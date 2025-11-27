@@ -1,217 +1,802 @@
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="ru">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MarketHub</title>
+  <meta charset="UTF-8" />
+  <title>MarketHub Mini App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, initial-scale=1, maximum-scale=1" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+    }
 
-    <style>
-        body {
-            margin: 0;
-            padding: 20px;
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-            background: #f4f7ff;
-        }
+    body {
+      background: #f1f4ff;
+      color: #0f172a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
 
-        /* ---- HEADER ---- */
+    .app {
+      background: #f9fafb;
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    }
 
-        .app-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 22px;
-        }
+    /* HEADER */
 
-        .app-header-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+    .app-header {
+      padding: 12px 16px 10px;
+      background: #ffffff;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
 
-        .app-logo-img {
-            width: 48px;
-            height: 48px;
-            border-radius: 14px;
-            object-fit: cover;
-        }
+    .app-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-        .app-title-block {
-            display: flex;
-            flex-direction: column;
-            line-height: 1.1;
-        }
+    .app-logo-small {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+    }
 
-        .app-title {
-            font-size: 19px;
-            font-weight: 700;
-        }
+    .app-title {
+      font-weight: 600;
+      font-size: 16px;
+      color: #0f172a;
+    }
 
-        .app-subtitle {
-            font-size: 13px;
-            color: #6b7280;
-            margin-top: 2px;
-        }
+    .app-subtitle {
+      font-size: 12px;
+      color: #64748b;
+    }
 
-        .app-badge {
-            font-size: 12px;
-            padding: 6px 12px;
-            border-radius: 30px;
-            background: #e6edff;
-            color: #1e47ff;
-        }
+    .theme-toggle {
+      border: none;
+      background: #eff6ff;
+      color: #1d4ed8;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+    }
 
-        /* ---- SEARCH ---- */
+    /* SCREEN CONTAINER */
 
-        .search-box {
-            background: white;
-            border-radius: 14px;
-            padding: 12px 14px;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-            margin-bottom: 18px;
-        }
+    .screens {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 12px 72px; /* место под нижнее меню */
+    }
 
-        .search-input {
-            border: none;
-            outline: none;
-            width: 100%;
-            font-size: 16px;
-        }
+    .screen {
+      display: none;
+    }
 
-        /* ---- QUICK BUTTONS ---- */
+    .screen.active {
+      display: block;
+    }
 
-        .quick-actions-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
+    .screen-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
 
-        .main-blue-btn {
-            background: #1f64ff;
-            color: white;
-            padding: 14px;
-            border-radius: 16px;
-            text-align: center;
-            font-size: 17px;
-            font-weight: 600;
-            margin-bottom: 12px;
-        }
+    /* SEARCH */
 
-        .quick-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 22px;
-        }
+    .search-bar {
+      margin-top: 4px;
+      margin-bottom: 12px;
+    }
 
-        .tab {
-            background: white;
-            padding: 10px 14px;
-            border-radius: 14px;
-            font-size: 14px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.06);
-        }
+    .search-input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      font-size: 14px;
+      padding-left: 32px;
+      background: #ffffff url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 5a6 6 0 014.472 9.972l3.278 3.278a1 1 0 01-1.414 1.414l-3.278-3.278A6 6 0 1111 5zm0 2a4 4 0 100 8 4 4 0 000-8z' fill='%2394a3b8'/%3E%3C/svg%3E")
+      no-repeat 10px center;
+      background-size: 16px;
+    }
 
-        .tab-active {
-            background: #1f64ff;
-            color: white;
-        }
+    /* QUICK ACTIONS */
 
-        /* ---- CATEGORIES ---- */
+    .quick-actions-title {
+      font-size: 14px;
+      color: #64748b;
+      margin-bottom: 6px;
+    }
 
-        .section-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 14px;
-        }
+    .primary-btn {
+      width: 100%;
+      border: none;
+      border-radius: 999px;
+      padding: 13px 16px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #ffffff;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
 
-        .categories {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-        }
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
 
-        .category-card {
-            background: white;
-            padding: 14px;
-            border-radius: 16px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-        }
+    .chip {
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 13px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: #ffffff;
+      color: #0f172a;
+    }
 
-        .category-title {
-            font-weight: 600;
-            margin-top: 6px;
-            margin-bottom: 4px;
-            font-size: 15px;
-        }
+    .chip.chip-filled {
+      background: #1d4ed8;
+      color: #ffffff;
+      border-color: transparent;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+    }
 
-        .category-sub {
-            font-size: 13px;
-            color: #6b7280;
-        }
-    </style>
+    /* CATEGORIES GRID */
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      margin-top: 4px;
+    }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .category-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 10px 12px;
+      box-shadow: 0 3px 10px rgba(15, 23, 42, 0.06);
+      font-size: 14px;
+    }
+
+    .category-card-title {
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .category-card-sub {
+      font-size: 12px;
+      color: #64748b;
+    }
+
+    /* LIST SCREEN */
+
+    .tabs-row {
+      display: flex;
+      margin-bottom: 10px;
+      background: #e5edff;
+      padding: 4px;
+      border-radius: 999px;
+    }
+
+    .tab-pill {
+      flex: 1;
+      border-radius: 999px;
+      padding: 7px 0;
+      font-size: 13px;
+      border: none;
+      background: transparent;
+      color: #475569;
+    }
+
+    .tab-pill.active {
+      background: #ffffff;
+      color: #1d4ed8;
+      box-shadow: 0 3px 8px rgba(15, 23, 42, 0.15);
+      font-weight: 600;
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      margin-bottom: 10px;
+    }
+
+    .filter-chip {
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 13px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: #ffffff;
+      white-space: nowrap;
+    }
+
+    .filter-chip.active {
+      background: #1d4ed8;
+      color: #ffffff;
+      border-color: transparent;
+    }
+
+    .ad-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .ad-card {
+      display: flex;
+      gap: 10px;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 10px;
+      box-shadow: 0 3px 10px rgba(15, 23, 42, 0.06);
+    }
+
+    .ad-image {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    }
+
+    .ad-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .ad-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .ad-meta {
+      font-size: 12px;
+      color: #64748b;
+    }
+
+    .ad-price {
+      font-size: 14px;
+      font-weight: 600;
+      color: #16a34a;
+      margin-top: 2px;
+    }
+
+    .ad-rating {
+      font-size: 12px;
+      color: #f59e0b;
+    }
+
+    /* PROFILE SCREEN */
+
+    .profile-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 14px;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+      margin-bottom: 14px;
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      background: #1d4ed8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 18px;
+    }
+
+    .profile-name {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .profile-username {
+      font-size: 13px;
+      color: #64748b;
+    }
+
+    .profile-rating {
+      font-size: 13px;
+      color: #f59e0b;
+      margin-top: 2px;
+    }
+
+    .profile-desc {
+      font-size: 13px;
+      color: #475569;
+      margin-top: 6px;
+    }
+
+    .profile-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .outline-btn,
+    .secondary-btn {
+      flex: 1;
+      border-radius: 999px;
+      padding: 8px 10px;
+      font-size: 13px;
+      border: 1px solid #cbd5f5;
+      background: #f8fafc;
+      color: #1d4ed8;
+    }
+
+    .secondary-btn {
+      background: #fff7ed;
+      border-color: #fed7aa;
+      color: #c2410c;
+    }
+
+    .profile-section-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      margin-top: 6px;
+    }
+
+    /* NEW AD FORM */
+
+    .back-link {
+      font-size: 13px;
+      color: #1d4ed8;
+      margin-bottom: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .form-group {
+      margin-bottom: 10px;
+    }
+
+    .form-label {
+      font-size: 13px;
+      margin-bottom: 4px;
+      display: block;
+      color: #475569;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      padding: 9px 10px;
+      font-size: 14px;
+      background: #ffffff;
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+
+    .step-tag {
+      display: inline-block;
+      font-size: 11px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      margin-left: 4px;
+    }
+
+    /* BOTTOM NAV */
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 480px;
+      background: rgba(15, 23, 42, 0.03);
+      padding: 6px 10px 10px;
+    }
+
+    .bottom-nav-inner {
+      background: #ffffff;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.15);
+      border-radius: 999px;
+      display: flex;
+      justify-content: space-around;
+      padding: 4px;
+    }
+
+    .nav-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      border-radius: 999px;
+      font-size: 12px;
+      padding: 6px 0;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .nav-btn span.icon {
+      font-size: 14px;
+    }
+
+    .nav-btn.active {
+      background: #1d4ed8;
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        align-items: stretch;
+      }
+      .app {
+        border-radius: 0;
+        box-shadow: none;
+      }
+    }
+  </style>
 </head>
-
 <body>
-
+  <div class="app">
     <!-- HEADER -->
-    <div class="app-header">
-        <div class="app-header-left">
-            <img src="markethub-logo.png" class="app-logo-img" alt="MarketHub">
-            <div class="app-title-block">
-                <div class="app-title">MarketHub</div>
-                <div class="app-subtitle">O‘zbekiston • e'lonlar</div>
+    <header class="app-header">
+      <div class="app-header-left">
+        <!-- НОВЫЙ ЛОГОТИП -->
+        <img src="markethub-logo.png" alt="MarketHub" class="app-logo-small" />
+        <div>
+          <div class="app-title">MarketHub</div>
+          <div class="app-subtitle">Узбекистан · объявления</div>
+        </div>
+      </div>
+      <button class="theme-toggle" id="themeToggleBtn">Тёмная тема</button>
+    </header>
+
+    <!-- SCREENS -->
+    <div class="screens">
+      <!-- HOME SCREEN -->
+      <section class="screen active" id="screen-home">
+        <div class="screen-title">Главный экран</div>
+
+        <div class="search-bar">
+          <input
+            type="text"
+            class="search-input"
+            placeholder="Найти товар или услугу..."
+          />
+        </div>
+
+        <div class="quick-actions-title">Быстрые действия</div>
+        <button class="primary-btn" id="btnOpenNewAd">
+          <span>＋</span> Подать объявление
+        </button>
+
+        <div class="chip-row">
+          <button class="chip chip-filled">📦 Товары</button>
+          <button class="chip">💼 Услуги</button>
+          <button class="chip">⭐ Продавцы</button>
+          <button class="chip">📍 Ташкент</button>
+        </div>
+
+        <div class="section-title">Популярные категории</div>
+        <div class="category-grid">
+          <div class="category-card">
+            <div class="category-card-title">📱 Электроника</div>
+            <div class="category-card-sub">Телефоны, ноутбуки</div>
+          </div>
+          <div class="category-card">
+            <div class="category-card-title">🏠 Для дома</div>
+            <div class="category-card-sub">Мебель, техника</div>
+          </div>
+          <div class="category-card">
+            <div class="category-card-title">👕 Одежда</div>
+            <div class="category-card-sub">Мужская, женская</div>
+          </div>
+          <div class="category-card">
+            <div class="category-card-title">🛠 Услуги</div>
+            <div class="category-card-sub">Мастера, ремонт</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- LIST SCREEN -->
+      <section class="screen" id="screen-list">
+        <div class="screen-title">Объявления</div>
+
+        <div class="tabs-row">
+          <button class="tab-pill active" id="tabGoods">Товары</button>
+          <button class="tab-pill" id="tabServices">Услуги</button>
+        </div>
+
+        <div class="filter-row">
+          <button class="filter-chip active">Все категории</button>
+          <button class="filter-chip">Телефоны</button>
+          <button class="filter-chip">Авто</button>
+          <button class="filter-chip">Для дома</button>
+          <button class="filter-chip">Одежда</button>
+        </div>
+
+        <div class="ad-list">
+          <article class="ad-card">
+            <div class="ad-image"></div>
+            <div class="ad-content">
+              <div class="ad-title">iPhone 13 Pro · 256GB</div>
+              <div class="ad-meta">📍 Ташкент · Электроника</div>
+              <div class="ad-price">10 500 000 сум</div>
+              <div class="ad-rating">⭐ 4,9 · 23 отзыва</div>
             </div>
+          </article>
+
+          <article class="ad-card">
+            <div class="ad-image"></div>
+            <div class="ad-content">
+              <div class="ad-title">Игровой ноутбук ASUS</div>
+              <div class="ad-meta">📍 Самарканд · Компьютеры</div>
+              <div class="ad-price">8 900 000 сум</div>
+              <div class="ad-rating">⭐ 5,0 · 11 отзывов</div>
+            </div>
+          </article>
+
+          <article class="ad-card">
+            <div class="ad-image"></div>
+            <div class="ad-content">
+              <div class="ad-title">Уборка квартир · Услуга</div>
+              <div class="ad-meta">📍 Фергана · Услуги</div>
+              <div class="ad-price">от 150 000 сум</div>
+              <div class="ad-rating">⭐ 4,8 · 47 отзывов</div>
+            </div>
+          </article>
         </div>
-        <div class="app-badge">beta · webapp</div>
+      </section>
+
+      <!-- PROFILE SCREEN -->
+      <section class="screen" id="screen-profile">
+        <div class="screen-title">Профиль продавца</div>
+
+        <div class="profile-card">
+          <div class="profile-header">
+            <div class="avatar">B</div>
+            <div>
+              <div class="profile-name">Baxir B-R</div>
+              <div class="profile-username">@Baxir1987 · Узбекистан</div>
+              <div class="profile-rating">⭐ 4,9 из 5 · 23 отзыва</div>
+            </div>
+          </div>
+
+          <div class="profile-desc">
+            «Краска — моё дыхание». Специалист по кузовной покраске
+            и честной продаже. Всегда на связи, без обмана.
+          </div>
+
+          <div class="profile-actions">
+            <button class="outline-btn">💬 Написать</button>
+            <button class="secondary-btn">⭐ Оставить отзыв</button>
+          </div>
+        </div>
+
+        <div class="profile-section-title">Последние объявления</div>
+        <div class="ad-list">
+          <article class="ad-card">
+            <div class="ad-image"></div>
+            <div class="ad-content">
+              <div class="ad-title">Шампунь от перхоти</div>
+              <div class="ad-meta">📍 Ташкент · Товар · 2 дня назад</div>
+              <div class="ad-price">150 000 сум</div>
+            </div>
+          </article>
+
+          <article class="ad-card">
+            <div class="ad-image"></div>
+            <div class="ad-content">
+              <div class="ad-title">Полировка кузова · услуга</div>
+              <div class="ad-meta">📍 Ташкент · Услуга · 5 дней назад</div>
+              <div class="ad-price">от 300 000 сум</div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- NEW AD SCREEN -->
+      <section class="screen" id="screen-new-ad">
+        <div class="back-link" id="backFromNewAd">← Назад на главный</div>
+        <div class="screen-title">
+          Новое объявление <span class="step-tag">Шаг 1 из 3</span>
+        </div>
+
+        <div class="form-group" style="margin-top: 10px;">
+          <label class="form-label">Тип</label>
+          <div class="chip-row">
+            <button class="chip chip-filled">📦 Товар</button>
+            <button class="chip">💼 Услуга</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Город</label>
+          <select class="form-select">
+            <option>Ташкент</option>
+            <option>Самарканд</option>
+            <option>Фергана</option>
+            <option>Наманган</option>
+            <option>Бухара</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Название</label>
+          <input class="form-input" placeholder="Например: «iPhone 13 Pro, как новый»" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Цена</label>
+          <input class="form-input" placeholder="Например: 10 500 000" />
+          <div class="hint">Валюта по умолчанию: сум</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Описание</label>
+          <textarea class="form-textarea" placeholder="Коротко опишите состояние и детали..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Фото</label>
+          <button class="outline-btn">📸 Загрузить (демо)</button>
+          <div class="hint">В реальной версии здесь будет загрузка фото.</div>
+        </div>
+
+        <button class="primary-btn" style="margin-top: 8px;">
+          Продолжить · шаг 2
+        </button>
+      </section>
     </div>
 
-    <!-- SEARCH -->
-    <div class="search-box">
-        🔍
-        <input class="search-input" placeholder="Mahsulot yoki xizmat qidiring…" />
-    </div>
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav">
+      <div class="bottom-nav-inner">
+        <button class="nav-btn active" data-screen="home">
+          <span class="icon">🏠</span>
+          <span>Главная</span>
+        </button>
+        <button class="nav-btn" data-screen="list">
+          <span class="icon">📋</span>
+          <span>Объявления</span>
+        </button>
+        <button class="nav-btn" data-screen="profile">
+          <span class="icon">👤</span>
+          <span>Профиль</span>
+        </button>
+      </div>
+    </nav>
+  </div>
 
-    <!-- QUICK ACTIONS -->
-    <div class="quick-actions-title">Tezkor harakatlar</div>
-    <div class="main-blue-btn">+ Eʼlon joylash</div>
+  <script>
+    // Переключение экранов
+    const screens = {
+      home: document.getElementById("screen-home"),
+      list: document.getElementById("screen-list"),
+      profile: document.getElementById("screen-profile"),
+      newAd: document.getElementById("screen-new-ad"),
+    };
 
-    <div class="quick-tabs">
-        <div class="tab tab-active">📦 Tovarlar</div>
-        <div class="tab">💼 Xizmatlar</div>
-        <div class="tab">⭐ Sotuvchilar</div>
-        <div class="tab">📍 Toshkent</div>
-    </div>
+    function showScreen(name) {
+      Object.values(screens).forEach((el) => el.classList.remove("active"));
+      if (screens[name]) {
+        screens[name].classList.add("active");
+      }
+      document
+        .querySelectorAll(".nav-btn")
+        .forEach((btn) => btn.classList.remove("active"));
+      const activeBtn = document.querySelector(
+        '.nav-btn[data-screen="' + name + '"]'
+      );
+      if (activeBtn) activeBtn.classList.add("active");
+    }
 
-    <!-- CATEGORIES -->
-    <div class="section-title">Mashhur kategoriyalar</div>
+    // Нижнее меню
+    document.querySelectorAll(".nav-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const target = btn.getAttribute("data-screen");
+        showScreen(target);
+      });
+    });
 
-    <div class="categories">
-        <div class="category-card">
-            📱
-            <div class="category-title">Elektronika</div>
-            <div class="category-sub">Telefonlar, noutbuklar</div>
-        </div>
+    // Кнопка "Подать объявление" на главном
+    document.getElementById("btnOpenNewAd").addEventListener("click", () => {
+      showScreen("newAd");
+    });
 
-        <div class="category-card">
-            🏠
-            <div class="category-title">Uy uchun</div>
-            <div class="category-sub">Mebel, texnika</div>
-        </div>
+    // Назад из формы объявления
+    document.getElementById("backFromNewAd").addEventListener("click", () => {
+      showScreen("home");
+    });
 
-        <div class="category-card">
-            👕
-            <div class="category-title">Kiyimlar</div>
-            <div class="category-sub">Erkaklar, ayollar</div>
-        </div>
+    // Переключение табов "Товары / Услуги" (визуально)
+    const tabGoods = document.getElementById("tabGoods");
+    const tabServices = document.getElementById("tabServices");
 
-        <div class="category-card">
-            🛠️
-            <div class="category-title">Xizmatlar</div>
-            <div class="category-sub">Ustalar, ta'mirlash</div>
-        </div>
-    </div>
+    tabGoods.addEventListener("click", () => {
+      tabGoods.classList.add("active");
+      tabServices.classList.remove("active");
+    });
 
+    tabServices.addEventListener("click", () => {
+      tabServices.classList.add("active");
+      tabGoods.classList.remove("active");
+    });
+
+    // Переключение темы (простая демо-логика)
+    const themeBtn = document.getElementById("themeToggleBtn");
+    let darkMode = false;
+    themeBtn.addEventListener("click", () => {
+      darkMode = !darkMode;
+      if (darkMode) {
+        document.body.style.background = "#020617";
+        document.querySelector(".app").style.background = "#020617";
+        document.querySelector(".screens").style.background = "#020617";
+        document.querySelectorAll(".screen, .category-card, .ad-card, .profile-card")
+          .forEach((el) => {
+            el.style.backgroundColor = "#020617";
+          });
+        themeBtn.textContent = "Светлая тема";
+      } else {
+        location.reload(); // для простоты возвращаем обычную тему
+      }
+    });
+  </script>
 </body>
 </html>
