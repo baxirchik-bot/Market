@@ -1,121 +1,217 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="uz">
 <head>
     <meta charset="UTF-8" />
-    <title>MarketHub — Mini App</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MarketHub</title>
+
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
-                system-ui, sans-serif;
-        }
-
         body {
-            background: #f9fafb;
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+            background: #f4f7ff;
+        }
+
+        /* ---- HEADER ---- */
+
+        .app-header {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            min-height: 100vh;
+            margin-bottom: 22px;
         }
 
-        .app {
-            background: #ffffff;
+        .app-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .app-logo-img {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            object-fit: cover;
+        }
+
+        .app-title-block {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+        }
+
+        .app-title {
+            font-size: 19px;
+            font-weight: 700;
+        }
+
+        .app-subtitle {
+            font-size: 13px;
+            color: #6b7280;
+            margin-top: 2px;
+        }
+
+        .app-badge {
+            font-size: 12px;
+            padding: 6px 12px;
+            border-radius: 30px;
+            background: #e6edff;
+            color: #1e47ff;
+        }
+
+        /* ---- SEARCH ---- */
+
+        .search-box {
+            background: white;
+            border-radius: 14px;
+            padding: 12px 14px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            margin-bottom: 18px;
+        }
+
+        .search-input {
+            border: none;
+            outline: none;
             width: 100%;
-            max-width: 480px;
-            min-height: 100vh;
-            padding: 24px;
-            border-radius: 22px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+            font-size: 16px;
         }
 
-        h1 {
-            font-size: 26px;
+        /* ---- QUICK BUTTONS ---- */
+
+        .quick-actions-title {
+            font-size: 18px;
             font-weight: 700;
             margin-bottom: 12px;
-            color: #0f172a;
         }
 
-        .subtitle {
-            color: #64748b;
-            margin-bottom: 24px;
-        }
-
-        .button {
-            display: block;
-            background: #2563eb;
+        .main-blue-btn {
+            background: #1f64ff;
             color: white;
+            padding: 14px;
+            border-radius: 16px;
             text-align: center;
-            padding: 16px;
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .quick-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 22px;
+        }
+
+        .tab {
+            background: white;
+            padding: 10px 14px;
             border-radius: 14px;
+            font-size: 14px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+        }
+
+        .tab-active {
+            background: #1f64ff;
+            color: white;
+        }
+
+        /* ---- CATEGORIES ---- */
+
+        .section-title {
             font-size: 18px;
-            margin-top: 26px;
-            text-decoration: none;
-            box-shadow: 0 4px 16px rgba(37,99,235,0.3);
-        }
-
-        .button:hover {
-            background: #1e50c3;
-        }
-
-        .logo {
-            width: 96px;
-            height: 96px;
-            margin: 0 auto 24px auto;
-            display: block;
-        }
-
-        .section {
-            margin-top: 28px;
-        }
-
-        .item {
-            background: #f1f5f9;
-            padding: 14px 18px;
-            border-radius: 14px;
+            font-weight: 700;
             margin-bottom: 14px;
         }
 
-        .item-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #0f172a;
+        .categories {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
         }
 
-        .item-text {
-            color: #64748b;
-            margin-top: 4px;
+        .category-card {
+            background: white;
+            padding: 14px;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+
+        .category-title {
+            font-weight: 600;
+            margin-top: 6px;
+            margin-bottom: 4px;
+            font-size: 15px;
+        }
+
+        .category-sub {
+            font-size: 13px;
+            color: #6b7280;
         }
     </style>
 </head>
 
 <body>
-<div class="app">
-    <img src="https://i.imgur.com/XZxGQGk.png" class="logo" />
 
-    <h1>MarketHub</h1>
-    <div class="subtitle">Покупай. Продавай. Услуги. Всё внутри мини-приложения.</div>
+    <!-- HEADER -->
+    <div class="app-header">
+        <div class="app-header-left">
+            <img src="markethub-logo.png" class="app-logo-img" alt="MarketHub">
+            <div class="app-title-block">
+                <div class="app-title">MarketHub</div>
+                <div class="app-subtitle">O‘zbekiston • e'lonlar</div>
+            </div>
+        </div>
+        <div class="app-badge">beta · webapp</div>
+    </div>
 
-    <a class="button" href="#">🚀 Открыть приложение</a>
+    <!-- SEARCH -->
+    <div class="search-box">
+        🔍
+        <input class="search-input" placeholder="Mahsulot yoki xizmat qidiring…" />
+    </div>
 
-    <div class="section">
-        <div class="item">
-            <div class="item-title">• Подать объявление</div>
-            <div class="item-text">Товары и услуги по городам Узбекистана</div>
+    <!-- QUICK ACTIONS -->
+    <div class="quick-actions-title">Tezkor harakatlar</div>
+    <div class="main-blue-btn">+ Eʼlon joylash</div>
+
+    <div class="quick-tabs">
+        <div class="tab tab-active">📦 Tovarlar</div>
+        <div class="tab">💼 Xizmatlar</div>
+        <div class="tab">⭐ Sotuvchilar</div>
+        <div class="tab">📍 Toshkent</div>
+    </div>
+
+    <!-- CATEGORIES -->
+    <div class="section-title">Mashhur kategoriyalar</div>
+
+    <div class="categories">
+        <div class="category-card">
+            📱
+            <div class="category-title">Elektronika</div>
+            <div class="category-sub">Telefonlar, noutbuklar</div>
         </div>
 
-        <div class="item">
-            <div class="item-title">• Быстрый поиск</div>
-            <div class="item-text">Фильтры, поиск, категории</div>
+        <div class="category-card">
+            🏠
+            <div class="category-title">Uy uchun</div>
+            <div class="category-sub">Mebel, texnika</div>
         </div>
 
-        <div class="item">
-            <div class="item-title">• Профиль продавца</div>
-            <div class="item-text">Отзывы и рейтинг — как на OLX</div>
+        <div class="category-card">
+            👕
+            <div class="category-title">Kiyimlar</div>
+            <div class="category-sub">Erkaklar, ayollar</div>
+        </div>
+
+        <div class="category-card">
+            🛠️
+            <div class="category-title">Xizmatlar</div>
+            <div class="category-sub">Ustalar, ta'mirlash</div>
         </div>
     </div>
-</div>
+
 </body>
 </html>
