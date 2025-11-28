@@ -885,6 +885,65 @@
   </div>
 
   <script>
+        // ==== YANGI E'LONLAR: ZAGRUZKA S BACKENDA ====
+
+    const ADS_API_URL = "https://baxir.pythonanywhere.com/ads";
+    const homeAdsList = document.getElementById("ads-list");
+
+    // небольшая функция для красивой цены
+    function formatPrice(price) {
+      if (price === null || price === undefined || price === "") {
+        return "Narx kelishiladi";
+      }
+      // переводим в строку и добавляем пробелы: 10500000 -> 10 500 000
+      const s = String(price);
+      return s.replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " сум";
+    }
+
+    function createHomeAdCard(ad) {
+      const card = document.createElement("article");
+      card.className = "ad-card";
+
+      const title = ad.title || "E'lon";
+      const city = ad.city || "Shahar";
+      const type = ad.type || "Tovar";
+      const priceText = formatPrice(ad.price);
+
+      card.innerHTML = `
+        <div class="ad-image"></div>
+        <div class="ad-content">
+          <div class="ad-title">${title}</div>
+          <div class="ad-meta">📍 ${city} · ${type}</div>
+          <div class="ad-price">${priceText}</div>
+        </div>
+      `;
+      return card;
+    }
+
+    async function loadLatestAds() {
+      if (!homeAdsList) return;
+
+      try {
+        const res = await fetch(ADS_API_URL);
+        if (!res.ok) throw new Error("Bad response");
+        const data = await res.json();
+
+        if (!Array.isArray(data)) return;
+
+        homeAdsList.innerHTML = ""; // очищаем список
+
+        // берём первые 4 объявления
+        data.slice(0, 4).forEach((ad) => {
+          const card = createHomeAdCard(ad);
+          homeAdsList.appendChild(card);
+        });
+      } catch (err) {
+        console.error("Xato yuklashda:", err);
+        homeAdsList.innerHTML =
+          "<div class='ad-meta'>E'lonlarni yuklashda xatolik. Keyinroq urinib ko'ring.</div>";
+      }
+    }
+    
     // --- ГЛОБАЛЬНОЕ СОСТОЯНИЕ НОВОГО ОБЪЯВЛЕНИЯ (только в браузере) ---
     const newAdDraft = {
       type: "Товар",
@@ -1142,6 +1201,9 @@
         location.reload(); // для простоты возвращаем обычную тему
       }
     });
+
+        // zagruzka yangi e'lonlar pri starte
+    loadLatestAds();
   </script>
 </body>
 </html>
