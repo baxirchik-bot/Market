@@ -850,331 +850,400 @@
   </div>
 
   <script>
-    // ==== КОНСТАНТЫ ====
-    const ADS_API_URL = "https://baxir.pythonanywhere.com/ads";
-    const homeAdsList = document.getElementById("ads-list");
-    const adList = document.getElementById("adList");
-    const NEW_LIMIT = 4; // сколько объявлений считаем "новыми"
+  // ==== API URL ====
+  const ADS_API_URL = "https://baxir.pythonanywhere.com/ads";
+  const ADD_AD_API_URL = "https://baxir.pythonanywhere.com/api/add_ad";
 
-    // --- форматирование цены ---
-    function formatPrice(price) {
-      if (price === null || price === undefined || price === "") {
-        return "Narx kelishiladi";
-      }
-      const s = String(price);
-      return s.replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " сум";
+  const homeAdsList = document.getElementById("ads-list");
+  const adList = document.getElementById("adList");
+
+  // ---- формат цены ----
+  function formatPrice(price) {
+    if (price === null || price === undefined || price === "") {
+      return "Narx kelishiladi";
     }
+    const s = String(price);
+    return s.replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " сум";
+  }
 
-    // --- карточка для блока Yangi e'lonlar (главная) ---
-    function createHomeAdCard(ad) {
-      const card = document.createElement("article");
-      card.className = "ad-card";
+  // ---- формат даты (кратко) ----
+  function formatDateShort(iso) {
+    if (!iso) return "";
+    try {
+      const d = new Date(iso);
+      const day = String(d.getDate()).padStart(2, "0");
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      return `${day}.${month}`;
+    } catch (e) {
+      return "";
+    }
+  }
 
-      const title = ad.title || "E'lon";
-      const city = ad.city || "Shahar";
-      const type = ad.type || "Tovar";
-      const priceText = formatPrice(ad.price);
+  // ---- карточка для блока "Yangi e'lonlar" (главная) ----
+  function createHomeAdCard(ad) {
+    const card = document.createElement("article");
+    card.className = "ad-card";
 
-      card.innerHTML = `
-        <div class="ad-image"></div>
-        <div class="ad-content">
-          <div class="ad-title">${title}</div>
-          <div class="ad-meta">📍 ${city} · ${type}</div>
-          <div class="ad-price">${priceText}</div>
+    const title = ad.title || "E'lon";
+    const city = ad.city || "Shahar";
+    const type = ad.type || "Tovar";
+    const priceText = formatPrice(ad.price);
+
+    card.innerHTML = `
+      <div class="ad-image"></div>
+      <div class="ad-content">
+        <div class="ad-title">${title}</div>
+        <div class="ad-meta">📍 ${city} · ${type}</div>
+        <div class="ad-price">${priceText}</div>
+      </div>
+    `;
+    return card;
+  }
+
+  // ---- карточка для вкладки "Объявления" ----
+  function createListAdCard(ad) {
+    const card = document.createElement("article");
+    card.className = "ad-card";
+
+    const title = ad.title || "E'lon";
+    const city = ad.city || "Shahar";
+    const type = ad.type || "Tovar";
+    const priceText = formatPrice(ad.price);
+    const created = formatDateShort(ad.created_at);
+    const desc = ad.description || "";
+
+    card.innerHTML = `
+      <div class="ad-image"></div>
+      <div class="ad-content">
+        <div class="ad-title">${title}</div>
+        <div class="ad-meta">
+          📍 ${city} · ${type}
+          ${created ? ` · ${created}` : ""}
         </div>
-      `;
-      return card;
-    }
+        <div class="ad-price">${priceText}</div>
+        ${
+          desc
+            ? `<div class="ad-meta" style="margin-top:2px;">${desc}</div>`
+            : ""
+        }
+      </div>
+    `;
+    return card;
+  }
 
-    // --- карточка для списка Объявлений ---
-    function createListAdCard(ad, isNew = false) {
-      const card = document.createElement("article");
-      card.className = "ad-card";
+  // ---- загрузка объявлений для главной и списка ----
+  async function loadAds() {
+    try {
+      const res = await fetch(ADS_API_URL);
+      if (!res.ok) throw new Error("Bad response");
+      const data = await res.json();
+      if (!Array.isArray(data)) return;
 
-      const title = ad.title || "E'lon";
-      const city = ad.city || "Shahar";
-      const type = ad.type || "Tovar";
-      const priceText = formatPrice(ad.price);
-
-      card.innerHTML = `
-        <div class="ad-image"></div>
-        <div class="ad-content">
-          <div class="ad-title">${title}</div>
-          <div class="ad-meta">📍 ${city} · ${type}</div>
-          <div class="ad-price">${priceText}</div>
-          ${isNew ? "<div class='badge-new'>⭐ Yangi e'lon</div>" : ""}
-        </div>
-      `;
-      return card;
-    }
-
-    // --- Загрузка объявлений из бэкенда для главной и списка ---
-    async function loadAdsFromBackend() {
-      try {
-        const res = await fetch(ADS_API_URL);
-        if (!res.ok) throw new Error("Bad response");
-        const data = await res.json();
-        if (!Array.isArray(data)) throw new Error("Not array");
-
-        if (homeAdsList) homeAdsList.innerHTML = "";
-        if (adList) adList.innerHTML = "";
-
-        data.forEach((ad, index) => {
-          const isNew = index < NEW_LIMIT;
-
-          // для главной берём только первые NEW_LIMIT
-          if (homeAdsList && index < NEW_LIMIT) {
-            homeAdsList.appendChild(createHomeAdCard(ad));
-          }
-
-          // в список добавляем все
-          if (adList) {
-            adList.appendChild(createListAdCard(ad, isNew));
-          }
-        });
-
-        // если вдруг совсем нет объявлений
-        if (homeAdsList && !homeAdsList.children.length) {
+      // Главная: Yangi e'lonlar
+      if (homeAdsList) {
+        homeAdsList.innerHTML = "";
+        const latest = data.slice(0, 4); // первые 4
+        if (!latest.length) {
           homeAdsList.innerHTML =
-            "<div class='ad-meta'>Hozircha e'lon yo'q.</div>";
-        }
-        if (adList && !adList.children.length) {
-          adList.innerHTML =
-            "<div class='ad-meta'>Пока нет объявлений.</div>";
-        }
-      } catch (err) {
-        console.error("Xato yuklashda:", err);
-        if (homeAdsList) {
-          homeAdsList.innerHTML =
-            "<div class='ad-meta'>E'lonlarni yuklashda xatolik. Keyinroq urinib ko'ring.</div>";
-        }
-        if (adList) {
-          adList.innerHTML =
-            "<div class='ad-meta'>Ошибка при загрузке объявлений. Попробуйте позже.</div>";
+            "<div class='ad-meta'>Hozircha e'lonlar yo'q.</div>";
+        } else {
+          latest.forEach((ad) => {
+            const card = createHomeAdCard(ad);
+            homeAdsList.appendChild(card);
+          });
         }
       }
-    }
 
-    // --- ГЛОБАЛЬНОЕ СОСТОЯНИЕ НОВОГО ОБЪЯВЛЕНИЯ (только в браузере) ---
-    const newAdDraft = {
-      type: "Товар",
-      city: "Ташкент",
-      title: "",
-      price: "",
-      description: "",
-      photoCount: 0,
-    };
-
-    // --- ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ ---
-    const screens = {
-      home: document.getElementById("screen-home"),
-      list: document.getElementById("screen-list"),
-      profile: document.getElementById("screen-profile"),
-      newAd1: document.getElementById("screen-new-ad-step1"),
-      newAd2: document.getElementById("screen-new-ad-step2"),
-      newAd3: document.getElementById("screen-new-ad-step3"),
-      newAdSuccess: document.getElementById("screen-new-ad-success"),
-    };
-
-    function showScreen(name) {
-      Object.values(screens).forEach((el) => el.classList.remove("active"));
-      if (screens[name]) {
-        screens[name].classList.add("active");
+      // Вкладка "Объявления"
+      if (adList) {
+        adList.innerHTML = "";
+        if (!data.length) {
+          adList.innerHTML =
+            "<div class='ad-meta'>Hozircha e'lonlar yo'q.</div>";
+        } else {
+          data.forEach((ad) => {
+            const card = createListAdCard(ad);
+            adList.appendChild(card);
+          });
+        }
       }
+    } catch (err) {
+      console.error("Xato yuklashda:", err);
+      if (homeAdsList) {
+        homeAdsList.innerHTML =
+          "<div class='ad-meta'>E'lonlarni yuklashda xatolik. Keyinroq urinib ko'ring.</div>";
+      }
+      if (adList) {
+        adList.innerHTML =
+          "<div class='ad-meta'>E'lonlarni yuklashda xatolik. Keyinroq urinib ko'ring.</div>";
+      }
+    }
+  }
 
-      // переключаем нижнее меню только для home/list/profile
-      document
-        .querySelectorAll(".nav-btn")
-        .forEach((btn) => btn.classList.remove("active"));
-      const activeBtn = document.querySelector(
-        '.nav-btn[data-screen="' + name + '"]'
-      );
-      if (activeBtn) activeBtn.classList.add("active");
+  // --- ГЛОБАЛЬНОЕ СОСТОЯНИЕ НОВОГО ОБЪЯВЛЕНИЯ ---
+  const newAdDraft = {
+    type: "Товар",
+    city: "Ташкент",
+    title: "",
+    price: "",
+    description: "",
+    photoCount: 0,
+  };
+
+  // --- ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ ---
+  const screens = {
+    home: document.getElementById("screen-home"),
+    list: document.getElementById("screen-list"),
+    profile: document.getElementById("screen-profile"),
+    newAd1: document.getElementById("screen-new-ad-step1"),
+    newAd2: document.getElementById("screen-new-ad-step2"),
+    newAd3: document.getElementById("screen-new-ad-step3"),
+    newAdSuccess: document.getElementById("screen-new-ad-success"),
+  };
+
+  function showScreen(name) {
+    Object.values(screens).forEach((el) => el.classList.remove("active"));
+    if (screens[name]) {
+      screens[name].classList.add("active");
     }
 
-    // --- НИЖНЕЕ МЕНЮ ---
-    document.querySelectorAll(".nav-btn").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const target = btn.getAttribute("data-screen");
-        showScreen(target);
-      });
-    });
-
-    // --- КНОПКА "ПОДАТЬ ОБЪЯВЛЕНИЕ" НА ГЛАВНОМ ---
-    document.getElementById("btnOpenNewAd").addEventListener("click", () => {
-      showScreen("newAd1");
-    });
-
-    // --- НАЗАД ИЗ ШАГА 1 НА ГЛАВНЫЙ ---
-    document.getElementById("backFromNewAd1").addEventListener("click", () => {
-      showScreen("home");
-    });
-
-    // --- ВЫБОР ТИПА ОБЪЯВЛЕНИЯ (ЧИПЫ) ---
-    const adTypeChips = document.querySelectorAll("#adTypeChips .chip");
-    adTypeChips.forEach((chip) => {
-      chip.addEventListener("click", () => {
-        adTypeChips.forEach((c) => c.classList.remove("chip-filled"));
-        chip.classList.add("chip-filled");
-        newAdDraft.type = chip.getAttribute("data-type") || "Товар";
-      });
-    });
-
-    // --- ПОЛЯ ШАГА 1 ---
-    const inputCity = document.getElementById("inputCity");
-    const inputTitle = document.getElementById("inputTitle");
-    const inputPrice = document.getElementById("inputPrice");
-    const inputDescription = document.getElementById("inputDescription");
-
+    // нижнее меню: активная только home/list/profile
     document
-      .getElementById("btnNewAdStep1Next")
-      .addEventListener("click", () => {
-        const title = (inputTitle.value || "").trim();
-        const price = (inputPrice.value || "").trim();
-        const desc = (inputDescription.value || "").trim();
+      .querySelectorAll(".nav-btn")
+      .forEach((btn) => btn.classList.remove("active"));
+    const activeBtn = document.querySelector(
+      '.nav-btn[data-screen="' + name + '"]'
+    );
+    if (activeBtn) activeBtn.classList.add("active");
+  }
 
-        if (!title) {
-          alert("Введите название объявления.");
-          return;
-        }
-        if (!price) {
-          alert("Введите цену.");
-          return;
-        }
-
-        newAdDraft.city = inputCity.value;
-        newAdDraft.title = title;
-        newAdDraft.price = price;
-        newAdDraft.description = desc || "Без описания";
-
-        showScreen("newAd2");
-      });
-
-    // --- ШАГ 2: ФОТО ---
-    const btnUploadPhotos = document.getElementById("btnUploadPhotos");
-    const inputPhotos = document.getElementById("inputPhotos");
-    const photosPreview = document.getElementById("photosPreview");
-
-    btnUploadPhotos.addEventListener("click", () => {
-      inputPhotos.click();
+  // --- НИЖНЕЕ МЕНЮ ---
+  document.querySelectorAll(".nav-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const target = btn.getAttribute("data-screen");
+      showScreen(target);
+      if (target === "list") {
+        // при открытии вкладки "Объявления" можно обновить список
+        loadAds();
+      }
     });
+  });
 
-    inputPhotos.addEventListener("change", () => {
-      const files = Array.from(inputPhotos.files || []);
-      photosPreview.innerHTML = "";
-      if (!files.length) {
-        newAdDraft.photoCount = 0;
+  // --- КНОПКА "ПОДАТЬ ОБЪЯВЛЕНИЕ" НА ГЛАВНОМ ---
+  document.getElementById("btnOpenNewAd").addEventListener("click", () => {
+    showScreen("newAd1");
+  });
+
+  // --- НАЗАД ИЗ ШАГА 1 НА ГЛАВНЫЙ ---
+  document.getElementById("backFromNewAd1").addEventListener("click", () => {
+    showScreen("home");
+  });
+
+  // --- ВЫБОР ТИПА ОБЪЯВЛЕНИЯ (ЧИПЫ) ---
+  const adTypeChips = document.querySelectorAll("#adTypeChips .chip");
+  adTypeChips.forEach((chip) => {
+    chip.addEventListener("click", () => {
+      adTypeChips.forEach((c) => c.classList.remove("chip-filled"));
+      chip.classList.add("chip-filled");
+      newAdDraft.type = chip.getAttribute("data-type") || "Товар";
+    });
+  });
+
+  // --- ПОЛЯ ШАГА 1 ---
+  const inputCity = document.getElementById("inputCity");
+  const inputTitle = document.getElementById("inputTitle");
+  const inputPrice = document.getElementById("inputPrice");
+  const inputDescription = document.getElementById("inputDescription");
+
+  document
+    .getElementById("btnNewAdStep1Next")
+    .addEventListener("click", () => {
+      const title = (inputTitle.value || "").trim();
+      const price = (inputPrice.value || "").trim();
+      const desc = (inputDescription.value || "").trim();
+
+      if (!title) {
+        alert("Введите название объявления.");
+        return;
+      }
+      if (!price) {
+        alert("Введите цену.");
         return;
       }
 
-      const maxFiles = 8;
-      files.slice(0, maxFiles).forEach((file) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const div = document.createElement("div");
-          div.className = "photo-thumb";
-          const img = document.createElement("img");
-          img.src = e.target.result;
-          div.appendChild(img);
-          photosPreview.appendChild(div);
-        };
-        reader.readAsDataURL(file);
-      });
+      newAdDraft.city = inputCity.value;
+      newAdDraft.title = title;
+      newAdDraft.price = price;
+      newAdDraft.description = desc || "Без описания";
 
-      newAdDraft.photoCount = Math.min(files.length, maxFiles);
-    });
-
-    document
-      .getElementById("btnNewAdStep2Next")
-      .addEventListener("click", () => {
-        if (!newAdDraft.photoCount) {
-          if (
-            !confirm(
-              "Вы ещё не добавили фото. Всё равно продолжить к подтверждению?"
-            )
-          ) {
-            return;
-          }
-        }
-        fillSummaryStep3();
-        showScreen("newAd3");
-      });
-
-    document.getElementById("backFromNewAd2").addEventListener("click", () => {
-      showScreen("newAd1");
-    });
-
-    // --- ШАГ 3: ПОДТВЕРЖДЕНИЕ ---
-    const summaryTitle = document.getElementById("summaryTitle");
-    const summaryCityType = document.getElementById("summaryCityType");
-    const summaryPrice = document.getElementById("summaryPrice");
-    const summaryDescription = document.getElementById("summaryDescription");
-    const summaryPhotosInfo = document.getElementById("summaryPhotosInfo");
-
-    function fillSummaryStep3() {
-      summaryTitle.textContent = newAdDraft.title || "Название объявления";
-      summaryCityType.textContent =
-        (newAdDraft.city || "Город") + " · " + (newAdDraft.type || "Товар");
-      summaryPrice.textContent = newAdDraft.price
-        ? newAdDraft.price + " сум"
-        : "Цена не указана";
-      summaryDescription.textContent =
-        newAdDraft.description || "Описание не указано.";
-      summaryPhotosInfo.textContent =
-        "Фото: " + (newAdDraft.photoCount || 0) + " шт.";
-    }
-
-    document.getElementById("backFromNewAd3").addEventListener("click", () => {
       showScreen("newAd2");
     });
 
-    // --- ПУБЛИКАЦИЯ: ДОБАВЛЯЕМ КАРТОЧКУ В СПИСОК ОБЪЯВЛЕНИЙ (демо, без бэкенда) ---
-    function addAdToList() {
-      if (!adList) return;
-      const fakeAd = {
-        title: newAdDraft.title,
-        city: newAdDraft.city,
-        type: newAdDraft.type,
-        price: newAdDraft.price,
-      };
-      const card = createListAdCard(fakeAd, true);
-      if (adList.firstChild) {
-        adList.insertBefore(card, adList.firstChild);
-      } else {
-        adList.appendChild(card);
-      }
+  // --- ШАГ 2: ФОТО (локально, только превью) ---
+  const btnUploadPhotos = document.getElementById("btnUploadPhotos");
+  const inputPhotos = document.getElementById("inputPhotos");
+  const photosPreview = document.getElementById("photosPreview");
+
+  btnUploadPhotos.addEventListener("click", () => {
+    inputPhotos.click();
+  });
+
+  inputPhotos.addEventListener("change", () => {
+    const files = Array.from(inputPhotos.files || []);
+    photosPreview.innerHTML = "";
+    if (!files.length) {
+      newAdDraft.photoCount = 0;
+      return;
     }
 
-    document.getElementById("btnPublishAd").addEventListener("click", () => {
-      addAdToList();
+    const maxFiles = 8;
+    files.slice(0, maxFiles).forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const div = document.createElement("div");
+        div.className = "photo-thumb";
+        const img = document.createElement("img");
+        img.src = e.target.result;
+        div.appendChild(img);
+        photosPreview.appendChild(div);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    newAdDraft.photoCount = Math.min(files.length, maxFiles);
+  });
+
+  document
+    .getElementById("btnNewAdStep2Next")
+    .addEventListener("click", () => {
+      if (!newAdDraft.photoCount) {
+        if (
+          !confirm(
+            "Вы ещё не добавили фото. Всё равно продолжить к подтверждению?"
+          )
+        ) {
+          return;
+        }
+      }
+      fillSummaryStep3();
+      showScreen("newAd3");
+    });
+
+  document.getElementById("backFromNewAd2").addEventListener("click", () => {
+    showScreen("newAd1");
+  });
+
+  // --- ШАГ 3: ПОДТВЕРЖДЕНИЕ ---
+  const summaryTitle = document.getElementById("summaryTitle");
+  const summaryCityType = document.getElementById("summaryCityType");
+  const summaryPrice = document.getElementById("summaryPrice");
+  const summaryDescription = document.getElementById("summaryDescription");
+  const summaryPhotosInfo = document.getElementById("summaryPhotosInfo");
+
+  function fillSummaryStep3() {
+    summaryTitle.textContent = newAdDraft.title || "Название объявления";
+    summaryCityType.textContent =
+      (newAdDraft.city || "Город") + " · " + (newAdDraft.type || "Товар");
+    summaryPrice.textContent = newAdDraft.price
+      ? newAdDraft.price + " сум"
+      : "Цена не указана";
+    summaryDescription.textContent =
+      newAdDraft.description || "Описание не указано.";
+    summaryPhotosInfo.textContent =
+      "Фото: " + (newAdDraft.photoCount || 0) + " шт.";
+  }
+
+  document.getElementById("backFromNewAd3").addEventListener("click", () => {
+    showScreen("newAd2");
+  });
+
+  // --- ПУБЛИКАЦИЯ: ОТПРАВКА НА БЭКЕНД /api/add_ad ---
+  const btnPublishAd = document.getElementById("btnPublishAd");
+
+  async function publishAdToBackend() {
+    // небольшая защита от двойного клика
+    btnPublishAd.disabled = true;
+    btnPublishAd.textContent = "Публикую...";
+
+    try {
+      const payload = {
+        type: newAdDraft.type,
+        city: newAdDraft.city,
+        title: newAdDraft.title,
+        price: (newAdDraft.price || "").replace(/\s+/g, ""),
+        description: newAdDraft.description,
+      };
+
+      const res = await fetch(ADD_AD_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        throw new Error("Bad response");
+      }
+
+      // Успешно опубликовано
+      // очищаем форму
+      inputTitle.value = "";
+      inputPrice.value = "";
+      inputDescription.value = "";
+      photosPreview.innerHTML = "";
+      if (inputPhotos) inputPhotos.value = "";
+
+      newAdDraft.title = "";
+      newAdDraft.price = "";
+      newAdDraft.description = "";
+      newAdDraft.photoCount = 0;
+
+      // показываем экран успеха
       showScreen("newAdSuccess");
-    });
 
-    // --- ЭКРАН УСПЕХА ---
-    document.getElementById("btnGoToList").addEventListener("click", () => {
-      showScreen("list");
-    });
+      // обновляем списки объявлений
+      loadAds();
+    } catch (err) {
+      console.error("Xato saqlashda:", err);
+      alert("Ошибка при сохранении объявления. Попробуйте ещё раз.");
+    } finally {
+      btnPublishAd.disabled = false;
+      btnPublishAd.textContent = "Опубликовать объявление";
+    }
+  }
 
-    document.getElementById("btnGoHome").addEventListener("click", () => {
-      showScreen("home");
-    });
+  btnPublishAd.addEventListener("click", publishAdToBackend);
 
-    // --- ПЕРЕКЛЮЧЕНИЕ ТАБОВ "ТОВАРЫ / УСЛУГИ" ---
-    const tabGoods = document.getElementById("tabGoods");
-    const tabServices = document.getElementById("tabServices");
+  // --- ЭКРАН УСПЕХА ---
+  document.getElementById("btnGoToList").addEventListener("click", () => {
+    showScreen("list");
+    loadAds();
+  });
 
-    tabGoods.addEventListener("click", () => {
-      tabGoods.classList.add("active");
-      tabServices.classList.remove("active");
-    });
+  document.getElementById("btnGoHome").addEventListener("click", () => {
+    showScreen("home");
+    loadAds();
+  });
 
-    tabServices.addEventListener("click", () => {
-      tabServices.classList.add("active");
-      tabGoods.classList.remove("active");
-    });
+  // --- ТАБЫ "ТОВАРЫ / УСЛУГИ" (пока только визуально) ---
+  const tabGoods = document.getElementById("tabGoods");
+  const tabServices = document.getElementById("tabServices");
 
-    // --- стартовая загрузка объявлений с бэкенда ---
-    loadAdsFromBackend();
-  </script>
+  tabGoods.addEventListener("click", () => {
+    tabGoods.classList.add("active");
+    tabServices.classList.remove("active");
+    // дальше можно будет добавить фильтрацию по type === "Товар"
+  });
+
+  tabServices.addEventListener("click", () => {
+    tabServices.classList.add("active");
+    tabGoods.classList.remove("active");
+    // дальше можно будет добавить фильтрацию по type === "Услуга"
+  });
+
+  // ---- ПЕРВЫЙ ЗАПУСК: загружаем объявления ----
+  loadAds();
+</script>
 </body>
 </html>
