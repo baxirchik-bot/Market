@@ -1048,6 +1048,16 @@
   const homeAdsList = document.getElementById("ads-list");
   const adList = document.getElementById("adList");
 
+  // элементы карточки объявления (экран просмотра)
+  const screenAdDetails = document.getElementById("screen-ad-details");
+  const detailMainImage = document.getElementById("detailMainImage");
+  const detailThumbs = document.getElementById("detailThumbs");
+  const detailTitle = document.getElementById("detailTitle");
+  const detailPrice = document.getElementById("detailPrice");
+  const detailMeta = document.getElementById("detailMeta");
+  const detailDescription = document.getElementById("detailDescription");
+  const detailBackBtn = document.getElementById("detailBackBtn");
+
   // ---- формат цены ----
   function formatPrice(price) {
     if (price === null || price === undefined || price === "") {
@@ -1096,7 +1106,6 @@
       </div>
     `;
 
-    // клик по карточке — открываем просмотр
     card.addEventListener("click", () => openAdDetails(ad));
     return card;
   }
@@ -1178,7 +1187,7 @@
       }
       if (adList) {
         adList.innerHTML =
-          "<div class='ad-meta'>E'lonlarni yuklashda xatolik. Keyinroq urinib ko'ring.</div>";
+          "<div class='ad-meta'>E'lonlarni yuklashда xatolik. Keyinroq urinib ko'ring.</div>";
       }
     }
   }
@@ -1216,7 +1225,7 @@
     newAd2: document.getElementById("screen-new-ad-step2"),
     newAd3: document.getElementById("screen-new-ad-step3"),
     newAdSuccess: document.getElementById("screen-new-ad-success"),
-    adDetails: document.getElementById("screen-ad-details"),
+    adDetails: screenAdDetails,
   };
 
   function showScreen(name) {
@@ -1502,6 +1511,64 @@
     setActiveTab(tabRealty);
     filterByType("Недвижимость");
   });
+
+  // --- ОТКРЫТИЕ КАРТОЧКИ ОБЪЯВЛЕНИЯ ---
+  function openAdDetails(ad) {
+    if (!screenAdDetails) return;
+
+    const title = ad.title || "Объявление";
+    const priceText = formatPrice(ad.price);
+    const city = ad.city || "Город";
+    const type = ad.type || "Товар";
+    const desc = ad.description || "";
+    const created = formatDateShort(ad.created_at);
+    const images = Array.isArray(ad.images) ? ad.images : [];
+
+    if (detailTitle) detailTitle.textContent = title;
+    if (detailPrice) detailPrice.textContent = priceText;
+    if (detailMeta)
+      detailMeta.textContent = `📍 ${city} · ${type}${
+        created ? " · " + created : ""
+      }`;
+    if (detailDescription) detailDescription.textContent = desc;
+
+    // главный фон
+    if (detailMainImage) {
+      if (images.length > 0) {
+        detailMainImage.style.backgroundImage = `url('${images[0]}')`;
+        detailMainImage.style.backgroundSize = "cover";
+        detailMainImage.style.backgroundPosition = "center";
+      } else {
+        detailMainImage.style.backgroundImage = "";
+      }
+    }
+
+    // превью-шки
+    if (detailThumbs) {
+      detailThumbs.innerHTML = "";
+      images.forEach((url, idx) => {
+        const div = document.createElement("div");
+        div.className = "detail-thumb";
+        div.style.backgroundImage = `url('${url}')`;
+        div.style.backgroundSize = "cover";
+        div.style.backgroundPosition = "center";
+        div.addEventListener("click", () => {
+          if (detailMainImage) {
+            detailMainImage.style.backgroundImage = `url('${url}')`;
+          }
+        });
+        detailThumbs.appendChild(div);
+      });
+    }
+
+    showScreen("adDetails");
+  }
+
+  if (detailBackBtn) {
+    detailBackBtn.addEventListener("click", () => {
+      showScreen("list");
+    });
+  }
 
   // ---- ПЕРВЫЙ ЗАПУСК ----
   loadAds();
