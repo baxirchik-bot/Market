@@ -70,7 +70,7 @@
     .screens {
       flex: 1;
       overflow-y: auto;
-      padding: 12px 12px 72px;
+      padding: 12px 12px 72px; /* место под нижнее меню */
     }
 
     .screen {
@@ -255,6 +255,7 @@
       border-radius: 16px;
       padding: 10px;
       box-shadow: 0 3px 10px rgba(15, 23, 42, 0.06);
+      cursor: pointer;
     }
 
     /* ==== YANGI E'LONLAR BLOKI ==== */
@@ -272,17 +273,6 @@
       border-radius: 14px;
       background: linear-gradient(135deg, #eff6ff, #dbeafe);
       flex-shrink: 0;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .ad-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
     }
 
     .ad-content {
@@ -568,6 +558,141 @@
       font-weight: 600;
     }
 
+    /* ==== ЭКРАН ПРОСМОТРА ОБЪЯВЛЕНИЯ ==== */
+
+    .ad-view-header-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .ad-view-back-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .ad-view-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .ad-view-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 12px;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+    }
+
+    .ad-view-image {
+      width: 100%;
+      height: 180px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #e5edff, #dbeafe);
+      margin-bottom: 10px;
+    }
+
+    .ad-view-main-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .ad-view-price {
+      font-size: 18px;
+      font-weight: 700;
+      color: #16a34a;
+      margin-bottom: 4px;
+    }
+
+    .ad-view-meta {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
+
+    .ad-view-description-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 8px;
+      margin-bottom: 4px;
+    }
+
+    .ad-view-description {
+      font-size: 14px;
+      color: #374151;
+    }
+
+    .ad-view-seller-card {
+      margin-top: 12px;
+      padding: 10px;
+      border-radius: 16px;
+      background: #f9fafb;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .ad-view-seller-info-main {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .ad-view-seller-info-sub {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .ad-view-actions-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .ad-view-btn-outline {
+      flex: 1;
+      border-radius: 999px;
+      padding: 8px 10px;
+      border: 1px solid #cbd5f5;
+      background: #ffffff;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      color: #1d4ed8;
+    }
+
+    .ad-view-btn-ghost-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .ad-view-btn-ghost {
+      flex: 1;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: #f9fafb;
+      font-size: 13px;
+      padding: 7px 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      color: #374151;
+    }
+
     @media (max-width: 480px) {
       body {
         align-items: stretch;
@@ -638,7 +763,7 @@
           </div>
         </div>
 
-        <!-- Yangi e'lonlar только на главной -->
+        <!-- Yangi e'lonlar ТОЛЬКО на главной -->
         <h2 class="section-title" style="margin-top:18px;">Yangi e'lonlar</h2>
         <div id="ads-list" class="ads-list">
           <!-- карточки подставит JS -->
@@ -715,6 +840,55 @@
         </div>
       </section>
 
+      <!-- AD VIEW SCREEN -->
+      <section class="screen" id="screen-ad-view">
+        <div class="ad-view-header-row">
+          <button class="ad-view-back-btn" id="adViewBackBtn">←</button>
+          <div class="ad-view-title">Объявление</div>
+        </div>
+
+        <div class="ad-view-card">
+          <div class="ad-view-image" id="viewImage"></div>
+
+          <div class="ad-view-main-title" id="viewTitle">Название объявления</div>
+          <div class="ad-view-price" id="viewPrice">0 сум</div>
+          <div class="ad-view-meta" id="viewMeta">Ташкент · Товары</div>
+
+          <div class="ad-view-description-title">Описание</div>
+          <div class="ad-view-description" id="viewDescription">
+            Здесь будет текст описания объявления.
+          </div>
+
+          <div class="ad-view-seller-card">
+            <div class="avatar">B</div>
+            <div>
+              <div class="ad-view-seller-info-main">Baxir B-R (@Baxir1987)</div>
+              <div class="ad-view-seller-info-sub">
+                ⭐ 4,9 · 23 отзыва · 12 объявлений
+              </div>
+            </div>
+          </div>
+
+          <div class="ad-view-actions-row">
+            <button class="ad-view-btn-outline">
+              💬 Написать продавцу
+            </button>
+            <button class="ad-view-btn-outline">
+              👤 Профиль продавца
+            </button>
+          </div>
+
+          <div class="ad-view-btn-ghost-row">
+            <button class="ad-view-btn-ghost">
+              ⭐ В избранное
+            </button>
+            <button class="ad-view-btn-ghost">
+              🔝 Похожие
+            </button>
+          </div>
+        </div>
+      </section>
+
       <!-- NEW AD STEP 1 -->
       <section class="screen" id="screen-new-ad-step1">
         <div class="back-link" id="backFromNewAd1">← Назад на главный</div>
@@ -727,7 +901,6 @@
           <div class="chip-row" id="adTypeChips">
             <button class="chip chip-filled" data-type="Товар">📦 Товар</button>
             <button class="chip" data-type="Услуга">💼 Услуга</button>
-            <button class="chip" data-type="Недвижимость">🏠 Недвижимость</button>
           </div>
         </div>
 
@@ -781,7 +954,8 @@
             class="hidden-input"
           />
           <div class="hint">
-            Можно загрузить до 8 фотографий. На сервер отправляется только первое фото как превью.
+            Можно загрузить до 8 фотографий. В демо-версии файлы не отправляются на сервер,
+            но вы увидите реальное превью.
           </div>
           <div class="photos-preview-row" id="photosPreview"></div>
         </div>
@@ -800,7 +974,7 @@
 
         <div class="profile-card" id="newAdSummaryCard">
           <div class="profile-header">
-            <div class="ad-image" id="summaryImageBox"></div>
+            <div class="ad-image"></div>
             <div>
               <div class="profile-name" id="summaryTitle">Название объявления</div>
               <div class="profile-username" id="summaryCityType">Город · Тип</div>
@@ -816,8 +990,8 @@
         </div>
 
         <div class="hint">
-          Проверьте данные. После публикации объявление
-          появится в списке и в блоке «Yangi e'lonlar».
+          Проверьте данные. В реальной версии после публикации объявление
+          появится в канале MarketHub — Узбекистан и в разделе «Объявления».
         </div>
 
         <button class="primary-btn" id="btnPublishAd" style="margin-top: 10px;">
@@ -830,7 +1004,8 @@
         <div class="success-icon">✅</div>
         <div class="success-text-main">Объявление опубликовано!</div>
         <div class="success-text-sub">
-          Объявление добавлено в базу и теперь отображается в разделе «Объявления» и в блоке «Yangi e'lonlar».
+          В демо-версии объявление добавлено на экран «Объявления».
+          В реальном проекте оно также будет отправлено в канал Telegram.
         </div>
 
         <button class="primary-btn" id="btnGoToList">
@@ -891,6 +1066,40 @@
     }
   }
 
+  // === ГЛОБАЛЬНО ТЕКУЩЕЕ ОБЪЯВЛЕНИЕ ДЛЯ ЭКРАНА ПРОСМОТРА ===
+  let currentAd = null;
+
+  // ---- открыть экран просмотра объявления ----
+  function openAdView(ad) {
+    currentAd = ad || null;
+    if (!ad) return;
+
+    const viewTitle = document.getElementById("viewTitle");
+    const viewPrice = document.getElementById("viewPrice");
+    const viewMeta = document.getElementById("viewMeta");
+    const viewDescription = document.getElementById("viewDescription");
+
+    const title = ad.title || "E'lon";
+    const city = ad.city || "Shahar";
+    const type = ad.type || "Tovar";
+    const priceText = formatPrice(ad.price);
+    const created = formatDateShort(ad.created_at);
+
+    viewTitle.textContent = title;
+    viewPrice.textContent = priceText;
+    viewMeta.textContent =
+      city +
+      " · " +
+      type +
+      (created ? " · " + created : "");
+    viewDescription.textContent =
+      ad.description && ad.description.trim()
+        ? ad.description
+        : "Описание не указано.";
+
+    showScreen("adView");
+  }
+
   // ---- карточка для блока "Yangi e'lonlar" (главная) ----
   function createHomeAdCard(ad) {
     const card = document.createElement("article");
@@ -900,18 +1109,17 @@
     const city = ad.city || "Shahar";
     const type = ad.type || "Tovar";
     const priceText = formatPrice(ad.price);
-    const mainPhoto = ad.main_photo;
 
     card.innerHTML = `
-      <div class="ad-image">
-        ${mainPhoto ? `<img src="${mainPhoto}" alt="Фото">` : ""}
-      </div>
+      <div class="ad-image"></div>
       <div class="ad-content">
         <div class="ad-title">${title}</div>
         <div class="ad-meta">📍 ${city} · ${type}</div>
         <div class="ad-price">${priceText}</div>
       </div>
     `;
+
+    card.addEventListener("click", () => openAdView(ad));
     return card;
   }
 
@@ -926,12 +1134,9 @@
     const priceText = formatPrice(ad.price);
     const created = formatDateShort(ad.created_at);
     const desc = ad.description || "";
-    const mainPhoto = ad.main_photo;
 
     card.innerHTML = `
-      <div class="ad-image">
-        ${mainPhoto ? `<img src="${mainPhoto}" alt="Фото">` : ""}
-      </div>
+      <div class="ad-image"></div>
       <div class="ad-content">
         <div class="ad-title">${title}</div>
         <div class="ad-meta">
@@ -946,6 +1151,8 @@
         }
       </div>
     `;
+
+    card.addEventListener("click", () => openAdView(ad));
     return card;
   }
 
@@ -960,7 +1167,7 @@
       // Главная: Yangi e'lonlar
       if (homeAdsList) {
         homeAdsList.innerHTML = "";
-        const latest = data.slice(0, 4);
+        const latest = data.slice(0, 4); // первые 4
         if (!latest.length) {
           homeAdsList.innerHTML =
             "<div class='ad-meta'>Hozircha e'lonlar yo'q.</div>";
@@ -1006,8 +1213,6 @@
     price: "",
     description: "",
     photoCount: 0,
-    mainPhoto: "",
-    photos: [],
   };
 
   // --- ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ ---
@@ -1015,6 +1220,7 @@
     home: document.getElementById("screen-home"),
     list: document.getElementById("screen-list"),
     profile: document.getElementById("screen-profile"),
+    adView: document.getElementById("screen-ad-view"),
     newAd1: document.getElementById("screen-new-ad-step1"),
     newAd2: document.getElementById("screen-new-ad-step2"),
     newAd3: document.getElementById("screen-new-ad-step3"),
@@ -1027,13 +1233,29 @@
       screens[name].classList.add("active");
     }
 
+    // нижнее меню: активная только home/list/profile
     document
       .querySelectorAll(".nav-btn")
       .forEach((btn) => btn.classList.remove("active"));
-    const activeBtn = document.querySelector(
-      '.nav-btn[data-screen="' + name + '"]'
-    );
-    if (activeBtn) activeBtn.classList.add("active");
+
+    const mapping = {
+      home: "home",
+      list: "list",
+      profile: "profile",
+      adView: "list",      // при просмотре объявления подсвечиваем "Объявления"
+      newAd1: "home",
+      newAd2: "home",
+      newAd3: "home",
+      newAdSuccess: "home",
+    };
+
+    const targetNav = mapping[name];
+    if (targetNav) {
+      const activeBtn = document.querySelector(
+        '.nav-btn[data-screen="' + targetNav + '"]'
+      );
+      if (activeBtn) activeBtn.classList.add("active");
+    }
   }
 
   // --- НИЖНЕЕ МЕНЮ ---
@@ -1044,10 +1266,12 @@
       if (target === "list") {
         loadAds();
       }
-      if (target === "home") {
-        loadAds();
-      }
     });
+  });
+
+  // --- КНОПКА НАЗАД С ЭКРАНА ПРОСМОТРА ---
+  document.getElementById("adViewBackBtn").addEventListener("click", () => {
+    showScreen("list");
   });
 
   // --- КНОПКА "ПОДАТЬ ОБЪЯВЛЕНИЕ" НА ГЛАВНОМ ---
@@ -1100,7 +1324,7 @@
       showScreen("newAd2");
     });
 
-  // --- ШАГ 2: ФОТО ---
+  // --- ШАГ 2: ФОТО (локально, только превью) ---
   const btnUploadPhotos = document.getElementById("btnUploadPhotos");
   const inputPhotos = document.getElementById("inputPhotos");
   const photosPreview = document.getElementById("photosPreview");
@@ -1112,26 +1336,19 @@
   inputPhotos.addEventListener("change", () => {
     const files = Array.from(inputPhotos.files || []);
     photosPreview.innerHTML = "";
-    newAdDraft.photos = [];
-    newAdDraft.mainPhoto = "";
     if (!files.length) {
       newAdDraft.photoCount = 0;
       return;
     }
 
     const maxFiles = 8;
-    files.slice(0, maxFiles).forEach((file, index) => {
+    files.slice(0, maxFiles).forEach((file) => {
       const reader = new FileReader();
       reader.onload = (e) => {
-        const dataUrl = e.target.result;
-        newAdDraft.photos.push(dataUrl);
-        if (index === 0) {
-          newAdDraft.mainPhoto = dataUrl;
-        }
         const div = document.createElement("div");
         div.className = "photo-thumb";
         const img = document.createElement("img");
-        img.src = dataUrl;
+        img.src = e.target.result;
         div.appendChild(img);
         photosPreview.appendChild(div);
       };
@@ -1167,7 +1384,6 @@
   const summaryPrice = document.getElementById("summaryPrice");
   const summaryDescription = document.getElementById("summaryDescription");
   const summaryPhotosInfo = document.getElementById("summaryPhotosInfo");
-  const summaryImageBox = document.getElementById("summaryImageBox");
 
   function fillSummaryStep3() {
     summaryTitle.textContent = newAdDraft.title || "Название объявления";
@@ -1180,13 +1396,6 @@
       newAdDraft.description || "Описание не указано.";
     summaryPhotosInfo.textContent =
       "Фото: " + (newAdDraft.photoCount || 0) + " шт.";
-
-    summaryImageBox.innerHTML = "";
-    if (newAdDraft.mainPhoto) {
-      const img = document.createElement("img");
-      img.src = newAdDraft.mainPhoto;
-      summaryImageBox.appendChild(img);
-    }
   }
 
   document.getElementById("backFromNewAd3").addEventListener("click", () => {
@@ -1207,7 +1416,6 @@
         title: newAdDraft.title,
         price: (newAdDraft.price || "").replace(/\s+/g, ""),
         description: newAdDraft.description,
-        main_photo: newAdDraft.mainPhoto || null,
       };
 
       const res = await fetch(ADD_AD_API_URL, {
@@ -1222,6 +1430,7 @@
         throw new Error("Bad response");
       }
 
+      // очищаем форму
       inputTitle.value = "";
       inputPrice.value = "";
       inputDescription.value = "";
@@ -1232,8 +1441,6 @@
       newAdDraft.price = "";
       newAdDraft.description = "";
       newAdDraft.photoCount = 0;
-      newAdDraft.mainPhoto = "";
-      newAdDraft.photos = [];
 
       showScreen("newAdSuccess");
       loadAds();
@@ -1276,21 +1483,19 @@
 
   tabGoods.addEventListener("click", () => {
     setActiveTab(tabGoods);
-    // потом сделаем фильтр по типу "Товар"
+    // потом добавим фильтр
   });
 
   tabServices.addEventListener("click", () => {
     setActiveTab(tabServices);
-    // потом фильтр по "Услуга"
   });
 
   tabRealty.addEventListener("click", () => {
     setActiveTab(tabRealty);
-    // потом фильтр по "Недвижимость"
   });
 
   // ---- ПЕРВЫЙ ЗАПУСК: загружаем объявления ----
   loadAds();
-  </script>
+</script>
 </body>
 </html>
