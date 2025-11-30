@@ -1041,6 +1041,10 @@
   const ADS_API_URL = "https://baxir.pythonanywhere.com/ads";
   const ADD_AD_API_URL = "https://baxir.pythonanywhere.com/api/add_ad";
 
+  // ==== ImgBB ====
+  const IMGBB_API_KEY = "d6a3eac7b36101df3effee3f7d0c7493"; // <--- СЮДА ВСТАВЬ СВОЙ КЛЮЧ
+  const IMGBB_UPLOAD_URL = "https://api.imgbb.com/1/upload";
+
   const homeAdsList = document.getElementById("ads-list");
   const adList = document.getElementById("adList");
 
@@ -1066,40 +1070,6 @@
     }
   }
 
-  // === ГЛОБАЛЬНО ТЕКУЩЕЕ ОБЪЯВЛЕНИЕ ДЛЯ ЭКРАНА ПРОСМОТРА ===
-  let currentAd = null;
-
-  // ---- открыть экран просмотра объявления ----
-  function openAdView(ad) {
-    currentAd = ad || null;
-    if (!ad) return;
-
-    const viewTitle = document.getElementById("viewTitle");
-    const viewPrice = document.getElementById("viewPrice");
-    const viewMeta = document.getElementById("viewMeta");
-    const viewDescription = document.getElementById("viewDescription");
-
-    const title = ad.title || "E'lon";
-    const city = ad.city || "Shahar";
-    const type = ad.type || "Tovar";
-    const priceText = formatPrice(ad.price);
-    const created = formatDateShort(ad.created_at);
-
-    viewTitle.textContent = title;
-    viewPrice.textContent = priceText;
-    viewMeta.textContent =
-      city +
-      " · " +
-      type +
-      (created ? " · " + created : "");
-    viewDescription.textContent =
-      ad.description && ad.description.trim()
-        ? ad.description
-        : "Описание не указано.";
-
-    showScreen("adView");
-  }
-
   // ---- карточка для блока "Yangi e'lonlar" (главная) ----
   function createHomeAdCard(ad) {
     const card = document.createElement("article");
@@ -1109,9 +1079,16 @@
     const city = ad.city || "Shahar";
     const type = ad.type || "Tovar";
     const priceText = formatPrice(ad.price);
+    const firstImage =
+      ad.images && Array.isArray(ad.images) && ad.images.length > 0
+        ? ad.images[0]
+        : null;
 
     card.innerHTML = `
-      <div class="ad-image"></div>
+      <div class="ad-image"
+        ${firstImage
+          ? `style="background-image:url('${firstImage}');background-size:cover;background-position:center;"`
+          : ""}></div>
       <div class="ad-content">
         <div class="ad-title">${title}</div>
         <div class="ad-meta">📍 ${city} · ${type}</div>
@@ -1119,7 +1096,8 @@
       </div>
     `;
 
-    card.addEventListener("click", () => openAdView(ad));
+    // клик по карточке — открываем просмотр
+    card.addEventListener("click", () => openAdDetails(ad));
     return card;
   }
 
@@ -1134,9 +1112,16 @@
     const priceText = formatPrice(ad.price);
     const created = formatDateShort(ad.created_at);
     const desc = ad.description || "";
+    const firstImage =
+      ad.images && Array.isArray(ad.images) && ad.images.length > 0
+        ? ad.images[0]
+        : null;
 
     card.innerHTML = `
-      <div class="ad-image"></div>
+      <div class="ad-image"
+        ${firstImage
+          ? `style="background-image:url('${firstImage}');background-size:cover;background-position:center;"`
+          : ""}></div>
       <div class="ad-content">
         <div class="ad-title">${title}</div>
         <div class="ad-meta">
@@ -1152,11 +1137,13 @@
       </div>
     `;
 
-    card.addEventListener("click", () => openAdView(ad));
+    card.addEventListener("click", () => openAdDetails(ad));
     return card;
   }
 
-  // ---- загрузка объявлений для главной и списка ----
+  // ---- загрузка объявлений ----
+  let allAds = [];
+
   async function loadAds() {
     try {
       const res = await fetch(ADS_API_URL);
@@ -1164,10 +1151,12 @@
       const data = await res.json();
       if (!Array.isArray(data)) return;
 
-      // Главная: Yangi e'lonlar
+      allAds = data;
+
+      // Главная
       if (homeAdsList) {
         homeAdsList.innerHTML = "";
-        const latest = data.slice(0, 4); // первые 4
+        const latest = data.slice(0, 4);
         if (!latest.length) {
           homeAdsList.innerHTML =
             "<div class='ad-meta'>Hozircha e'lonlar yo'q.</div>";
@@ -1179,19 +1168,8 @@
         }
       }
 
-      // Вкладка "Объявления"
-      if (adList) {
-        adList.innerHTML = "";
-        if (!data.length) {
-          adList.innerHTML =
-            "<div class='ad-meta'>Hozircha e'lonlar yo'q.</div>";
-        } else {
-          data.forEach((ad) => {
-            const card = createListAdCard(ad);
-            adList.appendChild(card);
-          });
-        }
-      }
+      // Список
+      renderListAds(data);
     } catch (err) {
       console.error("Xato yuklashda:", err);
       if (homeAdsList) {
@@ -1205,6 +1183,19 @@
     }
   }
 
+  function renderListAds(list) {
+    if (!adList) return;
+    adList.innerHTML = "";
+    if (!list.length) {
+      adList.innerHTML = "<div class='ad-meta'>Hozircha e'lonlar yo'q.</div>";
+      return;
+    }
+    list.forEach((ad) => {
+      const card = createListAdCard(ad);
+      adList.appendChild(card);
+    });
+  }
+
   // --- ГЛОБАЛЬНОЕ СОСТОЯНИЕ НОВОГО ОБЪЯВЛЕНИЯ ---
   const newAdDraft = {
     type: "Товар",
@@ -1213,6 +1204,7 @@
     price: "",
     description: "",
     photoCount: 0,
+    photos: [], // ссылки ImgBB
   };
 
   // --- ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ ---
@@ -1220,42 +1212,26 @@
     home: document.getElementById("screen-home"),
     list: document.getElementById("screen-list"),
     profile: document.getElementById("screen-profile"),
-    adView: document.getElementById("screen-ad-view"),
     newAd1: document.getElementById("screen-new-ad-step1"),
     newAd2: document.getElementById("screen-new-ad-step2"),
     newAd3: document.getElementById("screen-new-ad-step3"),
     newAdSuccess: document.getElementById("screen-new-ad-success"),
+    adDetails: document.getElementById("screen-ad-details"),
   };
 
   function showScreen(name) {
-    Object.values(screens).forEach((el) => el.classList.remove("active"));
+    Object.values(screens).forEach((el) => el && el.classList.remove("active"));
     if (screens[name]) {
       screens[name].classList.add("active");
     }
 
-    // нижнее меню: активная только home/list/profile
     document
       .querySelectorAll(".nav-btn")
       .forEach((btn) => btn.classList.remove("active"));
-
-    const mapping = {
-      home: "home",
-      list: "list",
-      profile: "profile",
-      adView: "list",      // при просмотре объявления подсвечиваем "Объявления"
-      newAd1: "home",
-      newAd2: "home",
-      newAd3: "home",
-      newAdSuccess: "home",
-    };
-
-    const targetNav = mapping[name];
-    if (targetNav) {
-      const activeBtn = document.querySelector(
-        '.nav-btn[data-screen="' + targetNav + '"]'
-      );
-      if (activeBtn) activeBtn.classList.add("active");
-    }
+    const activeBtn = document.querySelector(
+      '.nav-btn[data-screen="' + name + '"]'
+    );
+    if (activeBtn) activeBtn.classList.add("active");
   }
 
   // --- НИЖНЕЕ МЕНЮ ---
@@ -1269,22 +1245,16 @@
     });
   });
 
-  // --- КНОПКА НАЗАД С ЭКРАНА ПРОСМОТРА ---
-  document.getElementById("adViewBackBtn").addEventListener("click", () => {
-    showScreen("list");
-  });
-
-  // --- КНОПКА "ПОДАТЬ ОБЪЯВЛЕНИЕ" НА ГЛАВНОМ ---
+  // --- КНОПКА "ПОДАТЬ ОБЪЯВЛЕНИЕ" ---
   document.getElementById("btnOpenNewAd").addEventListener("click", () => {
     showScreen("newAd1");
   });
 
-  // --- НАЗАД ИЗ ШАГА 1 НА ГЛАВНЫЙ ---
   document.getElementById("backFromNewAd1").addEventListener("click", () => {
     showScreen("home");
   });
 
-  // --- ВЫБОР ТИПА ОБЪЯВЛЕНИЯ (ЧИПЫ) ---
+  // --- ТИП ОБЪЯВЛЕНИЯ ---
   const adTypeChips = document.querySelectorAll("#adTypeChips .chip");
   adTypeChips.forEach((chip) => {
     chip.addEventListener("click", () => {
@@ -1324,25 +1294,44 @@
       showScreen("newAd2");
     });
 
-  // --- ШАГ 2: ФОТО (локально, только превью) ---
+  // --- ШАГ 2: ФОТО + ЗАГРУЗКА В IMGBB ---
   const btnUploadPhotos = document.getElementById("btnUploadPhotos");
   const inputPhotos = document.getElementById("inputPhotos");
   const photosPreview = document.getElementById("photosPreview");
+
+  async function uploadToImgbb(file) {
+    const formData = new FormData();
+    formData.append("key", IMGBB_API_KEY);
+    formData.append("image", file);
+
+    const res = await fetch(IMGBB_UPLOAD_URL, {
+      method: "POST",
+      body: formData,
+    });
+    if (!res.ok) throw new Error("upload_failed");
+    const json = await res.json();
+    if (!json.success || !json.data || !json.data.url)
+      throw new Error("bad_response");
+    return json.data.url;
+  }
 
   btnUploadPhotos.addEventListener("click", () => {
     inputPhotos.click();
   });
 
-  inputPhotos.addEventListener("change", () => {
+  inputPhotos.addEventListener("change", async () => {
     const files = Array.from(inputPhotos.files || []);
     photosPreview.innerHTML = "";
-    if (!files.length) {
-      newAdDraft.photoCount = 0;
-      return;
-    }
+    newAdDraft.photos = [];
+    newAdDraft.photoCount = 0;
+
+    if (!files.length) return;
 
     const maxFiles = 8;
-    files.slice(0, maxFiles).forEach((file) => {
+    const selected = files.slice(0, maxFiles);
+
+    for (const file of selected) {
+      // локальное превью
       const reader = new FileReader();
       reader.onload = (e) => {
         const div = document.createElement("div");
@@ -1353,9 +1342,16 @@
         photosPreview.appendChild(div);
       };
       reader.readAsDataURL(file);
-    });
 
-    newAdDraft.photoCount = Math.min(files.length, maxFiles);
+      // загрузка в ImgBB
+      try {
+        const url = await uploadToImgbb(file);
+        newAdDraft.photos.push(url);
+        newAdDraft.photoCount = newAdDraft.photos.length;
+      } catch (e) {
+        console.error("ImgBB upload error:", e);
+      }
+    }
   });
 
   document
@@ -1402,7 +1398,7 @@
     showScreen("newAd2");
   });
 
-  // --- ПУБЛИКАЦИЯ: ОТПРАВКА НА БЭКЕНД /api/add_ad ---
+  // --- ПУБЛИКАЦИЯ: ОТПРАВКА НА БЭКЕНД ---
   const btnPublishAd = document.getElementById("btnPublishAd");
 
   async function publishAdToBackend() {
@@ -1416,6 +1412,7 @@
         title: newAdDraft.title,
         price: (newAdDraft.price || "").replace(/\s+/g, ""),
         description: newAdDraft.description,
+        images: newAdDraft.photos, // массив ссылок ImgBB
       };
 
       const res = await fetch(ADD_AD_API_URL, {
@@ -1430,7 +1427,6 @@
         throw new Error("Bad response");
       }
 
-      // очищаем форму
       inputTitle.value = "";
       inputPrice.value = "";
       inputDescription.value = "";
@@ -1441,6 +1437,7 @@
       newAdDraft.price = "";
       newAdDraft.description = "";
       newAdDraft.photoCount = 0;
+      newAdDraft.photos = [];
 
       showScreen("newAdSuccess");
       loadAds();
@@ -1466,7 +1463,7 @@
     loadAds();
   });
 
-  // --- ПЕРЕКЛЮЧЕНИЕ ТАБОВ "ТОВАРЫ / УСЛУГИ / НЕДВИЖИМОСТЬ" ---
+  // --- ТАБЫ Товары / Услуги / Недвижимость (фильтры по type) ---
   const tabGoods = document.getElementById("tabGoods");
   const tabServices = document.getElementById("tabServices");
   const tabRealty = document.getElementById("tabRealty");
@@ -1476,25 +1473,37 @@
       if (!btn) return;
       btn.classList.remove("active");
     });
-    if (activeBtn) {
-      activeBtn.classList.add("active");
+    if (activeBtn) activeBtn.classList.add("active");
+  }
+
+  function filterByType(typeName) {
+    if (!allAds.length) {
+      renderListAds([]);
+      return;
+    }
+    if (!typeName) {
+      renderListAds(allAds);
+    } else {
+      renderListAds(allAds.filter((ad) => ad.type === typeName));
     }
   }
 
   tabGoods.addEventListener("click", () => {
     setActiveTab(tabGoods);
-    // потом добавим фильтр
+    filterByType("Товар");
   });
 
   tabServices.addEventListener("click", () => {
     setActiveTab(tabServices);
+    filterByType("Услуга");
   });
 
   tabRealty.addEventListener("click", () => {
     setActiveTab(tabRealty);
+    filterByType("Недвижимость");
   });
 
-  // ---- ПЕРВЫЙ ЗАПУСК: загружаем объявления ----
+  // ---- ПЕРВЫЙ ЗАПУСК ----
   loadAds();
 </script>
 </body>
