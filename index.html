@@ -70,7 +70,7 @@
     .screens {
       flex: 1;
       overflow-y: auto;
-      padding: 12px 12px 72px; /* место под нижнее меню */
+      padding: 12px 12px 72px;
     }
 
     .screen {
@@ -129,6 +129,7 @@
       justify-content: center;
       gap: 8px;
       margin-bottom: 10px;
+      cursor: pointer;
     }
 
     .chip-row {
@@ -271,6 +272,17 @@
       border-radius: 14px;
       background: linear-gradient(135deg, #eff6ff, #dbeafe);
       flex-shrink: 0;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ad-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
 
     .ad-content {
@@ -600,11 +612,11 @@
         </button>
 
         <div class="chip-row">
-  <button class="chip chip-filled">📦 Товары</button>
-  <button class="chip">💼 Услуги</button>
-  <button class="chip">🏠 Недвижимость</button>
-  <button class="chip">📍 Ташкент</button>
-</div>
+          <button class="chip chip-filled">📦 Товары</button>
+          <button class="chip">💼 Услуги</button>
+          <button class="chip">🏠 Недвижимость</button>
+          <button class="chip">📍 Ташкент</button>
+        </div>
 
         <div class="section-title">Популярные категории</div>
         <div class="category-grid">
@@ -626,7 +638,7 @@
           </div>
         </div>
 
-        <!-- Yangi e'lonlar ТОЛЬКО на главной -->
+        <!-- Yangi e'lonlar только на главной -->
         <h2 class="section-title" style="margin-top:18px;">Yangi e'lonlar</h2>
         <div id="ads-list" class="ads-list">
           <!-- карточки подставит JS -->
@@ -638,10 +650,10 @@
         <div class="screen-title">Объявления</div>
 
         <div class="tabs-row">
-  <button class="tab-pill active" id="tabGoods">Товары</button>
-  <button class="tab-pill" id="tabServices">Услуги</button>
-  <button class="tab-pill" id="tabRealty">Недвижимость</button>
-</div>
+          <button class="tab-pill active" id="tabGoods">Товары</button>
+          <button class="tab-pill" id="tabServices">Услуги</button>
+          <button class="tab-pill" id="tabRealty">Недвижимость</button>
+        </div>
 
         <div class="filter-row">
           <button class="filter-chip active">Все категории</button>
@@ -715,6 +727,7 @@
           <div class="chip-row" id="adTypeChips">
             <button class="chip chip-filled" data-type="Товар">📦 Товар</button>
             <button class="chip" data-type="Услуга">💼 Услуга</button>
+            <button class="chip" data-type="Недвижимость">🏠 Недвижимость</button>
           </div>
         </div>
 
@@ -768,8 +781,7 @@
             class="hidden-input"
           />
           <div class="hint">
-            Можно загрузить до 8 фотографий. В демо-версии файлы не отправляются на сервер,
-            но вы увидите реальное превью.
+            Можно загрузить до 8 фотографий. На сервер отправляется только первое фото как превью.
           </div>
           <div class="photos-preview-row" id="photosPreview"></div>
         </div>
@@ -788,7 +800,7 @@
 
         <div class="profile-card" id="newAdSummaryCard">
           <div class="profile-header">
-            <div class="ad-image"></div>
+            <div class="ad-image" id="summaryImageBox"></div>
             <div>
               <div class="profile-name" id="summaryTitle">Название объявления</div>
               <div class="profile-username" id="summaryCityType">Город · Тип</div>
@@ -804,8 +816,8 @@
         </div>
 
         <div class="hint">
-          Проверьте данные. В реальной версии после публикации объявление
-          появится в канале MarketHub — Узбекистан и в разделе «Объявления».
+          Проверьте данные. После публикации объявление
+          появится в списке и в блоке «Yangi e'lonlar».
         </div>
 
         <button class="primary-btn" id="btnPublishAd" style="margin-top: 10px;">
@@ -818,8 +830,7 @@
         <div class="success-icon">✅</div>
         <div class="success-text-main">Объявление опубликовано!</div>
         <div class="success-text-sub">
-          В демо-версии объявление добавлено на экран «Объявления».
-          В реальном проекте оно также будет отправлено в канал Telegram.
+          Объявление добавлено в базу и теперь отображается в разделе «Объявления» и в блоке «Yangi e'lonlar».
         </div>
 
         <button class="primary-btn" id="btnGoToList">
@@ -889,9 +900,12 @@
     const city = ad.city || "Shahar";
     const type = ad.type || "Tovar";
     const priceText = formatPrice(ad.price);
+    const mainPhoto = ad.main_photo;
 
     card.innerHTML = `
-      <div class="ad-image"></div>
+      <div class="ad-image">
+        ${mainPhoto ? `<img src="${mainPhoto}" alt="Фото">` : ""}
+      </div>
       <div class="ad-content">
         <div class="ad-title">${title}</div>
         <div class="ad-meta">📍 ${city} · ${type}</div>
@@ -912,9 +926,12 @@
     const priceText = formatPrice(ad.price);
     const created = formatDateShort(ad.created_at);
     const desc = ad.description || "";
+    const mainPhoto = ad.main_photo;
 
     card.innerHTML = `
-      <div class="ad-image"></div>
+      <div class="ad-image">
+        ${mainPhoto ? `<img src="${mainPhoto}" alt="Фото">` : ""}
+      </div>
       <div class="ad-content">
         <div class="ad-title">${title}</div>
         <div class="ad-meta">
@@ -943,7 +960,7 @@
       // Главная: Yangi e'lonlar
       if (homeAdsList) {
         homeAdsList.innerHTML = "";
-        const latest = data.slice(0, 4); // первые 4
+        const latest = data.slice(0, 4);
         if (!latest.length) {
           homeAdsList.innerHTML =
             "<div class='ad-meta'>Hozircha e'lonlar yo'q.</div>";
@@ -989,6 +1006,8 @@
     price: "",
     description: "",
     photoCount: 0,
+    mainPhoto: "",
+    photos: [],
   };
 
   // --- ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ ---
@@ -1008,7 +1027,6 @@
       screens[name].classList.add("active");
     }
 
-    // нижнее меню: активная только home/list/profile
     document
       .querySelectorAll(".nav-btn")
       .forEach((btn) => btn.classList.remove("active"));
@@ -1024,7 +1042,9 @@
       const target = btn.getAttribute("data-screen");
       showScreen(target);
       if (target === "list") {
-        // при открытии вкладки "Объявления" можно обновить список
+        loadAds();
+      }
+      if (target === "home") {
         loadAds();
       }
     });
@@ -1080,7 +1100,7 @@
       showScreen("newAd2");
     });
 
-  // --- ШАГ 2: ФОТО (локально, только превью) ---
+  // --- ШАГ 2: ФОТО ---
   const btnUploadPhotos = document.getElementById("btnUploadPhotos");
   const inputPhotos = document.getElementById("inputPhotos");
   const photosPreview = document.getElementById("photosPreview");
@@ -1092,19 +1112,26 @@
   inputPhotos.addEventListener("change", () => {
     const files = Array.from(inputPhotos.files || []);
     photosPreview.innerHTML = "";
+    newAdDraft.photos = [];
+    newAdDraft.mainPhoto = "";
     if (!files.length) {
       newAdDraft.photoCount = 0;
       return;
     }
 
     const maxFiles = 8;
-    files.slice(0, maxFiles).forEach((file) => {
+    files.slice(0, maxFiles).forEach((file, index) => {
       const reader = new FileReader();
       reader.onload = (e) => {
+        const dataUrl = e.target.result;
+        newAdDraft.photos.push(dataUrl);
+        if (index === 0) {
+          newAdDraft.mainPhoto = dataUrl;
+        }
         const div = document.createElement("div");
         div.className = "photo-thumb";
         const img = document.createElement("img");
-        img.src = e.target.result;
+        img.src = dataUrl;
         div.appendChild(img);
         photosPreview.appendChild(div);
       };
@@ -1140,6 +1167,7 @@
   const summaryPrice = document.getElementById("summaryPrice");
   const summaryDescription = document.getElementById("summaryDescription");
   const summaryPhotosInfo = document.getElementById("summaryPhotosInfo");
+  const summaryImageBox = document.getElementById("summaryImageBox");
 
   function fillSummaryStep3() {
     summaryTitle.textContent = newAdDraft.title || "Название объявления";
@@ -1152,6 +1180,13 @@
       newAdDraft.description || "Описание не указано.";
     summaryPhotosInfo.textContent =
       "Фото: " + (newAdDraft.photoCount || 0) + " шт.";
+
+    summaryImageBox.innerHTML = "";
+    if (newAdDraft.mainPhoto) {
+      const img = document.createElement("img");
+      img.src = newAdDraft.mainPhoto;
+      summaryImageBox.appendChild(img);
+    }
   }
 
   document.getElementById("backFromNewAd3").addEventListener("click", () => {
@@ -1162,7 +1197,6 @@
   const btnPublishAd = document.getElementById("btnPublishAd");
 
   async function publishAdToBackend() {
-    // небольшая защита от двойного клика
     btnPublishAd.disabled = true;
     btnPublishAd.textContent = "Публикую...";
 
@@ -1173,6 +1207,7 @@
         title: newAdDraft.title,
         price: (newAdDraft.price || "").replace(/\s+/g, ""),
         description: newAdDraft.description,
+        main_photo: newAdDraft.mainPhoto || null,
       };
 
       const res = await fetch(ADD_AD_API_URL, {
@@ -1187,8 +1222,6 @@
         throw new Error("Bad response");
       }
 
-      // Успешно опубликовано
-      // очищаем форму
       inputTitle.value = "";
       inputPrice.value = "";
       inputDescription.value = "";
@@ -1199,11 +1232,10 @@
       newAdDraft.price = "";
       newAdDraft.description = "";
       newAdDraft.photoCount = 0;
+      newAdDraft.mainPhoto = "";
+      newAdDraft.photos = [];
 
-      // показываем экран успеха
       showScreen("newAdSuccess");
-
-      // обновляем списки объявлений
       loadAds();
     } catch (err) {
       console.error("Xato saqlashda:", err);
@@ -1228,38 +1260,37 @@
   });
 
   // --- ПЕРЕКЛЮЧЕНИЕ ТАБОВ "ТОВАРЫ / УСЛУГИ / НЕДВИЖИМОСТЬ" ---
-const tabGoods = document.getElementById("tabGoods");
-const tabServices = document.getElementById("tabServices");
-const tabRealty = document.getElementById("tabRealty");
+  const tabGoods = document.getElementById("tabGoods");
+  const tabServices = document.getElementById("tabServices");
+  const tabRealty = document.getElementById("tabRealty");
 
-// общая функция, чтобы не дублировать код
-function setActiveTab(activeBtn) {
-  [tabGoods, tabServices, tabRealty].forEach((btn) => {
-    if (!btn) return;
-    btn.classList.remove("active");
-  });
-  if (activeBtn) {
-    activeBtn.classList.add("active");
+  function setActiveTab(activeBtn) {
+    [tabGoods, tabServices, tabRealty].forEach((btn) => {
+      if (!btn) return;
+      btn.classList.remove("active");
+    });
+    if (activeBtn) {
+      activeBtn.classList.add("active");
+    }
   }
-}
 
-tabGoods.addEventListener("click", () => {
-  setActiveTab(tabGoods);
-  // здесь позже можно сделать фильтр по товарам
-});
+  tabGoods.addEventListener("click", () => {
+    setActiveTab(tabGoods);
+    // потом сделаем фильтр по типу "Товар"
+  });
 
-tabServices.addEventListener("click", () => {
-  setActiveTab(tabServices);
-  // здесь позже можно сделать фильтр по услугам
-});
+  tabServices.addEventListener("click", () => {
+    setActiveTab(tabServices);
+    // потом фильтр по "Услуга"
+  });
 
-tabRealty.addEventListener("click", () => {
-  setActiveTab(tabRealty);
-  // здесь позже сделаем фильтр по недвижимости
-});
+  tabRealty.addEventListener("click", () => {
+    setActiveTab(tabRealty);
+    // потом фильтр по "Недвижимость"
+  });
 
   // ---- ПЕРВЫЙ ЗАПУСК: загружаем объявления ----
   loadAds();
-</script>
+  </script>
 </body>
 </html>
