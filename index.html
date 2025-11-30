@@ -600,11 +600,11 @@
         </button>
 
         <div class="chip-row">
-          <button class="chip chip-filled">📦 Товары</button>
-          <button class="chip">💼 Услуги</button>
-          <button class="chip">⭐ Продавцы</button>
-          <button class="chip">📍 Ташкент</button>
-        </div>
+  <button class="chip chip-filled">📦 Товары</button>
+  <button class="chip">💼 Услуги</button>
+  <button class="chip">🏠 Недвижимость</button>
+  <button class="chip">📍 Ташкент</button>
+</div>
 
         <div class="section-title">Популярные категории</div>
         <div class="category-grid">
@@ -638,9 +638,10 @@
         <div class="screen-title">Объявления</div>
 
         <div class="tabs-row">
-          <button class="tab-pill active" id="tabGoods">Товары</button>
-          <button class="tab-pill" id="tabServices">Услуги</button>
-        </div>
+  <button class="tab-pill active" id="tabGoods">Товары</button>
+  <button class="tab-pill" id="tabServices">Услуги</button>
+  <button class="tab-pill" id="tabRealty">Недвижимость</button>
+</div>
 
         <div class="filter-row">
           <button class="filter-chip active">Все категории</button>
@@ -1226,21 +1227,36 @@
     loadAds();
   });
 
-  // --- ТАБЫ "ТОВАРЫ / УСЛУГИ" (пока только визуально) ---
-  const tabGoods = document.getElementById("tabGoods");
-  const tabServices = document.getElementById("tabServices");
+  // --- ПЕРЕКЛЮЧЕНИЕ ТАБОВ "ТОВАРЫ / УСЛУГИ / НЕДВИЖИМОСТЬ" ---
+const tabGoods = document.getElementById("tabGoods");
+const tabServices = document.getElementById("tabServices");
+const tabRealty = document.getElementById("tabRealty");
 
-  tabGoods.addEventListener("click", () => {
-    tabGoods.classList.add("active");
-    tabServices.classList.remove("active");
-    // дальше можно будет добавить фильтрацию по type === "Товар"
+// общая функция, чтобы не дублировать код
+function setActiveTab(activeBtn) {
+  [tabGoods, tabServices, tabRealty].forEach((btn) => {
+    if (!btn) return;
+    btn.classList.remove("active");
   });
+  if (activeBtn) {
+    activeBtn.classList.add("active");
+  }
+}
 
-  tabServices.addEventListener("click", () => {
-    tabServices.classList.add("active");
-    tabGoods.classList.remove("active");
-    // дальше можно будет добавить фильтрацию по type === "Услуга"
-  });
+tabGoods.addEventListener("click", () => {
+  setActiveTab(tabGoods);
+  // здесь позже можно сделать фильтр по товарам
+});
+
+tabServices.addEventListener("click", () => {
+  setActiveTab(tabServices);
+  // здесь позже можно сделать фильтр по услугам
+});
+
+tabRealty.addEventListener("click", () => {
+  setActiveTab(tabRealty);
+  // здесь позже сделаем фильтр по недвижимости
+});
 
   // ---- ПЕРВЫЙ ЗАПУСК: загружаем объявления ----
   loadAds();
