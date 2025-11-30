@@ -65,15 +65,6 @@
       color: #64748b;
     }
 
-    .theme-toggle {
-      border: none;
-      background: #eff6ff;
-      color: #1d4ed8;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-    }
-
     /* SCREEN CONTAINER */
 
     .screens {
@@ -587,7 +578,6 @@
           <div class="app-subtitle">Узбекистан · объявления</div>
         </div>
       </div>
-      <button class="theme-toggle" id="themeToggleBtn">Тёмная тема</button>
     </header>
 
     <!-- SCREENS -->
@@ -1181,29 +1171,6 @@
     tabServices.addEventListener("click", () => {
       tabServices.classList.add("active");
       tabGoods.classList.remove("active");
-    });
-
-    // --- ПЕРЕКЛЮЧЕНИЕ ТЕМЫ (ДЕМО) ---
-    const themeBtn = document.getElementById("themeToggleBtn");
-    let darkMode = false;
-    themeBtn.addEventListener("click", () => {
-      darkMode = !darkMode;
-      if (darkMode) {
-        document.body.style.background = "#020617";
-        document.querySelector(".app").style.background = "#020617";
-        document.querySelector(".screens").style.background = "#020617";
-        document
-          .querySelectorAll(
-            ".screen, .category-card, .ad-card, .profile-card, .bottom-nav-inner"
-          )
-          .forEach((el) => {
-            el.style.backgroundColor = "#020617";
-            el.style.color = "#e5e7eb";
-          });
-        themeBtn.textContent = "Светлая тема";
-      } else {
-        location.reload(); // для простоты возвращаем обычную тему
-      }
     });
 
     // --- стартовая загрузка объявлений с бэкенда ---
