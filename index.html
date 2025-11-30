@@ -265,7 +265,7 @@
       box-shadow: 0 3px 10px rgba(15, 23, 42, 0.06);
     }
 
-        /* ==== YANGI E'LONLAR BLOKI ==== */
+    /* ==== YANGI E'LONLAR BLOKI ==== */
     .ads-list {
       display: flex;
       flex-direction: column;
@@ -273,7 +273,7 @@
       margin-top: 8px;
       margin-bottom: 12px;
     }
-    
+
     .ad-image {
       width: 56px;
       height: 56px;
@@ -314,6 +314,12 @@
     .ad-photos-count {
       font-size: 11px;
       color: #64748b;
+      margin-top: 2px;
+    }
+
+    .badge-new {
+      font-size: 12px;
+      color: #f59e0b;
       margin-top: 2px;
     }
 
@@ -629,16 +635,14 @@
             <div class="category-card-sub">Мастера, ремонт</div>
           </div>
         </div>
+
+        <!-- Yangi e'lonlar ТОЛЬКО на главной -->
+        <h2 class="section-title" style="margin-top:18px;">Yangi e'lonlar</h2>
+        <div id="ads-list" class="ads-list">
+          <!-- карточки подставит JS -->
+        </div>
       </section>
 
-      <!-- СВЕЖИЕ ОБЪЯВЛЕНИЯ -->
-<section class="home-section">
-  <h2 class="section-title">Yangi e'lonlar</h2>
-  <div id="ads-list" class="ads-list">
-    <!-- сюда через JS подставляются карточки -->
-  </div>
-</section>
-      
       <!-- LIST SCREEN -->
       <section class="screen" id="screen-list">
         <div class="screen-title">Объявления</div>
@@ -656,15 +660,9 @@
           <button class="filter-chip">Одежда</button>
         </div>
 
-        <!-- Кнопки сортировки -->
-<div class="filter-row">
-  <button class="filter-chip sort-chip active" data-sort="new">Сначала новые</button>
-  <button class="filter-chip sort-chip" data-sort="cheap">Сначала дешёвые</button>
-</div>
-        
-       <div class="ad-list" id="adList">
-  <!-- сюда JS подставит реальные объявления с бэкенда -->
-</div>
+        <div class="ad-list" id="adList">
+          <!-- сюда JS подставит объявления с бэкенда -->
+        </div>
       </section>
 
       <!-- PROFILE SCREEN -->
@@ -861,15 +859,14 @@
     </nav>
   </div>
 
-    <script>
-    // ==== API URL'лар ====
+  <script>
+    // ==== КОНСТАНТЫ ====
     const ADS_API_URL = "https://baxir.pythonanywhere.com/ads";
-    const ADD_AD_API_URL = "https://baxir.pythonanywhere.com/api/add_ad";
+    const homeAdsList = document.getElementById("ads-list");
+    const adList = document.getElementById("adList");
+    const NEW_LIMIT = 4; // сколько объявлений считаем "новыми"
 
-    const homeAdsList = document.getElementById("ads-list"); // Yangi e'lonlar (главный экран)
-    const adList = document.getElementById("adList");        // Экран "Объявления"
-
-    // небольшая функция для красивой цены
+    // --- форматирование цены ---
     function formatPrice(price) {
       if (price === null || price === undefined || price === "") {
         return "Narx kelishiladi";
@@ -878,8 +875,8 @@
       return s.replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " сум";
     }
 
-    // одна функция карточки — используем и для главной, и для списка
-    function createAdCard(ad) {
+    // --- карточка для блока Yangi e'lonlar (главная) ---
+    function createHomeAdCard(ad) {
       const card = document.createElement("article");
       card.className = "ad-card";
 
@@ -899,54 +896,76 @@
       return card;
     }
 
-    // ---- Yangi e'lonlar (главный экран) ----
-    async function loadLatestAds() {
-      if (!homeAdsList) return;
+    // --- карточка для списка Объявлений ---
+    function createListAdCard(ad, isNew = false) {
+      const card = document.createElement("article");
+      card.className = "ad-card";
 
+      const title = ad.title || "E'lon";
+      const city = ad.city || "Shahar";
+      const type = ad.type || "Tovar";
+      const priceText = formatPrice(ad.price);
+
+      card.innerHTML = `
+        <div class="ad-image"></div>
+        <div class="ad-content">
+          <div class="ad-title">${title}</div>
+          <div class="ad-meta">📍 ${city} · ${type}</div>
+          <div class="ad-price">${priceText}</div>
+          ${isNew ? "<div class='badge-new'>⭐ Yangi e'lon</div>" : ""}
+        </div>
+      `;
+      return card;
+    }
+
+    // --- Загрузка объявлений из бэкенда для главной и списка ---
+    async function loadAdsFromBackend() {
       try {
         const res = await fetch(ADS_API_URL);
         if (!res.ok) throw new Error("Bad response");
         const data = await res.json();
-        if (!Array.isArray(data)) return;
+        if (!Array.isArray(data)) throw new Error("Not array");
 
-        homeAdsList.innerHTML = "";
+        if (homeAdsList) homeAdsList.innerHTML = "";
+        if (adList) adList.innerHTML = "";
 
-        // только первые 4 для блока "Yangi e'lonlar"
-        data.slice(0, 4).forEach((ad) => {
-          const card = createAdCard(ad);
-          homeAdsList.appendChild(card);
+        data.forEach((ad, index) => {
+          const isNew = index < NEW_LIMIT;
+
+          // для главной берём только первые NEW_LIMIT
+          if (homeAdsList && index < NEW_LIMIT) {
+            homeAdsList.appendChild(createHomeAdCard(ad));
+          }
+
+          // в список добавляем все
+          if (adList) {
+            adList.appendChild(createListAdCard(ad, isNew));
+          }
         });
+
+        // если вдруг совсем нет объявлений
+        if (homeAdsList && !homeAdsList.children.length) {
+          homeAdsList.innerHTML =
+            "<div class='ad-meta'>Hozircha e'lon yo'q.</div>";
+        }
+        if (adList && !adList.children.length) {
+          adList.innerHTML =
+            "<div class='ad-meta'>Пока нет объявлений.</div>";
+        }
       } catch (err) {
-        console.error("Xato yuklashda (home):", err);
-        homeAdsList.innerHTML =
-          "<div class='ad-meta'>E'lonlarni yuklashda xatolik. Keyinroq urinib ko'ring.</div>";
+        console.error("Xato yuklashda:", err);
+        if (homeAdsList) {
+          homeAdsList.innerHTML =
+            "<div class='ad-meta'>E'lonlarni yuklashda xatolik. Keyinroq urinib ko'ring.</div>";
+        }
+        if (adList) {
+          adList.innerHTML =
+            "<div class='ad-meta'>Ошибка при загрузке объявлений. Попробуйте позже.</div>";
+        }
       }
     }
 
-    // ---- Экран "Объявления" — полный список из бэкенда ----
-    async function loadListAds() {
-      if (!adList) return;
-
-      try {
-        const res = await fetch(ADS_API_URL);
-        if (!res.ok) throw new Error("Bad response");
-        const data = await res.json();
-        if (!Array.isArray(data)) return;
-
-        adList.innerHTML = "";
-
-        data.forEach((ad) => {
-          const card = createAdCard(ad);
-          adList.appendChild(card);
-        });
-      } catch (err) {
-        console.error("Xato yuklashda (list):", err);
-        adList.innerHTML =
-          "<div class='ad-meta'>Ro'yxatni yuklashda xatolik. Keyinroq urinib ko'ring.</div>";
-      }
-    }
-
-    // --- ГЛОБАЛЬНОЕ СОСТОЯНИЕ НОВОГО ОБЪЯВЛЕНИЯ ---
+    // --- ГЛОБАЛЬНОЕ СОСТОЯНИЕ НОВОГО ОБЪЯВЛЕНИЯ (только в браузере) ---
     const newAdDraft = {
       type: "Товар",
       city: "Ташкент",
@@ -988,15 +1007,10 @@
       btn.addEventListener("click", () => {
         const target = btn.getAttribute("data-screen");
         showScreen(target);
-
-        // если открыли экран "Объявления" — обновим список
-        if (target === "list") {
-          loadListAds();
-        }
       });
     });
 
-    // --- КНОПКА "ПОДАТЬ ОБЬЯВЛЕНИЕ" НА ГЛАВНОМ ---
+    // --- КНОПКА "ПОДАТЬ ОБЪЯВЛЕНИЕ" НА ГЛАВНОМ ---
     document.getElementById("btnOpenNewAd").addEventListener("click", () => {
       showScreen("newAd1");
     });
@@ -1124,55 +1138,31 @@
       showScreen("newAd2");
     });
 
-    // --- ПУБЛИКАЦИЯ: ОТПРАВКА В БЭКЕНД /api/add_ad ---
-    async function publishAdToBackend() {
-      const payload = {
-        type: newAdDraft.type,
-        city: newAdDraft.city,
+    // --- ПУБЛИКАЦИЯ: ДОБАВЛЯЕМ КАРТОЧКУ В СПИСОК ОБЪЯВЛЕНИЙ (демо, без бэкенда) ---
+    function addAdToList() {
+      if (!adList) return;
+      const fakeAd = {
         title: newAdDraft.title,
+        city: newAdDraft.city,
+        type: newAdDraft.type,
         price: newAdDraft.price,
-        description: newAdDraft.description,
       };
-
-      try {
-        const res = await fetch(ADD_AD_API_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        });
-
-        if (!res.ok) {
-          console.error("Server error:", res.status);
-          alert("Ошибка при сохранении объявления. Попробуйте ещё раз.");
-          return;
-        }
-
-        const data = await res.json();
-        console.log("Сохранено в БД:", data);
-
-        // обновляем оба списка
-        await loadLatestAds();
-        await loadListAds();
-
-        showScreen("newAdSuccess");
-      } catch (err) {
-        console.error("Network error:", err);
-        alert("Не удалось связаться с сервером. Проверьте интернет и попробуйте позже.");
+      const card = createListAdCard(fakeAd, true);
+      if (adList.firstChild) {
+        adList.insertBefore(card, adList.firstChild);
+      } else {
+        adList.appendChild(card);
       }
     }
 
-    document
-      .getElementById("btnPublishAd")
-      .addEventListener("click", () => {
-        publishAdToBackend();
-      });
+    document.getElementById("btnPublishAd").addEventListener("click", () => {
+      addAdToList();
+      showScreen("newAdSuccess");
+    });
 
     // --- ЭКРАН УСПЕХА ---
     document.getElementById("btnGoToList").addEventListener("click", () => {
       showScreen("list");
-      loadListAds();
     });
 
     document.getElementById("btnGoHome").addEventListener("click", () => {
@@ -1212,13 +1202,12 @@
           });
         themeBtn.textContent = "Светлая тема";
       } else {
-        location.reload();
+        location.reload(); // для простоты возвращаем обычную тему
       }
     });
 
-    // ---- Стартовая загрузка данных ----
-    loadLatestAds();
-    loadListAds();
+    // --- стартовая загрузка объявлений с бэкенда ---
+    loadAdsFromBackend();
   </script>
 </body>
 </html>
