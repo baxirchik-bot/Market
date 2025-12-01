@@ -1598,11 +1598,30 @@
     showScreen("adDetails");
   }
 
-  if (detailBackBtn) {
-    detailBackBtn.addEventListener("click", () => {
-      showScreen("list");
-    });
+  function showScreen(name) {
+  // прячем все экраны
+  Object.values(screens).forEach((el) => {
+    if (!el) return;
+    el.classList.remove("active");
+    el.style.display = "none";
+  });
+
+  // показываем нужный
+  const target = screens[name];
+  if (target) {
+    target.classList.add("active");
+    target.style.display = "block";
   }
+
+  // нижнее меню (как было)
+  document
+    .querySelectorAll(".nav-btn")
+    .forEach((btn) => btn.classList.remove("active"));
+  const activeBtn = document.querySelector(
+    '.nav-btn[data-screen="' + name + '"]'
+  );
+  if (activeBtn) activeBtn.classList.add("active");
+}
 
   // ---- ПЕРВЫЙ ЗАПУСК ----
   loadAds();
