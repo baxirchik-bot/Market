@@ -31,6 +31,14 @@
       box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
     }
 
+    .detail-thumb {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  background: #e5e7eb;
+  flex-shrink: 0;
+}
+    
     /* HEADER */
 
     .app-header {
@@ -1035,16 +1043,13 @@
   </div>
 
   <!-- Цена -->
-  <div id="detailPrice" style="font-size:18px; font-weight:600; margin-bottom:6px;">
-  </div>
+  <div id="detailPrice" style="font-size:18px; font-weight:600; margin-bottom:6px;"></div>
 
   <!-- Мета-инфо -->
-  <div id="detailMeta" style="font-size:13px; color:#64748b; margin-bottom:10px;">
-  </div>
+  <div id="detailMeta" style="font-size:13px; color:#64748b; margin-bottom:10px;"></div>
 
   <!-- Описание -->
-  <div id="detailDescription" style="font-size:14px; line-height:1.4;">
-  </div>
+  <div id="detailDescription" style="font-size:14px; line-height:1.4;"></div>
 
 </section>
 
@@ -1543,7 +1548,7 @@
     filterByType("Недвижимость");
   });
 
-  // --- ОТКРЫТИЕ КАРТОЧКИ ОБЪЯВЛЕНИЯ ---
+    // --- ОТКРЫТИЕ КАРТОЧКИ ОБЪЯВЛЕНИЯ ---
   function openAdDetails(ad) {
     if (!screenAdDetails) return;
 
@@ -1557,13 +1562,12 @@
 
     if (detailTitle) detailTitle.textContent = title;
     if (detailPrice) detailPrice.textContent = priceText;
-    if (detailMeta)
-      detailMeta.textContent = `📍 ${city} · ${type}${
-        created ? " · " + created : ""
-      }`;
+    if (detailMeta) {
+      detailMeta.textContent = `📍 ${city} · ${type}${created ? " · " + created : ""}`;
+    }
     if (detailDescription) detailDescription.textContent = desc;
 
-    // главный фон
+    // главное фото (фон DIV’а)
     if (detailMainImage) {
       if (images.length > 0) {
         detailMainImage.style.backgroundImage = `url('${images[0]}')`;
@@ -1574,10 +1578,10 @@
       }
     }
 
-    // превью-шки
+    // маленькие превью
     if (detailThumbs) {
       detailThumbs.innerHTML = "";
-      images.forEach((url, idx) => {
+      images.forEach((url) => {
         const div = document.createElement("div");
         div.className = "detail-thumb";
         div.style.backgroundImage = `url('${url}')`;
@@ -1595,30 +1599,41 @@
     showScreen("adDetails");
   }
 
-  function showScreen(name) {
-  // прячем все экраны
-  Object.values(screens).forEach((el) => {
-    if (!el) return;
-    el.classList.remove("active");
-    el.style.display = "none";
-  });
-
-  // показываем нужный
-  const target = screens[name];
-  if (target) {
-    target.classList.add("active");
-    target.style.display = "block";
+  // кнопка «Назад» из карточки
+  if (detailBackBtn) {
+    detailBackBtn.addEventListener("click", () => {
+      showScreen("list");
+    });
   }
 
-  // нижнее меню (как было)
-  document
-    .querySelectorAll(".nav-btn")
-    .forEach((btn) => btn.classList.remove("active"));
-  const activeBtn = document.querySelector(
-    '.nav-btn[data-screen="' + name + '"]'
-  );
-  if (activeBtn) activeBtn.classList.add("active");
-}
+  // ПЕРЕОПРЕДЕЛЁННАЯ showScreen — ОДНА ЕДИНСТВЕННАЯ
+  function showScreen(name) {
+    // прячем все экраны
+    Object.values(screens).forEach((el) => {
+      if (!el) return;
+      el.classList.remove("active");
+      el.style.display = "none";
+    });
+
+    // показываем нужный
+    const target = screens[name];
+    if (target) {
+      target.classList.add("active");
+      target.style.display = "block";
+    }
+
+    // нижнее меню
+    document
+      .querySelectorAll(".nav-btn")
+      .forEach((btn) => btn.classList.remove("active"));
+    const activeBtn = document.querySelector(
+      '.nav-btn[data-screen="' + name + '"]'
+    );
+    if (activeBtn) activeBtn.classList.add("active");
+
+    // всегда наверх при смене экрана
+    window.scrollTo(0, 0);
+  }
 
   // ---- ПЕРВЫЙ ЗАПУСК ----
   loadAds();
