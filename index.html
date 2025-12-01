@@ -42,15 +42,22 @@
     /* Главное фото в карточке объявления */
 #detailMainImage {
   width: 100%;
-  aspect-ratio: 4 / 3;       /* красивое соотношение сторон, вместо жёсткой высоты */
+  aspect-ratio: 4 / 3;          /* аккуратная высота */
   border-radius: 16px;
   background: #e5e7eb;
   margin-bottom: 12px;
-  background-size: cover;    /* подгон по окну */
+  background-size: contain;     /* Показать ВЕСЬ айфон, не обрезая */
   background-position: center;
   background-repeat: no-repeat;
+  overflow: hidden;
 }
 
+    #screen-ad-details .back-link {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #e5e7eb;
+}
+    
 /* Галерея маленьких фото */
 #detailThumbs {
   display: flex;
@@ -1014,7 +1021,7 @@
         </button>
       </section>
 
-       <!-- AD DETAILS SCREEN -->
+             <!-- AD DETAILS SCREEN -->
       <section class="screen" id="screen-ad-details" style="padding:12px;">
         <button class="back-link" id="detailBackBtn">← Назад</button>
 
