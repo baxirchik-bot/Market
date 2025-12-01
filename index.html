@@ -42,11 +42,11 @@
     /* Главное фото в карточке объявления */
 #detailMainImage {
   width: 100%;
-  height: 260px;
+  aspect-ratio: 4 / 3;       /* красивое соотношение сторон, вместо жёсткой высоты */
   border-radius: 16px;
   background: #e5e7eb;
   margin-bottom: 12px;
-  background-size: cover;        /* подгон по окну */
+  background-size: cover;    /* подгон по окну */
   background-position: center;
   background-repeat: no-repeat;
 }
@@ -1014,7 +1014,7 @@
         </button>
       </section>
 
-            <!-- AD DETAILS SCREEN -->
+       <!-- AD DETAILS SCREEN -->
       <section class="screen" id="screen-ad-details" style="padding:12px;">
         <button class="back-link" id="detailBackBtn">← Назад</button>
 
@@ -1034,6 +1034,35 @@
 
         <!-- Описание -->
         <div id="detailDescription"></div>
+
+        <!-- КАРТОЧКА ПРОДАВЦА + КНОПКИ -->
+        <div class="ad-view-seller-card">
+          <div class="avatar">B</div>
+          <div>
+            <div class="ad-view-seller-info-main">Baxir B-R (@Baxir1987)</div>
+            <div class="ad-view-seller-info-sub">
+              ⭐ 4,9 · 23 отзыва · 12 объявлений
+            </div>
+          </div>
+        </div>
+
+        <div class="ad-view-actions-row">
+          <button class="ad-view-btn-outline">
+            💬 Написать продавцу
+          </button>
+          <button class="ad-view-btn-outline">
+            👤 Профиль продавца
+          </button>
+        </div>
+
+        <div class="ad-view-btn-ghost-row">
+          <button class="ad-view-btn-ghost">
+            ⭐ В избранное
+          </button>
+          <button class="ad-view-btn-ghost">
+            🔝 Похожие
+          </button>
+        </div>
       </section>
     </div> <!-- /screens -->
 
