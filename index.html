@@ -32,13 +32,13 @@
     }
 
     .detail-thumb {
-  width: 64px;
-  height: 64px;
-  border-radius: 12px;
-  background: #e5e7eb;
-  flex-shrink: 0;
-}
-    
+      width: 64px;
+      height: 64px;
+      border-radius: 12px;
+      background: #e5e7eb;
+      flex-shrink: 0;
+    }
+
     /* HEADER */
 
     .app-header {
@@ -606,6 +606,8 @@
       border-radius: 16px;
       background: linear-gradient(135deg, #e5edff, #dbeafe);
       margin-bottom: 10px;
+      background-size: cover;
+      background-position: center;
     }
 
     .ad-view-main-title {
@@ -848,55 +850,6 @@
         </div>
       </section>
 
-      <!-- AD VIEW SCREEN -->
-      <section class="screen" id="screen-ad-view">
-        <div class="ad-view-header-row">
-          <button class="ad-view-back-btn" id="adViewBackBtn">←</button>
-          <div class="ad-view-title">Объявление</div>
-        </div>
-
-        <div class="ad-view-card">
-          <div class="ad-view-image" id="viewImage"></div>
-
-          <div class="ad-view-main-title" id="viewTitle">Название объявления</div>
-          <div class="ad-view-price" id="viewPrice">0 сум</div>
-          <div class="ad-view-meta" id="viewMeta">Ташкент · Товары</div>
-
-          <div class="ad-view-description-title">Описание</div>
-          <div class="ad-view-description" id="viewDescription">
-            Здесь будет текст описания объявления.
-          </div>
-
-          <div class="ad-view-seller-card">
-            <div class="avatar">B</div>
-            <div>
-              <div class="ad-view-seller-info-main">Baxir B-R (@Baxir1987)</div>
-              <div class="ad-view-seller-info-sub">
-                ⭐ 4,9 · 23 отзыва · 12 объявлений
-              </div>
-            </div>
-          </div>
-
-          <div class="ad-view-actions-row">
-            <button class="ad-view-btn-outline">
-              💬 Написать продавцу
-            </button>
-            <button class="ad-view-btn-outline">
-              👤 Профиль продавца
-            </button>
-          </div>
-
-          <div class="ad-view-btn-ghost-row">
-            <button class="ad-view-btn-ghost">
-              ⭐ В избранное
-            </button>
-            <button class="ad-view-btn-ghost">
-              🔝 Похожие
-            </button>
-          </div>
-        </div>
-      </section>
-
       <!-- NEW AD STEP 1 -->
       <section class="screen" id="screen-new-ad-step1">
         <div class="back-link" id="backFromNewAd1">← Назад на главный</div>
@@ -962,8 +915,7 @@
             class="hidden-input"
           />
           <div class="hint">
-            Можно загрузить до 8 фотографий. В демо-версии файлы не отправляются на сервер,
-            но вы увидите реальное превью.
+            Можно загрузить до 8 фотографий.
           </div>
           <div class="photos-preview-row" id="photosPreview"></div>
         </div>
@@ -1007,7 +959,7 @@
         </button>
       </section>
 
-            <!-- NEW AD SUCCESS -->
+      <!-- NEW AD SUCCESS -->
       <section class="screen" id="screen-new-ad-success">
         <div class="success-icon">✅</div>
         <div class="success-text-main">Объявление опубликовано!</div>
@@ -1024,35 +976,67 @@
         </button>
       </section>
 
-      <!-- AD DETAILS SCREEN -->
+      <!-- AD DETAILS SCREEN (используем для открытия объявления) -->
       <section class="screen" id="screen-ad-details" style="padding:12px;">
-        <button class="back-link" id="detailBackBtn">← Назад</button>
-
-        <div class="screen-title" id="detailTitle">Заголовок</div>
-
-        <!-- Главное фото -->
-        <div id="detailMainImage"
-             style="width:100%; height:260px; border-radius:16px; background:#e5e7eb; margin-bottom:12px;">
+        <div class="ad-view-header-row">
+          <button class="ad-view-back-btn" id="detailBackBtn">←</button>
+          <div class="ad-view-title">Объявление</div>
         </div>
 
-        <!-- Галерея маленьких фото -->
-        <div id="detailThumbs"
-             style="display:flex; gap:8px; overflow-x:auto; margin-bottom:12px;">
+        <div class="ad-view-card">
+          <!-- Заголовок -->
+          <div class="ad-view-main-title" id="detailTitle">Заголовок</div>
+
+          <!-- Главное фото -->
+          <div id="detailMainImage" class="ad-view-image"></div>
+
+          <!-- Галерея маленьких фото -->
+          <div id="detailThumbs"
+               style="display:flex; gap:8px; overflow-x:auto; margin-bottom:12px;">
+          </div>
+
+          <!-- Цена -->
+          <div id="detailPrice" class="ad-view-price">0 сум</div>
+
+          <!-- Мета-инфо -->
+          <div id="detailMeta" class="ad-view-meta"></div>
+
+          <!-- Описание -->
+          <div class="ad-view-description-title">Описание</div>
+          <div id="detailDescription" class="ad-view-description"></div>
+
+          <!-- Продавец -->
+          <div class="ad-view-seller-card">
+            <div class="avatar">B</div>
+            <div>
+              <div class="ad-view-seller-info-main">Baxir B-R (@Baxir1987)</div>
+              <div class="ad-view-seller-info-sub">
+                ⭐ 4,9 · 23 отзыва · 12 объявлений
+              </div>
+            </div>
+          </div>
+
+          <!-- Кнопки действия -->
+          <div class="ad-view-actions-row">
+            <button class="ad-view-btn-outline">
+              💬 Написать продавцу
+            </button>
+            <button class="ad-view-btn-outline">
+              👤 Профиль продавца
+            </button>
+          </div>
+
+          <div class="ad-view-btn-ghost-row">
+            <button class="ad-view-btn-ghost">
+              ⭐ В избранное
+            </button>
+            <button class="ad-view-btn-ghost">
+              🔝 Похожие
+            </button>
+          </div>
         </div>
-
-        <!-- Цена -->
-        <div id="detailPrice"
-             style="font-size:18px; font-weight:600; margin-bottom:6px;"></div>
-
-        <!-- Мета-инфо -->
-        <div id="detailMeta"
-             style="font-size:13px; color:#64748b; margin-bottom:10px;"></div>
-
-        <!-- Описание -->
-        <div id="detailDescription"
-             style="font-size:14px; line-height:1.4;"></div>
       </section>
-    </div> <!-- здесь закрывается div class="screens" -->
+    </div> <!-- /screens -->
 
     <!-- BOTTOM NAV -->
     <nav class="bottom-nav">
@@ -1079,13 +1063,13 @@
   const ADD_AD_API_URL = "https://baxir.pythonanywhere.com/api/add_ad";
 
   // ==== ImgBB ====
-  const IMGBB_API_KEY = "d6a3eac7b36101df3effee3f7d0c7493"; // <--- СЮДА ВСТАВЬ СВОЙ КЛЮЧ
+  const IMGBB_API_KEY = "d6a3eac7b36101df3effee3f7d0c7493";
   const IMGBB_UPLOAD_URL = "https://api.imgbb.com/1/upload";
 
   const homeAdsList = document.getElementById("ads-list");
   const adList = document.getElementById("adList");
   const screensContainer = document.querySelector(".screens");
-    
+
   // элементы карточки объявления (экран просмотра)
   const screenAdDetails = document.getElementById("screen-ad-details");
   const detailMainImage = document.getElementById("detailMainImage");
@@ -1225,7 +1209,7 @@
       }
       if (adList) {
         adList.innerHTML =
-          "<div class='ad-meta'>E'lonlarni yuklashда xatolik. Keyinroq urinib ko'ring.</div>";
+          "<div class='ad-meta'>E'lonlarni yuklashda xatolik. Keyinroq urinib ko'ring.</div>";
       }
     }
   }
@@ -1266,7 +1250,7 @@
     adDetails: screenAdDetails,
   };
 
-  function showScreen(name) {
+  function showScreenSimple(name) {
     Object.values(screens).forEach((el) => el && el.classList.remove("active"));
     if (screens[name]) {
       screens[name].classList.add("active");
@@ -1550,7 +1534,7 @@
     filterByType("Недвижимость");
   });
 
-    // --- ОТКРЫТИЕ КАРТОЧКИ ОБЪЯВЛЕНИЯ ---
+  // --- ОТКРЫТИЕ КАРТОЧКИ ОБЪЯВЛЕНИЯ ---
   function openAdDetails(ad) {
     if (!screenAdDetails) return;
 
@@ -1569,12 +1553,10 @@
     }
     if (detailDescription) detailDescription.textContent = desc;
 
-    // главное фото (фон DIV’а)
+    // главное фото
     if (detailMainImage) {
       if (images.length > 0) {
         detailMainImage.style.backgroundImage = `url('${images[0]}')`;
-        detailMainImage.style.backgroundSize = "cover";
-        detailMainImage.style.backgroundPosition = "center";
       } else {
         detailMainImage.style.backgroundImage = "";
       }
@@ -1608,7 +1590,7 @@
     });
   }
 
-  // ПЕРЕОПРЕДЕЛЁННАЯ showScreen — ОДНА ЕДИНСТВЕННАЯ
+  // ПЕРЕОПРЕДЕЛЁННАЯ showScreen — основная
   function showScreen(name) {
     // прячем все экраны
     Object.values(screens).forEach((el) => {
@@ -1633,7 +1615,7 @@
     );
     if (activeBtn) activeBtn.classList.add("active");
 
-        // всегда наверх при смене экрана
+    // скролл наверх
     if (screensContainer) {
       screensContainer.scrollTop = 0;
     }
@@ -1641,6 +1623,6 @@
 
   // ---- ПЕРВЫЙ ЗАПУСК ----
   loadAds();
-</script>
+  </script>
 </body>
 </html>
