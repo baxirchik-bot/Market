@@ -1083,7 +1083,8 @@
 
   const homeAdsList = document.getElementById("ads-list");
   const adList = document.getElementById("adList");
-
+  const screensContainer = document.querySelector(".screens");
+    
   // элементы карточки объявления (экран просмотра)
   const screenAdDetails = document.getElementById("screen-ad-details");
   const detailMainImage = document.getElementById("detailMainImage");
@@ -1631,8 +1632,10 @@
     );
     if (activeBtn) activeBtn.classList.add("active");
 
-    // всегда наверх при смене экрана
-    window.scrollTo(0, 0);
+        // всегда наверх при смене экрана
+    if (screensContainer) {
+      screensContainer.scrollTop = 0;
+    }
   }
 
   // ---- ПЕРВЫЙ ЗАПУСК ----
