@@ -662,25 +662,26 @@
     }
 
     .ad-view-actions-row {
-      display: flex;
-      gap: 8px;
-      margin-top: 10px;
-    }
+  display: flex;
+  gap: 6px;              /* чуть меньше расстояние между кнопками */
+  margin-top: 10px;
+}
 
-    .ad-view-btn-outline {
-      flex: 1;
-      border-radius: 999px;
-      padding: 8px 10px;
-      border: 1px solid #cbd5f5;
-      background: #ffffff;
-      font-size: 13px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      color: #1d4ed8;
-    }
+.ad-view-btn-outline {
+  flex: 1;
+  border-radius: 999px;
+  padding: 6px 6px;       /* меньше отступы = больше места под текст */
+  border: 1px solid #cbd5f5;
+  background: #ffffff;
+  font-size: 12px;        /* шрифт чуть меньше */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;               /* меньше расстояние между иконкой и текстом */
+  color: #1d4ed8;
+  white-space: nowrap;    /* запрет переносить текст на вторую строку */
+}
 
     .ad-view-btn-ghost-row {
       display: flex;
