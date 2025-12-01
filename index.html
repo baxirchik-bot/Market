@@ -39,6 +39,43 @@
       flex-shrink: 0;
     }
 
+    /* Главное фото в карточке объявления */
+#detailMainImage {
+  width: 100%;
+  height: 260px;
+  border-radius: 16px;
+  background: #e5e7eb;
+  margin-bottom: 12px;
+  background-size: cover;        /* подгон по окну */
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Галерея маленьких фото */
+#detailThumbs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin-bottom: 12px;
+}
+
+#detailPrice {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+#detailMeta {
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 10px;
+}
+
+#detailDescription {
+  font-size: 14px;
+  line-height: 1.4;
+}
+    
     /* HEADER */
 
     .app-header {
@@ -977,65 +1014,26 @@
         </button>
       </section>
 
-      <!-- AD DETAILS SCREEN (используем для открытия объявления) -->
+            <!-- AD DETAILS SCREEN -->
       <section class="screen" id="screen-ad-details" style="padding:12px;">
-        <div class="ad-view-header-row">
-          <button class="ad-view-back-btn" id="detailBackBtn">←</button>
-          <div class="ad-view-title">Объявление</div>
-        </div>
+        <button class="back-link" id="detailBackBtn">← Назад</button>
 
-        <div class="ad-view-card">
-          <!-- Заголовок -->
-          <div class="ad-view-main-title" id="detailTitle">Заголовок</div>
+        <div class="screen-title" id="detailTitle">Заголовок</div>
 
-          <!-- Главное фото -->
-          <div id="detailMainImage" class="ad-view-image"></div>
+        <!-- Главное фото -->
+        <div id="detailMainImage"></div>
 
-          <!-- Галерея маленьких фото -->
-          <div id="detailThumbs"
-               style="display:flex; gap:8px; overflow-x:auto; margin-bottom:12px;">
-          </div>
+        <!-- Галерея маленьких фото -->
+        <div id="detailThumbs"></div>
 
-          <!-- Цена -->
-          <div id="detailPrice" class="ad-view-price">0 сум</div>
+        <!-- Цена -->
+        <div id="detailPrice"></div>
 
-          <!-- Мета-инфо -->
-          <div id="detailMeta" class="ad-view-meta"></div>
+        <!-- Мета-инфо -->
+        <div id="detailMeta"></div>
 
-          <!-- Описание -->
-          <div class="ad-view-description-title">Описание</div>
-          <div id="detailDescription" class="ad-view-description"></div>
-
-          <!-- Продавец -->
-          <div class="ad-view-seller-card">
-            <div class="avatar">B</div>
-            <div>
-              <div class="ad-view-seller-info-main">Baxir B-R (@Baxir1987)</div>
-              <div class="ad-view-seller-info-sub">
-                ⭐ 4,9 · 23 отзыва · 12 объявлений
-              </div>
-            </div>
-          </div>
-
-          <!-- Кнопки действия -->
-          <div class="ad-view-actions-row">
-            <button class="ad-view-btn-outline">
-              💬 Написать продавцу
-            </button>
-            <button class="ad-view-btn-outline">
-              👤 Профиль продавца
-            </button>
-          </div>
-
-          <div class="ad-view-btn-ghost-row">
-            <button class="ad-view-btn-ghost">
-              ⭐ В избранное
-            </button>
-            <button class="ad-view-btn-ghost">
-              🔝 Похожие
-            </button>
-          </div>
-        </div>
+        <!-- Описание -->
+        <div id="detailDescription"></div>
       </section>
     </div> <!-- /screens -->
 
@@ -1081,6 +1079,17 @@
   const detailDescription = document.getElementById("detailDescription");
   const detailBackBtn = document.getElementById("detailBackBtn");
 
+  // изображения и текущий кадр в деталке
+let currentDetailImages = [];
+let currentDetailIndex = 0;
+
+    function setDetailMainImage(url) {
+  if (!detailMainImage) return;
+  detailMainImage.style.backgroundImage = `url('${url}')`;
+  detailMainImage.style.backgroundSize = "cover";
+  detailMainImage.style.backgroundPosition = "center";
+}
+    
   // ---- формат цены ----
   function formatPrice(price) {
     if (price === null || price === undefined || price === "") {
@@ -1535,54 +1544,85 @@
     filterByType("Недвижимость");
   });
 
-  // --- ОТКРЫТИЕ КАРТОЧКИ ОБЪЯВЛЕНИЯ ---
-  function openAdDetails(ad) {
-    if (!screenAdDetails) return;
+  // --- ОТКРЫТИЕ КАРТОЧКИ ОБЪЯВЛЕНИЯ + свайп ---
+function openAdDetails(ad) {
+  if (!screenAdDetails) return;
 
-    const title = ad.title || "Объявление";
-    const priceText = formatPrice(ad.price);
-    const city = ad.city || "Город";
-    const type = ad.type || "Товар";
-    const desc = ad.description || "";
-    const created = formatDateShort(ad.created_at);
-    const images = Array.isArray(ad.images) ? ad.images : [];
+  const title   = ad.title || "Объявление";
+  const priceText = formatPrice(ad.price);
+  const city    = ad.city || "Город";
+  const type    = ad.type || "Товар";
+  const desc    = ad.description || "";
+  const created = formatDateShort(ad.created_at);
+  const images  = Array.isArray(ad.images) ? ad.images : [];
 
-    if (detailTitle) detailTitle.textContent = title;
-    if (detailPrice) detailPrice.textContent = priceText;
-    if (detailMeta) {
-      detailMeta.textContent = `📍 ${city} · ${type}${created ? " · " + created : ""}`;
-    }
-    if (detailDescription) detailDescription.textContent = desc;
+  currentDetailImages = images;
+  currentDetailIndex  = 0;
 
-    // главное фото
-    if (detailMainImage) {
-      if (images.length > 0) {
-        detailMainImage.style.backgroundImage = `url('${images[0]}')`;
-      } else {
-        detailMainImage.style.backgroundImage = "";
-      }
-    }
+  if (detailTitle)       detailTitle.textContent = title;
+  if (detailPrice)       detailPrice.textContent = priceText;
+  if (detailMeta)
+    detailMeta.textContent = `📍 ${city} · ${type}${created ? " · " + created : ""}`;
+  if (detailDescription) detailDescription.textContent = desc;
 
-    // маленькие превью
-    if (detailThumbs) {
-      detailThumbs.innerHTML = "";
-      images.forEach((url) => {
-        const div = document.createElement("div");
-        div.className = "detail-thumb";
-        div.style.backgroundImage = `url('${url}')`;
-        div.style.backgroundSize = "cover";
-        div.style.backgroundPosition = "center";
-        div.addEventListener("click", () => {
-          if (detailMainImage) {
-            detailMainImage.style.backgroundImage = `url('${url}')`;
-          }
-        });
-        detailThumbs.appendChild(div);
-      });
-    }
-
-    showScreen("adDetails");
+  // главное фото
+  if (images.length > 0) {
+    setDetailMainImage(images[0]);
+  } else {
+    setDetailMainImage("");
   }
+
+  // маленькие превью
+  if (detailThumbs) {
+    detailThumbs.innerHTML = "";
+    images.forEach((url, idx) => {
+      const div = document.createElement("div");
+      div.className = "detail-thumb";
+      div.style.backgroundImage = `url('${url}')`;
+      div.style.backgroundSize = "cover";
+      div.style.backgroundPosition = "center";
+      div.addEventListener("click", () => {
+        currentDetailIndex = idx;
+        setDetailMainImage(url);
+      });
+      detailThumbs.appendChild(div);
+    });
+  }
+
+  showScreen("adDetails");
+}
+
+    // свайп по главной картинке (влево/вправо)
+if (detailMainImage) {
+  let touchStartX = null;
+
+  detailMainImage.addEventListener("touchstart", (e) => {
+    if (!e.touches || !e.touches.length) return;
+    touchStartX = e.touches[0].clientX;
+  });
+
+  detailMainImage.addEventListener("touchend", (e) => {
+    if (touchStartX === null || !e.changedTouches || !e.changedTouches.length)
+      return;
+
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    const threshold = 40; // минимальное расстояние свайпа
+
+    if (Math.abs(dx) > threshold && currentDetailImages.length > 1) {
+      if (dx < 0 && currentDetailIndex < currentDetailImages.length - 1) {
+        // свайп влево — следующая картинка
+        currentDetailIndex++;
+      } else if (dx > 0 && currentDetailIndex > 0) {
+        // свайп вправо — предыдущая
+        currentDetailIndex--;
+      }
+      const url = currentDetailImages[currentDetailIndex];
+      setDetailMainImage(url);
+    }
+
+    touchStartX = null;
+  });
+}
 
   // кнопка «Назад» из карточки
   if (detailBackBtn) {
