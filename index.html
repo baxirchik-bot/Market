@@ -216,7 +216,6 @@
       padding-bottom: 4px;
       margin-bottom: 10px;
     }
-
     .filter-chip {
       border-radius: 999px;
       padding: 6px 10px;
@@ -581,15 +580,17 @@
     }
 
     .ad-view-image {
-      width: 100%;
-      height: 220px;
-      border-radius: 16px;
-      background: #e5e7eb;
-      margin-bottom: 10px;
-      background-size: cover;
-      background-position: center;
-      overflow: hidden;
-    }
+  width: 100%;
+  height: 220px;              /* можешь сделать 240–260, если хочешь повыше */
+  border-radius: 16px;
+  background: #e5e7eb;
+  margin-bottom: 10px;
+
+  /* главное: показываем фото целиком */
+  background-size: contain;   /* вместо cover */
+  background-position: center;
+  background-repeat: no-repeat;
+}
 
     .detail-thumbs-row {
       display: flex;
