@@ -655,6 +655,33 @@
       margin-bottom: 12px;
     }
 
+    .ad-view-actions-big {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.call-btn,
+.msg-btn {
+  flex: 1;
+  padding: 13px 0;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 999px;
+  text-align: center;
+  text-decoration: none;
+  color: #ffffff;
+  display: block;
+}
+
+.call-btn {
+  background: #22c55e; /* зелёная, как на скрине */
+}
+
+.msg-btn {
+  background: #3b82f6; /* синяя */
+}
+    
     /* Лайтбокс (полноэкранное фото) */
     .lightbox {
       position: fixed;
@@ -1081,24 +1108,11 @@
             </div>
           </div>
 
-          <div class="ad-view-actions-row">
-            <button class="ad-view-btn-outline">
-              💬 Написать продавцу
-            </button>
-            <button class="ad-view-btn-outline">
-              👤 Профиль продавца
-            </button>
-          </div>
-
-          <div class="ad-view-btn-ghost-row">
-            <button class="ad-view-btn-ghost">
-              ⭐ В избранное
-            </button>
-            <button class="ad-view-btn-ghost">
-              🔝 Похожие
-            </button>
-          </div>
-        </div>
+            <div class="ad-view-actions-big">
+    <a id="callSellerBtn" class="call-btn">📞 Позвонить</a>
+    <a id="msgSellerBtn" class="msg-btn" target="_blank">💬 Написать</a>
+  </div>
+</div> <!-- конец .ad-view-card -->
       </section>
     </div>
 
@@ -1132,6 +1146,11 @@
     const ADS_API_URL = "https://baxir.pythonanywhere.com/ads";
     const ADD_AD_API_URL = "https://baxir.pythonanywhere.com/api/add_ad";
 
+    // ==== Контакты продавца по умолчанию ====
+// потом можно будет делать разные для разных продавцов
+const DEFAULT_PHONE = "+998901234567";    // поменяешь на свой
+const DEFAULT_TELEGRAM = "Baxir1987";     // БЕЗ @
+    
     // ==== ImgBB ====
     const IMGBB_API_KEY = "d6a3eac7b36101df3effee3f7d0c7493";
     const IMGBB_UPLOAD_URL = "https://api.imgbb.com/1/upload";
@@ -1499,6 +1518,8 @@
     const summaryPrice = document.getElementById("summaryPrice");
     const summaryDescription = document.getElementById("summaryDescription");
     const summaryPhotosInfo = document.getElementById("summaryPhotosInfo");
+    const callSellerBtn = document.getElementById("callSellerBtn");
+    const msgSellerBtn = document.getElementById("msgSellerBtn");
 
     function fillSummaryStep3() {
       summaryTitle.textContent = newAdDraft.title || "Название объявления";
@@ -1526,13 +1547,17 @@
 
       try {
         const payload = {
-          type: newAdDraft.type,
-          city: newAdDraft.city,
-          title: newAdDraft.title,
-          price: (newAdDraft.price || "").replace(/\s+/g, ""),
-          description: newAdDraft.description,
-          images: newAdDraft.photos,
-        };
+  type: newAdDraft.type,
+  city: newAdDraft.city,
+  title: newAdDraft.title,
+  price: (newAdDraft.price || "").replace(/\s+/g, ""),
+  description: newAdDraft.description,
+  images: newAdDraft.photos,  // массив ссылок ImgBB
+
+  // контакты продавца:
+  phone: DEFAULT_PHONE,
+  telegram: DEFAULT_TELEGRAM,
+};
 
         const res = await fetch(ADD_AD_API_URL, {
           method: "POST",
@@ -1691,6 +1716,29 @@
       });
     }
 
+            // --- Кнопки "Позвонить" и "Написать" ---
+    const phone = ad.phone || DEFAULT_PHONE;
+    const telegram = ad.telegram || DEFAULT_TELEGRAM;
+
+    if (callSellerBtn) {
+      if (phone) {
+        const cleanPhone = String(phone).replace(/\s+/g, "");
+        callSellerBtn.href = "tel:" + cleanPhone;
+        callSellerBtn.style.display = "block";
+      } else {
+        callSellerBtn.style.display = "none";
+      }
+    }
+
+    if (msgSellerBtn) {
+      if (telegram) {
+        const username = String(telegram).replace(/^@/, "");
+        msgSellerBtn.href = "https://t.me/" + username;
+        msgSellerBtn.style.display = "block";
+      } else {
+        msgSellerBtn.style.display = "none";
+      }
+    }
     showScreen("adDetails");
   }
 
