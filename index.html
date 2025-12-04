@@ -1235,7 +1235,7 @@
   const detailDescription = document.getElementById("detailDescription");
   const detailBackBtn = document.getElementById("detailBackBtn");
 
-  // кнопки Позвонить / Написать (внизу карточки)
+  // кнопки Позвонить / Написать
   const callSellerBtn = document.getElementById("callSellerBtn");
   const msgSellerBtn = document.getElementById("msgSellerBtn");
 
@@ -1420,21 +1420,18 @@
   };
 
   function showScreen(name) {
-    // скрыть все
     Object.values(screens).forEach((el) => {
       if (!el) return;
       el.classList.remove("active");
       el.style.display = "none";
     });
 
-    // показать нужный
     const target = screens[name];
     if (target) {
       target.classList.add("active");
       target.style.display = "block";
     }
 
-    // нижнее меню
     document
       .querySelectorAll(".nav-btn")
       .forEach((btn) => btn.classList.remove("active"));
@@ -1443,7 +1440,6 @@
     );
     if (activeBtn) activeBtn.classList.add("active");
 
-    // скролл вверх
     if (screensContainer) {
       screensContainer.scrollTop = 0;
     }
@@ -1546,7 +1542,6 @@
     const selected = files.slice(0, maxFiles);
 
     for (const file of selected) {
-      // локальное превью
       const reader = new FileReader();
       reader.onload = (e) => {
         const div = document.createElement("div");
@@ -1558,7 +1553,6 @@
       };
       reader.readAsDataURL(file);
 
-      // загрузка в ImgBB
       try {
         const url = await uploadToImgbb(file);
         newAdDraft.photos.push(url);
@@ -1629,9 +1623,7 @@
         title: newAdDraft.title,
         price: (newAdDraft.price || "").replace(/\s+/g, ""),
         description: newAdDraft.description,
-        images: newAdDraft.photos, // ссылки ImgBB
-
-        // контакты продавца (пока одинаковые для всех)
+        images: newAdDraft.photos,
         phone: DEFAULT_PHONE,
         telegram: DEFAULT_TELEGRAM,
       };
@@ -1748,24 +1740,35 @@
     }
     if (detailDescription) detailDescription.textContent = desc;
 
-    // --- иконки "Избранное" и "Поделиться" (рядом с названием/ценой) ---
-    let iconsRow = document.getElementById("detailIconsRow");
-    if (!iconsRow && detailTitle) {
-      iconsRow = document.createElement("div");
-      iconsRow.id = "detailIconsRow";
-      iconsRow.style.display = "flex";
-      iconsRow.style.justifyContent = "flex-end";
-      iconsRow.style.alignItems = "center";
-      iconsRow.style.gap = "12px";
-      iconsRow.style.marginTop = "-8px";
-      iconsRow.style.marginBottom = "8px";
+    // --- строка "цена + иконки" (в одной линии) ---
+    let priceRow = document.getElementById("detailPriceRow");
+    if (!priceRow && detailPrice && detailPrice.parentNode) {
+      priceRow = document.createElement("div");
+      priceRow.id = "detailPriceRow";
+      priceRow.style.display = "flex";
+      priceRow.style.alignItems = "center";
+      priceRow.style.justifyContent = "space-between";
+      priceRow.style.marginBottom = "6px";
 
-      // вставляем сразу после заголовка
-      detailTitle.insertAdjacentElement("afterend", iconsRow);
+      detailPrice.parentNode.insertBefore(priceRow, detailPrice);
+      priceRow.appendChild(detailPrice);
     }
-    if (iconsRow) {
-      iconsRow.innerHTML = "";
 
+    if (priceRow) {
+      let iconsRow = document.getElementById("detailIconsRow");
+      if (!iconsRow) {
+        iconsRow = document.createElement("div");
+        iconsRow.id = "detailIconsRow";
+        iconsRow.style.display = "flex";
+        iconsRow.style.alignItems = "center";
+        iconsRow.style.gap = "8px";
+        priceRow.appendChild(iconsRow);
+      } else {
+        iconsRow.innerHTML = "";
+        priceRow.appendChild(iconsRow);
+      }
+
+      // кнопка "избранное"
       const favBtn = document.createElement("button");
       favBtn.type = "button";
       favBtn.style.width = "28px";
@@ -1779,13 +1782,13 @@
       favBtn.style.background = "#ffffff";
       favBtn.style.cursor = "pointer";
       favBtn.textContent = "♡";
-
       let favActive = false;
       favBtn.addEventListener("click", () => {
         favActive = !favActive;
         favBtn.textContent = favActive ? "♥" : "♡";
       });
 
+      // кнопка "поделиться"
       const shareBtn = document.createElement("button");
       shareBtn.type = "button";
       shareBtn.style.width = "28px";
@@ -1809,10 +1812,13 @@
         if (navigator.share) {
           navigator.share(shareData).catch(() => {});
         } else {
-          // запасной вариант
-          navigator.clipboard
-            ?.writeText(shareData.url)
-            .then(() => alert("Ссылка скопирована."));
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard
+              .writeText(shareData.url)
+              .then(() => alert("Ссылка скопирована."));
+          } else {
+            alert("Поделиться можно, скопировав ссылку из адресной строки.");
+          }
         }
       });
 
@@ -1823,15 +1829,12 @@
     // --- главное фото со свайпом ---
     if (detailMainImage) {
       detailMainImage.innerHTML = "";
-
-      // контейнер — горизонтальный скролл
       detailMainImage.style.display = "flex";
       detailMainImage.style.overflowX = "auto";
       detailMainImage.style.scrollSnapType = "x mandatory";
 
       images.forEach((url) => {
         const slide = document.createElement("div");
-        slide.className = "detail-main-slide";
         slide.style.minWidth = "100%";
         slide.style.height = "100%";
         slide.style.borderRadius = "16px";
@@ -1840,7 +1843,6 @@
         slide.style.backgroundPosition = "center";
         slide.style.scrollSnapAlign = "start";
 
-        // клик по слайду — полноэкранный просмотр
         slide.addEventListener("click", () => {
           openLightbox(url);
         });
@@ -1885,7 +1887,6 @@
     }
 
     // --- КНОПКИ "ПОЗВОНИТЬ" / "НАПИСАТЬ" ---
-
     const phone = ad.phone || DEFAULT_PHONE;
     const telegram = ad.telegram || DEFAULT_TELEGRAM;
 
