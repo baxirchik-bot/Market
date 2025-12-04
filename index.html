@@ -849,6 +849,86 @@
       white-space: nowrap;
     }
 
+    /* Строка статистики (просмотры / избранное) */
+.ad-view-stats {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+/* Строка про доставку */
+.ad-view-delivery {
+  font-size: 13px;
+  color: #4b5563;
+  margin-bottom: 8px;
+}
+
+/* Статус онлайна продавца */
+.ad-view-seller-status {
+  font-size: 12px;
+  color: #16a34a; /* зелёный, как "онлайн" */
+  margin-top: 2px;
+}
+
+/* Блок "Похожие объявления" */
+.similar-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 14px;
+  margin-bottom: 6px;
+}
+
+.similar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.similar-card {
+  display: flex;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 12px;
+  background: #f9fafb;
+  cursor: pointer;
+}
+
+.similar-card-image {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: #e5e7eb;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+
+.similar-card-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.similar-card-title {
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.similar-card-meta {
+  font-size: 11px;
+  color: #6b7280;
+}
+
+.similar-card-price {
+  font-size: 13px;
+  font-weight: 600;
+  color: #16a34a;
+  margin-top: 2px;
+}
+    
     @media (max-width: 480px) {
       body {
         align-items: stretch;
@@ -1117,72 +1197,89 @@
       </section>
 
             <!-- AD DETAILS SCREEN -->
-      <section class="screen" id="screen-ad-details" style="padding:12px;">
-        <div class="ad-view-header">
-  <button class="ad-view-back-btn" id="detailBackBtn">←</button>
-  <span class="ad-view-header-title">Объявление</span>
-</div>
-
-        <div class="ad-view-card">
-
-  <!-- Главное фото (слайдер) -->
-  <div class="detail-main-image" id="detailMainImage"></div>
-
-  <!-- Маленькие превью -->
-  <div class="detail-thumbs" id="detailThumbs"></div>
-
-  <!-- Заголовок + цена + иконки -->
-  <div class="ad-view-title-row">
-    <div class="ad-view-title-box">
-      <div class="ad-view-main-title" id="detailTitle">Название объявления</div>
-      <div class="ad-view-price" id="detailPrice">0 сум</div>
-    </div>
-    <div class="ad-view-icon-row">
-      <button
-        class="icon-circle-btn"
-        id="favoriteBtn"
-        type="button"
-        aria-label="В избранное"
-      >
-        ♡
-      </button>
-      <button
-        class="icon-circle-btn"
-        id="shareBtn"
-        type="button"
-        aria-label="Поделиться"
-      >
-        ⤴︎
-      </button>
-    </div>
+<section class="screen" id="screen-ad-details" style="padding:12px;">
+  <div class="ad-view-header">
+    <button class="ad-view-back-btn" id="detailBackBtn">←</button>
+    <span class="ad-view-header-title">Объявление</span>
   </div>
 
-  <!-- Метаданные -->
-  <div class="ad-view-meta" id="detailMeta">Ташкент · Товары</div>
+  <div class="ad-view-card">
+    <!-- Главное фото (слайдер) -->
+    <div class="detail-main-image" id="detailMainImage"></div>
 
-  <!-- Описание -->
-  <div class="ad-view-description-title">Описание</div>
-  <div class="ad-view-description" id="detailDescription">
-    Здесь будет текст описания объявления.
-  </div>
+    <!-- Маленькие превью -->
+    <div class="detail-thumbs" id="detailThumbs"></div>
 
-  <!-- Карточка продавца и кнопки "Позвонить / Написать" — оставь как у тебя было -->
-  <div class="ad-view-seller-card">
-    <div class="avatar">B</div>
-    <div>
-      <div class="ad-view-seller-info-main">Baxir B-R (@Baxir1987)</div>
-      <div class="ad-view-seller-info-sub">
-        ⭐ 4,9 · 23 отзыва · 12 объявлений
+    <!-- Заголовок + цена + иконки -->
+    <div class="ad-view-title-row">
+      <div class="ad-view-title-box">
+        <div class="ad-view-main-title" id="detailTitle">Название объявления</div>
+        <div class="ad-view-price" id="detailPrice">0 сум</div>
+        <!-- НОВОЕ: статистика просмотров / избранного -->
+        <div class="ad-view-stats" id="detailStats">
+          👁 124 просмотра · 💾 8 в избранном
+        </div>
+      </div>
+      <div class="ad-view-icon-row">
+        <button
+          class="icon-circle-btn"
+          id="favoriteBtn"
+          type="button"
+          aria-label="В избранное"
+        >
+          ♡
+        </button>
+        <button
+          class="icon-circle-btn"
+          id="shareBtn"
+          type="button"
+          aria-label="Поделиться"
+        >
+          ⤴︎
+        </button>
       </div>
     </div>
-  </div>
 
-  <div class="ad-view-actions-row">
-    <a class="call-btn" id="callSellerBtn" href="#">Позвонить</a>
-    <a class="msg-btn" id="msgSellerBtn" href="#">Написать</a>
+    <!-- Метаданные -->
+    <div class="ad-view-meta" id="detailMeta">Ташкент · Товары</div>
+
+    <!-- НОВОЕ: информация о доставке -->
+    <div class="ad-view-delivery" id="detailDelivery">
+      Доставка: есть
+    </div>
+
+    <!-- Описание -->
+    <div class="ad-view-description-title">Описание</div>
+    <div class="ad-view-description" id="detailDescription">
+      Здесь будет текст описания объявления.
+    </div>
+
+    <!-- Карточка продавца -->
+    <div class="ad-view-seller-card">
+      <div class="avatar">B</div>
+      <div>
+        <div class="ad-view-seller-info-main">Baxir B-R (@Baxir1987)</div>
+        <div class="ad-view-seller-info-sub">
+          ⭐ 4,9 · 23 отзыва · 12 объявлений
+        </div>
+        <!-- НОВОЕ: статус онлайна -->
+        <div class="ad-view-seller-status" id="sellerStatus">
+          Онлайн недавно
+        </div>
+      </div>
+    </div>
+
+    <!-- Кнопки Позвонить / Написать -->
+    <div class="ad-view-actions-big">
+      <a class="call-btn" id="callSellerBtn" href="#">Позвонить</a>
+      <a class="msg-btn" id="msgSellerBtn" href="#">Написать</a>
+    </div>
+
+    <!-- НОВОЕ: похожие объявления -->
+    <h3 class="similar-title">Похожие объявления</h3>
+    <div class="similar-list" id="similarList"></div>
   </div>
-</div> <!-- конец .ad-view-card -->
-      </section>
+</section>
     </div>
 
         <!-- FULLSCREEN IMAGE LIGHTBOX -->
@@ -1724,143 +1821,229 @@
     filterByType("Недвижимость");
   });
 
-  // ===== ОТКРЫТИЕ КАРТОЧКИ ОБЪЯВЛЕНИЯ =====
+  // вспомогательная функция: мини-карточка для блока "Похожие объявления"
+function createSimilarCard(ad) {
+  const card = document.createElement("div");
+  card.className = "similar-card";
 
-  function openAdDetails(ad) {
-    if (!screenAdDetails) return;
+  const firstImage =
+    ad.images && Array.isArray(ad.images) && ad.images.length > 0
+      ? ad.images[0]
+      : null;
 
-    const title = ad.title || "Объявление";
-    const priceText = formatPrice(ad.price);
-    const city = ad.city || "Город";
-    const type = ad.type || "Товар";
-    const desc = ad.description || "";
-    const created = formatDateShort(ad.created_at);
-    const images = Array.isArray(ad.images) ? ad.images : [];
+  const imgDiv = document.createElement("div");
+  imgDiv.className = "similar-card-image";
+  if (firstImage) {
+    imgDiv.style.backgroundImage = `url('${firstImage}')`;
+  }
 
-    if (detailTitle) detailTitle.textContent = title;
-    if (detailPrice) detailPrice.textContent = priceText;
-    if (detailMeta) {
-      detailMeta.textContent = `📍 ${city} · ${type}${
-        created ? " · " + created : ""
-      }`;
+  const content = document.createElement("div");
+  content.className = "similar-card-content";
+
+  const titleEl = document.createElement("div");
+  titleEl.className = "similar-card-title";
+  titleEl.textContent = ad.title || "Объявление";
+
+  const metaEl = document.createElement("div");
+  metaEl.className = "similar-card-meta";
+  metaEl.textContent = `${ad.city || "Город"} · ${ad.type || "Товар"}`;
+
+  const priceEl = document.createElement("div");
+  priceEl.className = "similar-card-price";
+  priceEl.textContent = formatPrice(ad.price);
+
+  content.appendChild(titleEl);
+  content.appendChild(metaEl);
+  content.appendChild(priceEl);
+
+  card.appendChild(imgDiv);
+  card.appendChild(content);
+
+  card.addEventListener("click", () => openAdDetails(ad));
+
+  return card;
+}
+
+function openAdDetails(ad) {
+  if (!screenAdDetails) return;
+
+  const title = ad.title || "Объявление";
+  const priceText = formatPrice(ad.price);
+  const city = ad.city || "Город";
+  const type = ad.type || "Товар";
+  const desc = ad.description || "";
+  const created = formatDateShort(ad.created_at);
+  const images = Array.isArray(ad.images) ? ad.images : [];
+
+  // Заголовок / цена
+  if (detailTitle) detailTitle.textContent = title;
+  if (detailPrice) detailPrice.textContent = priceText;
+
+  // Метаданные (город · тип · дата)
+  if (detailMeta) {
+    detailMeta.textContent = `📍 ${city} · ${type}${
+      created ? " · " + created : ""
+    }`;
+  }
+
+  // Описание
+  if (detailDescription) detailDescription.textContent = desc;
+
+  // Статистика просмотров / избранного (пока фейковые числа)
+  if (detailStats) {
+    const views = ad.views || 124;
+    const favs = ad.favorites || 8;
+    detailStats.textContent = `👁 ${views} просмотров · 💾 ${favs} в избранном`;
+  }
+
+  // Доставка: для "Товар" — есть, для "Услуга" — нет
+  if (detailDelivery) {
+    let deliveryText = "Доставка: нет";
+    if (type === "Товар") {
+      deliveryText = "Доставка: есть";
     }
-    if (detailDescription) detailDescription.textContent = desc;
+    detailDelivery.textContent = deliveryText;
+  }
 
-    // --- логика для иконок (используем уже существующие кнопки) ---
-    if (favoriteBtn) {
-      let fav = false;
-      favoriteBtn.textContent = "♡";
-      favoriteBtn.onclick = () => {
-        fav = !fav;
-        favoriteBtn.textContent = fav ? "♥" : "♡";
-      };
-    }
+  // Статус продавца (пока статично)
+  if (sellerStatus) {
+    sellerStatus.textContent = "Онлайн недавно";
+  }
 
-    if (shareBtn) {
-      shareBtn.onclick = () => {
-        const shareData = {
-          title: title,
-          text: title,
-          url: window.location.href,
-        };
-        if (navigator.share) {
-          navigator.share(shareData).catch(() => {});
-        } else if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard
-            .writeText(shareData.url)
-            .then(() => alert("Ссылка скопирована."));
-        } else {
-          alert("Поделиться можно, скопировав ссылку из адресной строки.");
-        }
-      };
-    }
+  // Главное фото со свайпом
+  if (detailMainImage) {
+    detailMainImage.innerHTML = "";
+    detailMainImage.style.display = "flex";
+    detailMainImage.style.overflowX = "auto";
+    detailMainImage.style.scrollSnapType = "x mandatory";
 
-    // --- главное фото со свайпом ---
-    if (detailMainImage) {
-      detailMainImage.innerHTML = "";
-      detailMainImage.style.display = "flex";
-      detailMainImage.style.overflowX = "auto";
-      detailMainImage.style.scrollSnapType = "x mandatory";
-
+    if (images.length) {
       images.forEach((url) => {
         const slide = document.createElement("div");
-        slide.style.minWidth = "100%";
-        slide.style.height = "100%";
-        slide.style.borderRadius = "16px";
+        slide.className = "detail-main-slide";
         slide.style.backgroundImage = `url('${url}')`;
-        slide.style.backgroundSize = "cover";
-        slide.style.backgroundPosition = "center";
-        slide.style.scrollSnapAlign = "start";
 
+        // полноэкранный просмотр
         slide.addEventListener("click", () => {
           openLightbox(url);
         });
 
         detailMainImage.appendChild(slide);
       });
-
-      if (!images.length) {
-        const slide = document.createElement("div");
-        slide.style.minWidth = "100%";
-        slide.style.height = "100%";
-        slide.style.borderRadius = "16px";
-        slide.style.background = "#e5e7eb";
-        slide.style.scrollSnapAlign = "start";
-        detailMainImage.appendChild(slide);
-      }
-
-      detailMainImage.scrollLeft = 0;
+    } else {
+      // если нет фото
+      const slide = document.createElement("div");
+      slide.className = "detail-main-slide";
+      detailMainImage.appendChild(slide);
     }
 
-    // --- маленькие превью ---
-    if (detailThumbs) {
-      detailThumbs.innerHTML = "";
-      images.forEach((url, idx) => {
-        const div = document.createElement("div");
-        div.className = "detail-thumb";
-        div.style.backgroundImage = `url('${url}')`;
-        div.style.backgroundSize = "cover";
-        div.style.backgroundPosition = "center";
-
-        div.addEventListener("click", () => {
-          if (detailMainImage) {
-            detailMainImage.scrollTo({
-              left: idx * detailMainImage.clientWidth,
-              behavior: "smooth",
-            });
-          }
-        });
-
-        detailThumbs.appendChild(div);
-      });
-    }
-
-    // --- КНОПКИ "ПОЗВОНИТЬ" / "НАПИСАТЬ" ---
-    const phone = ad.phone || DEFAULT_PHONE;
-    const telegram = ad.telegram || DEFAULT_TELEGRAM;
-
-    if (callSellerBtn) {
-      if (phone) {
-        const cleanPhone = String(phone).replace(/\s+/g, "");
-        callSellerBtn.href = "tel:" + cleanPhone;
-        callSellerBtn.style.display = "flex";
-      } else {
-        callSellerBtn.style.display = "none";
-      }
-    }
-
-    if (msgSellerBtn) {
-      if (telegram) {
-        const username = String(telegram).replace(/^@/, "");
-        msgSellerBtn.href = "https://t.me/" + username;
-        msgSellerBtn.style.display = "flex";
-      } else {
-        msgSellerBtn.style.display = "none";
-      }
-    }
-
-    showScreen("adDetails");
+    detailMainImage.scrollLeft = 0;
   }
+
+  // Маленькие превью
+  if (detailThumbs) {
+    detailThumbs.innerHTML = "";
+    images.forEach((url, idx) => {
+      const div = document.createElement("div");
+      div.className = "detail-thumb";
+      div.style.backgroundImage = `url('${url}')`;
+      div.style.backgroundSize = "cover";
+      div.style.backgroundPosition = "center";
+
+      div.addEventListener("click", () => {
+        if (detailMainImage) {
+          detailMainImage.scrollTo({
+            left: idx * detailMainImage.clientWidth,
+            behavior: "smooth",
+          });
+        }
+      });
+
+      detailThumbs.appendChild(div);
+    });
+  }
+
+  // Кнопки "Позвонить" / "Написать"
+  const phone = ad.phone || DEFAULT_PHONE;
+  const telegram = ad.telegram || DEFAULT_TELEGRAM;
+
+  if (callSellerBtn) {
+    if (phone) {
+      const cleanPhone = String(phone).replace(/\s+/g, "");
+      callSellerBtn.href = "tel:" + cleanPhone;
+      callSellerBtn.style.display = "block";
+    } else {
+      callSellerBtn.style.display = "none";
+    }
+  }
+
+  if (msgSellerBtn) {
+    if (telegram) {
+      const username = String(telegram).replace(/^@/, "");
+      msgSellerBtn.href = "https://t.me/" + username;
+      msgSellerBtn.style.display = "block";
+    } else {
+      msgSellerBtn.style.display = "none";
+    }
+  }
+
+  // Иконка "В избранное" (просто переключатель сердечка)
+  if (favoriteBtn) {
+    favoriteBtn.textContent = "♡";
+    favoriteBtn.dataset.active = "0";
+    favoriteBtn.onclick = () => {
+      const active = favoriteBtn.dataset.active === "1";
+      favoriteBtn.dataset.active = active ? "0" : "1";
+      favoriteBtn.textContent = active ? "♡" : "♥";
+    };
+  }
+
+  // Иконка "Поделиться"
+  if (shareBtn) {
+    shareBtn.onclick = () => {
+      const shareData = {
+        title: title,
+        text: title,
+        url: window.location.href, // пока просто ссылка на текущую страницу
+      };
+      if (navigator.share) {
+        navigator.share(shareData).catch(() => {});
+      } else if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard
+          .writeText(shareData.url)
+          .then(() => alert("Ссылка скопирована."));
+      } else {
+        alert("Поделиться можно, скопировав ссылку из адресной строки.");
+      }
+    };
+  }
+
+  // Похожие объявления
+  if (similarList) {
+    similarList.innerHTML = "";
+
+    if (Array.isArray(allAds) && allAds.length > 1) {
+      const candidates = allAds.filter(
+        (item) => item.id !== ad.id && item.type === ad.type
+      );
+      const sliced = candidates.slice(0, 3);
+
+      if (!sliced.length) {
+        similarList.innerHTML =
+          "<div class='ad-meta'>Пока нет похожих объявлений.</div>";
+      } else {
+        sliced.forEach((item) => {
+          similarList.appendChild(createSimilarCard(item));
+        });
+      }
+    } else {
+      similarList.innerHTML =
+        "<div class='ad-meta'>Пока нет похожих объявлений.</div>";
+    }
+  }
+
+  showScreen("adDetails");
+}
 
   // ===== ЛАЙТБОКС ДЛЯ ФОТО =====
 
