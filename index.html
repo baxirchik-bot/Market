@@ -1239,6 +1239,10 @@
   const callSellerBtn = document.getElementById("callSellerBtn");
   const msgSellerBtn = document.getElementById("msgSellerBtn");
 
+  // иконки «сердце» и «поделиться» из HTML
+  const favoriteBtn = document.getElementById("favoriteBtn");
+  const shareBtn = document.getElementById("shareBtn");
+
   // лайтбокс
   const imageLightbox = document.getElementById("imageLightbox");
   const lightboxImg = document.getElementById("lightboxImg");
@@ -1740,70 +1744,18 @@
     }
     if (detailDescription) detailDescription.textContent = desc;
 
-    // --- строка "цена + иконки" (в одной линии) ---
-    let priceRow = document.getElementById("detailPriceRow");
-    if (!priceRow && detailPrice && detailPrice.parentNode) {
-      priceRow = document.createElement("div");
-      priceRow.id = "detailPriceRow";
-      priceRow.style.display = "flex";
-      priceRow.style.alignItems = "center";
-      priceRow.style.justifyContent = "space-between";
-      priceRow.style.marginBottom = "6px";
-
-      detailPrice.parentNode.insertBefore(priceRow, detailPrice);
-      priceRow.appendChild(detailPrice);
+    // --- логика для иконок (используем уже существующие кнопки) ---
+    if (favoriteBtn) {
+      let fav = false;
+      favoriteBtn.textContent = "♡";
+      favoriteBtn.onclick = () => {
+        fav = !fav;
+        favoriteBtn.textContent = fav ? "♥" : "♡";
+      };
     }
 
-    if (priceRow) {
-      let iconsRow = document.getElementById("detailIconsRow");
-      if (!iconsRow) {
-        iconsRow = document.createElement("div");
-        iconsRow.id = "detailIconsRow";
-        iconsRow.style.display = "flex";
-        iconsRow.style.alignItems = "center";
-        iconsRow.style.gap = "8px";
-        priceRow.appendChild(iconsRow);
-      } else {
-        iconsRow.innerHTML = "";
-        priceRow.appendChild(iconsRow);
-      }
-
-      // кнопка "избранное"
-      const favBtn = document.createElement("button");
-      favBtn.type = "button";
-      favBtn.style.width = "28px";
-      favBtn.style.height = "28px";
-      favBtn.style.borderRadius = "999px";
-      favBtn.style.border = "1px solid #e2e8f0";
-      favBtn.style.display = "flex";
-      favBtn.style.alignItems = "center";
-      favBtn.style.justifyContent = "center";
-      favBtn.style.fontSize = "18px";
-      favBtn.style.background = "#ffffff";
-      favBtn.style.cursor = "pointer";
-      favBtn.textContent = "♡";
-      let favActive = false;
-      favBtn.addEventListener("click", () => {
-        favActive = !favActive;
-        favBtn.textContent = favActive ? "♥" : "♡";
-      });
-
-      // кнопка "поделиться"
-      const shareBtn = document.createElement("button");
-      shareBtn.type = "button";
-      shareBtn.style.width = "28px";
-      shareBtn.style.height = "28px";
-      shareBtn.style.borderRadius = "999px";
-      shareBtn.style.border = "1px solid #e2e8f0";
-      shareBtn.style.display = "flex";
-      shareBtn.style.alignItems = "center";
-      shareBtn.style.justifyContent = "center";
-      shareBtn.style.fontSize = "18px";
-      shareBtn.style.background = "#ffffff";
-      shareBtn.style.cursor = "pointer";
-      shareBtn.textContent = "⤴";
-
-      shareBtn.addEventListener("click", () => {
+    if (shareBtn) {
+      shareBtn.onclick = () => {
         const shareData = {
           title: title,
           text: title,
@@ -1811,19 +1763,14 @@
         };
         if (navigator.share) {
           navigator.share(shareData).catch(() => {});
+        } else if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard
+            .writeText(shareData.url)
+            .then(() => alert("Ссылка скопирована."));
         } else {
-          if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard
-              .writeText(shareData.url)
-              .then(() => alert("Ссылка скопирована."));
-          } else {
-            alert("Поделиться можно, скопировав ссылку из адресной строки.");
-          }
+          alert("Поделиться можно, скопировав ссылку из адресной строки.");
         }
-      });
-
-      iconsRow.appendChild(favBtn);
-      iconsRow.appendChild(shareBtn);
+      };
     }
 
     // --- главное фото со свайпом ---
