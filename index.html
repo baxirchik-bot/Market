@@ -1214,8 +1214,8 @@
   const ADD_AD_API_URL = "https://baxir.pythonanywhere.com/api/add_ad";
 
   // ==== Контакты продавца по умолчанию ====
-  const DEFAULT_PHONE = "+998901234567";   // поменяешь на свой
-  const DEFAULT_TELEGRAM = "Baxir1987";    // БЕЗ @
+  const DEFAULT_PHONE = "+998901234567"; // поменяешь на свой
+  const DEFAULT_TELEGRAM = "Baxir1987";  // БЕЗ @
 
   // ==== ImgBB ====
   const IMGBB_API_KEY = "d6a3eac7b36101df3effee3f7d0c7493";
@@ -1225,7 +1225,7 @@
   const adList = document.getElementById("adList");
   const screensContainer = document.querySelector(".screens");
 
-  // элементы карточки объявления (экран просмотра)
+  // элементы карточки объявления
   const screenAdDetails = document.getElementById("screen-ad-details");
   const detailMainImage = document.getElementById("detailMainImage");
   const detailThumbs = document.getElementById("detailThumbs");
@@ -1235,11 +1235,16 @@
   const detailDescription = document.getElementById("detailDescription");
   const detailBackBtn = document.getElementById("detailBackBtn");
 
-  // кнопки "Позвонить" / "Написать" в карточке
+  // кнопки Позвонить / Написать (внизу карточки)
   const callSellerBtn = document.getElementById("callSellerBtn");
   const msgSellerBtn = document.getElementById("msgSellerBtn");
 
-  // ---- формат цены ----
+  // лайтбокс
+  const imageLightbox = document.getElementById("imageLightbox");
+  const lightboxImg = document.getElementById("lightboxImg");
+
+  // ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
+
   function formatPrice(price) {
     if (price === null || price === undefined || price === "") {
       return "Narx kelishiladi";
@@ -1248,7 +1253,6 @@
     return s.replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " сум";
   }
 
-  // ---- формат даты ----
   function formatDateShort(iso) {
     if (!iso) return "";
     try {
@@ -1261,7 +1265,8 @@
     }
   }
 
-  // ---- карточка для блока "Yangi e'lonlar" (главная) ----
+  // ===== КАРТОЧКИ СПИСКА / ГЛАВНОЙ =====
+
   function createHomeAdCard(ad) {
     const card = document.createElement("article");
     card.className = "ad-card";
@@ -1288,50 +1293,11 @@
         <div class="ad-price">${priceText}</div>
       </div>
     `;
-     
-  function openAdDetails(ad) {
-  if (!screenAdDetails) return;
 
-  currentAd = ad; // <-- ВАЖНО: запоминаем
-  ...
     card.addEventListener("click", () => openAdDetails(ad));
     return card;
   }
 
-    // Клик по сердечку — демо "избранное"
-if (favoriteBtn) {
-  favoriteBtn.addEventListener("click", () => {
-    const title = currentAd?.title || "Объявление";
-    alert(`В демо-версии: «${title}» добавлено в избранное 😊`);
-  });
-}
-
-// Клик по share
-if (shareBtn) {
-  shareBtn.addEventListener("click", () => {
-    const title = currentAd?.title || "Объявление";
-    const url = window.location.href; // можно потом сделать отдельную ссылку на конкретное объявление
-
-    if (navigator.share) {
-      navigator
-        .share({
-          title,
-          text: `Смотри объявление: ${title}`,
-          url,
-        })
-        .catch(() => {});
-    } else {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(url);
-        alert("Ссылка на объявление скопирована.");
-      } else {
-        alert("Поделиться можно, просто скопировав ссылку из адресной строки.");
-      }
-    }
-  });
-}
-    
-  // ---- карточка для вкладки "Объявления" ----
   function createListAdCard(ad) {
     const card = document.createElement("article");
     card.className = "ad-card";
@@ -1372,14 +1338,10 @@ if (shareBtn) {
     return card;
   }
 
-  // ---- загрузка объявлений ----
+  // ===== ЗАГРУЗКА ОБЪЯВЛЕНИЙ =====
+
   let allAds = [];
 
-    let currentAd = null;
-
-const favoriteBtn = document.getElementById("favoriteBtn");
-const shareBtn = document.getElementById("shareBtn");
-    
   async function loadAds() {
     try {
       const res = await fetch(ADS_API_URL);
@@ -1389,7 +1351,7 @@ const shareBtn = document.getElementById("shareBtn");
 
       allAds = data;
 
-      // Главная
+      // Главная (Yangi e'lonlar)
       if (homeAdsList) {
         homeAdsList.innerHTML = "";
         const latest = data.slice(0, 4);
@@ -1432,7 +1394,8 @@ const shareBtn = document.getElementById("shareBtn");
     });
   }
 
-  // --- ГЛОБАЛЬНОЕ СОСТОЯНИЕ НОВОГО ОБЪЯВЛЕНИЯ ---
+  // ===== СОСТОЯНИЕ НОВОГО ОБЪЯВЛЕНИЯ =====
+
   const newAdDraft = {
     type: "Товар",
     city: "Ташкент",
@@ -1441,11 +1404,10 @@ const shareBtn = document.getElementById("shareBtn");
     description: "",
     photoCount: 0,
     photos: [],
-    phone: "",       // персональный телефон
-    telegram: "",    // персональный telegram
   };
 
-  // --- ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ ---
+  // ===== ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ =====
+
   const screens = {
     home: document.getElementById("screen-home"),
     list: document.getElementById("screen-list"),
@@ -1487,7 +1449,7 @@ const shareBtn = document.getElementById("shareBtn");
     }
   }
 
-  // --- НИЖНЕЕ МЕНЮ ---
+  // нижнее меню
   document.querySelectorAll(".nav-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       const target = btn.getAttribute("data-screen");
@@ -1498,7 +1460,8 @@ const shareBtn = document.getElementById("shareBtn");
     });
   });
 
-  // --- КНОПКА "ПОДАТЬ ОБЪЯВЛЕНИЕ" ---
+  // ===== НОВОЕ ОБЪЯВЛЕНИЕ: ШАГ 1 =====
+
   document.getElementById("btnOpenNewAd").addEventListener("click", () => {
     showScreen("newAd1");
   });
@@ -1507,7 +1470,6 @@ const shareBtn = document.getElementById("shareBtn");
     showScreen("home");
   });
 
-  // --- ТИП ОБЪЯВЛЕНИЯ ---
   const adTypeChips = document.querySelectorAll("#adTypeChips .chip");
   adTypeChips.forEach((chip) => {
     chip.addEventListener("click", () => {
@@ -1517,14 +1479,10 @@ const shareBtn = document.getElementById("shareBtn");
     });
   });
 
-  // --- ПОЛЯ ШАГА 1 ---
   const inputCity = document.getElementById("inputCity");
   const inputTitle = document.getElementById("inputTitle");
   const inputPrice = document.getElementById("inputPrice");
   const inputDescription = document.getElementById("inputDescription");
-  // новые (если добавишь в HTML):
-  const inputPhone = document.getElementById("inputPhone");
-  const inputTelegram = document.getElementById("inputTelegram");
 
   document
     .getElementById("btnNewAdStep1Next")
@@ -1532,16 +1490,6 @@ const shareBtn = document.getElementById("shareBtn");
       const title = (inputTitle.value || "").trim();
       const price = (inputPrice.value || "").trim();
       const desc = (inputDescription.value || "").trim();
-
-      // читаем контакты, если поля есть
-      const phoneVal =
-        inputPhone && inputPhone.value
-          ? inputPhone.value.trim()
-          : "";
-      const telegramVal =
-        inputTelegram && inputTelegram.value
-          ? inputTelegram.value.trim()
-          : "";
 
       if (!title) {
         alert("Введите название объявления.");
@@ -1557,15 +1505,11 @@ const shareBtn = document.getElementById("shareBtn");
       newAdDraft.price = price;
       newAdDraft.description = desc || "Без описания";
 
-      // если пользователь ввёл контакты — сохраняем,
-      // иначе используем дефолтные
-      newAdDraft.phone = phoneVal || DEFAULT_PHONE;
-      newAdDraft.telegram = telegramVal || DEFAULT_TELEGRAM;
-
       showScreen("newAd2");
     });
 
-  // --- ШАГ 2: ФОТО + ЗАГРУЗКА В IMGBB ---
+  // ===== ШАГ 2: ФОТО + IMGBB =====
+
   const btnUploadPhotos = document.getElementById("btnUploadPhotos");
   const inputPhotos = document.getElementById("inputPhotos");
   const photosPreview = document.getElementById("photosPreview");
@@ -1645,7 +1589,8 @@ const shareBtn = document.getElementById("shareBtn");
     showScreen("newAd1");
   });
 
-  // --- ШАГ 3: ПОДТВЕРЖДЕНИЕ ---
+  // ===== ШАГ 3: ПОДТВЕРЖДЕНИЕ =====
+
   const summaryTitle = document.getElementById("summaryTitle");
   const summaryCityType = document.getElementById("summaryCityType");
   const summaryPrice = document.getElementById("summaryPrice");
@@ -1669,7 +1614,8 @@ const shareBtn = document.getElementById("shareBtn");
     showScreen("newAd2");
   });
 
-  // --- ПУБЛИКАЦИЯ: ОТПРАВКА НА БЭКЕНД ---
+  // ===== ПУБЛИКАЦИЯ НА БЭКЕНД =====
+
   const btnPublishAd = document.getElementById("btnPublishAd");
 
   async function publishAdToBackend() {
@@ -1683,9 +1629,11 @@ const shareBtn = document.getElementById("shareBtn");
         title: newAdDraft.title,
         price: (newAdDraft.price || "").replace(/\s+/g, ""),
         description: newAdDraft.description,
-        images: newAdDraft.photos, // массив ссылок ImgBB
-        phone: newAdDraft.phone || DEFAULT_PHONE,
-        telegram: newAdDraft.telegram || DEFAULT_TELEGRAM,
+        images: newAdDraft.photos, // ссылки ImgBB
+
+        // контакты продавца (пока одинаковые для всех)
+        phone: DEFAULT_PHONE,
+        telegram: DEFAULT_TELEGRAM,
       };
 
       const res = await fetch(ADD_AD_API_URL, {
@@ -1711,8 +1659,6 @@ const shareBtn = document.getElementById("shareBtn");
       newAdDraft.description = "";
       newAdDraft.photoCount = 0;
       newAdDraft.photos = [];
-      newAdDraft.phone = "";
-      newAdDraft.telegram = "";
 
       showScreen("newAdSuccess");
       loadAds();
@@ -1727,7 +1673,8 @@ const shareBtn = document.getElementById("shareBtn");
 
   btnPublishAd.addEventListener("click", publishAdToBackend);
 
-  // --- ЭКРАН УСПЕХА ---
+  // ===== ЭКРАН УСПЕХА =====
+
   document.getElementById("btnGoToList").addEventListener("click", () => {
     showScreen("list");
     loadAds();
@@ -1738,7 +1685,8 @@ const shareBtn = document.getElementById("shareBtn");
     loadAds();
   });
 
-  // --- ТАБЫ Товары / Услуги / Недвижимость (фильтры по type) ---
+  // ===== ТАБЫ ТОВАРЫ / УСЛУГИ / НЕДВИЖИМОСТЬ =====
+
   const tabGoods = document.getElementById("tabGoods");
   const tabServices = document.getElementById("tabServices");
   const tabRealty = document.getElementById("tabRealty");
@@ -1778,23 +1726,8 @@ const shareBtn = document.getElementById("shareBtn");
     filterByType("Недвижимость");
   });
 
-  // --- ЛАЙТБОКС ДЛЯ ПОЛНОЭКРАННОГО ФОТО ---
-  const imageLightbox = document.getElementById("imageLightbox");
-  const lightboxImg = document.getElementById("lightboxImg");
+  // ===== ОТКРЫТИЕ КАРТОЧКИ ОБЪЯВЛЕНИЯ =====
 
-  function openLightbox(url) {
-    if (!imageLightbox || !lightboxImg) return;
-    lightboxImg.src = url;
-    imageLightbox.classList.add("visible");
-  }
-
-  if (imageLightbox) {
-    imageLightbox.addEventListener("click", () => {
-      imageLightbox.classList.remove("visible");
-    });
-  }
-
-  // --- ОТКРЫТИЕ КАРТОЧКИ ОБЪЯВЛЕНИЯ ---
   function openAdDetails(ad) {
     if (!screenAdDetails) return;
 
@@ -1809,33 +1742,126 @@ const shareBtn = document.getElementById("shareBtn");
     if (detailTitle) detailTitle.textContent = title;
     if (detailPrice) detailPrice.textContent = priceText;
     if (detailMeta) {
-      detailMeta.textContent = `📍 ${city} · ${type}${created ? " · " + created : ""}`;
+      detailMeta.textContent = `📍 ${city} · ${type}${
+        created ? " · " + created : ""
+      }`;
     }
     if (detailDescription) detailDescription.textContent = desc;
 
-    // главное фото со свайпом
+    // --- иконки "Избранное" и "Поделиться" (рядом с названием/ценой) ---
+    let iconsRow = document.getElementById("detailIconsRow");
+    if (!iconsRow && detailTitle) {
+      iconsRow = document.createElement("div");
+      iconsRow.id = "detailIconsRow";
+      iconsRow.style.display = "flex";
+      iconsRow.style.justifyContent = "flex-end";
+      iconsRow.style.alignItems = "center";
+      iconsRow.style.gap = "12px";
+      iconsRow.style.marginTop = "-8px";
+      iconsRow.style.marginBottom = "8px";
+
+      // вставляем сразу после заголовка
+      detailTitle.insertAdjacentElement("afterend", iconsRow);
+    }
+    if (iconsRow) {
+      iconsRow.innerHTML = "";
+
+      const favBtn = document.createElement("button");
+      favBtn.type = "button";
+      favBtn.style.width = "28px";
+      favBtn.style.height = "28px";
+      favBtn.style.borderRadius = "999px";
+      favBtn.style.border = "1px solid #e2e8f0";
+      favBtn.style.display = "flex";
+      favBtn.style.alignItems = "center";
+      favBtn.style.justifyContent = "center";
+      favBtn.style.fontSize = "18px";
+      favBtn.style.background = "#ffffff";
+      favBtn.style.cursor = "pointer";
+      favBtn.textContent = "♡";
+
+      let favActive = false;
+      favBtn.addEventListener("click", () => {
+        favActive = !favActive;
+        favBtn.textContent = favActive ? "♥" : "♡";
+      });
+
+      const shareBtn = document.createElement("button");
+      shareBtn.type = "button";
+      shareBtn.style.width = "28px";
+      shareBtn.style.height = "28px";
+      shareBtn.style.borderRadius = "999px";
+      shareBtn.style.border = "1px solid #e2e8f0";
+      shareBtn.style.display = "flex";
+      shareBtn.style.alignItems = "center";
+      shareBtn.style.justifyContent = "center";
+      shareBtn.style.fontSize = "18px";
+      shareBtn.style.background = "#ffffff";
+      shareBtn.style.cursor = "pointer";
+      shareBtn.textContent = "⤴";
+
+      shareBtn.addEventListener("click", () => {
+        const shareData = {
+          title: title,
+          text: title,
+          url: window.location.href,
+        };
+        if (navigator.share) {
+          navigator.share(shareData).catch(() => {});
+        } else {
+          // запасной вариант
+          navigator.clipboard
+            ?.writeText(shareData.url)
+            .then(() => alert("Ссылка скопирована."));
+        }
+      });
+
+      iconsRow.appendChild(favBtn);
+      iconsRow.appendChild(shareBtn);
+    }
+
+    // --- главное фото со свайпом ---
     if (detailMainImage) {
       detailMainImage.innerHTML = "";
+
+      // контейнер — горизонтальный скролл
+      detailMainImage.style.display = "flex";
+      detailMainImage.style.overflowX = "auto";
+      detailMainImage.style.scrollSnapType = "x mandatory";
+
       images.forEach((url) => {
         const slide = document.createElement("div");
         slide.className = "detail-main-slide";
+        slide.style.minWidth = "100%";
+        slide.style.height = "100%";
+        slide.style.borderRadius = "16px";
         slide.style.backgroundImage = `url('${url}')`;
+        slide.style.backgroundSize = "cover";
+        slide.style.backgroundPosition = "center";
+        slide.style.scrollSnapAlign = "start";
+
+        // клик по слайду — полноэкранный просмотр
         slide.addEventListener("click", () => {
           openLightbox(url);
         });
+
         detailMainImage.appendChild(slide);
       });
 
       if (!images.length) {
         const slide = document.createElement("div");
-        slide.className = "detail-main-slide";
+        slide.style.minWidth = "100%";
+        slide.style.height = "100%";
+        slide.style.borderRadius = "16px";
+        slide.style.background = "#e5e7eb";
+        slide.style.scrollSnapAlign = "start";
         detailMainImage.appendChild(slide);
       }
 
       detailMainImage.scrollLeft = 0;
     }
 
-    // маленькие превью
+    // --- маленькие превью ---
     if (detailThumbs) {
       detailThumbs.innerHTML = "";
       images.forEach((url, idx) => {
@@ -1858,7 +1884,8 @@ const shareBtn = document.getElementById("shareBtn");
       });
     }
 
-    // --- Кнопки "Позвонить" и "Написать" ---
+    // --- КНОПКИ "ПОЗВОНИТЬ" / "НАПИСАТЬ" ---
+
     const phone = ad.phone || DEFAULT_PHONE;
     const telegram = ad.telegram || DEFAULT_TELEGRAM;
 
@@ -1866,7 +1893,7 @@ const shareBtn = document.getElementById("shareBtn");
       if (phone) {
         const cleanPhone = String(phone).replace(/\s+/g, "");
         callSellerBtn.href = "tel:" + cleanPhone;
-        callSellerBtn.style.display = "block";
+        callSellerBtn.style.display = "flex";
       } else {
         callSellerBtn.style.display = "none";
       }
@@ -1876,7 +1903,7 @@ const shareBtn = document.getElementById("shareBtn");
       if (telegram) {
         const username = String(telegram).replace(/^@/, "");
         msgSellerBtn.href = "https://t.me/" + username;
-        msgSellerBtn.style.display = "block";
+        msgSellerBtn.style.display = "flex";
       } else {
         msgSellerBtn.style.display = "none";
       }
@@ -1885,14 +1912,29 @@ const shareBtn = document.getElementById("shareBtn");
     showScreen("adDetails");
   }
 
-  // назад из карточки
+  // ===== ЛАЙТБОКС ДЛЯ ФОТО =====
+
+  function openLightbox(url) {
+    if (!imageLightbox || !lightboxImg) return;
+    lightboxImg.src = url;
+    imageLightbox.classList.add("visible");
+  }
+
+  if (imageLightbox) {
+    imageLightbox.addEventListener("click", () => {
+      imageLightbox.classList.remove("visible");
+    });
+  }
+
+  // ===== НАЗАД ИЗ КАРТОЧКИ =====
+
   if (detailBackBtn) {
     detailBackBtn.addEventListener("click", () => {
       showScreen("list");
     });
   }
 
-  // ---- ПЕРВЫЙ ЗАПУСК ----
+  // ===== ПЕРВЫЙ ЗАПУСК =====
   loadAds();
 </script>
 </body>
