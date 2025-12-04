@@ -609,6 +609,65 @@
       flex-shrink: 0;
     }
 
+        /* Главное фото в карточке + свайп */
+    #detailMainImage {
+      width: 100%;
+      height: 260px;
+      border-radius: 16px;
+      background: #e5e7eb;
+      margin-bottom: 12px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      display: flex;
+    }
+
+    .detail-main-slide {
+      min-width: 100%;
+      height: 100%;
+      flex-shrink: 0;
+      scroll-snap-align: center;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .detail-thumbs-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      margin-bottom: 12px;
+    }
+
+    /* Лайтбокс (полноэкранное фото) */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .lightbox.visible {
+      display: flex;
+    }
+
+    .lightbox img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .lightbox-close-hint {
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 12px;
+    }
+    
     .ad-view-main-title {
       font-size: 18px;
       font-weight: 600;
@@ -970,21 +1029,21 @@
         </button>
       </section>
 
-      <!-- AD DETAILS SCREEN -->
-      <section class="screen" id="screen-ad-details">
-        <div class="ad-detail-header">
-          <div class="ad-detail-header-left">
-            <button class="ad-detail-back" id="detailBackBtn">←</button>
-            <div class="ad-detail-header-title">Объявление</div>
-          </div>
-          <button class="ad-detail-more">⋯</button>
+            <!-- AD DETAILS SCREEN -->
+      <section class="screen" id="screen-ad-details" style="padding:12px;">
+        <div class="ad-view-header-row">
+          <button class="ad-view-back-btn" id="detailBackBtn">←</button>
+          <div class="ad-view-title">Объявление</div>
         </div>
 
         <div class="ad-view-card">
-          <div class="ad-view-image" id="detailMainImage"></div>
+          <!-- Главное фото со свайпом -->
+          <div id="detailMainImage"></div>
 
-          <div class="detail-thumbs-row" id="detailThumbs"></div>
+          <!-- Маленькие превью -->
+          <div id="detailThumbs" class="detail-thumbs-row"></div>
 
+          <!-- Текстовая часть -->
           <div class="ad-view-main-title" id="detailTitle">Название объявления</div>
           <div class="ad-view-price" id="detailPrice">0 сум</div>
           <div class="ad-view-meta" id="detailMeta">Ташкент · Товары</div>
@@ -1005,18 +1064,32 @@
           </div>
 
           <div class="ad-view-actions-row">
-            <button class="ad-view-btn-outline">💬 Написать продавцу</button>
-            <button class="ad-view-btn-outline">👤 Профиль продавца</button>
+            <button class="ad-view-btn-outline">
+              💬 Написать продавцу
+            </button>
+            <button class="ad-view-btn-outline">
+              👤 Профиль продавца
+            </button>
           </div>
 
           <div class="ad-view-btn-ghost-row">
-            <button class="ad-view-btn-ghost">⭐ В избранное</button>
-            <button class="ad-view-btn-ghost">🔝 Похожие</button>
+            <button class="ad-view-btn-ghost">
+              ⭐ В избранное
+            </button>
+            <button class="ad-view-btn-ghost">
+              🔝 Похожие
+            </button>
           </div>
         </div>
       </section>
     </div>
 
+        <!-- FULLSCREEN IMAGE LIGHTBOX -->
+    <div id="imageLightbox" class="lightbox">
+      <img id="lightboxImg" src="" alt="Фото объявления" />
+      <div class="lightbox-close-hint">Нажмите, чтобы закрыть</div>
+    </div>
+    
     <!-- BOTTOM NAV -->
     <nav class="bottom-nav">
       <div class="bottom-nav-inner">
@@ -1532,51 +1605,92 @@
     });
 
     // открытие карточки объявления
-    function openAdDetails(ad) {
-      if (!screenAdDetails) return;
+      function openAdDetails(ad) {
+    if (!screenAdDetails) return;
 
-      const title = ad.title || "Объявление";
-      const priceText = formatPrice(ad.price);
-      const city = ad.city || "Город";
-      const type = ad.type || "Товар";
-      const desc = ad.description || "";
-      const created = formatDateShort(ad.created_at);
-      const images = Array.isArray(ad.images) ? ad.images : [];
+    const title = ad.title || "Объявление";
+    const priceText = formatPrice(ad.price);
+    const city = ad.city || "Город";
+    const type = ad.type || "Товар";
+    const desc = ad.description || "";
+    const created = formatDateShort(ad.created_at);
+    const images = Array.isArray(ad.images) ? ad.images : [];
 
-      if (detailTitle) detailTitle.textContent = title;
-      if (detailPrice) detailPrice.textContent = priceText;
-      if (detailMeta) {
-        detailMeta.textContent = `📍 ${city} · ${type}${
-          created ? " · " + created : ""
-        }`;
-      }
-      if (detailDescription) detailDescription.textContent = desc;
-
-      if (detailMainImage) {
-        if (images.length > 0) {
-          detailMainImage.style.backgroundImage = `url('${images[0]}')`;
-        } else {
-          detailMainImage.style.backgroundImage = "";
-        }
-      }
-
-      if (detailThumbs) {
-        detailThumbs.innerHTML = "";
-        images.forEach((url) => {
-          const div = document.createElement("div");
-          div.className = "detail-thumb";
-          div.style.backgroundImage = `url('${url}')`;
-          div.addEventListener("click", () => {
-            if (detailMainImage) {
-              detailMainImage.style.backgroundImage = `url('${url}')`;
-            }
-          });
-          detailThumbs.appendChild(div);
-        });
-      }
-
-      showScreen("adDetails");
+    if (detailTitle) detailTitle.textContent = title;
+    if (detailPrice) detailPrice.textContent = priceText;
+    if (detailMeta) {
+      detailMeta.textContent = `📍 ${city} · ${type}${created ? " · " + created : ""}`;
     }
+    if (detailDescription) detailDescription.textContent = desc;
+
+    // главное фото со свайпом
+    if (detailMainImage) {
+      detailMainImage.innerHTML = "";
+      images.forEach((url) => {
+        const slide = document.createElement("div");
+        slide.className = "detail-main-slide";
+        slide.style.backgroundImage = `url('${url}')`;
+
+        // клик по слайду — открыть в полный экран
+        slide.addEventListener("click", () => {
+          openLightbox(url);
+        });
+
+        detailMainImage.appendChild(slide);
+      });
+
+      // если фоток нет — просто серый холст
+      if (!images.length) {
+        const slide = document.createElement("div");
+        slide.className = "detail-main-slide";
+        detailMainImage.appendChild(slide);
+      }
+
+      detailMainImage.scrollLeft = 0;
+    }
+
+    // маленькие превью
+    if (detailThumbs) {
+      detailThumbs.innerHTML = "";
+      images.forEach((url, idx) => {
+        const div = document.createElement("div");
+        div.className = "detail-thumb";
+        div.style.backgroundImage = `url('${url}')`;
+        div.style.backgroundSize = "cover";
+        div.style.backgroundPosition = "center";
+
+        // клик по превью — скроллим главный блок на нужный слайд
+        div.addEventListener("click", () => {
+          if (detailMainImage) {
+            detailMainImage.scrollTo({
+              left: idx * detailMainImage.clientWidth,
+              behavior: "smooth",
+            });
+          }
+        });
+
+        detailThumbs.appendChild(div);
+      });
+    }
+
+    showScreen("adDetails");
+  }
+
+      // Лайтбокс для полноэкранного просмотра
+  const imageLightbox = document.getElementById("imageLightbox");
+  const lightboxImg = document.getElementById("lightboxImg");
+
+  function openLightbox(url) {
+    if (!imageLightbox || !lightboxImg) return;
+    lightboxImg.src = url;
+    imageLightbox.classList.add("visible");
+  }
+
+  if (imageLightbox) {
+    imageLightbox.addEventListener("click", () => {
+      imageLightbox.classList.remove("visible");
+    });
+  }
 
     // назад из карточки
     if (detailBackBtn) {
