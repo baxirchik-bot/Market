@@ -531,6 +531,31 @@
       font-weight: 600;
     }
 
+    .ad-view-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.ad-view-back-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  border: 1px solid rgba(148,163,184,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.ad-view-header-title {
+  font-size: 17px;
+  font-weight: 600;
+}
+
     /* ==== КАРТОЧКА ОБЪЯВЛЕНИЯ ==== */
     .ad-detail-header {
       display: flex;
@@ -1024,10 +1049,10 @@
 
             <!-- AD DETAILS SCREEN -->
       <section class="screen" id="screen-ad-details" style="padding:12px;">
-        <div class="ad-view-header-row">
-          <button class="ad-view-back-btn" id="detailBackBtn">←</button>
-          <div class="ad-view-title">Объявление</div>
-        </div>
+        <div class="ad-view-header">
+  <button class="ad-view-back-btn" id="detailBackBtn">←</button>
+  <span class="ad-view-header-title">Объявление</span>
+</div>
 
         <div class="ad-view-card">
           <!-- Главное фото со свайпом -->
