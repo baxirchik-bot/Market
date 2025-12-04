@@ -556,6 +556,46 @@
   font-weight: 600;
 }
 
+    /* Иконки "в избранное" и "поделиться" рядом с названием */
+
+.ad-view-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+
+.ad-view-title-box {
+  flex: 1;
+  min-width: 0; /* чтобы текст красиво переносился */
+}
+
+.ad-view-icon-row {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.icon-circle-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.icon-circle-btn:active {
+  transform: scale(0.96);
+}
+    
     /* ==== КАРТОЧКА ОБЪЯВЛЕНИЯ ==== */
     .ad-detail-header {
       display: flex;
@@ -1082,35 +1122,62 @@
 </div>
 
         <div class="ad-view-card">
-          <!-- Главное фото со свайпом -->
-          <div id="detailMainImage"></div>
 
-          <!-- Маленькие превью -->
-          <div id="detailThumbs" class="detail-thumbs-row"></div>
+  <!-- Главное фото (слайдер) -->
+  <div class="detail-main-image" id="detailMainImage"></div>
 
-          <!-- Текстовая часть -->
-          <div class="ad-view-main-title" id="detailTitle">Название объявления</div>
-          <div class="ad-view-price" id="detailPrice">0 сум</div>
-          <div class="ad-view-meta" id="detailMeta">Ташкент · Товары</div>
+  <!-- Маленькие превью -->
+  <div class="detail-thumbs" id="detailThumbs"></div>
 
-          <div class="ad-view-description-title">Описание</div>
-          <div class="ad-view-description" id="detailDescription">
-            Здесь будет текст описания объявления.
-          </div>
+  <!-- Заголовок + цена + иконки -->
+  <div class="ad-view-title-row">
+    <div class="ad-view-title-box">
+      <div class="ad-view-main-title" id="detailTitle">Название объявления</div>
+      <div class="ad-view-price" id="detailPrice">0 сум</div>
+    </div>
+    <div class="ad-view-icon-row">
+      <button
+        class="icon-circle-btn"
+        id="favoriteBtn"
+        type="button"
+        aria-label="В избранное"
+      >
+        ♡
+      </button>
+      <button
+        class="icon-circle-btn"
+        id="shareBtn"
+        type="button"
+        aria-label="Поделиться"
+      >
+        ⤴︎
+      </button>
+    </div>
+  </div>
 
-          <div class="ad-view-seller-card">
-            <div class="avatar">B</div>
-            <div>
-              <div class="ad-view-seller-info-main">Baxir B-R (@Baxir1987)</div>
-              <div class="ad-view-seller-info-sub">
-                ⭐ 4,9 · 23 отзыва · 12 объявлений
-              </div>
-            </div>
-          </div>
+  <!-- Метаданные -->
+  <div class="ad-view-meta" id="detailMeta">Ташкент · Товары</div>
 
-            <div class="ad-view-actions-big">
-    <a id="callSellerBtn" class="call-btn">📞 Позвонить</a>
-    <a id="msgSellerBtn" class="msg-btn" target="_blank">💬 Написать</a>
+  <!-- Описание -->
+  <div class="ad-view-description-title">Описание</div>
+  <div class="ad-view-description" id="detailDescription">
+    Здесь будет текст описания объявления.
+  </div>
+
+  <!-- Карточка продавца и кнопки "Позвонить / Написать" — оставь как у тебя было -->
+  <div class="ad-view-seller-card">
+    <div class="avatar">B</div>
+    <div>
+      <div class="ad-view-seller-info-main">Baxir B-R (@Baxir1987)</div>
+      <div class="ad-view-seller-info-sub">
+        ⭐ 4,9 · 23 отзыва · 12 объявлений
+      </div>
+    </div>
+  </div>
+
+  <div class="ad-view-actions-row">
+    <a class="call-btn" id="callSellerBtn" href="#">Позвонить</a>
+    <a class="msg-btn" id="msgSellerBtn" href="#">Написать</a>
   </div>
 </div> <!-- конец .ad-view-card -->
       </section>
@@ -1221,11 +1288,49 @@
         <div class="ad-price">${priceText}</div>
       </div>
     `;
+     
+  function openAdDetails(ad) {
+  if (!screenAdDetails) return;
 
+  currentAd = ad; // <-- ВАЖНО: запоминаем
+  ...
     card.addEventListener("click", () => openAdDetails(ad));
     return card;
   }
 
+    // Клик по сердечку — демо "избранное"
+if (favoriteBtn) {
+  favoriteBtn.addEventListener("click", () => {
+    const title = currentAd?.title || "Объявление";
+    alert(`В демо-версии: «${title}» добавлено в избранное 😊`);
+  });
+}
+
+// Клик по share
+if (shareBtn) {
+  shareBtn.addEventListener("click", () => {
+    const title = currentAd?.title || "Объявление";
+    const url = window.location.href; // можно потом сделать отдельную ссылку на конкретное объявление
+
+    if (navigator.share) {
+      navigator
+        .share({
+          title,
+          text: `Смотри объявление: ${title}`,
+          url,
+        })
+        .catch(() => {});
+    } else {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url);
+        alert("Ссылка на объявление скопирована.");
+      } else {
+        alert("Поделиться можно, просто скопировав ссылку из адресной строки.");
+      }
+    }
+  });
+}
+    
   // ---- карточка для вкладки "Объявления" ----
   function createListAdCard(ad) {
     const card = document.createElement("article");
@@ -1270,6 +1375,11 @@
   // ---- загрузка объявлений ----
   let allAds = [];
 
+    let currentAd = null;
+
+const favoriteBtn = document.getElementById("favoriteBtn");
+const shareBtn = document.getElementById("shareBtn");
+    
   async function loadAds() {
     try {
       const res = await fetch(ADS_API_URL);
