@@ -150,6 +150,21 @@
       cursor: pointer;
     }
 
+        /* ПРОМО-БАННЕР НА ГЛАВНОЙ */
+    .promo-banner {
+      margin: 10px 0 14px;
+      border-radius: 18px;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18);
+    }
+
+    .promo-banner img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
     .chip-row {
       display: flex;
       flex-wrap: wrap;
@@ -911,9 +926,14 @@
         </div>
 
         <div class="quick-actions-title">Быстрые действия</div>
-        <button class="primary-btn" id="btnOpenNewAd">
+                <button class="primary-btn" id="btnOpenNewAd">
           <span>＋</span> Подать объявление
         </button>
+
+        <!-- ПРОМО-БАННЕР (как на Авито) -->
+        <div class="promo-banner" id="promoBanner">
+          <img src="markethub-promo-banner.jpg" alt="MarketHub — biznesingiz uchun yangi mijozlar" />
+        </div>
 
         <!-- Популярные категории -->
         <h2 class="section-title" style="margin-top:12px;">Популярные категории</h2>
@@ -2328,6 +2348,16 @@
     });
   }
 
+      // Клик по промо-баннеру (покупка продвижения)
+  const promoBanner = document.getElementById("promoBanner");
+  if (promoBanner) {
+    promoBanner.addEventListener("click", () => {
+      // здесь позже откроем отдельный экран / WebApp покупки продвижения
+      // пока просто показываем сообщение
+      alert("Скоро тут будет страница продвижения объявлений 🚀");
+    });
+  }
+    
   // ===== ИНИЦИАЛИЗАЦИЯ =====
   loadAds();
   </script>
