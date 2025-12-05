@@ -1375,7 +1375,7 @@
   const similarList = document.getElementById("similarList");
   const favoriteBtn = document.getElementById("favoriteBtn");
   const shareBtn = document.getElementById("shareBtn");
-  —const sellerCard = document.getElementById("sellerCard");
+  const sellerCard = document.getElementById("sellerCard");
 
   // Lightbox
   const imageLightbox = document.getElementById("imageLightbox");
@@ -2282,6 +2282,13 @@
       showScreen("home");
     });
   }
+
+    // Переход в профиль при клике по карточке продавца в объявлении
+if (sellerCard) {
+  sellerCard.addEventListener("click", () => {
+    showScreen("profile");
+  });
+}
 
   // ===== ИНИЦИАЛИЗАЦИЯ =====
   loadAds();
