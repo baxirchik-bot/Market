@@ -180,6 +180,33 @@
       margin-top: 4px;
     }
 
+    /* POPULAR CATEGORIES */
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .category-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 10px 12px;
+      box-shadow: 0 3px 10px rgba(15, 23, 42, 0.06);
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .category-card-title {
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .category-card-sub {
+      font-size: 12px;
+      color: #64748b;
+    }
+
     /* LIST (TILE) */
     .ad-list {
       display: flex;
@@ -562,6 +589,44 @@
       flex-shrink: 0;
     }
 
+    /* Заголовок + иконки */
+    .ad-view-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+      margin-top: 8px;
+      margin-bottom: 4px;
+    }
+
+    .ad-view-title-box {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .ad-view-icon-row {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .icon-circle-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      cursor: pointer;
+      padding: 0;
+    }
+    .icon-circle-btn:active {
+      transform: scale(0.96);
+    }
+
     .ad-view-main-title {
       font-size: 18px;
       font-weight: 600;
@@ -647,6 +712,7 @@
       display: flex;
       gap: 10px;
       margin-top: 12px;
+      align-items: stretch;
     }
 
     .call-btn,
@@ -659,7 +725,9 @@
       text-align: center;
       text-decoration: none;
       color: #ffffff;
-      display: block;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .call-btn {
@@ -753,6 +821,31 @@
       font-size: 12px;
     }
 
+    .lightbox-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      border: none;
+      background: rgba(15, 23, 42, 0.6);
+      color: #ffffff;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .lightbox-prev {
+      left: 12px;
+    }
+
+    .lightbox-next {
+      right: 12px;
+    }
+
     /* ФИЛЬТРЫ ЭКРАН */
     .filters-section-title {
       font-size: 14px;
@@ -814,6 +907,27 @@
         <button class="primary-btn" id="btnOpenNewAd">
           <span>＋</span> Подать объявление
         </button>
+
+        <!-- Популярные категории -->
+        <h2 class="section-title" style="margin-top:12px;">Популярные категории</h2>
+        <div class="category-grid" id="homeCategoryGrid">
+          <div class="category-card" data-type="Транспорт">
+            <div class="category-card-title">🚗 Транспорт</div>
+            <div class="category-card-sub">Легковые, спецтехника</div>
+          </div>
+          <div class="category-card" data-type="Недвижимость">
+            <div class="category-card-title">🏠 Недвижимость</div>
+            <div class="category-card-sub">Квартиры, дома</div>
+          </div>
+          <div class="category-card" data-type="Электроника">
+            <div class="category-card-title">📱 Электроника</div>
+            <div class="category-card-sub">Телефоны, техника</div>
+          </div>
+          <div class="category-card" data-type="Услуги">
+            <div class="category-card-title">🛠 Услуги</div>
+            <div class="category-card-sub">Мастера, ремонт</div>
+          </div>
+        </div>
 
         <h2 class="section-title" style="margin-top:10px;">Все объявления</h2>
         <div id="feedList" class="ad-list grid-mode"></div>
@@ -880,9 +994,15 @@
         <div class="filters-section-title">Тип объявления</div>
         <div class="chip-row" id="filterTypeRow">
           <button class="chip chip-filled" data-type="all">Все</button>
-          <button class="chip" data-type="Товар">📦 Товары</button>
-          <button class="chip" data-type="Услуга">💼 Услуги</button>
-          <button class="chip" data-type="Недвижимость">🏠 Недвижимость</button>
+          <button class="chip" data-type="Транспорт">🚗 Транспорт</button>
+          <button class="chip" data-type="Одежда">👕 Одежда</button>
+          <button class="chip" data-type="Электроника">📱 Электроника</button>
+          <button class="chip" data-type="Животные">🐾 Животные</button>
+          <button class="chip" data-type="Работа">💼 Работа</button>
+          <button class="chip" data-type="Запчасти и аксессуары">🔧 Запчасти и аксессуары</button>
+          <button class="chip" data-type="Готовый бизнес и оборудование">🏭 Готовый бизнес</button>
+          <button class="chip" data-type="Подработка">⏱ Подработка</button>
+          <button class="chip" data-type="Путешествия">✈️ Путешествия</button>
         </div>
 
         <div class="filters-section-title">Город</div>
@@ -902,17 +1022,25 @@
           <option>Хива</option>
         </select>
 
-        <div class="filters-section-title">Цена</div>
-        <div class="chip-row" id="filterPriceRow">
-          <button class="chip chip-filled" data-price="all">Любая цена</button>
-          <button class="chip" data-price="lt500">до 500 000</button>
-          <button class="chip" data-price="mid">500 000 – 2 000 000</button>
-          <button class="chip" data-price="gt2000">от 2 000 000</button>
+        <div class="filters-section-title">Валюта</div>
+        <div class="chip-row" id="filterCurrencyRow">
+          <button class="chip chip-filled" data-currency="sum">Сум</button>
+          <button class="chip" data-currency="usd">USD</button>
         </div>
 
         <div class="filters-section-title">Дополнительно</div>
         <div class="chip-row">
           <button class="chip" id="filterPhotoChip">📷 Только с фото</button>
+        </div>
+
+        <div class="filters-section-title">Сортировка</div>
+        <div class="form-group">
+          <select class="form-select" id="filterSort">
+            <option value="default">По умолчанию</option>
+            <option value="date">По дате</option>
+            <option value="cheap">Дешевле</option>
+            <option value="expensive">Дороже</option>
+          </select>
         </div>
 
         <div class="filters-actions-row">
@@ -935,8 +1063,15 @@
         <div class="form-group" style="margin-top: 10px;">
           <label class="form-label">Тип объявления</label>
           <div class="chip-row" id="adTypeChips">
-            <button class="chip chip-filled" data-type="Товар">📦 Товар</button>
-            <button class="chip" data-type="Услуга">💼 Услуга</button>
+            <button class="chip chip-filled" data-type="Транспорт">🚗 Транспорт</button>
+            <button class="chip" data-type="Одежда">👕 Одежда</button>
+            <button class="chip" data-type="Электроника">📱 Электроника</button>
+            <button class="chip" data-type="Животные">🐾 Животные</button>
+            <button class="chip" data-type="Работа">💼 Работа</button>
+            <button class="chip" data-type="Запчасти и аксессуары">🔧 Запчасти и аксессуары</button>
+            <button class="chip" data-type="Готовый бизнес и оборудование">🏭 Готовый бизнес</button>
+            <button class="chip" data-type="Подработка">⏱ Подработка</button>
+            <button class="chip" data-type="Путешествия">✈️ Путешествия</button>
           </div>
         </div>
 
@@ -957,9 +1092,9 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">Цена</label>
+          <label class="form-label">Цена (в сумах)</label>
           <input class="form-input" id="inputPrice" placeholder="Например: 10 500 000" />
-          <div class="hint">Валюта по умолчанию: сум</div>
+          <div class="hint">Валюта хранения: сум. На сайте показываем в сум или USD.</div>
         </div>
 
         <div class="form-group">
@@ -1130,8 +1265,10 @@
 
     <!-- FULLSCREEN IMAGE LIGHTBOX -->
     <div id="imageLightbox" class="lightbox">
+      <button class="lightbox-arrow lightbox-prev" id="lightboxPrev">‹</button>
       <img id="lightboxImg" src="" alt="Фото объявления" />
-      <div class="lightbox-close-hint">Нажмите для закрытия</div>
+      <button class="lightbox-arrow lightbox-next" id="lightboxNext">›</button>
+      <div class="lightbox-close-hint">Смахните или нажмите для закрытия</div>
     </div>
 
     <!-- BOTTOM NAV -->
@@ -1162,6 +1299,9 @@
   const DEFAULT_PHONE = "+998901234567"; // поменяешь на свой
   const DEFAULT_TELEGRAM = "Baxir1987";  // БЕЗ @
 
+  // ==== Курс валюты (1 USD = X сум) ====
+  const EXCHANGE_RATE = 12500; // когда курс изменится — меняешь здесь
+
   // ==== ImgBB ====
   const IMGBB_API_KEY = "d6a3eac7b36101df3effee3f7d0c7493";
   const IMGBB_UPLOAD_URL = "https://api.imgbb.com/1/upload";
@@ -1181,11 +1321,14 @@
   const searchInput = document.querySelector(".search-input");
   const openFiltersBtn = document.getElementById("openFiltersBtn");
 
+  const homeCategoryGrid = document.getElementById("homeCategoryGrid");
+
   // Filters UI
   const filterTypeRow = document.getElementById("filterTypeRow");
   const filterCitySelect = document.getElementById("filterCity");
-  const filterPriceRow = document.getElementById("filterPriceRow");
+  const filterCurrencyRow = document.getElementById("filterCurrencyRow");
   const filterPhotoChip = document.getElementById("filterPhotoChip");
+  const filterSortSelect = document.getElementById("filterSort");
   const filtersApplyBtn = document.getElementById("filtersApplyBtn");
   const filtersResetBtn = document.getElementById("filtersResetBtn");
   const filtersBackBtn = document.getElementById("filtersBack");
@@ -1236,6 +1379,8 @@
   // Lightbox
   const imageLightbox = document.getElementById("imageLightbox");
   const lightboxImg = document.getElementById("lightboxImg");
+  const lightboxPrev = document.getElementById("lightboxPrev");
+  const lightboxNext = document.getElementById("lightboxNext");
 
   // ========== ГЛОБАЛЬНОЕ СОСТОЯНИЕ ==========
 
@@ -1247,8 +1392,9 @@
   const filterState = {
     type: "all",
     city: "all",
-    price: "all",
+    currency: "sum",   // sum | usd
     onlyWithPhoto: false,
+    sort: "default",   // default | date | cheap | expensive
   };
 
   // избранное
@@ -1257,7 +1403,7 @@
 
   // черновик нового объявления
   const newAdDraft = {
-    type: "Товар",
+    type: "Транспорт",
     city: "Ташкент",
     title: "",
     price: "",
@@ -1268,14 +1414,34 @@
 
   let currentAdInDetails = null;
 
+  // Lightbox состояние
+  let lightboxImages = [];
+  let lightboxIndex = 0;
+
   // ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
+
+  function formatNumberWithSpaces(num) {
+    const s = String(num);
+    return s.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  }
 
   function formatPrice(price) {
     if (price === null || price === undefined || price === "") {
       return "Narx kelishiladi";
     }
-    const s = String(price);
-    return s.replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " сум";
+    const p = Number(price || 0);
+    if (!isFinite(p) || p <= 0) {
+      return "Narx kelishiladi";
+    }
+
+    if (filterState.currency === "usd") {
+      const usd = p / EXCHANGE_RATE;
+      const rounded = Math.round(usd * 100) / 100;
+      return formatNumberWithSpaces(rounded) + " USD";
+    }
+
+    // по умолчанию сум
+    return formatNumberWithSpaces(p) + " сум";
   }
 
   function formatDateShort(iso) {
@@ -1373,16 +1539,6 @@
         }
       }
 
-      // цена
-      const p = Number(ad.price || 0);
-      if (filterState.price === "lt500") {
-        if (!(p > 0 && p < 500000)) return false;
-      } else if (filterState.price === "mid") {
-        if (!(p >= 500000 && p <= 2000000)) return false;
-      } else if (filterState.price === "gt2000") {
-        if (!(p > 2000000)) return false;
-      }
-
       // поиск по названию и описанию
       if (q) {
         const text = String(ad.title || "") + " " + String(ad.description || "");
@@ -1392,11 +1548,23 @@
       return true;
     });
 
-    // сортировка — новые сверху
+    // сортировка
     filteredAds.sort((a, b) => {
+      const pa = Number(a.price || 0);
+      const pb = Number(b.price || 0);
       const da = a.created_at ? new Date(a.created_at).getTime() : 0;
       const db = b.created_at ? new Date(b.created_at).getTime() : 0;
-      return db - da;
+
+      switch (filterState.sort) {
+        case "cheap":
+          return pa - pb;
+        case "expensive":
+          return pb - pa;
+        case "date":
+        case "default":
+        default:
+          return db - da; // новые сверху
+      }
     });
   }
 
@@ -1533,6 +1701,22 @@
     });
   }
 
+  // ===== ГЛАВНЫЕ КАТЕГОРИИ НА ГЛАВНОЙ =====
+  if (homeCategoryGrid) {
+    homeCategoryGrid.addEventListener("click", (e) => {
+      const card = e.target.closest(".category-card");
+      if (!card) return;
+      const t = card.getAttribute("data-type");
+      if (!t) return;
+
+      filterState.type = t;
+      applyAllFilters();
+      renderFeed();
+      // обновим фильтры, чтобы при открытии было видно выбранный тип
+      syncFiltersUIFromState();
+    });
+  }
+
   // ===== ФИЛЬТРЫ: UI <-> состояние =====
 
   function syncFiltersUIFromState() {
@@ -1547,16 +1731,20 @@
     if (filterCitySelect) {
       filterCitySelect.value = filterState.city === "all" ? "all" : filterState.city;
     }
-    // цена
-    if (filterPriceRow) {
-      filterPriceRow.querySelectorAll(".chip").forEach((chip) => {
-        const v = chip.getAttribute("data-price") || "all";
-        chip.classList.toggle("chip-filled", v === filterState.price);
+    // валюта
+    if (filterCurrencyRow) {
+      filterCurrencyRow.querySelectorAll(".chip").forEach((chip) => {
+        const v = chip.getAttribute("data-currency") || "sum";
+        chip.classList.toggle("chip-filled", v === filterState.currency);
       });
     }
     // фото
     if (filterPhotoChip) {
       filterPhotoChip.classList.toggle("chip-filled", filterState.onlyWithPhoto);
+    }
+    // сортировка
+    if (filterSortSelect) {
+      filterSortSelect.value = filterState.sort || "default";
     }
   }
 
@@ -1571,18 +1759,24 @@
       const val = filterCitySelect.value;
       filterState.city = !val || val === "all" ? "all" : val;
     }
-    // цена
-    if (filterPriceRow) {
-      const active = filterPriceRow.querySelector(".chip-filled");
-      filterState.price = active ? (active.getAttribute("data-price") || "all") : "all";
+    // валюта
+    if (filterCurrencyRow) {
+      const active = filterCurrencyRow.querySelector(".chip-filled");
+      filterState.currency = active
+        ? (active.getAttribute("data-currency") || "sum")
+        : "sum";
     }
     // фото
     if (filterPhotoChip) {
       filterState.onlyWithPhoto = filterPhotoChip.classList.contains("chip-filled");
     }
+    // сортировка
+    if (filterSortSelect) {
+      filterState.sort = filterSortSelect.value || "default";
+    }
   }
 
-  // клики по типам/цене в фильтрах
+  // клики по типам/валюте в фильтрах
   if (filterTypeRow) {
     filterTypeRow.addEventListener("click", (e) => {
       const chip = e.target.closest(".chip");
@@ -1592,11 +1786,11 @@
     });
   }
 
-  if (filterPriceRow) {
-    filterPriceRow.addEventListener("click", (e) => {
+  if (filterCurrencyRow) {
+    filterCurrencyRow.addEventListener("click", (e) => {
       const chip = e.target.closest(".chip");
       if (!chip) return;
-      filterPriceRow.querySelectorAll(".chip").forEach((c) => c.classList.remove("chip-filled"));
+      filterCurrencyRow.querySelectorAll(".chip").forEach((c) => c.classList.remove("chip-filled"));
       chip.classList.add("chip-filled");
     });
   }
@@ -1626,8 +1820,9 @@
     filtersResetBtn.addEventListener("click", () => {
       filterState.type = "all";
       filterState.city = "all";
-      filterState.price = "all";
+      filterState.currency = "sum";
       filterState.onlyWithPhoto = false;
+      filterState.sort = "default";
       syncFiltersUIFromState();
       applyAllFilters();
       renderFeed();
@@ -1647,7 +1842,7 @@
     chip.addEventListener("click", () => {
       adTypeChips.forEach((c) => c.classList.remove("chip-filled"));
       chip.classList.add("chip-filled");
-      newAdDraft.type = chip.getAttribute("data-type") || "Товар";
+      newAdDraft.type = chip.getAttribute("data-type") || "Транспорт";
     });
   });
 
@@ -1770,7 +1965,7 @@
   function fillSummaryStep3() {
     summaryTitle.textContent = newAdDraft.title || "Название объявления";
     summaryCityType.textContent =
-      (newAdDraft.city || "Город") + " · " + (newAdDraft.type || "Товар");
+      (newAdDraft.city || "Город") + " · " + (newAdDraft.type || "Транспорт");
     summaryPrice.textContent = newAdDraft.price
       ? newAdDraft.price + " сум"
       : "Цена не указана";
@@ -1885,12 +2080,12 @@
       detailMainImage.style.scrollSnapType = "x mandatory";
 
       if (images.length) {
-        images.forEach((url) => {
+        images.forEach((url, idx) => {
           const slide = document.createElement("div");
           slide.className = "detail-main-slide";
           slide.style.backgroundImage = `url('${url}')`;
           slide.addEventListener("click", () => {
-            openLightbox(url);
+            openLightbox(images, idx);
           });
           detailMainImage.appendChild(slide);
         });
@@ -2038,15 +2233,44 @@
 
   // ===== ЛАЙТБОКС =====
 
-  function openLightbox(url) {
-    if (!imageLightbox || !lightboxImg) return;
+  function updateLightboxImage() {
+    if (!lightboxImg || !lightboxImages.length) return;
+    const url = lightboxImages[lightboxIndex];
     lightboxImg.src = url;
+  }
+
+  function openLightbox(images, idx) {
+    if (!imageLightbox || !lightboxImg) return;
+    lightboxImages = Array.isArray(images) && images.length ? images.slice() : [];
+    lightboxIndex = idx || 0;
+    if (!lightboxImages.length) {
+      return;
+    }
+    updateLightboxImage();
     imageLightbox.classList.add("visible");
   }
 
   if (imageLightbox) {
     imageLightbox.addEventListener("click", () => {
       imageLightbox.classList.remove("visible");
+    });
+  }
+
+  if (lightboxPrev) {
+    lightboxPrev.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (!lightboxImages.length) return;
+      lightboxIndex = (lightboxIndex - 1 + lightboxImages.length) % lightboxImages.length;
+      updateLightboxImage();
+    });
+  }
+
+  if (lightboxNext) {
+    lightboxNext.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (!lightboxImages.length) return;
+      lightboxIndex = (lightboxIndex + 1) % lightboxImages.length;
+      updateLightboxImage();
     });
   }
 
