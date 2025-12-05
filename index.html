@@ -263,6 +263,8 @@
       border-radius: 14px;
       background: linear-gradient(135deg, #eff6ff, #dbeafe);
       flex-shrink: 0;
+      background-size: cover;
+      background-position: center;
     }
 
     .ad-content {
@@ -531,112 +533,71 @@
       font-weight: 600;
     }
 
+    /* HEADER в карточке объявления */
     .ad-view-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-
-.ad-view-back-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: 999px;
-  border: 1px solid rgba(148,163,184,0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #ffffff;
-  cursor: pointer;
-  font-size: 18px;
-}
-
-.ad-view-header-title {
-  font-size: 17px;
-  font-weight: 600;
-}
-
-    /* Иконки "в избранное" и "поделиться" рядом с названием */
-
-.ad-view-title-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 8px;
-  margin-top: 8px;
-  margin-bottom: 4px;
-}
-
-.ad-view-title-box {
-  flex: 1;
-  min-width: 0; /* чтобы текст красиво переносился */
-}
-
-.ad-view-icon-row {
-  display: flex;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-.icon-circle-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: 999px;
-  border: 1px solid #d1d5db;
-  background: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 17px;
-  cursor: pointer;
-  padding: 0;
-}
-
-.icon-circle-btn:active {
-  transform: scale(0.96);
-}
-    
-    /* ==== КАРТОЧКА ОБЪЯВЛЕНИЯ ==== */
-    .ad-detail-header {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 10px;
+      gap: 10px;
+      margin-bottom: 12px;
     }
-    .ad-detail-header-left {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .ad-detail-back {
+
+    .ad-view-back-btn {
       width: 32px;
       height: 32px;
       border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.6);
-      background: #ffffff;
+      border: 1px solid rgba(148, 163, 184, 0.5);
       display: flex;
       align-items: center;
       justify-content: center;
+      background: #ffffff;
       cursor: pointer;
       font-size: 18px;
     }
-    .ad-detail-header-title {
-      font-size: 16px;
+
+    .ad-view-header-title {
+      font-size: 17px;
       font-weight: 600;
     }
-    .ad-detail-more {
+
+    /* Заголовок + иконки */
+    .ad-view-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+      margin-top: 8px;
+      margin-bottom: 4px;
+    }
+
+    .ad-view-title-box {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .ad-view-icon-row {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .icon-circle-btn {
       width: 32px;
       height: 32px;
       border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.6);
+      border: 1px solid #d1d5db;
       background: #ffffff;
       display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 17px;
       cursor: pointer;
-      font-size: 18px;
+      padding: 0;
+    }
+    .icon-circle-btn:active {
+      transform: scale(0.96);
     }
 
+    /* КАРТОЧКА ОБЪЯВЛЕНИЯ */
     .ad-view-card {
       background: #ffffff;
       border-radius: 20px;
@@ -644,30 +605,7 @@
       box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
     }
 
-    .ad-view-image {
-  width: 100%;
-  height: 220px;              /* можешь сделать 240–260, если хочешь повыше */
-  border-radius: 16px;
-  background: #e5e7eb;
-  margin-bottom: 10px;
-
-  /* главное: показываем фото целиком */
-  background-size: contain;   /* вместо cover */
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-    .detail-thumb {
-      width: 56px;
-      height: 56px;
-      border-radius: 12px;
-      background: #e5e7eb;
-      background-size: cover;
-      background-position: center;
-      flex-shrink: 0;
-    }
-
-        /* Главное фото в карточке + свайп */
+    /* Главное фото со свайпом */
     #detailMainImage {
       width: 100%;
       height: 260px;
@@ -686,81 +624,197 @@
       scroll-snap-align: center;
       background-size: cover;
       background-position: center;
+      border-radius: 16px;
     }
 
     .detail-thumbs {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  margin: 8px 0 12px;
-}
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      margin-bottom: 10px;
+    }
 
-    /* Ровное выравнивание кнопок "Позвонить" и "Написать" */
-.ad-view-actions-big {
-  display: flex;
-  gap: 10px;
-  margin-top: 16px;
-  align-items: center;
-}
+    .detail-thumb {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      background: #e5e7eb;
+      background-size: cover;
+      background-position: center;
+      flex-shrink: 0;
+    }
 
-/* Кнопка Позвонить */
-.call-btn {
-  flex: 1;
-  padding: 13px 0;
-  font-size: 15px;
-  font-weight: 600;
-  border-radius: 999px;
-  color: #ffffff;
-  background: #22c55e;
-  text-align: center;
-  text-decoration: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 48px; /* фиксированная высота — чтобы не прыгали */
-}
+    .ad-view-main-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
 
-/* Кнопка Написать */
-.msg-btn {
-  flex: 1;
-  padding: 13px 0;
-  font-size: 15px;
-  font-weight: 600;
-  border-radius: 999px;
-  color: #ffffff;
-  background: #3b82f6;
-  text-align: center;
-  text-decoration: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 48px; /* одинаковая высота */
-}
+    .ad-view-price {
+      font-size: 18px;
+      font-weight: 700;
+      color: #16a34a;
+      margin-bottom: 2px;
+    }
 
-.call-btn,
-.msg-btn {
-  flex: 1;
-  padding: 13px 0;
-  font-size: 15px;
-  font-weight: 600;
-  border-radius: 999px;
-  text-decoration: none;
-  color: #ffffff;
+    .ad-view-promo {
+      font-size: 12px;
+      color: #ea580c;
+      margin-bottom: 4px;
+    }
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+    .ad-view-meta {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 2px;
+    }
 
-.call-btn {
-  background: #22c55e; /* зелёная, как на скрине */
-}
+    .ad-view-stats {
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 2px;
+    }
 
-.msg-btn {
-  background: #3b82f6; /* синяя */
-}
-    
-    /* Лайтбокс (полноэкранное фото) */
+    .ad-view-delivery {
+      font-size: 13px;
+      color: #475569;
+      margin-bottom: 8px;
+    }
+
+    .ad-view-description-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 8px;
+      margin-bottom: 4px;
+    }
+
+    .ad-view-description {
+      font-size: 14px;
+      color: #374151;
+      margin-bottom: 8px;
+    }
+
+    .ad-view-safe-tip {
+      font-size: 12px;
+      color: #6b7280;
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 8px 10px;
+      border: 1px dashed #cbd5f5;
+      margin-bottom: 8px;
+    }
+
+    .ad-view-seller-card {
+      margin-top: 8px;
+      padding: 10px;
+      border-radius: 16px;
+      background: #f9fafb;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .ad-view-seller-card:hover {
+      background: #eef2ff;
+    }
+
+    .ad-view-seller-info-main {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .ad-view-seller-info-sub {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .ad-view-seller-status {
+      font-size: 12px;
+      color: #16a34a;
+      margin-top: 2px;
+    }
+
+    .ad-view-actions-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .call-btn,
+    .msg-btn {
+      flex: 1;
+      padding: 13px 0;
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: 999px;
+      text-align: center;
+      text-decoration: none;
+      color: #ffffff;
+      display: block;
+    }
+
+    .call-btn {
+      background: #22c55e;
+    }
+
+    .msg-btn {
+      background: #3b82f6;
+    }
+
+    /* Похожие объявления */
+    .similar-section {
+      margin-top: 16px;
+    }
+
+    .similar-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .similar-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .similar-card {
+      display: flex;
+      gap: 8px;
+      padding: 8px;
+      border-radius: 12px;
+      background: #f9fafb;
+      cursor: pointer;
+    }
+
+    .similar-image {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      background: #e5e7eb;
+      background-size: cover;
+      background-position: center;
+      flex-shrink: 0;
+    }
+
+    .similar-content-title {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .similar-content-meta {
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .similar-content-price {
+      font-size: 13px;
+      font-weight: 600;
+      color: #16a34a;
+    }
+
+    /* Лайтбокс */
     .lightbox {
       position: fixed;
       inset: 0;
@@ -790,181 +844,32 @@
       color: rgba(255, 255, 255, 0.7);
       font-size: 12px;
     }
-    
-    .ad-view-main-title {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
 
-    .ad-view-price {
-      font-size: 18px;
-      font-weight: 700;
-      color: #16a34a;
-      margin-bottom: 4px;
-    }
-
-    .ad-view-meta {
-      font-size: 13px;
-      color: #6b7280;
-      margin-bottom: 8px;
-    }
-
-    .ad-view-description-title {
-      font-size: 14px;
-      font-weight: 600;
-      margin-top: 8px;
-      margin-bottom: 4px;
-    }
-
-    .ad-view-description {
-      font-size: 14px;
-      color: #374151;
-    }
-
-    .ad-view-seller-card {
-      margin-top: 12px;
-      padding: 10px;
-      border-radius: 16px;
-      background: #f9fafb;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .ad-view-seller-info-main {
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .ad-view-seller-info-sub {
-      font-size: 12px;
-      color: #6b7280;
-    }
-
-    .ad-view-actions-row {
-      display: flex;
-      gap: 8px;
-      margin-top: 10px;
-    }
-    .ad-view-btn-outline {
-      flex: 1;
+    .lightbox-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 40px;
+      height: 40px;
       border-radius: 999px;
-      padding: 8px 10px;
-      border: 1px solid #cbd5f5;
-      background: #ffffff;
-      font-size: 13px;
-      cursor: pointer;
+      border: none;
+      background: rgba(15,23,42,0.6);
+      color: #ffffff;
+      font-size: 24px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      color: #1d4ed8;
-      white-space: nowrap;
-    }
-
-    .ad-view-btn-ghost-row {
-      display: flex;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    .ad-view-btn-ghost {
-      flex: 1;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      background: #f9fafb;
-      font-size: 13px;
-      padding: 7px 10px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      color: #374151;
-      white-space: nowrap;
     }
 
-    /* Строка статистики (просмотры / избранное) */
-.ad-view-stats {
-  font-size: 12px;
-  color: #6b7280;
-  margin-top: 2px;
-}
+    .lightbox-prev {
+      left: 12px;
+    }
 
-/* Строка про доставку */
-.ad-view-delivery {
-  font-size: 13px;
-  color: #4b5563;
-  margin-bottom: 8px;
-}
+    .lightbox-next {
+      right: 12px;
+    }
 
-/* Статус онлайна продавца */
-.ad-view-seller-status {
-  font-size: 12px;
-  color: #16a34a; /* зелёный, как "онлайн" */
-  margin-top: 2px;
-}
-
-/* Блок "Похожие объявления" */
-.similar-title {
-  font-size: 14px;
-  font-weight: 600;
-  margin-top: 14px;
-  margin-bottom: 6px;
-}
-
-.similar-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 4px;
-}
-
-.similar-card {
-  display: flex;
-  gap: 8px;
-  padding: 6px 8px;
-  border-radius: 12px;
-  background: #f9fafb;
-  cursor: pointer;
-}
-
-.similar-card-image {
-  width: 48px;
-  height: 48px;
-  border-radius: 10px;
-  background: #e5e7eb;
-  background-size: cover;
-  background-position: center;
-  flex-shrink: 0;
-}
-
-.similar-card-content {
-  flex: 1;
-  min-width: 0;
-}
-
-.similar-card-title {
-  font-size: 13px;
-  font-weight: 600;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
-
-.similar-card-meta {
-  font-size: 11px;
-  color: #6b7280;
-}
-
-.similar-card-price {
-  font-size: 13px;
-  font-weight: 600;
-  color: #16a34a;
-  margin-top: 2px;
-}
-    
     @media (max-width: 480px) {
       body {
         align-items: stretch;
@@ -1232,98 +1137,98 @@
         </button>
       </section>
 
-            <!-- AD DETAILS SCREEN -->
-<section class="screen" id="screen-ad-details" style="padding:12px;">
-  <div class="ad-view-header">
-    <button class="ad-view-back-btn" id="detailBackBtn">←</button>
-    <span class="ad-view-header-title">Объявление</span>
-  </div>
-
-  <div class="ad-view-card">
-    <!-- Главное фото (слайдер) -->
-    <div class="detail-main-image" id="detailMainImage"></div>
-
-    <!-- Маленькие превью -->
-    <div class="detail-thumbs" id="detailThumbs"></div>
-
-    <!-- Заголовок + цена + иконки -->
-    <div class="ad-view-title-row">
-      <div class="ad-view-title-box">
-        <div class="ad-view-main-title" id="detailTitle">Название объявления</div>
-        <div class="ad-view-price" id="detailPrice">0 сум</div>
-        <!-- НОВОЕ: статистика просмотров / избранного -->
-        <div class="ad-view-stats" id="detailStats">
-           124 просмотра ·  8 в избранном
+      <!-- AD DETAILS SCREEN -->
+      <section class="screen" id="screen-ad-details" style="padding:12px;">
+        <div class="ad-view-header">
+          <button class="ad-view-back-btn" id="detailBackBtn">←</button>
+          <span class="ad-view-header-title">Объявление</span>
         </div>
-      </div>
-      <div class="ad-view-icon-row">
-        <button
-          class="icon-circle-btn"
-          id="favoriteBtn"
-          type="button"
-          aria-label="В избранное"
-        >
-          ♡
-        </button>
-        <button
-          class="icon-circle-btn"
-          id="shareBtn"
-          type="button"
-          aria-label="Поделиться"
-        >
-          ⤴︎
-        </button>
-      </div>
-    </div>
 
-    <!-- Метаданные -->
-    <div class="ad-view-meta" id="detailMeta">Ташкент · Товары</div>
+        <div class="ad-view-card">
+          <!-- Главное фото (слайдер) -->
+          <div class="detail-main-image" id="detailMainImage"></div>
 
-    <!-- НОВОЕ: информация о доставке -->
-    <div class="ad-view-delivery" id="detailDelivery">
-      Доставка: есть
-    </div>
+          <!-- Маленькие превью -->
+          <div class="detail-thumbs" id="detailThumbs"></div>
 
-    <!-- Описание -->
-    <div class="ad-view-description-title">Описание</div>
-    <div class="ad-view-description" id="detailDescription">
-      Здесь будет текст описания объявления.
-    </div>
+          <!-- Заголовок + цена + иконки -->
+          <div class="ad-view-title-row">
+            <div class="ad-view-title-box">
+              <div class="ad-view-main-title" id="detailTitle">Название объявления</div>
+              <div class="ad-view-price" id="detailPrice">0 сум</div>
+              <div class="ad-view-promo" id="detailPromo"></div>
+            </div>
+            <div class="ad-view-icon-row">
+              <button
+                class="icon-circle-btn"
+                id="favoriteBtn"
+                type="button"
+                aria-label="В избранное"
+              >
+                ♡
+              </button>
+              <button
+                class="icon-circle-btn"
+                id="shareBtn"
+                type="button"
+                aria-label="Поделиться"
+              >
+                ⤴︎
+              </button>
+            </div>
+          </div>
 
-    <!-- Карточка продавца -->
-    <div class="ad-view-seller-card">
-      <div class="avatar">B</div>
-      <div>
-        <div class="ad-view-seller-info-main">Baxir B-R (@Baxir1987)</div>
-        <div class="ad-view-seller-info-sub">
-          ⭐ 4,9 · 23 отзыва · 12 объявлений
+          <!-- Метаданные -->
+          <div class="ad-view-meta" id="detailMeta">Ташкент · Товары</div>
+          <div class="ad-view-stats" id="detailStats">👁 124 просмотра · 💾 8 в избранном</div>
+          <div class="ad-view-delivery" id="detailDelivery">Доставка: есть</div>
+
+          <!-- Описание -->
+          <div class="ad-view-description-title">Описание</div>
+          <div class="ad-view-description" id="detailDescription">
+            Здесь будет текст описания объявления.
+          </div>
+
+          <div class="ad-view-safe-tip">
+            🔒 MarketHub советует: не отправляйте предоплату незнакомым людям.
+            Встречайтесь лично и проверяйте товар перед оплатой.
+          </div>
+
+          <!-- Продавец -->
+          <div class="ad-view-seller-card" id="sellerCard">
+            <div class="avatar">B</div>
+            <div>
+              <div class="ad-view-seller-info-main">Baxir B-R (@Baxir1987)</div>
+              <div class="ad-view-seller-info-sub">
+                ⭐ 4,9 · 23 отзыва · 12 объявлений
+              </div>
+              <div class="ad-view-seller-status">Онлайн недавно · ⚡ Отвечает в течение 10 минут</div>
+            </div>
+          </div>
+
+          <!-- Кнопки связи -->
+          <div class="ad-view-actions-row">
+            <a class="call-btn" id="callSellerBtn" href="#">Позвонить</a>
+            <a class="msg-btn" id="msgSellerBtn" href="#">Написать</a>
+          </div>
+
+          <!-- Похожие объявления -->
+          <div class="similar-section">
+            <div class="similar-title">Похожие объявления</div>
+            <div class="similar-list" id="similarList"></div>
+          </div>
         </div>
-        <!-- НОВОЕ: статус онлайна -->
-        <div class="ad-view-seller-status" id="sellerStatus">
-          Онлайн недавно
-        </div>
-      </div>
+      </section>
     </div>
 
-    <!-- Кнопки Позвонить / Написать -->
-    <div class="ad-view-actions-big">
-      <a class="call-btn" id="callSellerBtn" href="#">Позвонить</a>
-      <a class="msg-btn" id="msgSellerBtn" href="#">Написать</a>
-    </div>
-
-    <!-- НОВОЕ: похожие объявления -->
-    <h3 class="similar-title">Похожие объявления</h3>
-    <div class="similar-list" id="similarList"></div>
-  </div>
-</section>
-    </div>
-
-        <!-- FULLSCREEN IMAGE LIGHTBOX -->
+    <!-- FULLSCREEN IMAGE LIGHTBOX -->
     <div id="imageLightbox" class="lightbox">
+      <button class="lightbox-arrow lightbox-prev" id="lightboxPrev">‹</button>
       <img id="lightboxImg" src="" alt="Фото объявления" />
-      <div class="lightbox-close-hint">Нажмите, чтобы закрыть</div>
+      <button class="lightbox-arrow lightbox-next" id="lightboxNext">›</button>
+      <div class="lightbox-close-hint">Смахните или нажмите для закрытия</div>
     </div>
-    
+
     <!-- BOTTOM NAV -->
     <nav class="bottom-nav">
       <div class="bottom-nav-inner">
@@ -1344,767 +1249,794 @@
   </div>
 
   <script>
-  // ==== API URL ====
-  const ADS_API_URL = "https://baxir.pythonanywhere.com/ads";
-  const ADD_AD_API_URL = "https://baxir.pythonanywhere.com/api/add_ad";
+    // ==== API URL ====
+    const ADS_API_URL = "https://baxir.pythonanywhere.com/ads";
+    const ADD_AD_API_URL = "https://baxir.pythonanywhere.com/api/add_ad";
 
-  // ==== Контакты продавца по умолчанию ====
-  const DEFAULT_PHONE = "+998950766061"; // поменяешь на свой
-  const DEFAULT_TELEGRAM = "Nafis_2607";  // БЕЗ @
+    // ==== Контакты продавца по умолчанию ====
+    const DEFAULT_PHONE = "+998901234567";
+    const DEFAULT_TELEGRAM = "Baxir1987";
 
-  // ==== ImgBB ====
-  const IMGBB_API_KEY = "d6a3eac7b36101df3effee3f7d0c7493";
-  const IMGBB_UPLOAD_URL = "https://api.imgbb.com/1/upload";
+    // ==== ImgBB ====
+    const IMGBB_API_KEY = "d6a3eac7b36101df3effee3f7d0c7493";
+    const IMGBB_UPLOAD_URL = "https://api.imgbb.com/1/upload";
 
-  const homeAdsList = document.getElementById("ads-list");
-  const adList = document.getElementById("adList");
-  const screensContainer = document.querySelector(".screens");
+    const homeAdsList = document.getElementById("ads-list");
+    const adList = document.getElementById("adList");
+    const screensContainer = document.querySelector(".screens");
 
-  // элементы карточки объявления
-  const screenAdDetails = document.getElementById("screen-ad-details");
-  const detailMainImage = document.getElementById("detailMainImage");
-  const detailThumbs = document.getElementById("detailThumbs");
-  const detailTitle = document.getElementById("detailTitle");
-  const detailPrice = document.getElementById("detailPrice");
-  const detailMeta = document.getElementById("detailMeta");
-  const detailDescription = document.getElementById("detailDescription");
-  const detailBackBtn = document.getElementById("detailBackBtn");
+    // элементы карточки объявления
+    const screenAdDetails = document.getElementById("screen-ad-details");
+    const detailMainImage = document.getElementById("detailMainImage");
+    const detailThumbs = document.getElementById("detailThumbs");
+    const detailTitle = document.getElementById("detailTitle");
+    const detailPrice = document.getElementById("detailPrice");
+    const detailPromo = document.getElementById("detailPromo");
+    const detailMeta = document.getElementById("detailMeta");
+    const detailStats = document.getElementById("detailStats");
+    const detailDelivery = document.getElementById("detailDelivery");
+    const detailDescription = document.getElementById("detailDescription");
+    const detailBackBtn = document.getElementById("detailBackBtn");
+    const callSellerBtn = document.getElementById("callSellerBtn");
+    const msgSellerBtn = document.getElementById("msgSellerBtn");
+    const sellerCard = document.getElementById("sellerCard");
+    const similarList = document.getElementById("similarList");
+    const favoriteBtn = document.getElementById("favoriteBtn");
+    const shareBtn = document.getElementById("shareBtn");
 
-  // кнопки Позвонить / Написать
-  const callSellerBtn = document.getElementById("callSellerBtn");
-  const msgSellerBtn = document.getElementById("msgSellerBtn");
+    // лайтбокс
+    const imageLightbox = document.getElementById("imageLightbox");
+    const lightboxImg = document.getElementById("lightboxImg");
+    const lightboxPrev = document.getElementById("lightboxPrev");
+    const lightboxNext = document.getElementById("lightboxNext");
 
-  // иконки «сердце» и «поделиться» из HTML
-  const favoriteBtn = document.getElementById("favoriteBtn");
-  const shareBtn = document.getElementById("shareBtn");
+    let lightboxImages = [];
+    let lightboxIndex = 0;
 
-  // лайтбокс
-  const imageLightbox = document.getElementById("imageLightbox");
-  const lightboxImg = document.getElementById("lightboxImg");
-
-  // ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
-
-  function formatPrice(price) {
-    if (price === null || price === undefined || price === "") {
-      return "Narx kelishiladi";
+    // ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
+    function formatPrice(price) {
+      if (price === null || price === undefined || price === "") {
+        return "Narx kelishiladi";
+      }
+      const s = String(price);
+      return s.replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " сум";
     }
-    const s = String(price);
-    return s.replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " сум";
-  }
 
-  function formatDateShort(iso) {
-    if (!iso) return "";
-    try {
-      const d = new Date(iso);
-      const day = String(d.getDate()).padStart(2, "0");
-      const month = String(d.getMonth() + 1).padStart(2, "0");
-      return `${day}.${month}`;
-    } catch (e) {
-      return "";
+    function formatDateShort(iso) {
+      if (!iso) return "";
+      try {
+        const d = new Date(iso);
+        const day = String(d.getDate()).padStart(2, "0");
+        const month = String(d.getMonth() + 1).padStart(2, "0");
+        return `${day}.${month}`;
+      } catch (e) {
+        return "";
+      }
     }
-  }
 
-  // ===== КАРТОЧКИ СПИСКА / ГЛАВНОЙ =====
+    function randomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
 
-  function createHomeAdCard(ad) {
-    const card = document.createElement("article");
-    card.className = "ad-card";
+    // ===== КАРТОЧКИ СПИСКА / ГЛАВНОЙ =====
+    function createHomeAdCard(ad) {
+      const card = document.createElement("article");
+      card.className = "ad-card";
 
-    const title = ad.title || "E'lon";
-    const city = ad.city || "Shahar";
-    const type = ad.type || "Tovar";
-    const priceText = formatPrice(ad.price);
-    const firstImage =
-      ad.images && Array.isArray(ad.images) && ad.images.length > 0
-        ? ad.images[0]
-        : null;
+      const title = ad.title || "E'lon";
+      const city = ad.city || "Shahar";
+      const type = ad.type || "Tovar";
+      const priceText = formatPrice(ad.price);
+      const firstImage =
+        ad.images && Array.isArray(ad.images) && ad.images.length > 0
+          ? ad.images[0]
+          : null;
 
-    card.innerHTML = `
-      <div class="ad-image"
-        ${
-          firstImage
-            ? `style="background-image:url('${firstImage}');background-size:cover;background-position:center;"`
-            : ""
-        }></div>
-      <div class="ad-content">
-        <div class="ad-title">${title}</div>
-        <div class="ad-meta">📍 ${city} · ${type}</div>
-        <div class="ad-price">${priceText}</div>
-      </div>
-    `;
-
-    card.addEventListener("click", () => openAdDetails(ad));
-    return card;
-  }
-
-  function createListAdCard(ad) {
-    const card = document.createElement("article");
-    card.className = "ad-card";
-
-    const title = ad.title || "E'lon";
-    const city = ad.city || "Shahar";
-    const type = ad.type || "Tovar";
-    const priceText = formatPrice(ad.price);
-    const created = formatDateShort(ad.created_at);
-    const desc = ad.description || "";
-    const firstImage =
-      ad.images && Array.isArray(ad.images) && ad.images.length > 0
-        ? ad.images[0]
-        : null;
-
-    card.innerHTML = `
-      <div class="ad-image"
-        ${
-          firstImage
-            ? `style="background-image:url('${firstImage}');background-size:cover;background-position:center;"`
-            : ""
-        }></div>
-      <div class="ad-content">
-        <div class="ad-title">${title}</div>
-        <div class="ad-meta">
-          📍 ${city} · ${type}${created ? ` · ${created}` : ""}
+      card.innerHTML = `
+        <div class="ad-image"
+          ${
+            firstImage
+              ? `style="background-image:url('${firstImage}');"`
+              : ""
+          }></div>
+        <div class="ad-content">
+          <div class="ad-title">${title}</div>
+          <div class="ad-meta">📍 ${city} · ${type}</div>
+          <div class="ad-price">${priceText}</div>
         </div>
-        <div class="ad-price">${priceText}</div>
-        ${
-          desc
-            ? `<div class="ad-meta" style="margin-top:2px;">${desc}</div>`
-            : ""
+      `;
+
+      card.addEventListener("click", () => openAdDetails(ad));
+      return card;
+    }
+
+    function createListAdCard(ad) {
+      const card = document.createElement("article");
+      card.className = "ad-card";
+
+      const title = ad.title || "E'lon";
+      const city = ad.city || "Shahar";
+      const type = ad.type || "Tovar";
+      const priceText = formatPrice(ad.price);
+      const created = formatDateShort(ad.created_at);
+      const desc = ad.description || "";
+      const firstImage =
+        ad.images && Array.isArray(ad.images) && ad.images.length > 0
+          ? ad.images[0]
+          : null;
+
+      card.innerHTML = `
+        <div class="ad-image"
+          ${
+            firstImage
+              ? `style="background-image:url('${firstImage}');"`
+              : ""
+          }></div>
+        <div class="ad-content">
+          <div class="ad-title">${title}</div>
+          <div class="ad-meta">
+            📍 ${city} · ${type}${created ? ` · ${created}` : ""}
+          </div>
+          <div class="ad-price">${priceText}</div>
+          ${
+            desc
+              ? `<div class="ad-meta" style="margin-top:2px;">${desc}</div>`
+              : ""
+          }
+        </div>
+      `;
+
+      card.addEventListener("click", () => openAdDetails(ad));
+      return card;
+    }
+
+    // ===== ЗАГРУЗКА ОБЪЯВЛЕНИЙ =====
+    let allAds = [];
+
+    async function loadAds() {
+      try {
+        const res = await fetch(ADS_API_URL);
+        if (!res.ok) throw new Error("Bad response");
+        const data = await res.json();
+        if (!Array.isArray(data)) return;
+
+        allAds = data;
+
+        // Главная (Yangi e'lonlar)
+        if (homeAdsList) {
+          homeAdsList.innerHTML = "";
+          const latest = data.slice(0, 4);
+          if (!latest.length) {
+            homeAdsList.innerHTML =
+              "<div class='ad-meta'>Hozircha e'lonlar yo'q.</div>";
+          } else {
+            latest.forEach((ad) => {
+              const card = createHomeAdCard(ad);
+              homeAdsList.appendChild(card);
+            });
+          }
         }
-      </div>
-    `;
 
-    card.addEventListener("click", () => openAdDetails(ad));
-    return card;
-  }
-
-  // ===== ЗАГРУЗКА ОБЪЯВЛЕНИЙ =====
-
-  let allAds = [];
-
-  async function loadAds() {
-    try {
-      const res = await fetch(ADS_API_URL);
-      if (!res.ok) throw new Error("Bad response");
-      const data = await res.json();
-      if (!Array.isArray(data)) return;
-
-      allAds = data;
-
-      // Главная (Yangi e'lonlar)
-      if (homeAdsList) {
-        homeAdsList.innerHTML = "";
-        const latest = data.slice(0, 4);
-        if (!latest.length) {
+        // Список
+        renderListAds(data);
+      } catch (err) {
+        console.error("Xato yuklashda:", err);
+        if (homeAdsList) {
           homeAdsList.innerHTML =
-            "<div class='ad-meta'>Hozircha e'lonlar yo'q.</div>";
-        } else {
-          latest.forEach((ad) => {
-            const card = createHomeAdCard(ad);
-            homeAdsList.appendChild(card);
-          });
+            "<div class='ad-meta'>E'lonlarni yuklashda xatolik. Keyinroq urinib ko'ring.</div>";
+        }
+        if (adList) {
+          adList.innerHTML =
+            "<div class='ad-meta'>E'lonlarni yuklashda xatolik. Keyinroq urinib ko'ring.</div>";
         }
       }
+    }
 
-      // Список
-      renderListAds(data);
-    } catch (err) {
-      console.error("Xato yuklashda:", err);
-      if (homeAdsList) {
-        homeAdsList.innerHTML =
-          "<div class='ad-meta'>E'lonlarni yuklashda xatolik. Keyinroq urinib ko'ring.</div>";
+    function renderListAds(list) {
+      if (!adList) return;
+      adList.innerHTML = "";
+      if (!list.length) {
+        adList.innerHTML = "<div class='ad-meta'>Hozircha e'lonlar yo'q.</div>";
+        return;
       }
-      if (adList) {
-        adList.innerHTML =
-          "<div class='ad-meta'>E'lonlarni yuklashda xatolik. Keyinroq urinib ko'ring.</div>";
+      list.forEach((ad) => {
+        const card = createListAdCard(ad);
+        adList.appendChild(card);
+      });
+    }
+
+    // ===== СОСТОЯНИЕ НОВОГО ОБЪЯВЛЕНИЯ =====
+    const newAdDraft = {
+      type: "Товар",
+      city: "Ташкент",
+      title: "",
+      price: "",
+      description: "",
+      photoCount: 0,
+      photos: [],
+    };
+
+    // ===== ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ =====
+    const screens = {
+      home: document.getElementById("screen-home"),
+      list: document.getElementById("screen-list"),
+      profile: document.getElementById("screen-profile"),
+      newAd1: document.getElementById("screen-new-ad-step1"),
+      newAd2: document.getElementById("screen-new-ad-step2"),
+      newAd3: document.getElementById("screen-new-ad-step3"),
+      newAdSuccess: document.getElementById("screen-new-ad-success"),
+      adDetails: screenAdDetails,
+    };
+
+    function showScreen(name) {
+      Object.values(screens).forEach((el) => {
+        if (!el) return;
+        el.classList.remove("active");
+        el.style.display = "none";
+      });
+
+      const target = screens[name];
+      if (target) {
+        target.classList.add("active");
+        target.style.display = "block";
+      }
+
+      document
+        .querySelectorAll(".nav-btn")
+        .forEach((btn) => btn.classList.remove("active"));
+      const activeBtn = document.querySelector(
+        '.nav-btn[data-screen="' + name + '"]'
+      );
+      if (activeBtn) activeBtn.classList.add("active");
+
+      if (screensContainer) {
+        screensContainer.scrollTop = 0;
       }
     }
-  }
 
-  function renderListAds(list) {
-    if (!adList) return;
-    adList.innerHTML = "";
-    if (!list.length) {
-      adList.innerHTML = "<div class='ad-meta'>Hozircha e'lonlar yo'q.</div>";
-      return;
-    }
-    list.forEach((ad) => {
-      const card = createListAdCard(ad);
-      adList.appendChild(card);
-    });
-  }
-
-  // ===== СОСТОЯНИЕ НОВОГО ОБЪЯВЛЕНИЯ =====
-
-  const newAdDraft = {
-    type: "Товар",
-    city: "Ташкент",
-    title: "",
-    price: "",
-    description: "",
-    photoCount: 0,
-    photos: [],
-  };
-
-  // ===== ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ =====
-
-  const screens = {
-    home: document.getElementById("screen-home"),
-    list: document.getElementById("screen-list"),
-    profile: document.getElementById("screen-profile"),
-    newAd1: document.getElementById("screen-new-ad-step1"),
-    newAd2: document.getElementById("screen-new-ad-step2"),
-    newAd3: document.getElementById("screen-new-ad-step3"),
-    newAdSuccess: document.getElementById("screen-new-ad-success"),
-    adDetails: screenAdDetails,
-  };
-
-  function showScreen(name) {
-    Object.values(screens).forEach((el) => {
-      if (!el) return;
-      el.classList.remove("active");
-      el.style.display = "none";
+    // нижнее меню
+    document.querySelectorAll(".nav-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const target = btn.getAttribute("data-screen");
+        showScreen(target);
+        if (target === "list") {
+          loadAds();
+        }
+      });
     });
 
-    const target = screens[name];
-    if (target) {
-      target.classList.add("active");
-      target.style.display = "block";
-    }
+    // ===== НОВОЕ ОБЪЯВЛЕНИЕ: ШАГ 1 =====
+    document.getElementById("btnOpenNewAd").addEventListener("click", () => {
+      showScreen("newAd1");
+    });
+
+    document.getElementById("backFromNewAd1").addEventListener("click", () => {
+      showScreen("home");
+    });
+
+    const adTypeChips = document.querySelectorAll("#adTypeChips .chip");
+    adTypeChips.forEach((chip) => {
+      chip.addEventListener("click", () => {
+        adTypeChips.forEach((c) => c.classList.remove("chip-filled"));
+        chip.classList.add("chip-filled");
+        newAdDraft.type = chip.getAttribute("data-type") || "Товар";
+      });
+    });
+
+    const inputCity = document.getElementById("inputCity");
+    const inputTitle = document.getElementById("inputTitle");
+    const inputPrice = document.getElementById("inputPrice");
+    const inputDescription = document.getElementById("inputDescription");
 
     document
-      .querySelectorAll(".nav-btn")
-      .forEach((btn) => btn.classList.remove("active"));
-    const activeBtn = document.querySelector(
-      '.nav-btn[data-screen="' + name + '"]'
-    );
-    if (activeBtn) activeBtn.classList.add("active");
+      .getElementById("btnNewAdStep1Next")
+      .addEventListener("click", () => {
+        const title = (inputTitle.value || "").trim();
+        const price = (inputPrice.value || "").trim();
+        const desc = (inputDescription.value || "").trim();
 
-    if (screensContainer) {
-      screensContainer.scrollTop = 0;
+        if (!title) {
+          alert("Введите название объявления.");
+          return;
+        }
+        if (!price) {
+          alert("Введите цену.");
+          return;
+        }
+
+        newAdDraft.city = inputCity.value;
+        newAdDraft.title = title;
+        newAdDraft.price = price;
+        newAdDraft.description = desc || "Без описания";
+
+        showScreen("newAd2");
+      });
+
+    // ===== ШАГ 2: ФОТО + IMGBB =====
+    const btnUploadPhotos = document.getElementById("btnUploadPhotos");
+    const inputPhotos = document.getElementById("inputPhotos");
+    const photosPreview = document.getElementById("photosPreview");
+
+    async function uploadToImgbb(file) {
+      const formData = new FormData();
+      formData.append("key", IMGBB_API_KEY);
+      formData.append("image", file);
+
+      const res = await fetch(IMGBB_UPLOAD_URL, {
+        method: "POST",
+        body: formData,
+      });
+      if (!res.ok) throw new Error("upload_failed");
+      const json = await res.json();
+      if (!json.success || !json.data || !json.data.url)
+        throw new Error("bad_response");
+      return json.data.url;
     }
-  }
 
-  // нижнее меню
-  document.querySelectorAll(".nav-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const target = btn.getAttribute("data-screen");
-      showScreen(target);
-      if (target === "list") {
-        loadAds();
+    btnUploadPhotos.addEventListener("click", () => {
+      inputPhotos.click();
+    });
+
+    inputPhotos.addEventListener("change", async () => {
+      const files = Array.from(inputPhotos.files || []);
+      photosPreview.innerHTML = "";
+      newAdDraft.photos = [];
+      newAdDraft.photoCount = 0;
+
+      if (!files.length) return;
+
+      const maxFiles = 8;
+      const selected = files.slice(0, maxFiles);
+
+      for (const file of selected) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const div = document.createElement("div");
+          div.className = "photo-thumb";
+          const img = document.createElement("img");
+          img.src = e.target.result;
+          div.appendChild(img);
+          photosPreview.appendChild(div);
+        };
+        reader.readAsDataURL(file);
+
+        try {
+          const url = await uploadToImgbb(file);
+          newAdDraft.photos.push(url);
+          newAdDraft.photoCount = newAdDraft.photos.length;
+        } catch (e) {
+          console.error("ImgBB upload error:", e);
+        }
       }
     });
-  });
 
-  // ===== НОВОЕ ОБЪЯВЛЕНИЕ: ШАГ 1 =====
+    document
+      .getElementById("btnNewAdStep2Next")
+      .addEventListener("click", () => {
+        if (!newAdDraft.photoCount) {
+          if (
+            !confirm(
+              "Вы ещё не добавили фото. Всё равно продолжить к подтверждению?"
+            )
+          ) {
+            return;
+          }
+        }
+        fillSummaryStep3();
+        showScreen("newAd3");
+      });
 
-  document.getElementById("btnOpenNewAd").addEventListener("click", () => {
-    showScreen("newAd1");
-  });
-
-  document.getElementById("backFromNewAd1").addEventListener("click", () => {
-    showScreen("home");
-  });
-
-  const adTypeChips = document.querySelectorAll("#adTypeChips .chip");
-  adTypeChips.forEach((chip) => {
-    chip.addEventListener("click", () => {
-      adTypeChips.forEach((c) => c.classList.remove("chip-filled"));
-      chip.classList.add("chip-filled");
-      newAdDraft.type = chip.getAttribute("data-type") || "Товар";
+    document.getElementById("backFromNewAd2").addEventListener("click", () => {
+      showScreen("newAd1");
     });
-  });
 
-  const inputCity = document.getElementById("inputCity");
-  const inputTitle = document.getElementById("inputTitle");
-  const inputPrice = document.getElementById("inputPrice");
-  const inputDescription = document.getElementById("inputDescription");
+    // ===== ШАГ 3: ПОДТВЕРЖДЕНИЕ =====
+    const summaryTitle = document.getElementById("summaryTitle");
+    const summaryCityType = document.getElementById("summaryCityType");
+    const summaryPrice = document.getElementById("summaryPrice");
+    const summaryDescription = document.getElementById("summaryDescription");
+    const summaryPhotosInfo = document.getElementById("summaryPhotosInfo");
 
-  document
-    .getElementById("btnNewAdStep1Next")
-    .addEventListener("click", () => {
-      const title = (inputTitle.value || "").trim();
-      const price = (inputPrice.value || "").trim();
-      const desc = (inputDescription.value || "").trim();
+    function fillSummaryStep3() {
+      summaryTitle.textContent = newAdDraft.title || "Название объявления";
+      summaryCityType.textContent =
+        (newAdDraft.city || "Город") + " · " + (newAdDraft.type || "Товар");
+      summaryPrice.textContent = newAdDraft.price
+        ? newAdDraft.price + " сум"
+        : "Цена не указана";
+      summaryDescription.textContent =
+        newAdDraft.description || "Описание не указано.";
+      summaryPhotosInfo.textContent =
+        "Фото: " + (newAdDraft.photoCount || 0) + " шт.";
+    }
 
-      if (!title) {
-        alert("Введите название объявления.");
-        return;
-      }
-      if (!price) {
-        alert("Введите цену.");
-        return;
-      }
-
-      newAdDraft.city = inputCity.value;
-      newAdDraft.title = title;
-      newAdDraft.price = price;
-      newAdDraft.description = desc || "Без описания";
-
+    document.getElementById("backFromNewAd3").addEventListener("click", () => {
       showScreen("newAd2");
     });
 
-  // ===== ШАГ 2: ФОТО + IMGBB =====
+    // ===== ПУБЛИКАЦИЯ НА БЭКЕНД =====
+    const btnPublishAd = document.getElementById("btnPublishAd");
 
-  const btnUploadPhotos = document.getElementById("btnUploadPhotos");
-  const inputPhotos = document.getElementById("inputPhotos");
-  const photosPreview = document.getElementById("photosPreview");
-
-  async function uploadToImgbb(file) {
-    const formData = new FormData();
-    formData.append("key", IMGBB_API_KEY);
-    formData.append("image", file);
-
-    const res = await fetch(IMGBB_UPLOAD_URL, {
-      method: "POST",
-      body: formData,
-    });
-    if (!res.ok) throw new Error("upload_failed");
-    const json = await res.json();
-    if (!json.success || !json.data || !json.data.url)
-      throw new Error("bad_response");
-    return json.data.url;
-  }
-
-  btnUploadPhotos.addEventListener("click", () => {
-    inputPhotos.click();
-  });
-
-  inputPhotos.addEventListener("change", async () => {
-    const files = Array.from(inputPhotos.files || []);
-    photosPreview.innerHTML = "";
-    newAdDraft.photos = [];
-    newAdDraft.photoCount = 0;
-
-    if (!files.length) return;
-
-    const maxFiles = 8;
-    const selected = files.slice(0, maxFiles);
-
-    for (const file of selected) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const div = document.createElement("div");
-        div.className = "photo-thumb";
-        const img = document.createElement("img");
-        img.src = e.target.result;
-        div.appendChild(img);
-        photosPreview.appendChild(div);
-      };
-      reader.readAsDataURL(file);
+    async function publishAdToBackend() {
+      btnPublishAd.disabled = true;
+      btnPublishAd.textContent = "Публикую...";
 
       try {
-        const url = await uploadToImgbb(file);
-        newAdDraft.photos.push(url);
-        newAdDraft.photoCount = newAdDraft.photos.length;
-      } catch (e) {
-        console.error("ImgBB upload error:", e);
-      }
-    }
-  });
+        const payload = {
+          type: newAdDraft.type,
+          city: newAdDraft.city,
+          title: newAdDraft.title,
+          price: (newAdDraft.price || "").replace(/\s+/g, ""),
+          description: newAdDraft.description,
+          images: newAdDraft.photos,
+          phone: DEFAULT_PHONE,
+          telegram: DEFAULT_TELEGRAM,
+        };
 
-  document
-    .getElementById("btnNewAdStep2Next")
-    .addEventListener("click", () => {
-      if (!newAdDraft.photoCount) {
-        if (
-          !confirm(
-            "Вы ещё не добавили фото. Всё равно продолжить к подтверждению?"
-          )
-        ) {
-          return;
-        }
-      }
-      fillSummaryStep3();
-      showScreen("newAd3");
-    });
-
-  document.getElementById("backFromNewAd2").addEventListener("click", () => {
-    showScreen("newAd1");
-  });
-
-  // ===== ШАГ 3: ПОДТВЕРЖДЕНИЕ =====
-
-  const summaryTitle = document.getElementById("summaryTitle");
-  const summaryCityType = document.getElementById("summaryCityType");
-  const summaryPrice = document.getElementById("summaryPrice");
-  const summaryDescription = document.getElementById("summaryDescription");
-  const summaryPhotosInfo = document.getElementById("summaryPhotosInfo");
-
-  function fillSummaryStep3() {
-    summaryTitle.textContent = newAdDraft.title || "Название объявления";
-    summaryCityType.textContent =
-      (newAdDraft.city || "Город") + " · " + (newAdDraft.type || "Товар");
-    summaryPrice.textContent = newAdDraft.price
-      ? newAdDraft.price + " сум"
-      : "Цена не указана";
-    summaryDescription.textContent =
-      newAdDraft.description || "Описание не указано.";
-    summaryPhotosInfo.textContent =
-      "Фото: " + (newAdDraft.photoCount || 0) + " шт.";
-  }
-
-  document.getElementById("backFromNewAd3").addEventListener("click", () => {
-    showScreen("newAd2");
-  });
-
-  // ===== ПУБЛИКАЦИЯ НА БЭКЕНД =====
-
-  const btnPublishAd = document.getElementById("btnPublishAd");
-
-  async function publishAdToBackend() {
-    btnPublishAd.disabled = true;
-    btnPublishAd.textContent = "Публикую...";
-
-    try {
-      const payload = {
-        type: newAdDraft.type,
-        city: newAdDraft.city,
-        title: newAdDraft.title,
-        price: (newAdDraft.price || "").replace(/\s+/g, ""),
-        description: newAdDraft.description,
-        images: newAdDraft.photos,
-        phone: DEFAULT_PHONE,
-        telegram: DEFAULT_TELEGRAM,
-      };
-
-      const res = await fetch(ADD_AD_API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) {
-        throw new Error("Bad response");
-      }
-
-      inputTitle.value = "";
-      inputPrice.value = "";
-      inputDescription.value = "";
-      photosPreview.innerHTML = "";
-      if (inputPhotos) inputPhotos.value = "";
-
-      newAdDraft.title = "";
-      newAdDraft.price = "";
-      newAdDraft.description = "";
-      newAdDraft.photoCount = 0;
-      newAdDraft.photos = [];
-
-      showScreen("newAdSuccess");
-      loadAds();
-    } catch (err) {
-      console.error("Xato saqlashda:", err);
-      alert("Ошибка при сохранении объявления. Попробуйте ещё раз.");
-    } finally {
-      btnPublishAd.disabled = false;
-      btnPublishAd.textContent = "Опубликовать объявление";
-    }
-  }
-
-  btnPublishAd.addEventListener("click", publishAdToBackend);
-
-  // ===== ЭКРАН УСПЕХА =====
-
-  document.getElementById("btnGoToList").addEventListener("click", () => {
-    showScreen("list");
-    loadAds();
-  });
-
-  document.getElementById("btnGoHome").addEventListener("click", () => {
-    showScreen("home");
-    loadAds();
-  });
-
-  // ===== ТАБЫ ТОВАРЫ / УСЛУГИ / НЕДВИЖИМОСТЬ =====
-
-  const tabGoods = document.getElementById("tabGoods");
-  const tabServices = document.getElementById("tabServices");
-  const tabRealty = document.getElementById("tabRealty");
-
-  function setActiveTab(activeBtn) {
-    [tabGoods, tabServices, tabRealty].forEach((btn) => {
-      if (!btn) return;
-      btn.classList.remove("active");
-    });
-    if (activeBtn) activeBtn.classList.add("active");
-  }
-
-  function filterByType(typeName) {
-    if (!allAds.length) {
-      renderListAds([]);
-      return;
-    }
-    if (!typeName) {
-      renderListAds(allAds);
-    } else {
-      renderListAds(allAds.filter((ad) => ad.type === typeName));
-    }
-  }
-
-  tabGoods.addEventListener("click", () => {
-    setActiveTab(tabGoods);
-    filterByType("Товар");
-  });
-
-  tabServices.addEventListener("click", () => {
-    setActiveTab(tabServices);
-    filterByType("Услуга");
-  });
-
-  tabRealty.addEventListener("click", () => {
-    setActiveTab(tabRealty);
-    filterByType("Недвижимость");
-  });
-
-  // вспомогательная функция: мини-карточка для блока "Похожие объявления"
-function createSimilarCard(ad) {
-  const card = document.createElement("div");
-  card.className = "similar-card";
-
-  const firstImage =
-    ad.images && Array.isArray(ad.images) && ad.images.length > 0
-      ? ad.images[0]
-      : null;
-
-  const imgDiv = document.createElement("div");
-  imgDiv.className = "similar-card-image";
-  if (firstImage) {
-    imgDiv.style.backgroundImage = `url('${firstImage}')`;
-  }
-
-  const content = document.createElement("div");
-  content.className = "similar-card-content";
-
-  const titleEl = document.createElement("div");
-  titleEl.className = "similar-card-title";
-  titleEl.textContent = ad.title || "Объявление";
-
-  const metaEl = document.createElement("div");
-  metaEl.className = "similar-card-meta";
-  metaEl.textContent = `${ad.city || "Город"} · ${ad.type || "Товар"}`;
-
-  const priceEl = document.createElement("div");
-  priceEl.className = "similar-card-price";
-  priceEl.textContent = formatPrice(ad.price);
-
-  content.appendChild(titleEl);
-  content.appendChild(metaEl);
-  content.appendChild(priceEl);
-
-  card.appendChild(imgDiv);
-  card.appendChild(content);
-
-  card.addEventListener("click", () => openAdDetails(ad));
-
-  return card;
-}
-
-function openAdDetails(ad) {
-  if (!screenAdDetails) return;
-
-  const title = ad.title || "Объявление";
-  const priceText = formatPrice(ad.price);
-  const city = ad.city || "Город";
-  const type = ad.type || "Товар";
-  const desc = ad.description || "";
-  const created = formatDateShort(ad.created_at);
-  const images = Array.isArray(ad.images) ? ad.images : [];
-
-  // Заголовок / цена
-  if (detailTitle) detailTitle.textContent = title;
-  if (detailPrice) detailPrice.textContent = priceText;
-
-  // Метаданные (город · тип · дата)
-  if (detailMeta) {
-    detailMeta.textContent = `📍 ${city} · ${type}${
-      created ? " · " + created : ""
-    }`;
-  }
-
-  // Описание
-  if (detailDescription) detailDescription.textContent = desc;
-
-  // Статистика просмотров / избранного (пока фейковые числа)
-  if (detailStats) {
-    const views = ad.views || 124;
-    const favs = ad.favorites || 8;
-    detailStats.textContent = ` ${views} просмотров ·  ${favs} в избранном`;
-  }
-
-  // Доставка: для "Товар" — есть, для "Услуга" — нет
-  if (detailDelivery) {
-    let deliveryText = "Доставка: нет";
-    if (type === "Товар") {
-      deliveryText = "Доставка: есть";
-    }
-    detailDelivery.textContent = deliveryText;
-  }
-
-  // Статус продавца (пока статично)
-  if (sellerStatus) {
-    sellerStatus.textContent = "Онлайн недавно";
-  }
-
-  // Главное фото со свайпом
-  if (detailMainImage) {
-    detailMainImage.innerHTML = "";
-    detailMainImage.style.display = "flex";
-    detailMainImage.style.overflowX = "auto";
-    detailMainImage.style.scrollSnapType = "x mandatory";
-
-    if (images.length) {
-      images.forEach((url) => {
-        const slide = document.createElement("div");
-        slide.className = "detail-main-slide";
-        slide.style.backgroundImage = `url('${url}')`;
-
-        // полноэкранный просмотр
-        slide.addEventListener("click", () => {
-          openLightbox(url);
+        const res = await fetch(ADD_AD_API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
         });
 
-        detailMainImage.appendChild(slide);
-      });
-    } else {
-      // если нет фото
-      const slide = document.createElement("div");
-      slide.className = "detail-main-slide";
-      detailMainImage.appendChild(slide);
-    }
-
-    detailMainImage.scrollLeft = 0;
-  }
-
-  // Маленькие превью
-  if (detailThumbs) {
-    detailThumbs.innerHTML = "";
-    images.forEach((url, idx) => {
-      const div = document.createElement("div");
-      div.className = "detail-thumb";
-      div.style.backgroundImage = `url('${url}')`;
-      div.style.backgroundSize = "cover";
-      div.style.backgroundPosition = "center";
-
-      div.addEventListener("click", () => {
-        if (detailMainImage) {
-          detailMainImage.scrollTo({
-            left: idx * detailMainImage.clientWidth,
-            behavior: "smooth",
-          });
+        if (!res.ok) {
+          throw new Error("Bad response");
         }
-      });
 
-      detailThumbs.appendChild(div);
-    });
-  }
+        inputTitle.value = "";
+        inputPrice.value = "";
+        inputDescription.value = "";
+        photosPreview.innerHTML = "";
+        if (inputPhotos) inputPhotos.value = "";
 
-  // Кнопки "Позвонить" / "Написать"
-  const phone = ad.phone || DEFAULT_PHONE;
-  const telegram = ad.telegram || DEFAULT_TELEGRAM;
+        newAdDraft.title = "";
+        newAdDraft.price = "";
+        newAdDraft.description = "";
+        newAdDraft.photoCount = 0;
+        newAdDraft.photos = [];
 
-  if (callSellerBtn) {
-    if (phone) {
-      const cleanPhone = String(phone).replace(/\s+/g, "");
-      callSellerBtn.href = "tel:" + cleanPhone;
-      callSellerBtn.style.display = "block";
-    } else {
-      callSellerBtn.style.display = "none";
-    }
-  }
-
-  if (msgSellerBtn) {
-    if (telegram) {
-      const username = String(telegram).replace(/^@/, "");
-      msgSellerBtn.href = "https://t.me/" + username;
-      msgSellerBtn.style.display = "block";
-    } else {
-      msgSellerBtn.style.display = "none";
-    }
-  }
-
-  // Иконка "В избранное" (просто переключатель сердечка)
-  if (favoriteBtn) {
-    favoriteBtn.textContent = "♡";
-    favoriteBtn.dataset.active = "0";
-    favoriteBtn.onclick = () => {
-      const active = favoriteBtn.dataset.active === "1";
-      favoriteBtn.dataset.active = active ? "0" : "1";
-      favoriteBtn.textContent = active ? "♡" : "♥";
-    };
-  }
-
-  // Иконка "Поделиться"
-  if (shareBtn) {
-    shareBtn.onclick = () => {
-      const shareData = {
-        title: title,
-        text: title,
-        url: window.location.href, // пока просто ссылка на текущую страницу
-      };
-      if (navigator.share) {
-        navigator.share(shareData).catch(() => {});
-      } else if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard
-          .writeText(shareData.url)
-          .then(() => alert("Ссылка скопирована."));
-      } else {
-        alert("Поделиться можно, скопировав ссылку из адресной строки.");
+        showScreen("newAdSuccess");
+        loadAds();
+      } catch (err) {
+        console.error("Xato saqlashda:", err);
+        alert("Ошибка при сохранении объявления. Попробуйте ещё раз.");
+      } finally {
+        btnPublishAd.disabled = false;
+        btnPublishAd.textContent = "Опубликовать объявление";
       }
-    };
-  }
-
-  // Похожие объявления
-  if (similarList) {
-    similarList.innerHTML = "";
-
-    if (Array.isArray(allAds) && allAds.length > 1) {
-      const candidates = allAds.filter(
-        (item) => item.id !== ad.id && item.type === ad.type
-      );
-      const sliced = candidates.slice(0, 3);
-
-      if (!sliced.length) {
-        similarList.innerHTML =
-          "<div class='ad-meta'>Пока нет похожих объявлений.</div>";
-      } else {
-        sliced.forEach((item) => {
-          similarList.appendChild(createSimilarCard(item));
-        });
-      }
-    } else {
-      similarList.innerHTML =
-        "<div class='ad-meta'>Пока нет похожих объявлений.</div>";
     }
-  }
 
-  showScreen("adDetails");
-}
+    btnPublishAd.addEventListener("click", publishAdToBackend);
 
-  // ===== ЛАЙТБОКС ДЛЯ ФОТО =====
-
-  function openLightbox(url) {
-    if (!imageLightbox || !lightboxImg) return;
-    lightboxImg.src = url;
-    imageLightbox.classList.add("visible");
-  }
-
-  if (imageLightbox) {
-    imageLightbox.addEventListener("click", () => {
-      imageLightbox.classList.remove("visible");
-    });
-  }
-
-  // ===== НАЗАД ИЗ КАРТОЧКИ =====
-
-  if (detailBackBtn) {
-    detailBackBtn.addEventListener("click", () => {
+    // ===== ЭКРАН УСПЕХА =====
+    document.getElementById("btnGoToList").addEventListener("click", () => {
       showScreen("list");
+      loadAds();
     });
-  }
 
-  // ===== ПЕРВЫЙ ЗАПУСК =====
-  loadAds();
-</script>
+    document.getElementById("btnGoHome").addEventListener("click", () => {
+      showScreen("home");
+      loadAds();
+    });
+
+    // ===== ТАБЫ ТОВАРЫ / УСЛУГИ / НЕДВИЖИМОСТЬ =====
+    const tabGoods = document.getElementById("tabGoods");
+    const tabServices = document.getElementById("tabServices");
+    const tabRealty = document.getElementById("tabRealty");
+
+    function setActiveTab(activeBtn) {
+      [tabGoods, tabServices, tabRealty].forEach((btn) => {
+        if (!btn) return;
+        btn.classList.remove("active");
+      });
+      if (activeBtn) activeBtn.classList.add("active");
+    }
+
+    function filterByType(typeName) {
+      if (!allAds.length) {
+        renderListAds([]);
+        return;
+      }
+      if (!typeName) {
+        renderListAds(allAds);
+      } else {
+        renderListAds(allAds.filter((ad) => ad.type === typeName));
+      }
+    }
+
+    tabGoods.addEventListener("click", () => {
+      setActiveTab(tabGoods);
+      filterByType("Товар");
+    });
+
+    tabServices.addEventListener("click", () => {
+      setActiveTab(tabServices);
+      filterByType("Услуга");
+    });
+
+    tabRealty.addEventListener("click", () => {
+      setActiveTab(tabRealty);
+      filterByType("Недвижимость");
+    });
+
+    // ===== ОТКРЫТИЕ КАРТОЧКИ ОБЪЯВЛЕНИЯ =====
+    function openAdDetails(ad) {
+      if (!screenAdDetails) return;
+
+      const title = ad.title || "Объявление";
+      const priceText = formatPrice(ad.price);
+      const city = ad.city || "Город";
+      const type = ad.type || "Товар";
+      const desc = ad.description || "";
+      const created = formatDateShort(ad.created_at);
+      const images = Array.isArray(ad.images) ? ad.images : [];
+
+      if (detailTitle) detailTitle.textContent = title;
+      if (detailPrice) detailPrice.textContent = priceText;
+
+      // фейковая "акция"
+      if (detailPromo) {
+        if (ad.price) {
+          detailPromo.textContent = "🔥 Цена снижена, спецпредложение!";
+        } else {
+          detailPromo.textContent = "";
+        }
+      }
+
+      if (detailMeta) {
+        detailMeta.textContent = `📍 ${city} · ${type}${
+          created ? " · " + created : ""
+        }`;
+      }
+
+      // фейковые просмотры/избранное (фиксируются на время сессии)
+      if (!ad._views) {
+        ad._views = randomInt(50, 300);
+        ad._favs = randomInt(1, 25);
+      }
+      if (detailStats) {
+        detailStats.textContent = `👁 ${ad._views} просмотров · 💾 ${ad._favs} в избранном`;
+      }
+
+      // Доставка
+      if (detailDelivery) {
+        const hasDelivery = ad.type === "Товар";
+        detailDelivery.textContent = `Доставка: ${hasDelivery ? "есть" : "нет"}`;
+      }
+
+      if (detailDescription) detailDescription.textContent = desc;
+
+      // Главное фото со свайпом
+      if (detailMainImage) {
+        detailMainImage.innerHTML = "";
+        detailMainImage.style.display = "flex";
+        detailMainImage.style.overflowX = "auto";
+        detailMainImage.style.scrollSnapType = "x mandatory";
+
+        images.forEach((url, index) => {
+          const slide = document.createElement("div");
+          slide.className = "detail-main-slide";
+          slide.style.backgroundImage = `url('${url}')`;
+
+          slide.addEventListener("click", () => {
+            openLightbox(index);
+          });
+
+          detailMainImage.appendChild(slide);
+        });
+
+        if (!images.length) {
+          const slide = document.createElement("div");
+          slide.className = "detail-main-slide";
+          slide.style.background = "#e5e7eb";
+          detailMainImage.appendChild(slide);
+        }
+
+        detailMainImage.scrollLeft = 0;
+      }
+
+      // Маленькие превью
+      if (detailThumbs) {
+        detailThumbs.innerHTML = "";
+        images.forEach((url, idx) => {
+          const div = document.createElement("div");
+          div.className = "detail-thumb";
+          div.style.backgroundImage = `url('${url}')`;
+
+          div.addEventListener("click", () => {
+            if (detailMainImage) {
+              detailMainImage.scrollTo({
+                left: idx * detailMainImage.clientWidth,
+                behavior: "smooth",
+              });
+            }
+          });
+
+          detailThumbs.appendChild(div);
+        });
+      }
+
+      // Похожие объявления
+      if (similarList) {
+        similarList.innerHTML = "";
+        const others = allAds.filter((x) => x.id !== ad.id);
+        const samples = others.slice(0, 3);
+        samples.forEach((item) => {
+          const el = document.createElement("div");
+          el.className = "similar-card";
+
+          const imgUrl =
+            item.images && item.images.length ? item.images[0] : null;
+
+          el.innerHTML = `
+            <div class="similar-image" ${
+              imgUrl ? `style="background-image:url('${imgUrl}');"` : ""
+            }></div>
+            <div>
+              <div class="similar-content-title">${item.title || "Объявление"}</div>
+              <div class="similar-content-meta">${
+                item.city || "Город"
+              } · ${item.type || "Товар"}</div>
+              <div class="similar-content-price">${formatPrice(
+                item.price
+              )}</div>
+            </div>
+          `;
+
+          el.addEventListener("click", () => openAdDetails(item));
+          similarList.appendChild(el);
+        });
+      }
+
+      // Кнопки "Позвонить" / "Написать"
+      const phone = ad.phone || DEFAULT_PHONE;
+      const telegram = ad.telegram || DEFAULT_TELEGRAM;
+
+      if (callSellerBtn) {
+        if (phone) {
+          const cleanPhone = String(phone).replace(/\s+/g, "");
+          callSellerBtn.href = "tel:" + cleanPhone;
+          callSellerBtn.style.display = "block";
+        } else {
+          callSellerBtn.style.display = "none";
+        }
+      }
+
+      if (msgSellerBtn) {
+        if (telegram) {
+          const username = String(telegram).replace(/^@/, "");
+          msgSellerBtn.href = "https://t.me/" + username;
+          msgSellerBtn.style.display = "block";
+        } else {
+          msgSellerBtn.style.display = "none";
+        }
+      }
+
+      // Данные для лайтбокса
+      lightboxImages = images.slice();
+
+      showScreen("adDetails");
+    }
+
+    // ===== ЛАЙТБОКС ДЛЯ ФОТО + СВАЙП =====
+    function updateLightboxImage() {
+      if (!lightboxImages.length || !lightboxImg) return;
+      lightboxImg.src = lightboxImages[lightboxIndex];
+    }
+
+    function openLightbox(startIndex) {
+      if (!imageLightbox || !lightboxImg || !lightboxImages.length) return;
+      lightboxIndex = startIndex || 0;
+      updateLightboxImage();
+      imageLightbox.classList.add("visible");
+    }
+
+    function closeLightbox() {
+      if (imageLightbox) imageLightbox.classList.remove("visible");
+    }
+
+    function showPrev() {
+      if (!lightboxImages.length) return;
+      lightboxIndex = (lightboxIndex - 1 + lightboxImages.length) % lightboxImages.length;
+      updateLightboxImage();
+    }
+
+    function showNext() {
+      if (!lightboxImages.length) return;
+      lightboxIndex = (lightboxIndex + 1) % lightboxImages.length;
+      updateLightboxImage();
+    }
+
+    if (lightboxPrev) {
+      lightboxPrev.addEventListener("click", (e) => {
+        e.stopPropagation();
+        showPrev();
+      });
+    }
+
+    if (lightboxNext) {
+      lightboxNext.addEventListener("click", (e) => {
+        e.stopPropagation();
+        showNext();
+      });
+    }
+
+    if (imageLightbox) {
+      imageLightbox.addEventListener("click", () => {
+        closeLightbox();
+      });
+    }
+
+    // свайп по экрану
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    if (imageLightbox) {
+      imageLightbox.addEventListener("touchstart", (e) => {
+        touchStartX = e.changedTouches[0].clientX;
+      });
+
+      imageLightbox.addEventListener("touchend", (e) => {
+        touchEndX = e.changedTouches[0].clientX;
+        const diff = touchEndX - touchStartX;
+        if (Math.abs(diff) > 50) {
+          if (diff > 0) {
+            showPrev();
+          } else {
+            showNext();
+          }
+        } else {
+          closeLightbox();
+        }
+      });
+    }
+
+    // ===== НАЗАД ИЗ КАРТОЧКИ =====
+    if (detailBackBtn) {
+      detailBackBtn.addEventListener("click", () => {
+        showScreen("list");
+      });
+    }
+
+    // ===== ПЕРЕХОД В ПРОФИЛЬ ПРИ КЛИКЕ НА ПРОДАВЦА =====
+    if (sellerCard) {
+      sellerCard.addEventListener("click", () => {
+        showScreen("profile");
+      });
+    }
+
+    // ===== ИЗБРАННОЕ / ПОДЕЛИТЬСЯ =====
+    if (favoriteBtn) {
+      let favActive = false;
+      favoriteBtn.addEventListener("click", () => {
+        favActive = !favActive;
+        favoriteBtn.textContent = favActive ? "♥" : "♡";
+      });
+    }
+
+    if (shareBtn) {
+      shareBtn.addEventListener("click", () => {
+        const shareData = {
+          title: detailTitle ? detailTitle.textContent : "Объявление",
+          text: detailTitle ? detailTitle.textContent : "Объявление",
+          url: window.location.href,
+        };
+        if (navigator.share) {
+          navigator.share(shareData).catch(() => {});
+        } else if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard
+            .writeText(shareData.url)
+            .then(() => alert("Ссылка скопирована."));
+        } else {
+          alert("Поделиться можно, скопировав ссылку из адресной строки.");
+        }
+      });
+    }
+
+    // ===== ПЕРВЫЙ ЗАПУСК =====
+    loadAds();
+  </script>
 </body>
 </html>
