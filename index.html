@@ -207,6 +207,13 @@
       color: #64748b;
     }
 
+    /* Активная категория */
+.category-card.active {
+  border-color: #1d4ed8;
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.3);
+  background: #eff6ff;
+}
+    
     /* LIST (TILE) */
     .ad-list {
       display: flex;
@@ -1718,6 +1725,40 @@
     });
   }
 
+    // Популярные категории на главной
+const popularCategoryCards = document.querySelectorAll(".category-card");
+let activeCategoryType = null;
+
+popularCategoryCards.forEach((card) => {
+  const type = card.getAttribute("data-type");
+
+  card.addEventListener("click", () => {
+    if (!type) return;
+
+    // если эта категория уже активна — снимаем фильтр
+    if (activeCategoryType === type) {
+      activeCategoryType = null;
+      filterState.type = "all";
+
+      popularCategoryCards.forEach((c) => c.classList.remove("active"));
+    } else {
+      // включаем выбранную категорию
+      activeCategoryType = type;
+      filterState.type = type;
+
+      popularCategoryCards.forEach((c) => c.classList.remove("active"));
+      card.classList.add("active");
+    }
+
+    applyAllFilters();
+    renderFeed();
+
+    if (screensContainer) {
+      screensContainer.scrollTop = 0;
+    }
+  });
+});
+    
   // ===== ФИЛЬТРЫ: UI <-> состояние =====
 
   function syncFiltersUIFromState() {
