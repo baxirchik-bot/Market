@@ -936,6 +936,10 @@
           </div>
         </div>
 
+        <p class="hint" style="margin-top:6px;">
+  Нажмите на категорию ещё раз, чтобы вернуть все объявления
+</p>
+        
         <h2 class="section-title" style="margin-top:10px;">Все объявления</h2>
         <div id="feedList" class="ad-list grid-mode"></div>
       </section>
@@ -1398,11 +1402,12 @@
 
   // фильтры
   const filterState = {
-    type: "all",
+    type: "all",        // Товар / Услуга / Недвижимость (фильтр в экране Фильтры)
     city: "all",
-    currency: "sum",   // sum | usd
+    currency: "sum",    // sum | usd
     onlyWithPhoto: false,
-    sort: "default",   // default | date | cheap | expensive
+    sort: "default",    // default | date | cheap | expensive
+    category: "all",    // Транспорт / Недвижимость / Электроника / Услуги (популярные боксы)
   };
 
   // избранное
@@ -1530,9 +1535,14 @@
     const q = searchQuery.trim().toLowerCase();
 
     filteredAds = allAds.filter((ad) => {
-      // тип
+      // тип (Товар / Услуга / Недвижимость) из экрана Фильтры
       if (filterState.type !== "all" && ad.type !== filterState.type) {
         return false;
+      }
+
+      // категория (Транспорт / Недвижимость / Электроника / Услуги) из популярных боксов
+      if (filterState.category !== "all") {
+        if ((ad.category || "").trim() !== filterState.category) return false;
       }
 
       // город
@@ -1709,56 +1719,39 @@
     });
   }
 
-  // ===== ГЛАВНЫЕ КАТЕГОРИИ НА ГЛАВНОЙ =====
-  if (homeCategoryGrid) {
-    homeCategoryGrid.addEventListener("click", (e) => {
-      const card = e.target.closest(".category-card");
-      if (!card) return;
-      const t = card.getAttribute("data-type");
-      if (!t) return;
+  // ===== ПОПУЛЯРНЫЕ КАТЕГОРИИ НА ГЛАВНОЙ =====
 
-      filterState.type = t;
+  const popularCategoryCards = document.querySelectorAll(".category-card");
+  let activeCategoryType = null;
+
+  popularCategoryCards.forEach((card) => {
+    const type = card.getAttribute("data-type");
+
+    card.addEventListener("click", () => {
+      if (!type) return;
+
+      // если эта категория уже активна — снимаем фильтр (показать все объявления)
+      if (activeCategoryType === type) {
+        activeCategoryType = null;
+        filterState.category = "all";
+        popularCategoryCards.forEach((c) => c.classList.remove("active"));
+      } else {
+        // включаем выбранную категорию
+        activeCategoryType = type;
+        filterState.category = type;
+        popularCategoryCards.forEach((c) => c.classList.remove("active"));
+        card.classList.add("active");
+      }
+
       applyAllFilters();
       renderFeed();
-      // обновим фильтры, чтобы при открытии было видно выбранный тип
-      syncFiltersUIFromState();
+
+      if (screensContainer) {
+        screensContainer.scrollTop = 0;
+      }
     });
-  }
-
-    // Популярные категории на главной
-const popularCategoryCards = document.querySelectorAll(".category-card");
-let activeCategoryType = null;
-
-popularCategoryCards.forEach((card) => {
-  const type = card.getAttribute("data-type");
-
-  card.addEventListener("click", () => {
-    if (!type) return;
-
-    // если эта категория уже активна — снимаем фильтр
-    if (activeCategoryType === type) {
-      activeCategoryType = null;
-      filterState.type = "all";
-
-      popularCategoryCards.forEach((c) => c.classList.remove("active"));
-    } else {
-      // включаем выбранную категорию
-      activeCategoryType = type;
-      filterState.type = type;
-
-      popularCategoryCards.forEach((c) => c.classList.remove("active"));
-      card.classList.add("active");
-    }
-
-    applyAllFilters();
-    renderFeed();
-
-    if (screensContainer) {
-      screensContainer.scrollTop = 0;
-    }
   });
-});
-    
+
   // ===== ФИЛЬТРЫ: UI <-> состояние =====
 
   function syncFiltersUIFromState() {
@@ -1865,6 +1858,10 @@ popularCategoryCards.forEach((card) => {
       filterState.currency = "sum";
       filterState.onlyWithPhoto = false;
       filterState.sort = "default";
+      filterState.category = "all";
+      // сброс активной категории на главной
+      popularCategoryCards.forEach((c) => c.classList.remove("active"));
+
       syncFiltersUIFromState();
       applyAllFilters();
       renderFeed();
@@ -1877,7 +1874,7 @@ popularCategoryCards.forEach((card) => {
     });
   }
 
-  // ===== НОВОЕ ОБЪЯВЛЕНИЕ: ШАГИ =====
+    // ===== НОВОЕ ОБЪЯВЛЕНИЕ: ШАГИ =====
 
   // выбор типа
   adTypeChips.forEach((chip) => {
@@ -2324,12 +2321,12 @@ popularCategoryCards.forEach((card) => {
     });
   }
 
-    // Переход в профиль при клике по карточке продавца в объявлении
-if (sellerCard) {
-  sellerCard.addEventListener("click", () => {
-    showScreen("profile");
-  });
-}
+  // Переход в профиль при клике по карточке продавца в объявлении
+  if (sellerCard) {
+    sellerCard.addEventListener("click", () => {
+      showScreen("profile");
+    });
+  }
 
   // ===== ИНИЦИАЛИЗАЦИЯ =====
   loadAds();
