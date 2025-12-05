@@ -160,10 +160,11 @@
     }
 
     .promo-banner img {
-      display: block;
-      width: 100%;
-      height: auto;
-    }
+  width: 800px;
+  height: 100px;      /* ← ровно в два раза меньше */
+  object-fit: cover;  /* чтобы робот и текст не деформировались */
+  border-radius: 12px;
+}
 
     .chip-row {
       display: flex;
