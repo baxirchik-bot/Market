@@ -84,10 +84,17 @@
       margin-bottom: 10px;
     }
 
-    /* SEARCH */
-    .search-bar {
+    /* SEARCH + FILTER BUTTON */
+    .search-bar-row {
+      display: flex;
+      gap: 8px;
       margin-top: 4px;
       margin-bottom: 12px;
+      align-items: stretch;
+    }
+
+    .search-bar {
+      flex: 1;
     }
 
     .search-input {
@@ -101,6 +108,21 @@
         url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 5a6 6 0 014.472 9.972l3.278 3.278a1 1 0 01-1.414 1.414l-3.278-3.278A6 6 0 1111 5zm0 2a4 4 0 100 8 4 4 0 000-8z' fill='%2394a3b8'/%3E%3C/svg%3E")
         no-repeat 10px center;
       background-size: 16px;
+    }
+
+    .filters-btn {
+      border-radius: 14px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      padding: 0 10px;
+      font-size: 13px;
+      background: #ffffff;
+      color: #1d4ed8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      cursor: pointer;
+      white-space: nowrap;
     }
 
     /* QUICK ACTIONS */
@@ -151,7 +173,6 @@
       box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
     }
 
-    /* CATEGORIES */
     .section-title {
       font-size: 15px;
       font-weight: 600;
@@ -159,78 +180,7 @@
       margin-top: 4px;
     }
 
-    .category-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-    }
-
-    .category-card {
-      background: #ffffff;
-      border-radius: 16px;
-      padding: 10px 12px;
-      box-shadow: 0 3px 10px rgba(15, 23, 42, 0.06);
-      font-size: 14px;
-    }
-
-    .category-card-title {
-      font-weight: 600;
-      margin-bottom: 2px;
-    }
-
-    .category-card-sub {
-      font-size: 12px;
-      color: #64748b;
-    }
-
-    /* LIST SCREEN */
-    .tabs-row {
-      display: flex;
-      margin-bottom: 10px;
-      background: #e5edff;
-      padding: 4px;
-      border-radius: 999px;
-    }
-
-    .tab-pill {
-      flex: 1;
-      border-radius: 999px;
-      padding: 7px 0;
-      font-size: 13px;
-      border: none;
-      background: transparent;
-      color: #475569;
-      cursor: pointer;
-    }
-    .tab-pill.active {
-      background: #ffffff;
-      color: #1d4ed8;
-      box-shadow: 0 3px 8px rgba(15, 23, 42, 0.15);
-      font-weight: 600;
-    }
-
-    .filter-row {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-      margin-bottom: 10px;
-    }
-    .filter-chip {
-      border-radius: 999px;
-      padding: 6px 10px;
-      font-size: 13px;
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      background: #ffffff;
-      white-space: nowrap;
-      cursor: default;
-    }
-    .filter-chip.active {
-      background: #1d4ed8;
-      color: #ffffff;
-      border-color: transparent;
-    }
-
+    /* LIST (TILE) */
     .ad-list {
       display: flex;
       flex-direction: column;
@@ -248,13 +198,19 @@
       cursor: pointer;
     }
 
-    /* Yangi e'lonlar */
-    .ads-list {
-      display: flex;
-      flex-direction: column;
+    /* Сетка для плитки */
+    .ad-list.grid-mode {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 8px;
-      margin-top: 8px;
-      margin-bottom: 12px;
+    }
+    .ad-list.grid-mode .ad-card {
+      flex-direction: column;
+      padding: 8px;
+    }
+    .ad-list.grid-mode .ad-image {
+      width: 100%;
+      height: 120px;
     }
 
     .ad-image {
@@ -559,45 +515,7 @@
       font-weight: 600;
     }
 
-    /* Заголовок + иконки */
-    .ad-view-title-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 8px;
-      margin-top: 8px;
-      margin-bottom: 4px;
-    }
-
-    .ad-view-title-box {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .ad-view-icon-row {
-      display: flex;
-      gap: 8px;
-      flex-shrink: 0;
-    }
-
-    .icon-circle-btn {
-      width: 32px;
-      height: 32px;
-      border-radius: 999px;
-      border: 1px solid #d1d5db;
-      background: #ffffff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 17px;
-      cursor: pointer;
-      padding: 0;
-    }
-    .icon-circle-btn:active {
-      transform: scale(0.96);
-    }
-
-    /* КАРТОЧКА ОБЪЯВЛЕНИЯ */
+    /* КАРТОЧКА ОБЪЯВЛЕНИЯ (детали) */
     .ad-view-card {
       background: #ffffff;
       border-radius: 20px;
@@ -691,16 +609,6 @@
     .ad-view-description {
       font-size: 14px;
       color: #374151;
-      margin-bottom: 8px;
-    }
-
-    .ad-view-safe-tip {
-      font-size: 12px;
-      color: #6b7280;
-      background: #f9fafb;
-      border-radius: 12px;
-      padding: 8px 10px;
-      border: 1px dashed #cbd5f5;
       margin-bottom: 8px;
     }
 
@@ -845,102 +753,20 @@
       font-size: 12px;
     }
 
-    .lightbox-arrow {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 40px;
-      height: 40px;
-      border-radius: 999px;
-      border: none;
-      background: rgba(15,23,42,0.6);
-      color: #ffffff;
-      font-size: 24px;
+    /* ФИЛЬТРЫ ЭКРАН */
+    .filters-section-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 10px 0 6px;
+    }
+
+    .filters-actions-row {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 12px;
     }
 
-    .lightbox-prev {
-      left: 12px;
-    }
-
-    .lightbox-next {
-      right: 12px;
-    }
-
-    /* Панель сортировки и вида */
-.list-toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  margin: 6px 0 10px;
-  font-size: 12px;
-  color: #64748b;
-}
-
-.list-toolbar-left {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.list-toolbar-right {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.sort-select {
-  border-radius: 999px;
-  border: 1px solid rgba(148,163,184,0.6);
-  padding: 4px 8px;
-  font-size: 12px;
-  background: #ffffff;
-}
-
-/* Кнопки переключения вида */
-.view-toggle-btn {
-  width: 28px;
-  height: 28px;
-  border-radius: 999px;
-  border: 1px solid #e2e8f0;
-  background: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  cursor: pointer;
-}
-.view-toggle-btn.active {
-  background: #1d4ed8;
-  color: #ffffff;
-  border-color: #1d4ed8;
-}
-
-/* Сетка для объявлений */
-.ad-list.grid-mode {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-}
-.ad-list.grid-mode .ad-card {
-  flex-direction: column;
-}
-.ad-list.grid-mode .ad-image {
-  width: 100%;
-  height: 120px;
-}
-
-/* Доп. чип для "только с фото" */
-.filter-chip.toggle-on {
-  background: #22c55e;
-  color: #ffffff;
-  border-color: transparent;
-}
-    
     @media (max-width: 480px) {
       body {
         align-items: stretch;
@@ -967,16 +793,21 @@
 
     <!-- SCREENS -->
     <div class="screens">
-      <!-- HOME SCREEN -->
+      <!-- HOME (главная лента) -->
       <section class="screen active" id="screen-home">
-        <div class="screen-title">Главный экран</div>
+        <div class="screen-title">Лента объявлений</div>
 
-        <div class="search-bar">
-          <input
-            type="text"
-            class="search-input"
-            placeholder="Найти товар или услугу..."
-          />
+        <div class="search-bar-row">
+          <div class="search-bar">
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Найти товар или услугу..."
+            />
+          </div>
+          <button class="filters-btn" id="openFiltersBtn">
+            ⚙️ Фильтры
+          </button>
         </div>
 
         <div class="quick-actions-title">Быстрые действия</div>
@@ -984,76 +815,14 @@
           <span>＋</span> Подать объявление
         </button>
 
-        <div class="chip-row">
-          <button class="chip chip-filled">📦 Товары</button>
-          <button class="chip">💼 Услуги</button>
-          <button class="chip">🏠 Недвижимость</button>
-          <button class="chip">📍 Ташкент</button>
-        </div>
-
-        <div class="section-title">Популярные категории</div>
-        <div class="category-grid">
-          <div class="category-card">
-            <div class="category-card-title">📱 Электроника</div>
-            <div class="category-card-sub">Телефоны, ноутбуки</div>
-          </div>
-          <div class="category-card">
-            <div class="category-card-title">🏠 Для дома</div>
-            <div class="category-card-sub">Мебель, техника</div>
-          </div>
-          <div class="category-card">
-            <div class="category-card-title">👕 Одежда</div>
-            <div class="category-card-sub">Мужская, женская</div>
-          </div>
-          <div class="category-card">
-            <div class="category-card-title">🛠 Услуги</div>
-            <div class="category-card-sub">Мастера, ремонт</div>
-          </div>
-        </div>
-
-        <!-- Yangi e'lonlar -->
-        <h2 class="section-title" style="margin-top:18px;">Yangi e'lonlar</h2>
-        <div id="ads-list" class="ads-list"></div>
+        <h2 class="section-title" style="margin-top:10px;">Все объявления</h2>
+        <div id="feedList" class="ad-list grid-mode"></div>
       </section>
 
-            <!-- LIST SCREEN -->
-      <section class="screen" id="screen-list">
-        <div class="screen-title">Объявления</div>
-
-        <!-- Табы по типу -->
-        <div class="tabs-row">
-          <button class="tab-pill active" id="tabGoods">Товары</button>
-          <button class="tab-pill" id="tabServices">Услуги</button>
-          <button class="tab-pill" id="tabRealty">Недвижимость</button>
-        </div>
-
-        <!-- Фильтр по городу (12 областей + Ташкент) -->
-        <div class="filter-row" id="cityFilterRow">
-          <button class="filter-chip city-chip active" data-city="Все">Все города</button>
-          <button class="filter-chip city-chip" data-city="Ташкент">Ташкент</button>
-          <button class="filter-chip city-chip" data-city="Андижан">Андижан</button>
-          <button class="filter-chip city-chip" data-city="Бухара">Бухара</button>
-          <button class="filter-chip city-chip" data-city="Фергана">Фергана</button>
-          <button class="filter-chip city-chip" data-city="Джизак">Джизак</button>
-          <button class="filter-chip city-chip" data-city="Наманган">Наманган</button>
-          <button class="filter-chip city-chip" data-city="Навоий">Навоий</button>
-          <button class="filter-chip city-chip" data-city="Кашкадарья">Кашкадарья</button>
-          <button class="filter-chip city-chip" data-city="Самарканд">Самарканд</button>
-          <button class="filter-chip city-chip" data-city="Сирдарья">Сирдарья</button>
-          <button class="filter-chip city-chip" data-city="Сурхандарья">Сурхандарья</button>
-          <button class="filter-chip city-chip" data-city="Хорезм">Хорезм</button>
-        </div>
-
-        <!-- Фильтр по цене -->
-        <div class="filter-row" id="priceFilterRow">
-          <button class="filter-chip price-chip active" data-price="all">Любая цена</button>
-          <button class="filter-chip price-chip" data-price="lt500">до 500 000</button>
-          <button class="filter-chip price-chip" data-price="500-2000">500 000 – 2 000 000</button>
-          <button class="filter-chip price-chip" data-price="gt2000">от 2 000 000</button>
-        </div>
-
-        <!-- Лента объявлений -->
-        <div class="ad-list" id="adList"></div>
+      <!-- FAVORITES -->
+      <section class="screen" id="screen-favorites">
+        <div class="screen-title">Избранное</div>
+        <div id="favoritesList" class="ad-list grid-mode"></div>
       </section>
 
       <!-- PROFILE SCREEN -->
@@ -1103,9 +872,62 @@
         </div>
       </section>
 
+      <!-- FILTERS SCREEN -->
+      <section class="screen" id="screen-filters">
+        <div class="back-link" id="filtersBack">← Назад к ленте</div>
+        <div class="screen-title">Фильтры</div>
+
+        <div class="filters-section-title">Тип объявления</div>
+        <div class="chip-row" id="filterTypeRow">
+          <button class="chip chip-filled" data-type="all">Все</button>
+          <button class="chip" data-type="Товар">📦 Товары</button>
+          <button class="chip" data-type="Услуга">💼 Услуги</button>
+          <button class="chip" data-type="Недвижимость">🏠 Недвижимость</button>
+        </div>
+
+        <div class="filters-section-title">Город</div>
+        <select class="form-select" id="filterCity">
+          <option value="all">Вся страна</option>
+          <option>Ташкент</option>
+          <option>Самарканд</option>
+          <option>Фергана</option>
+          <option>Наманган</option>
+          <option>Андижан</option>
+          <option>Бухара</option>
+          <option>Навои</option>
+          <option>Карши</option>
+          <option>Термез</option>
+          <option>Джизак</option>
+          <option>Гулистан</option>
+          <option>Хива</option>
+        </select>
+
+        <div class="filters-section-title">Цена</div>
+        <div class="chip-row" id="filterPriceRow">
+          <button class="chip chip-filled" data-price="all">Любая цена</button>
+          <button class="chip" data-price="lt500">до 500 000</button>
+          <button class="chip" data-price="mid">500 000 – 2 000 000</button>
+          <button class="chip" data-price="gt2000">от 2 000 000</button>
+        </div>
+
+        <div class="filters-section-title">Дополнительно</div>
+        <div class="chip-row">
+          <button class="chip" id="filterPhotoChip">📷 Только с фото</button>
+        </div>
+
+        <div class="filters-actions-row">
+          <button class="primary-btn" id="filtersApplyBtn">
+            Показать объявления
+          </button>
+          <button class="outline-btn" id="filtersResetBtn">
+            Сбросить фильтры
+          </button>
+        </div>
+      </section>
+
       <!-- NEW AD STEP 1 -->
       <section class="screen" id="screen-new-ad-step1">
-        <div class="back-link" id="backFromNewAd1">← Назад на главный</div>
+        <div class="back-link" id="backFromNewAd1">← Назад к ленте</div>
         <div class="screen-title">
           Новое объявление <span class="step-tag">Шаг 1 из 3</span>
         </div>
@@ -1203,7 +1025,7 @@
         </div>
 
         <div class="hint">
-          После публикации объявление появится в разделе «Объявления».
+          После публикации объявление появится в ленте.
         </div>
 
         <button class="primary-btn" id="btnPublishAd" style="margin-top: 10px;">
@@ -1216,11 +1038,11 @@
         <div class="success-icon">✅</div>
         <div class="success-text-main">Объявление опубликовано!</div>
         <div class="success-text-sub">
-          В демо-версии объявление добавлено на экран «Объявления».
+          В демо-версии объявление добавлено в общую ленту.
         </div>
 
-        <button class="primary-btn" id="btnGoToList">
-          📋 Перейти к объявлениям
+        <button class="primary-btn" id="btnGoToFeed">
+          📋 Перейти к ленте
         </button>
         <button class="outline-btn" id="btnGoHome" style="margin-top: 8px;">
           🏠 На главный экран
@@ -1270,7 +1092,7 @@
 
           <!-- Метаданные -->
           <div class="ad-view-meta" id="detailMeta">Ташкент · Товары</div>
-          <div class="ad-view-stats" id="detailStats"> 124 просмотра ·  8 в избранном</div>
+          <div class="ad-view-stats" id="detailStats">124 просмотра · 8 в избранном</div>
           <div class="ad-view-delivery" id="detailDelivery">Доставка: есть</div>
 
           <!-- Описание -->
@@ -1308,10 +1130,8 @@
 
     <!-- FULLSCREEN IMAGE LIGHTBOX -->
     <div id="imageLightbox" class="lightbox">
-      <button class="lightbox-arrow lightbox-prev" id="lightboxPrev">‹</button>
       <img id="lightboxImg" src="" alt="Фото объявления" />
-      <button class="lightbox-arrow lightbox-next" id="lightboxNext">›</button>
-      <div class="lightbox-close-hint">Смахните или нажмите для закрытия</div>
+      <div class="lightbox-close-hint">Нажмите для закрытия</div>
     </div>
 
     <!-- BOTTOM NAV -->
@@ -1319,11 +1139,11 @@
       <div class="bottom-nav-inner">
         <button class="nav-btn active" data-screen="home">
           <span class="icon">🏠</span>
-          <span>Главная</span>
+          <span>Лента</span>
         </button>
-        <button class="nav-btn" data-screen="list">
-          <span class="icon">📋</span>
-          <span>Объявления</span>
+        <button class="nav-btn" data-screen="favorites">
+          <span class="icon">⭐</span>
+          <span>Избранное</span>
         </button>
         <button class="nav-btn" data-screen="profile">
           <span class="icon">👤</span>
@@ -1348,12 +1168,57 @@
 
   // ==== DOM-элементы ====
   const screensContainer = document.querySelector(".screens");
-  const homeScreen = document.getElementById("screen-home");
-  const homeAdsList = document.getElementById("ads-list");
-  const listScreen = document.getElementById("screen-list");
-  const adList = document.getElementById("adList");
 
-  // --- детали объявления ---
+  const homeScreen = document.getElementById("screen-home");
+  const feedList = document.getElementById("feedList");
+
+  const favoritesScreen = document.getElementById("screen-favorites");
+  const favoritesList = document.getElementById("favoritesList");
+
+  const profileScreen = document.getElementById("screen-profile");
+  const filtersScreen = document.getElementById("screen-filters");
+
+  const searchInput = document.querySelector(".search-input");
+  const openFiltersBtn = document.getElementById("openFiltersBtn");
+
+  // Filters UI
+  const filterTypeRow = document.getElementById("filterTypeRow");
+  const filterCitySelect = document.getElementById("filterCity");
+  const filterPriceRow = document.getElementById("filterPriceRow");
+  const filterPhotoChip = document.getElementById("filterPhotoChip");
+  const filtersApplyBtn = document.getElementById("filtersApplyBtn");
+  const filtersResetBtn = document.getElementById("filtersResetBtn");
+  const filtersBackBtn = document.getElementById("filtersBack");
+
+  // New ad screens
+  const inputCity = document.getElementById("inputCity");
+  const inputTitle = document.getElementById("inputTitle");
+  const inputPrice = document.getElementById("inputPrice");
+  const inputDescription = document.getElementById("inputDescription");
+  const btnOpenNewAd = document.getElementById("btnOpenNewAd");
+  const btnNewAdStep1Next = document.getElementById("btnNewAdStep1Next");
+  const backFromNewAd1 = document.getElementById("backFromNewAd1");
+
+  const btnUploadPhotos = document.getElementById("btnUploadPhotos");
+  const inputPhotos = document.getElementById("inputPhotos");
+  const photosPreview = document.getElementById("photosPreview");
+  const btnNewAdStep2Next = document.getElementById("btnNewAdStep2Next");
+  const backFromNewAd2 = document.getElementById("backFromNewAd2");
+
+  const backFromNewAd3 = document.getElementById("backFromNewAd3");
+  const btnPublishAd = document.getElementById("btnPublishAd");
+  const summaryTitle = document.getElementById("summaryTitle");
+  const summaryCityType = document.getElementById("summaryCityType");
+  const summaryPrice = document.getElementById("summaryPrice");
+  const summaryDescription = document.getElementById("summaryDescription");
+  const summaryPhotosInfo = document.getElementById("summaryPhotosInfo");
+
+  const btnGoToFeed = document.getElementById("btnGoToFeed");
+  const btnGoHome = document.getElementById("btnGoHome");
+
+  const adTypeChips = document.querySelectorAll("#adTypeChips .chip");
+
+  // Details screen
   const screenAdDetails = document.getElementById("screen-ad-details");
   const detailMainImage = document.getElementById("detailMainImage");
   const detailThumbs = document.getElementById("detailThumbs");
@@ -1364,34 +1229,44 @@
   const detailBackBtn = document.getElementById("detailBackBtn");
   const callSellerBtn = document.getElementById("callSellerBtn");
   const msgSellerBtn = document.getElementById("msgSellerBtn");
+  const similarList = document.getElementById("similarList");
+  const favoriteBtn = document.getElementById("favoriteBtn");
+  const shareBtn = document.getElementById("shareBtn");
 
-  // лайтбокс
+  // Lightbox
   const imageLightbox = document.getElementById("imageLightbox");
   const lightboxImg = document.getElementById("lightboxImg");
 
-  // поиск
-  const searchInput = document.querySelector(".search-input");
-
   // ========== ГЛОБАЛЬНОЕ СОСТОЯНИЕ ==========
 
-  let allAds = [];        // все объявления с бэка
-  let filteredAds = [];   // после всех фильтров/поиска
-  let renderedCount = 0;  // сколько уже отрисовано в ленту
-  const PAGE_SIZE = 20;
-
-  let currentSort = "new";        // new | cheap | expensive
-  let currentCityFilter = "all";  // "all" или название города
-  let currentPriceFilter = "all"; // all | lt500 | mid | gt2000
-  let onlyWithPhoto = false;
-  let currentTypeFilter = null;   // Товар / Услуга / Недвижимость
-  let currentViewMode = "list";   // list | grid
+  let allAds = [];
+  let filteredAds = [];
   let searchQuery = "";
 
-  const FAVORITES_KEY = "mh_favorites";
-  const VIEWED_KEY = "mh_viewed";
+  // фильтры
+  const filterState = {
+    type: "all",
+    city: "all",
+    price: "all",
+    onlyWithPhoto: false,
+  };
 
-  let favoritesSet = loadFavoritesFromStorage(); // Set(id)
-  let viewedIds = loadViewedFromStorage();       // [id, id, ...]
+  // избранное
+  const FAVORITES_KEY = "mh_favorites";
+  let favoritesSet = loadFavoritesFromStorage();
+
+  // черновик нового объявления
+  const newAdDraft = {
+    type: "Товар",
+    city: "Ташкент",
+    title: "",
+    price: "",
+    description: "",
+    photoCount: 0,
+    photos: [],
+  };
+
+  let currentAdInDetails = null;
 
   // ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
 
@@ -1415,7 +1290,7 @@
     }
   }
 
-  // --- localStorage: избранное ---
+  // localStorage избранное
   function loadFavoritesFromStorage() {
     try {
       const raw = localStorage.getItem(FAVORITES_KEY);
@@ -1434,68 +1309,9 @@
     } catch (e) {}
   }
 
-  // --- localStorage: просмотренные ---
-  function loadViewedFromStorage() {
-    try {
-      const raw = localStorage.getItem(VIEWED_KEY);
-      if (!raw) return [];
-      const arr = JSON.parse(raw);
-      return Array.isArray(arr) ? arr : [];
-    } catch (e) {
-      return [];
-    }
-  }
+  // ===== СОЗДАНИЕ КАРТОЧЕК =====
 
-  function saveViewedToStorage() {
-    try {
-      localStorage.setItem(VIEWED_KEY, JSON.stringify(viewedIds));
-    } catch (e) {}
-  }
-
-  function addToViewed(adId) {
-    adId = Number(adId);
-    viewedIds = viewedIds.filter((id) => id !== adId);
-    viewedIds.unshift(adId);
-    if (viewedIds.length > 30) {
-      viewedIds = viewedIds.slice(0, 30);
-    }
-    saveViewedToStorage();
-  }
-
-  // ===== СОЗДАНИЕ КАРТОЧЕК ДЛЯ ЛЕНТЫ =====
-
-  function createHomeAdCard(ad) {
-    const card = document.createElement("article");
-    card.className = "ad-card";
-
-    const title = ad.title || "E'lon";
-    const city = ad.city || "Shahar";
-    const type = ad.type || "Tovar";
-    const priceText = formatPrice(ad.price);
-    const firstImage =
-      ad.images && Array.isArray(ad.images) && ad.images.length > 0
-        ? ad.images[0]
-        : null;
-
-    card.innerHTML = `
-      <div class="ad-image"
-        ${
-          firstImage
-            ? `style="background-image:url('${firstImage}');background-size:cover;background-position:center;"`
-            : ""
-        }></div>
-      <div class="ad-content">
-        <div class="ad-title">${title}</div>
-        <div class="ad-meta">📍 ${city} · ${type}</div>
-        <div class="ad-price">${priceText}</div>
-      </div>
-    `;
-
-    card.addEventListener("click", () => openAdDetails(ad));
-    return card;
-  }
-
-  function createListAdCard(ad) {
+  function createTileCard(ad) {
     const card = document.createElement("article");
     card.className = "ad-card";
 
@@ -1504,7 +1320,6 @@
     const type = ad.type || "Tovar";
     const priceText = formatPrice(ad.price);
     const created = formatDateShort(ad.created_at);
-    const desc = ad.description || "";
     const firstImage =
       ad.images && Array.isArray(ad.images) && ad.images.length > 0
         ? ad.images[0]
@@ -1523,11 +1338,6 @@
           📍 ${city} · ${type}${created ? ` · ${created}` : ""}
         </div>
         <div class="ad-price">${priceText}</div>
-        ${
-          desc
-            ? `<div class="ad-meta" style="margin-top:2px;">${desc}</div>`
-            : ""
-        }
       </div>
     `;
 
@@ -1535,127 +1345,100 @@
     return card;
   }
 
-  // ===== ДОБАВЛЯЕМ БЛОКИ НА ГЛАВНУЮ: избранное, просмотренные, горячие =====
+  // ===== ФИЛЬТРЫ + РЕНДЕР ЛЕНТЫ =====
 
-  let favoritesTitleEl, favoritesListEl;
-  let viewedTitleEl, viewedListEl;
-  let hotTitleEl, hotListEl;
-
-  function setupHomeExtraBlocks() {
-    if (!homeScreen) return;
-
-    // Блок "Избранное"
-    favoritesTitleEl = document.createElement("h2");
-    favoritesTitleEl.className = "section-title";
-    favoritesTitleEl.textContent = "Избранное";
-    favoritesTitleEl.style.marginTop = "18px";
-    favoritesTitleEl.style.display = "none";
-
-    favoritesListEl = document.createElement("div");
-    favoritesListEl.id = "favoritesList";
-    favoritesListEl.className = "ads-list";
-    favoritesListEl.style.display = "none";
-
-    // Блок "Вы смотрели"
-    viewedTitleEl = document.createElement("h2");
-    viewedTitleEl.className = "section-title";
-    viewedTitleEl.textContent = "Вы смотрели ранее";
-    viewedTitleEl.style.marginTop = "18px";
-    viewedTitleEl.style.display = "none";
-
-    viewedListEl = document.createElement("div");
-    viewedListEl.id = "viewedList";
-    viewedListEl.className = "ads-list";
-    viewedListEl.style.display = "none";
-
-    // Блок "Горячие предложения"
-    hotTitleEl = document.createElement("h2");
-    hotTitleEl.className = "section-title";
-    hotTitleEl.textContent = "🔥 Горячие предложения";
-    hotTitleEl.style.marginTop = "18px";
-    hotTitleEl.style.display = "none";
-
-    hotListEl = document.createElement("div");
-    hotListEl.id = "hotList";
-    hotListEl.className = "ads-list";
-    hotListEl.style.display = "none";
-
-    // Вставляем после Yangi e'lonlar
-    if (homeAdsList && homeAdsList.parentNode) {
-      homeAdsList.parentNode.appendChild(favoritesTitleEl);
-      homeAdsList.parentNode.appendChild(favoritesListEl);
-      homeAdsList.parentNode.appendChild(viewedTitleEl);
-      homeAdsList.parentNode.appendChild(viewedListEl);
-      homeAdsList.parentNode.appendChild(hotTitleEl);
-      homeAdsList.parentNode.appendChild(hotListEl);
-    }
-  }
-
-  function renderFavoritesOnHome() {
-    if (!favoritesTitleEl || !favoritesListEl) return;
-    if (!allAds.length || !favoritesSet.size) {
-      favoritesTitleEl.style.display = "none";
-      favoritesListEl.style.display = "none";
-      return;
-    }
-    const favIds = Array.from(favoritesSet);
-    const favAds = allAds.filter((ad) => favIds.includes(ad.id)).slice(0, 4);
-    if (!favAds.length) {
-      favoritesTitleEl.style.display = "none";
-      favoritesListEl.style.display = "none";
-      return;
-    }
-    favoritesListEl.innerHTML = "";
-    favAds.forEach((ad) => favoritesListEl.appendChild(createHomeAdCard(ad)));
-    favoritesTitleEl.style.display = "block";
-    favoritesListEl.style.display = "flex";
-  }
-
-  function renderViewedOnHome() {
-    if (!viewedTitleEl || !viewedListEl) return;
-    if (!allAds.length || !viewedIds.length) {
-      viewedTitleEl.style.display = "none";
-      viewedListEl.style.display = "none";
-      return;
-    }
-    const map = new Map(allAds.map((ad) => [ad.id, ad]));
-    const ads = [];
-    for (const id of viewedIds) {
-      if (map.has(id)) ads.push(map.get(id));
-      if (ads.length >= 4) break;
-    }
-    if (!ads.length) {
-      viewedTitleEl.style.display = "none";
-      viewedListEl.style.display = "none";
-      return;
-    }
-    viewedListEl.innerHTML = "";
-    ads.forEach((ad) => viewedListEl.appendChild(createHomeAdCard(ad)));
-    viewedTitleEl.style.display = "block";
-    viewedListEl.style.display = "flex";
-  }
-
-  function renderHotOnHome() {
-    if (!hotTitleEl || !hotListEl) return;
+  function applyAllFilters() {
     if (!allAds.length) {
-      hotTitleEl.style.display = "none";
-      hotListEl.style.display = "none";
+      filteredAds = [];
       return;
     }
-    // Просто берём 4 самых дорогих
-    const withPrice = allAds
-      .filter((ad) => ad.price !== null && ad.price !== undefined)
-      .slice();
-    withPrice.sort((a, b) => (Number(b.price || 0) - Number(a.price || 0)));
-    const hot = (withPrice.length ? withPrice : allAds).slice(0, 4);
 
-    hotListEl.innerHTML = "";
-    hot.forEach((ad) => hotListEl.appendChild(createHomeAdCard(ad)));
-    hotTitleEl.style.display = "block";
-    hotListEl.style.display = "flex";
+    const q = searchQuery.trim().toLowerCase();
+
+    filteredAds = allAds.filter((ad) => {
+      // тип
+      if (filterState.type !== "all" && ad.type !== filterState.type) {
+        return false;
+      }
+
+      // город
+      if (filterState.city !== "all") {
+        if ((ad.city || "").trim() !== filterState.city) return false;
+      }
+
+      // только с фото
+      if (filterState.onlyWithPhoto) {
+        if (!ad.images || !Array.isArray(ad.images) || ad.images.length === 0) {
+          return false;
+        }
+      }
+
+      // цена
+      const p = Number(ad.price || 0);
+      if (filterState.price === "lt500") {
+        if (!(p > 0 && p < 500000)) return false;
+      } else if (filterState.price === "mid") {
+        if (!(p >= 500000 && p <= 2000000)) return false;
+      } else if (filterState.price === "gt2000") {
+        if (!(p > 2000000)) return false;
+      }
+
+      // поиск по названию и описанию
+      if (q) {
+        const text = String(ad.title || "") + " " + String(ad.description || "");
+        if (!text.toLowerCase().includes(q)) return false;
+      }
+
+      return true;
+    });
+
+    // сортировка — новые сверху
+    filteredAds.sort((a, b) => {
+      const da = a.created_at ? new Date(a.created_at).getTime() : 0;
+      const db = b.created_at ? new Date(b.created_at).getTime() : 0;
+      return db - da;
+    });
   }
 
-  // ===== ЗАГРУЗКА ОБЪЯВЛЕНИЙ + ПРИМЕНЕНИЕ ФИЛЬТРОВ =====
+  function renderFeed() {
+    if (!feedList) return;
+    feedList.innerHTML = "";
+
+    if (!filteredAds.length) {
+      feedList.innerHTML =
+        "<div class='ad-meta'>Подходящих объявлений нет. Попробуйте изменить фильтры или поиск.</div>";
+      return;
+    }
+
+    filteredAds.forEach((ad) => {
+      feedList.appendChild(createTileCard(ad));
+    });
+  }
+
+  function renderFavorites() {
+    if (!favoritesList) return;
+    favoritesList.innerHTML = "";
+
+    const favIds = Array.from(favoritesSet);
+    if (!allAds.length || !favIds.length) {
+      favoritesList.innerHTML =
+        "<div class='ad-meta'>В избранном пока пусто. Откройте объявление и нажмите ♡, чтобы добавить.</div>";
+      return;
+    }
+
+    const favAds = allAds.filter((ad) => favIds.includes(ad.id));
+    if (!favAds.length) {
+      favoritesList.innerHTML =
+        "<div class='ad-meta'>В избранном пока пусто.</div>";
+      return;
+    }
+
+    favAds.forEach((ad) => {
+      favoritesList.appendChild(createTileCard(ad));
+    });
+  }
+
+  // ===== ЗАГРУЗКА ОБЪЯВЛЕНИЙ =====
 
   async function loadAds() {
     try {
@@ -1665,129 +1448,29 @@
       if (!Array.isArray(data)) return;
 
       allAds = data;
-
-      // Блок "Yangi e'lonlar" — 4 последних
-      if (homeAdsList) {
-        homeAdsList.innerHTML = "";
-        const latest = data.slice(0, 4);
-        if (!latest.length) {
-          homeAdsList.innerHTML =
-            "<div class='ad-meta'>Hozircha e'lonlar yo'q.</div>";
-        } else {
-          latest.forEach((ad) => {
-            const card = createHomeAdCard(ad);
-            homeAdsList.appendChild(card);
-          });
-        }
-      }
-
-      // Рисуем доп. блоки
-      renderFavoritesOnHome();
-      renderViewedOnHome();
-      renderHotOnHome();
-
-      // Лента
-      applyAllFiltersAndSort();
+      applyAllFilters();
+      renderFeed();
+      renderFavorites();
     } catch (err) {
       console.error("Xato yuklashda:", err);
-      if (homeAdsList) {
-        homeAdsList.innerHTML =
+      if (feedList) {
+        feedList.innerHTML =
           "<div class='ad-meta'>E'lonlarni yuklashda xatolik. Keyinroq urinib ko'ring.</div>";
       }
-      if (adList) {
-        adList.innerHTML =
-          "<div class='ad-meta'>E'lonlarni yuklashda xatolik. Keyinroq urinib ko'ring.</div>";
+      if (favoritesList) {
+        favoritesList.innerHTML =
+          "<div class='ad-meta'>Избранное недоступно. Попробуйте позже.</div>";
       }
     }
-  }
-
-  function applyAllFiltersAndSort() {
-    if (!adList) return;
-    if (!allAds.length) {
-      adList.innerHTML = "<div class='ad-meta'>Hozircha e'lonlar yo'q.</div>";
-      return;
-    }
-
-    filteredAds = allAds.filter((ad) => {
-      // тип (таб Товары/Услуги/Недвижимость)
-      if (currentTypeFilter && ad.type !== currentTypeFilter) return false;
-
-      // город
-      if (currentCityFilter !== "all") {
-        if ((ad.city || "").trim() !== currentCityFilter) return false;
-      }
-
-      // только с фото
-      if (onlyWithPhoto) {
-        if (
-          !ad.images ||
-          !Array.isArray(ad.images) ||
-          ad.images.length === 0
-        ) {
-          return false;
-        }
-      }
-
-      // фильтр по цене
-      const p = Number(ad.price || 0);
-      if (currentPriceFilter === "lt500") {
-        if (!(p > 0 && p < 500000)) return false;
-      } else if (currentPriceFilter === "mid") {
-        if (!(p >= 500000 && p <= 2000000)) return false;
-      } else if (currentPriceFilter === "gt2000") {
-        if (!(p > 2000000)) return false;
-      }
-
-      // поиск по названию и описанию
-      if (searchQuery) {
-        const text =
-          String(ad.title || "") + " " + String(ad.description || "");
-        if (!text.toLowerCase().includes(searchQuery)) return false;
-      }
-
-      return true;
-    });
-
-    // сортировка
-    filteredAds.sort((a, b) => {
-      if (currentSort === "cheap") {
-        return Number(a.price || 0) - Number(b.price || 0);
-      }
-      if (currentSort === "expensive") {
-        return Number(b.price || 0) - Number(a.price || 0);
-      }
-      // "новые" — по created_at
-      const da = a.created_at ? new Date(a.created_at).getTime() : 0;
-      const db = b.created_at ? new Date(b.created_at).getTime() : 0;
-      return db - da;
-    });
-
-    renderedCount = 0;
-    adList.innerHTML = "";
-    loadMoreAds();
-  }
-
-  function loadMoreAds() {
-    if (!adList || !filteredAds.length) {
-      if (renderedCount === 0) {
-        adList.innerHTML =
-          "<div class='ad-meta'>Подходящих объявлений нет.</div>";
-      }
-      return;
-    }
-    const slice = filteredAds.slice(renderedCount, renderedCount + PAGE_SIZE);
-    slice.forEach((ad) => {
-      adList.appendChild(createListAdCard(ad));
-    });
-    renderedCount += slice.length;
   }
 
   // ===== ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ =====
 
   const screens = {
-    home: document.getElementById("screen-home"),
-    list: document.getElementById("screen-list"),
-    profile: document.getElementById("screen-profile"),
+    home: homeScreen,
+    favorites: favoritesScreen,
+    profile: profileScreen,
+    filters: filtersScreen,
     newAd1: document.getElementById("screen-new-ad-step1"),
     newAd2: document.getElementById("screen-new-ad-step2"),
     newAd3: document.getElementById("screen-new-ad-step3"),
@@ -1808,6 +1491,7 @@
       target.style.display = "block";
     }
 
+    // нижнее меню
     document
       .querySelectorAll(".nav-btn")
       .forEach((btn) => btn.classList.remove("active"));
@@ -1819,6 +1503,16 @@
     if (screensContainer) {
       screensContainer.scrollTop = 0;
     }
+
+    // при открытии фильтров — подтянуть состояние
+    if (name === "filters") {
+      syncFiltersUIFromState();
+    }
+
+    // при открытии избранного — перерисовать
+    if (name === "favorites") {
+      renderFavorites();
+    }
   }
 
   // нижнее меню
@@ -1826,33 +1520,129 @@
     btn.addEventListener("click", () => {
       const target = btn.getAttribute("data-screen");
       showScreen(target);
-      if (target === "list") {
-        applyAllFiltersAndSort();
-      }
     });
   });
 
-  // ===== НОВОЕ ОБЪЯВЛЕНИЕ: ШАГ 1 =====
+  // ===== ПОИСК =====
 
-  const newAdDraft = {
-    type: "Товар",
-    city: "Ташкент",
-    title: "",
-    price: "",
-    description: "",
-    photoCount: 0,
-    photos: [],
-  };
+  if (searchInput) {
+    searchInput.addEventListener("input", (e) => {
+      searchQuery = (e.target.value || "").toLowerCase();
+      applyAllFilters();
+      renderFeed();
+    });
+  }
 
-  document.getElementById("btnOpenNewAd").addEventListener("click", () => {
-    showScreen("newAd1");
-  });
+  // ===== ФИЛЬТРЫ: UI <-> состояние =====
 
-  document.getElementById("backFromNewAd1").addEventListener("click", () => {
-    showScreen("home");
-  });
+  function syncFiltersUIFromState() {
+    // тип
+    if (filterTypeRow) {
+      filterTypeRow.querySelectorAll(".chip").forEach((chip) => {
+        const t = chip.getAttribute("data-type") || "all";
+        chip.classList.toggle("chip-filled", t === filterState.type);
+      });
+    }
+    // город
+    if (filterCitySelect) {
+      filterCitySelect.value = filterState.city === "all" ? "all" : filterState.city;
+    }
+    // цена
+    if (filterPriceRow) {
+      filterPriceRow.querySelectorAll(".chip").forEach((chip) => {
+        const v = chip.getAttribute("data-price") || "all";
+        chip.classList.toggle("chip-filled", v === filterState.price);
+      });
+    }
+    // фото
+    if (filterPhotoChip) {
+      filterPhotoChip.classList.toggle("chip-filled", filterState.onlyWithPhoto);
+    }
+  }
 
-  const adTypeChips = document.querySelectorAll("#adTypeChips .chip");
+  function readFiltersFromUI() {
+    // тип
+    if (filterTypeRow) {
+      const active = filterTypeRow.querySelector(".chip-filled");
+      filterState.type = active ? (active.getAttribute("data-type") || "all") : "all";
+    }
+    // город
+    if (filterCitySelect) {
+      const val = filterCitySelect.value;
+      filterState.city = !val || val === "all" ? "all" : val;
+    }
+    // цена
+    if (filterPriceRow) {
+      const active = filterPriceRow.querySelector(".chip-filled");
+      filterState.price = active ? (active.getAttribute("data-price") || "all") : "all";
+    }
+    // фото
+    if (filterPhotoChip) {
+      filterState.onlyWithPhoto = filterPhotoChip.classList.contains("chip-filled");
+    }
+  }
+
+  // клики по типам/цене в фильтрах
+  if (filterTypeRow) {
+    filterTypeRow.addEventListener("click", (e) => {
+      const chip = e.target.closest(".chip");
+      if (!chip) return;
+      filterTypeRow.querySelectorAll(".chip").forEach((c) => c.classList.remove("chip-filled"));
+      chip.classList.add("chip-filled");
+    });
+  }
+
+  if (filterPriceRow) {
+    filterPriceRow.addEventListener("click", (e) => {
+      const chip = e.target.closest(".chip");
+      if (!chip) return;
+      filterPriceRow.querySelectorAll(".chip").forEach((c) => c.classList.remove("chip-filled"));
+      chip.classList.add("chip-filled");
+    });
+  }
+
+  if (filterPhotoChip) {
+    filterPhotoChip.addEventListener("click", () => {
+      filterPhotoChip.classList.toggle("chip-filled");
+    });
+  }
+
+  if (openFiltersBtn) {
+    openFiltersBtn.addEventListener("click", () => {
+      showScreen("filters");
+    });
+  }
+
+  if (filtersApplyBtn) {
+    filtersApplyBtn.addEventListener("click", () => {
+      readFiltersFromUI();
+      applyAllFilters();
+      renderFeed();
+      showScreen("home");
+    });
+  }
+
+  if (filtersResetBtn) {
+    filtersResetBtn.addEventListener("click", () => {
+      filterState.type = "all";
+      filterState.city = "all";
+      filterState.price = "all";
+      filterState.onlyWithPhoto = false;
+      syncFiltersUIFromState();
+      applyAllFilters();
+      renderFeed();
+    });
+  }
+
+  if (filtersBackBtn) {
+    filtersBackBtn.addEventListener("click", () => {
+      showScreen("home");
+    });
+  }
+
+  // ===== НОВОЕ ОБЪЯВЛЕНИЕ: ШАГИ =====
+
+  // выбор типа
   adTypeChips.forEach((chip) => {
     chip.addEventListener("click", () => {
       adTypeChips.forEach((c) => c.classList.remove("chip-filled"));
@@ -1861,14 +1651,20 @@
     });
   });
 
-  const inputCity = document.getElementById("inputCity");
-  const inputTitle = document.getElementById("inputTitle");
-  const inputPrice = document.getElementById("inputPrice");
-  const inputDescription = document.getElementById("inputDescription");
+  if (btnOpenNewAd) {
+    btnOpenNewAd.addEventListener("click", () => {
+      showScreen("newAd1");
+    });
+  }
 
-  document
-    .getElementById("btnNewAdStep1Next")
-    .addEventListener("click", () => {
+  if (backFromNewAd1) {
+    backFromNewAd1.addEventListener("click", () => {
+      showScreen("home");
+    });
+  }
+
+  if (btnNewAdStep1Next) {
+    btnNewAdStep1Next.addEventListener("click", () => {
       const title = (inputTitle.value || "").trim();
       const price = (inputPrice.value || "").trim();
       const desc = (inputDescription.value || "").trim();
@@ -1889,13 +1685,9 @@
 
       showScreen("newAd2");
     });
+  }
 
-  // ===== ШАГ 2: ФОТО + IMGBB =====
-
-  const btnUploadPhotos = document.getElementById("btnUploadPhotos");
-  const inputPhotos = document.getElementById("inputPhotos");
-  const photosPreview = document.getElementById("photosPreview");
-
+  // шаг 2: фото + ImgBB
   async function uploadToImgbb(file) {
     const formData = new FormData();
     formData.append("key", IMGBB_API_KEY);
@@ -1912,46 +1704,49 @@
     return json.data.url;
   }
 
-  btnUploadPhotos.addEventListener("click", () => {
-    inputPhotos.click();
-  });
+  if (btnUploadPhotos) {
+    btnUploadPhotos.addEventListener("click", () => {
+      inputPhotos.click();
+    });
+  }
 
-  inputPhotos.addEventListener("change", async () => {
-    const files = Array.from(inputPhotos.files || []);
-    photosPreview.innerHTML = "";
-    newAdDraft.photos = [];
-    newAdDraft.photoCount = 0;
+  if (inputPhotos) {
+    inputPhotos.addEventListener("change", async () => {
+      const files = Array.from(inputPhotos.files || []);
+      photosPreview.innerHTML = "";
+      newAdDraft.photos = [];
+      newAdDraft.photoCount = 0;
 
-    if (!files.length) return;
+      if (!files.length) return;
 
-    const maxFiles = 8;
-    const selected = files.slice(0, maxFiles);
+      const maxFiles = 8;
+      const selected = files.slice(0, maxFiles);
 
-    for (const file of selected) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const div = document.createElement("div");
-        div.className = "photo-thumb";
-        const img = document.createElement("img");
-        img.src = e.target.result;
-        div.appendChild(img);
-        photosPreview.appendChild(div);
-      };
-      reader.readAsDataURL(file);
+      for (const file of selected) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const div = document.createElement("div");
+          div.className = "photo-thumb";
+          const img = document.createElement("img");
+          img.src = e.target.result;
+          div.appendChild(img);
+          photosPreview.appendChild(div);
+        };
+        reader.readAsDataURL(file);
 
-      try {
-        const url = await uploadToImgbb(file);
-        newAdDraft.photos.push(url);
-        newAdDraft.photoCount = newAdDraft.photos.length;
-      } catch (e) {
-        console.error("ImgBB upload error:", e);
+        try {
+          const url = await uploadToImgbb(file);
+          newAdDraft.photos.push(url);
+          newAdDraft.photoCount = newAdDraft.photos.length;
+        } catch (e) {
+          console.error("ImgBB upload error:", e);
+        }
       }
-    }
-  });
+    });
+  }
 
-  document
-    .getElementById("btnNewAdStep2Next")
-    .addEventListener("click", () => {
+  if (btnNewAdStep2Next) {
+    btnNewAdStep2Next.addEventListener("click", () => {
       if (!newAdDraft.photoCount) {
         if (
           !confirm(
@@ -1964,18 +1759,13 @@
       fillSummaryStep3();
       showScreen("newAd3");
     });
+  }
 
-  document.getElementById("backFromNewAd2").addEventListener("click", () => {
-    showScreen("newAd1");
-  });
-
-  // ===== ШАГ 3: ПОДТВЕРЖДЕНИЕ =====
-
-  const summaryTitle = document.getElementById("summaryTitle");
-  const summaryCityType = document.getElementById("summaryCityType");
-  const summaryPrice = document.getElementById("summaryPrice");
-  const summaryDescription = document.getElementById("summaryDescription");
-  const summaryPhotosInfo = document.getElementById("summaryPhotosInfo");
+  if (backFromNewAd2) {
+    backFromNewAd2.addEventListener("click", () => {
+      showScreen("newAd1");
+    });
+  }
 
   function fillSummaryStep3() {
     summaryTitle.textContent = newAdDraft.title || "Название объявления";
@@ -1990,11 +1780,11 @@
       "Фото: " + (newAdDraft.photoCount || 0) + " шт.";
   }
 
-  document.getElementById("backFromNewAd3").addEventListener("click", () => {
-    showScreen("newAd2");
-  });
-
-  const btnPublishAd = document.getElementById("btnPublishAd");
+  if (backFromNewAd3) {
+    backFromNewAd3.addEventListener("click", () => {
+      showScreen("newAd2");
+    });
+  }
 
   async function publishAdToBackend() {
     btnPublishAd.disabled = true;
@@ -2047,225 +1837,19 @@
     }
   }
 
-  btnPublishAd.addEventListener("click", publishAdToBackend);
-
-  // ===== ЭКРАН УСПЕХА =====
-
-  document.getElementById("btnGoToList").addEventListener("click", () => {
-    showScreen("list");
-    applyAllFiltersAndSort();
-  });
-
-  document.getElementById("btnGoHome").addEventListener("click", () => {
-    showScreen("home");
-    loadAds();
-  });
-
-  // ===== ТАБЫ ТОВАРЫ / УСЛУГИ / НЕДВИЖИМОСТЬ =====
-
-  const tabGoods = document.getElementById("tabGoods");
-  const tabServices = document.getElementById("tabServices");
-  const tabRealty = document.getElementById("tabRealty");
-
-  function setActiveTab(activeBtn) {
-    [tabGoods, tabServices, tabRealty].forEach((btn) => {
-      if (!btn) return;
-      btn.classList.remove("active");
-    });
-    if (activeBtn) activeBtn.classList.add("active");
+  if (btnPublishAd) {
+    btnPublishAd.addEventListener("click", publishAdToBackend);
   }
 
-  function changeTypeFilter(typeName) {
-    currentTypeFilter = typeName;
-    applyAllFiltersAndSort();
-  }
-
-  tabGoods.addEventListener("click", () => {
-    setActiveTab(tabGoods);
-    changeTypeFilter("Товар");
-  });
-
-  tabServices.addEventListener("click", () => {
-    setActiveTab(tabServices);
-    changeTypeFilter("Услуга");
-  });
-
-  tabRealty.addEventListener("click", () => {
-    setActiveTab(tabRealty);
-    changeTypeFilter("Недвижимость");
-  });
-
-  // ===== ПОИСК ПО НАЗВАНИЮ/ОПИСАНИЮ =====
-
-  if (searchInput) {
-    searchInput.addEventListener("input", (e) => {
-      searchQuery = (e.target.value || "").toLowerCase();
-      showScreen("list");
-      applyAllFiltersAndSort();
+  if (btnGoToFeed) {
+    btnGoToFeed.addEventListener("click", () => {
+      showScreen("home");
     });
   }
 
-  // ===== ФИЛЬТР ПО ГОРОДУ + ПО ЦЕНЕ + "ТОЛЬКО С ФОТО" =====
-
-  function setupCityAndPriceFilters() {
-    if (!listScreen) return;
-
-    const cityRow = listScreen.querySelector(".filter-row");
-    if (!cityRow) return;
-
-    // заменим старые чипы на города
-    cityRow.innerHTML = "";
-    const cities = [
-      "Все",
-      "Ташкент",
-      "Самарканд",
-      "Фергана",
-      "Наманган",
-      "Андижан",
-      "Бухара",
-      "Хива",
-      "Карши",
-      "Термез",
-      "Джизак",
-      "Гулистан",
-      "Навои",
-    ];
-
-    cities.forEach((name, idx) => {
-      const btn = document.createElement("button");
-      btn.className = "filter-chip";
-      if (idx === 0) btn.classList.add("active");
-      btn.textContent = name;
-      btn.dataset.city = name === "Все" ? "all" : name;
-      btn.addEventListener("click", () => {
-        cityRow
-          .querySelectorAll(".filter-chip")
-          .forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
-        currentCityFilter = btn.dataset.city;
-        applyAllFiltersAndSort();
-      });
-      cityRow.appendChild(btn);
-    });
-
-    // ряд для фильтра по цене и "только с фото"
-    const priceRow = document.createElement("div");
-    priceRow.className = "filter-row";
-
-    const priceOptions = [
-      { key: "all", label: "Все цены" },
-      { key: "lt500", label: "до 500 000" },
-      { key: "mid", label: "500 000 – 2 000 000" },
-      { key: "gt2000", label: "от 2 000 000" },
-    ];
-
-    priceOptions.forEach((opt, idx) => {
-      const btn = document.createElement("button");
-      btn.className = "filter-chip";
-      if (idx === 0) btn.classList.add("active");
-      btn.textContent = opt.label;
-      btn.dataset.price = opt.key;
-      btn.addEventListener("click", () => {
-        priceRow
-          .querySelectorAll(".filter-chip")
-          .forEach((b) => {
-            if (!b.dataset.toggle) b.classList.remove("active");
-          });
-        btn.classList.add("active");
-        currentPriceFilter = opt.key;
-        applyAllFiltersAndSort();
-      });
-      priceRow.appendChild(btn);
-    });
-
-    // "Только с фото" — отдельный чип
-    const photoBtn = document.createElement("button");
-    photoBtn.className = "filter-chip";
-    photoBtn.dataset.toggle = "photo";
-    photoBtn.textContent = "📷 Только с фото";
-    photoBtn.addEventListener("click", () => {
-      onlyWithPhoto = !onlyWithPhoto;
-      photoBtn.classList.toggle("toggle-on", onlyWithPhoto);
-      applyAllFiltersAndSort();
-    });
-    priceRow.appendChild(photoBtn);
-
-    cityRow.insertAdjacentElement("afterend", priceRow);
-  }
-
-  // ===== СОРТИРОВКА + ПЕРЕКЛЮЧАТЕЛЬ ВИДА (СПИСОК / СЕТКА) =====
-
-  let sortSelectEl, viewListBtn, viewGridBtn;
-
-  function setupSortAndViewToolbar() {
-    if (!listScreen) return;
-    const titleEl = listScreen.querySelector(".screen-title");
-    if (!titleEl) return;
-
-    const toolbar = document.createElement("div");
-    toolbar.className = "list-toolbar";
-
-    const left = document.createElement("div");
-    left.className = "list-toolbar-left";
-    const label = document.createElement("span");
-    label.textContent = "Сортировка";
-    sortSelectEl = document.createElement("select");
-    sortSelectEl.className = "sort-select";
-    sortSelectEl.innerHTML = `
-      <option value="new">Сначала новые</option>
-      <option value="cheap">Сначала дешёвые</option>
-      <option value="expensive">Сначала дорогие</option>
-    `;
-    sortSelectEl.addEventListener("change", () => {
-      currentSort = sortSelectEl.value;
-      applyAllFiltersAndSort();
-    });
-    left.appendChild(label);
-    left.appendChild(sortSelectEl);
-
-    const right = document.createElement("div");
-    right.className = "list-toolbar-right";
-    viewListBtn = document.createElement("button");
-    viewListBtn.className = "view-toggle-btn active";
-    viewListBtn.textContent = "☰";
-    viewGridBtn = document.createElement("button");
-    viewGridBtn.className = "view-toggle-btn";
-    viewGridBtn.textContent = "▦";
-
-    viewListBtn.addEventListener("click", () => {
-      currentViewMode = "list";
-      viewListBtn.classList.add("active");
-      viewGridBtn.classList.remove("active");
-      if (adList) adList.classList.remove("grid-mode");
-    });
-
-    viewGridBtn.addEventListener("click", () => {
-      currentViewMode = "grid";
-      viewGridBtn.classList.add("active");
-      viewListBtn.classList.remove("active");
-      if (adList) adList.classList.add("grid-mode");
-    });
-
-    right.appendChild(viewListBtn);
-    right.appendChild(viewGridBtn);
-
-    toolbar.appendChild(left);
-    toolbar.appendChild(right);
-
-    titleEl.insertAdjacentElement("afterend", toolbar);
-  }
-
-  // ===== INFINITE SCROLL ЛЕНТЫ =====
-
-  if (screensContainer) {
-    screensContainer.addEventListener("scroll", () => {
-      if (!screens.list || !screens.list.classList.contains("active")) return;
-      const nearBottom =
-        screensContainer.scrollTop + screensContainer.clientHeight >=
-        screensContainer.scrollHeight - 80;
-      if (nearBottom) {
-        loadMoreAds();
-      }
+  if (btnGoHome) {
+    btnGoHome.addEventListener("click", () => {
+      showScreen("home");
     });
   }
 
@@ -2273,6 +1857,8 @@
 
   function openAdDetails(ad) {
     if (!screenAdDetails) return;
+
+    currentAdInDetails = ad;
 
     const title = ad.title || "Объявление";
     const priceText = formatPrice(ad.price);
@@ -2291,58 +1877,40 @@
     }
     if (detailDescription) detailDescription.textContent = desc;
 
-    // добавляем в историю просмотров
-    if (ad.id !== undefined && ad.id !== null) {
-      addToViewed(ad.id);
-      renderViewedOnHome();
-    }
-
-    // --- фото со свайпом ---
+    // фото-слайдер
     if (detailMainImage) {
       detailMainImage.innerHTML = "";
       detailMainImage.style.display = "flex";
       detailMainImage.style.overflowX = "auto";
       detailMainImage.style.scrollSnapType = "x mandatory";
 
-      images.forEach((url) => {
-        const slide = document.createElement("div");
-        slide.style.minWidth = "100%";
-        slide.style.height = "100%";
-        slide.style.borderRadius = "16px";
-        slide.style.backgroundImage = `url('${url}')`;
-        slide.style.backgroundSize = "cover";
-        slide.style.backgroundPosition = "center";
-        slide.style.scrollSnapAlign = "start";
-
-        slide.addEventListener("click", () => {
-          openLightbox(url);
+      if (images.length) {
+        images.forEach((url) => {
+          const slide = document.createElement("div");
+          slide.className = "detail-main-slide";
+          slide.style.backgroundImage = `url('${url}')`;
+          slide.addEventListener("click", () => {
+            openLightbox(url);
+          });
+          detailMainImage.appendChild(slide);
         });
-
-        detailMainImage.appendChild(slide);
-      });
-
-      if (!images.length) {
+      } else {
         const slide = document.createElement("div");
-        slide.style.minWidth = "100%";
-        slide.style.height = "100%";
-        slide.style.borderRadius = "16px";
+        slide.className = "detail-main-slide";
         slide.style.background = "#e5e7eb";
-        slide.style.scrollSnapAlign = "start";
         detailMainImage.appendChild(slide);
       }
 
       detailMainImage.scrollLeft = 0;
     }
 
-    // --- маленькие превью ---
+    // превью
     if (detailThumbs) {
       detailThumbs.innerHTML = "";
       images.forEach((url, idx) => {
         const div = document.createElement("div");
         div.className = "detail-thumb";
         div.style.backgroundImage = `url('${url}')`;
-        div.style.backgroundSize = "cover";
-        div.style.backgroundPosition = "center";
 
         div.addEventListener("click", () => {
           if (detailMainImage) {
@@ -2357,7 +1925,7 @@
       });
     }
 
-    // --- КНОПКИ "ПОЗВОНИТЬ" / "НАПИСАТЬ" ---
+    // кнопки связи
     const phone = ad.phone || DEFAULT_PHONE;
     const telegram = ad.telegram || DEFAULT_TELEGRAM;
 
@@ -2381,83 +1949,28 @@
       }
     }
 
-    // --- ИЗБРАННОЕ (сердечко в заголовке) ---
-    // создаём/обновляем блок иконок рядом с ценой (detailPrice)
-    let priceRow = document.getElementById("detailPriceRow");
-    if (!priceRow && detailPrice && detailPrice.parentNode) {
-      priceRow = document.createElement("div");
-      priceRow.id = "detailPriceRow";
-      priceRow.style.display = "flex";
-      priceRow.style.alignItems = "center";
-      priceRow.style.justifyContent = "space-between";
-      priceRow.style.marginBottom = "6px";
+    // избранное (сердечко)
+    if (favoriteBtn) {
+      const isFav = ad.id != null && favoritesSet.has(ad.id);
+      favoriteBtn.textContent = isFav ? "♥" : "♡";
 
-      detailPrice.parentNode.insertBefore(priceRow, detailPrice);
-      priceRow.appendChild(detailPrice);
-    }
-
-    if (priceRow) {
-      let iconsRow = document.getElementById("detailIconsRow");
-      if (!iconsRow) {
-        iconsRow = document.createElement("div");
-        iconsRow.id = "detailIconsRow";
-        iconsRow.style.display = "flex";
-        iconsRow.style.alignItems = "center";
-        iconsRow.style.gap = "8px";
-        priceRow.appendChild(iconsRow);
-      } else {
-        iconsRow.innerHTML = "";
-        priceRow.appendChild(iconsRow);
-      }
-
-      // избранное
-      const favBtn = document.createElement("button");
-      favBtn.type = "button";
-      favBtn.style.width = "28px";
-      favBtn.style.height = "28px";
-      favBtn.style.borderRadius = "999px";
-      favBtn.style.border = "1px solid #e2e8f0";
-      favBtn.style.display = "flex";
-      favBtn.style.alignItems = "center";
-      favBtn.style.justifyContent = "center";
-      favBtn.style.fontSize = "18px";
-      favBtn.style.background = "#ffffff";
-      favBtn.style.cursor = "pointer";
-
-      let favActive = favoritesSet.has(ad.id);
-      favBtn.textContent = favActive ? "♥" : "♡";
-
-      favBtn.addEventListener("click", () => {
-        if (!ad.id && ad.id !== 0) return;
+      favoriteBtn.onclick = () => {
+        if (ad.id == null) return;
         if (favoritesSet.has(ad.id)) {
           favoritesSet.delete(ad.id);
-          favActive = false;
-          favBtn.textContent = "♡";
+          favoriteBtn.textContent = "♡";
         } else {
           favoritesSet.add(ad.id);
-          favActive = true;
-          favBtn.textContent = "♥";
+          favoriteBtn.textContent = "♥";
         }
         saveFavoritesToStorage();
-        renderFavoritesOnHome();
-      });
+        renderFavorites();
+      };
+    }
 
-      // поделиться
-      const shareBtn = document.createElement("button");
-      shareBtn.type = "button";
-      shareBtn.style.width = "28px";
-      shareBtn.style.height = "28px";
-      shareBtn.style.borderRadius = "999px";
-      shareBtn.style.border = "1px solid #e2e8f0";
-      shareBtn.style.display = "flex";
-      shareBtn.style.alignItems = "center";
-      shareBtn.style.justifyContent = "center";
-      shareBtn.style.fontSize = "18px";
-      shareBtn.style.background = "#ffffff";
-      shareBtn.style.cursor = "pointer";
-      shareBtn.textContent = "⤴";
-
-      shareBtn.addEventListener("click", () => {
+    // поделиться
+    if (shareBtn) {
+      shareBtn.onclick = () => {
         const shareData = {
           title: title,
           text: title,
@@ -2472,10 +1985,52 @@
         } else {
           alert("Поделиться можно, скопировав ссылку из адресной строки.");
         }
-      });
+      };
+    }
 
-      iconsRow.appendChild(favBtn);
-      iconsRow.appendChild(shareBtn);
+    // похожие
+    if (similarList) {
+      similarList.innerHTML = "";
+      const sameType = allAds.filter(
+        (x) => x.id !== ad.id && x.type === ad.type && x.city === ad.city
+      );
+      const similarAds = (sameType.length ? sameType : allAds)
+        .filter((x) => x.id !== ad.id)
+        .slice(0, 3);
+
+      if (!similarAds.length) {
+        similarList.innerHTML =
+          "<div class='ad-meta'>Похожих объявлений пока нет.</div>";
+      } else {
+        similarAds.forEach((item) => {
+          const card = document.createElement("div");
+          card.className = "similar-card";
+
+          const firstImage =
+            item.images && Array.isArray(item.images) && item.images.length > 0
+              ? item.images[0]
+              : null;
+          card.innerHTML = `
+            <div class="similar-image"
+              ${
+                firstImage
+                  ? `style="background-image:url('${firstImage}');background-size:cover;background-position:center;"`
+                  : ""
+              }></div>
+            <div>
+              <div class="similar-content-title">${item.title || "E'lon"}</div>
+              <div class="similar-content-meta">
+                📍 ${item.city || "Shahar"} · ${item.type || "Tovar"}
+              </div>
+              <div class="similar-content-price">
+                ${formatPrice(item.price)}
+              </div>
+            </div>
+          `;
+          card.addEventListener("click", () => openAdDetails(item));
+          similarList.appendChild(card);
+        });
+      }
     }
 
     showScreen("adDetails");
@@ -2499,16 +2054,12 @@
 
   if (detailBackBtn) {
     detailBackBtn.addEventListener("click", () => {
-      showScreen("list");
+      showScreen("home");
     });
   }
 
   // ===== ИНИЦИАЛИЗАЦИЯ =====
-
-  setupHomeExtraBlocks();
-  setupCityAndPriceFilters();
-  setupSortAndViewToolbar();
   loadAds();
-</script>
+  </script>
 </body>
 </html>
