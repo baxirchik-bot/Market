@@ -541,7 +541,7 @@
 /* iOS-style BOTTOM NAV (как на скрине) */
 .bottom-nav {
   position: fixed;
-  bottom: 8px;
+  bottom: 0px;
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
@@ -566,33 +566,6 @@
 
   position: relative;
   z-index: 9001;
-}
-
-/* одна кнопка вкладки */
-.nav-btn {
-  flex: 1;
-  border: none;
-  background: transparent;
-  border-radius: 999px;
-
-  min-height: 56px;          /* стандартная зона клика iOS */
-  padding: 4px 8px;
-
-  display: flex;
-  flex-direction: column;    /* иконка сверху, текст снизу */
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-
-  font-size: 11px;
-  color: #111827;
-  cursor: pointer;
-
-  -webkit-tap-highlight-color: transparent;
-  outline: none;
-
-  position: relative;
-  z-index: 9002;
 }
 
 /* иконка в стиле SF Symbols */
