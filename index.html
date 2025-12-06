@@ -541,7 +541,7 @@
 /* iOS-style BOTTOM NAV (как на скрине) */
 .bottom-nav {
   position: fixed;
-  bottom: 0px;
+  bottom: 8px;
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
@@ -554,6 +554,33 @@
   pointer-events: auto;
 }
 
+    /* одна кнопка вкладки */
+.nav-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  border-radius: 999px;
+
+  min-height: 56px;
+  padding: 4px 8px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+
+  font-size: 11px;
+  color: #111827;
+  cursor: pointer;
+
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+
+  position: relative;
+  z-index: 9002;
+}
+    
 .bottom-nav-inner {
   background: #ffffff;
   border-radius: 999px;
