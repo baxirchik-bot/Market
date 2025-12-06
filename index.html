@@ -529,8 +529,16 @@
     margin-bottom: 16px;
   }
 
-  /* === iOS-style tab bar как на скрине === */
+  /* SCREEN CONTAINER – чтобы контент не залезал под меню */
+.screens {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 12px 120px; /* больше отступ снизу под таб-бар */
+  position: relative;
+  z-index: 1;               /* ниже, чем нижнее меню */
+}
 
+/* iOS-style BOTTOM NAV (как на скрине) */
 .bottom-nav {
   position: fixed;
   bottom: 8px;
@@ -539,10 +547,11 @@
   width: 100%;
   max-width: 480px;
 
-  /* фон страницы под капсулой */
   background: transparent;
   padding: 0 10px calc(4px + env(safe-area-inset-bottom));
-  z-index: 50;
+
+  z-index: 9000;        /* выше экранов, ниже лайтбокса/тоста */
+  pointer-events: auto;
 }
 
 .bottom-nav-inner {
@@ -550,9 +559,13 @@
   border-radius: 999px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   padding: 4px;
+
   display: flex;
   justify-content: space-between;
   align-items: stretch;
+
+  position: relative;
+  z-index: 9001;
 }
 
 /* одна кнопка вкладки */
@@ -562,7 +575,7 @@
   background: transparent;
   border-radius: 999px;
 
-  min-height: 56px;          /* большая зона клика, как у Apple */
+  min-height: 56px;          /* стандартная зона клика iOS */
   padding: 4px 8px;
 
   display: flex;
@@ -572,28 +585,31 @@
   gap: 2px;
 
   font-size: 11px;
-  color: #111827;            /* как в iOS — почти чёрный */
+  color: #111827;
   cursor: pointer;
 
   -webkit-tap-highlight-color: transparent;
   outline: none;
+
+  position: relative;
+  z-index: 9002;
 }
 
-/* иконка — монохромная, как SF Symbols */
+/* иконка в стиле SF Symbols */
 .nav-btn .icon {
   font-size: 20px;
   line-height: 1;
 }
 
-/* состояние при нажатии — лёгкий "прижим" */
+/* эффект при нажатии */
 .nav-btn:active {
   transform: scale(0.96);
 }
 
-/* АКТИВНАЯ вкладка (как на твоём скрине: белый островок + синяя иконка и текст) */
+/* активная вкладка */
 .nav-btn.active {
   background: #ffffff;
-  color: #007aff;                    /* стандартный iOS blue */
+  color: #007aff;                    /* iOS blue */
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.10);
 }
 
