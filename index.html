@@ -554,7 +554,7 @@
   pointer-events: auto;
 }
 
-    /* одна кнопка вкладки */
+ /* одна кнопка вкладки */
 .nav-btn {
   flex: 1;
   border: none;
@@ -579,6 +579,7 @@
 
   position: relative;
   z-index: 9002;
+  touch-action: manipulation;
 }
     
 .bottom-nav-inner {
@@ -2148,12 +2149,27 @@ function showScreen(name) {
   if (name === "home")      resetFeedRender();
 }
 
-// bottom nav
+// bottom nav — кликабельность на телефонах
 navButtons.forEach(btn => {
-  btn.addEventListener("click", () => {
+  const handleNavTap = () => {
     const target = btn.getAttribute("data-screen");
+    if (!target) return;
     showScreen(target);
-  });
+  };
+
+  // обычный клик (iPad, десктоп)
+  btn.addEventListener("click", handleNavTap);
+
+  // быстрый отклик на iPhone / Android
+  btn.addEventListener(
+    "touchstart",
+    (e) => {
+      // чтобы не было двойного срабатывания click
+      e.preventDefault();
+      handleNavTap();
+    },
+    { passive: false }
+  );
 });
 
 // infinite scroll on home
