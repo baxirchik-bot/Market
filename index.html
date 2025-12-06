@@ -539,19 +539,17 @@
 }
 
 /* iOS-style BOTTOM NAV (как на скрине) */
-.bottom-nav {
+    .bottom-nav {
   position: fixed;
-  bottom: 8px;
+  bottom: 24px; /* было 8px — подняли капсулу повыше от жестовой зоны */
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
   max-width: 480px;
 
   background: transparent;
-  padding: 0 10px calc(4px + env(safe-area-inset-bottom));
-
-  z-index: 9000;        /* выше экранов, ниже лайтбокса/тоста */
-  pointer-events: auto;
+  padding: 0 10px calc(16px + env(safe-area-inset-bottom)); /* чуть больше отступ снизу */
+  z-index: 50;
 }
 
  /* одна кнопка вкладки */
