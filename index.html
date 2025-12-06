@@ -541,14 +541,14 @@
 /* iOS-style BOTTOM NAV (как на скрине) */
     .bottom-nav {
   position: fixed;
-  bottom: 24px; /* было 8px — подняли капсулу повыше от жестовой зоны */
+  bottom: 14px; /* было 8px — подняли капсулу повыше от жестовой зоны */
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
   max-width: 480px;
 
   background: transparent;
-  padding: 0 10px calc(16px + env(safe-area-inset-bottom)); /* чуть больше отступ снизу */
+  padding: 0 10px calc(8px + env(safe-area-inset-bottom)); /* чуть больше отступ снизу */
   z-index: 50;
 }
 
