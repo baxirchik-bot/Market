@@ -535,74 +535,86 @@
     z-index: 1;
   }
 
-  /* === iOS-style tab bar === */
-  .bottom-nav {
-    position: fixed;
-    bottom: 32px;
-    left: 0;
-    right: 0;
-    width: 100%;
-    padding: 4px 10px 6px;
-    background: transparent;
-    z-index: 50;
-    display: flex;
-    justify-content: center;
-  }
+  /* контейнер снизу */
+.bottom-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 12px;              /* можно 10–16 подстроить по вкусу */
+  width: 100%;
+  padding: 0 10px;
+  background: transparent;
+  z-index: 50;
 
-  .bottom-nav-inner {
-    width: 100%;
-    max-width: 480px;
-    margin auto;
-    background: #ffffff;
-    border-radius: 999px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
-    padding: 4px;
-    display: flex;
-    justify-content: space-between;
-    align-items: stretch;
-    transform: translateY(18px);  /* опускаем внешний вид, не ломая тапы */
-  }
+  display: flex;
+  justify-content: center;
 
-  .nav-btn {
-    flex: 1;
-    border: none;
-    background: transparent;
-    border-radius: 999px;
-    min-height: 56px;
-    padding: 4px 8px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
-    font-size: 11px;
-    color: #111827;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-    outline: none;
-    pointer-events: auto;
-    touch-action: manipulation;
-  }
+  /* важный трюк: сам контейнер клики НЕ ловит,
+     кликабельна только белая капсула внутри */
+  pointer-events: none;
+}
 
-  .nav-btn .icon,
-  .nav-btn span {
-    pointer-events: none;
-  }
+/* белая капсула */
+.bottom-nav-inner {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
 
-  .nav-btn:active {
-    opacity: 0.6;
-  }
+  background: #ffffff;
+  border-radius: 999px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  padding: 4px;
 
-  .nav-btn.active {
-    background: #ffffff;
-    color: #007aff;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.10);
-  }
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
 
-  .nav-btn.active .icon {
-    color: #007aff;
-  }
+  /* клики разрешены только по ней и её детям */
+  pointer-events: auto;
+}
 
+/* одна кнопка вкладки */
+.nav-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  border-radius: 999px;
+
+  min-height: 56px;          /* большая зона тапа */
+  padding: 4px 8px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+
+  font-size: 11px;
+  color: #111827;
+  cursor: pointer;
+
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+/* НЕ трогаем pointer-events у текста и иконки!
+   (убери старое .nav-btn .icon, .nav-btn span { pointer-events:none; } ) */
+
+.nav-btn:active {
+  opacity: 0.6;
+}
+
+/* активная вкладка */
+.nav-btn.active {
+  background: #ffffff;
+  color: #007aff;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.10);
+}
+
+.nav-btn.active .icon {
+  color: #007aff;
+}
+    
   /* HEADER в карточке объявления */
   .ad-view-header {
     display: flex;
