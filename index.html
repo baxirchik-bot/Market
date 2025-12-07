@@ -2147,16 +2147,6 @@ navButtons.forEach(btn => {
 
   // обычный клик (iPad, десктоп)
   btn.addEventListener("click", handleNavTap);
-
-  // быстрый отклик на iPhone / Android
-  btn.addEventListener(
-    "touchstart",
-    (e) => {
-      // чтобы не было двойного срабатывания click
-      e.preventDefault();
-      handleNavTap();
-    },
-    { passive: false }
   );
 });
 
