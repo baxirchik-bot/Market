@@ -562,45 +562,54 @@
     align-items: stretch;
   }
 
-  .nav-btn {
-    flex: 1;
-    border: none;
-    background: transparent;
-    border-radius: 999px;
-    min-height: 56px;
-    padding: 4px 8px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
-    font-size: 11px;
-    color: #111827;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-    outline: none;
-    pointer-events: auto;
-    touch-action: manipulation;
-  }
+  /* Нижнее меню — увеличенные иконки и текст */
+.nav-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  border-radius: 999px;
 
-  .nav-btn .icon,
-  .nav-btn span {
-    pointer-events: none;
-  }
+  min-height: 64px;               /* больше высота */
+  padding: 6px 8px;               /* чуть больше отступы */
 
-  .nav-btn:active {
-    opacity: 0.6;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 
-  .nav-btn.active {
-    background: #ffffff;
-    color: #007aff;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.10);
-  }
+  gap: 4px;                       /* больше расстояние между иконкой и текстом */
 
-  .nav-btn.active .icon {
-    color: #007aff;
-  }
+  font-size: 13px;                /* текст больше */
+  color: #111827;
+
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  pointer-events: auto;
+}
+
+/* увеличиваем иконки */
+.nav-btn .icon {
+  font-size: 23px;                /* ***Иконка больше*** */
+  line-height: 1;
+  pointer-events: none;
+}
+
+.nav-btn span {
+  pointer-events: none;
+  font-weight: 500;               /* чуть чётче */
+}
+
+/* активная вкладка */
+.nav-btn.active {
+  background: #ffffff;
+  color: #007aff;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+}
+
+.nav-btn.active .icon {
+  color: #007aff;
+}
 
   /* HEADER в карточке объявления */
   .ad-view-header {
