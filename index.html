@@ -1600,17 +1600,19 @@
       <div class="settings-arrow">›</div>
     </button>
 
-    <button class="settings-row">
-      <div class="settings-icon">⭐</div>
-      <div class="settings-title">Sevimlilar</div>
-      <div class="settings-arrow">›</div>
-    </button>
+    <!-- Sevimlilar -->
+<button class="settings-row" id="settingsFavoritesRow">
+  <div class="settings-icon">⭐</div>
+  <div class="settings-title">Sevimlilar</div>
+  <div class="settings-arrow">›</div>
+</button>
 
-    <button class="settings-row">
-      <div class="settings-icon">🕒</div>
-      <div class="settings-title">Ko‘rish tarixi</div>
-      <div class="settings-arrow">›</div>
-    </button>
+<!-- Ko‘rish tarixi -->
+<button class="settings-row" id="settingsHistoryRow">
+  <div class="settings-icon">🕒</div>
+  <div class="settings-title">Ko‘rish tarixi</div>
+  <div class="settings-arrow">›</div>
+</button>
 
     <button class="settings-row">
       <div class="settings-icon">🌐</div>
@@ -1896,6 +1898,10 @@
   const screenShops      = document.getElementById("screen-shops");
   const screenSettings   = document.getElementById("screen-settings");
 
+  // Settings rows (profil ekrani)
+const settingsFavoritesRow = document.getElementById("settingsFavoritesRow");
+const settingsHistoryRow   = document.getElementById("settingsHistoryRow");
+    
   // Lists
   const feedList          = document.getElementById("feedList");
   const favoritesList     = document.getElementById("favoritesList");
@@ -2906,6 +2912,19 @@
       adminLastAdsEl.appendChild(row);
     });
   }
+
+    // ================== SETTINGS: SEVIMLILAR & TARIX ==================
+if (settingsFavoritesRow) {
+  settingsFavoritesRow.addEventListener("click", () => {
+    showScreen("favorites");   // ochiladi Sevimlilar ekrani
+  });
+}
+
+if (settingsHistoryRow) {
+  settingsHistoryRow.addEventListener("click", () => {
+    showScreen("history");     // ochiladi Ko‘rish tarixi ekrani
+  });
+}
 
   // ================== СТАРТ ==================
   showScreen("home");
