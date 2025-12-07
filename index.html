@@ -576,7 +576,7 @@
   background: transparent;
   border-radius: 999px;
 
-  min-height: 75px;          /* большая зона тапа */
+  min-height: 60px;          /* большая зона тапа */
   padding: 8px; 8px;
 
   display: flex;
@@ -1274,6 +1274,10 @@
     color: #b91c1c;
   }
 
+    .nav-btn .icon {
+  pointer-events: none; /* клики по иконке проходят сквозь неё в .nav-btn */
+}
+    
   /* Адаптив */
   @media (max-width: 480px) {
     body {
