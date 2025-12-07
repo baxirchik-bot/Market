@@ -22,15 +22,14 @@
   }
 
   .app {
-  position: relative;              /* ВАЖНО: якорь для bottom-nav */
-  background: #f9fafb;
-  width: 100%;
-  max-width: 480px;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
-}
+    background: #f9fafb;
+    width: 100%;
+    max-width: 480px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  }
 
   /* HEADER */
   .app-header {
@@ -529,79 +528,80 @@
 
   /* Переопределяем .screens, чтобы дать запас под таб-бар */
   .screens {
-  flex: 1;
-  overflow-y: auto;
-  padding: 12px 12px 16px; /* снизу маленький отступ, меню будет ниже */
-}
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 12px 120px;
+    position: relative;
+    z-index: 1;
+  }
 
-/* === Нижнее меню (без fixed/absolute) === */
-.bottom-nav {
-  width: 100%;
-  padding: 0 10px 16px;    /* отступ снизу */
-  background: #f1f4ff;     /* фон как у всего приложения */
-  display: flex;
-  justify-content: center;
-}
+  /* === iOS-style tab bar === */
+  .bottom-nav {
+    position: fixed;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    width: 100%;
+    padding: 4px 10px 6px;
+    background: transparent;
+    z-index: 50;
+    display: flex;
+    justify-content: center;
+  }
 
-.bottom-nav-inner {
-  width: 100%;
-  max-width: 480px;
-  margin: 0 auto;
+  .bottom-nav-inner {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 999px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    padding: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+  }
 
-  background: #ffffff;
-  border-radius: 999px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
-  padding: 4px;
+  .nav-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    border-radius: 999px;
+    min-height: 56px;
+    padding: 4px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    font-size: 11px;
+    color: #111827;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    pointer-events: auto;
+    touch-action: manipulation;
+  }
 
-  display: flex;
-  justify-content: space-between;
-  align-items: stretch;
-}
+  .nav-btn .icon,
+  .nav-btn span {
+    pointer-events: none;
+  }
 
-/* одна кнопка вкладки */
-.nav-btn {
-  flex: 1;
-  border: none;
-  background: transparent;
-  border-radius: 999px;
+  .nav-btn:active {
+    opacity: 0.6;
+  }
 
-  min-height: 56px;
-  padding: 4px 8px;
+  .nav-btn.active {
+    background: #ffffff;
+    color: #007aff;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.10);
+  }
 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
+  .nav-btn.active .icon {
+    color: #007aff;
+  }
 
-  font-size: 11px;
-  color: #111827;
-  cursor: pointer;
-
-  -webkit-tap-highlight-color: transparent;
-  outline: none;
-}
-
-/* не трогаем pointer-events — кликается вся кнопка */
-.nav-btn:active {
-  opacity: 0.6;
-}
-
-/* активная вкладка */
-.nav-btn.active {
-  background: #ffffff;
-  color: #007aff;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.10);
-}
-
-.nav-btn .icon {
-  font-size: 18px;
-}
-
-.nav-btn.active .icon {
-  color: #007aff;
-}
-    
   /* HEADER в карточке объявления */
   .ad-view-header {
     display: flex;
@@ -2047,21 +2047,16 @@
     if (name === "home")      resetFeedRender();
   }
 
-  // Новый обработчик нижнего меню (через делегирование)
-const bottomNavInner = document.querySelector(".bottom-nav-inner");
-
-if (bottomNavInner) {
-  bottomNavInner.addEventListener("click", (e) => {
-    const btn = e.target.closest(".nav-btn");
-    if (!btn) return;
-
-    const target = btn.getAttribute("data-screen");
-    if (!target) return;
-
-    showScreen(target);
+  // bottom nav
+  navButtons.forEach(btn => {
+    const handleNavTap = () => {
+      const target = btn.getAttribute("data-screen");
+      if (!target) return;
+      showScreen(target);
+    };
+    btn.addEventListener("click", handleNavTap);
   });
-}
-    
+
   // infinite scroll on home
   if (screensContainer) {
     screensContainer.addEventListener("scroll", () => {
