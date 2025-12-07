@@ -1614,11 +1614,11 @@
   <div class="settings-arrow">›</div>
 </button>
 
-    <button class="settings-row">
-      <div class="settings-icon">🌐</div>
-      <div class="settings-title">Tilni tanlash (uz/ru)</div>
-      <div class="settings-arrow">›</div>
-    </button>
+    <button class="settings-row" id="settingsLangRow">
+  <div class="settings-icon">🌐</div>
+  <div class="settings-title">Tilni tanlash (uz/ru)</div>
+  <div class="settings-arrow">›</div>
+</button>
 
     <!-- Pullik xizmatlar -> promo ekran -->
 <button class="settings-row" id="settingsPaidRow">
@@ -1812,6 +1812,25 @@
 
         <button id="btnGoHome" class="primary-btn">Bosh sahifa</button>
       </section>
+
+      <!-- ================= TILNI TANLASH (UZ/RU) ================= -->
+<section id="screen-language" class="screen">
+  <div class="screen-title">Tilni tanlash</div>
+
+  <div class="settings-card">
+    <button class="settings-row" id="languageUz">
+      <div class="settings-icon">🇺🇿</div>
+      <div class="settings-title">O‘zbek tili</div>
+      <div class="settings-arrow">›</div>
+    </button>
+
+    <button class="settings-row" id="languageRu">
+      <div class="settings-icon">🇷🇺</div>
+      <div class="settings-title">Русский язык</div>
+      <div class="settings-arrow">›</div>
+    </button>
+  </div>
+</section>
     </main>
 
     <!-- BOTTOM NAV -->
@@ -1896,6 +1915,9 @@
   const screenNewAdSuccess= document.getElementById("screen-new-ad-success");
   const screenShops      = document.getElementById("screen-shops");
   const screenSettings   = document.getElementById("screen-settings");
+  const settingsLangRow = document.getElementById("settingsLangRow");
+  const languageUz      = document.getElementById("languageUz");
+  const languageRu      = document.getElementById("languageRu");
 
   // Settings rows (profil ekrani)
 const settingsFavoritesRow = document.getElementById("settingsFavoritesRow");
@@ -2936,6 +2958,30 @@ if (settingsPaidRow) {
 if (settingsBusinessRow) {
   settingsBusinessRow.addEventListener("click", () => {
     showScreen("promo");   // vaqtinchalik ham shu yerga
+  });
+}
+
+    // ================== SETTINGS: TILNI TANLASH ==================
+if (settingsLangRow) {
+  settingsLangRow.addEventListener("click", () => {
+    showScreen("language");
+  });
+}
+
+// Nima bo‘ladi til bosilganda?
+if (languageUz) {
+  languageUz.addEventListener("click", () => {
+    localStorage.setItem("zalvoLang", "uz");
+    alert("Til o‘rnatildi: O‘zbek tili");
+    showScreen("profile");
+  });
+}
+
+if (languageRu) {
+  languageRu.addEventListener("click", () => {
+    localStorage.setItem("zalvoLang", "ru");
+    alert("Язык установлен: Русский");
+    showScreen("profile");
   });
 }
 
