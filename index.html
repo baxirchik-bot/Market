@@ -1202,6 +1202,47 @@
     color: #b91c1c;
   }
 
+    .settings-list {
+  margin-top: 8px;
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(15, 23, 42, 0.06);
+}
+
+.settings-item {
+  width: 100%;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  border: none;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  cursor: pointer;
+  text-align: left;
+}
+
+.settings-item:last-child {
+  border-bottom: none;
+}
+
+.settings-item-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.settings-item-icon {
+  font-size: 18px;
+}
+
+.settings-item-chevron {
+  font-size: 14px;
+  color: #cbd5e1;
+}
+
   @media (max-width: 480px) {
     body {
       align-items: stretch;
@@ -1470,6 +1511,61 @@
         <div id="historyList" class="ad-list"></div>
       </section>
 
+            <!-- ================= SHOPS (DO'KONLAR) ================= -->
+      <section id="screen-shops" class="screen">
+        <div class="screen-title">Do‘konlar</div>
+        <div class="hint">
+          Bu bo‘limda keyinchalik rasmiy do‘konlar va brendlar ro‘yxati paydo bo‘ladi.
+        </div>
+      </section>
+
+      <!-- ================= SETTINGS (SOZLAMALAR) ================= -->
+      <section id="screen-settings" class="screen">
+        <div class="screen-title">Sozlamalar</div>
+
+        <div class="settings-list">
+          <button id="settingsAccount" class="settings-item">
+            <div class="settings-item-left">
+              <span class="settings-item-icon">👤</span>
+              <span>Akkaunt</span>
+            </div>
+            <span class="settings-item-chevron">›</span>
+          </button>
+
+          <button id="settingsFavorites" class="settings-item">
+            <div class="settings-item-left">
+              <span class="settings-item-icon">⭐</span>
+              <span>Sevimlilar</span>
+            </div>
+            <span class="settings-item-chevron">›</span>
+          </button>
+
+          <button id="settingsHistory" class="settings-item">
+            <div class="settings-item-left">
+              <span class="settings-item-icon">🕒</span>
+              <span>Ko‘rish tarixi</span>
+            </div>
+            <span class="settings-item-chevron">›</span>
+          </button>
+
+          <button id="settingsProfile" class="settings-item">
+            <div class="settings-item-left">
+              <span class="settings-item-icon">📇</span>
+              <span>Profil ma’lumotlari</span>
+            </div>
+            <span class="settings-item-chevron">›</span>
+          </button>
+
+          <button id="settingsAbout" class="settings-item">
+            <div class="settings-item-left">
+              <span class="settings-item-icon">ℹ️</span>
+              <span>MarketHub haqida</span>
+            </div>
+            <span class="settings-item-chevron">›</span>
+          </button>
+        </div>
+      </section>
+      
       <!-- ================= ADMIN PANEL ================= -->
       <section id="screen-admin" class="screen">
         <div class="screen-title">Admin Panel</div>
@@ -1568,24 +1664,25 @@
 
     <!-- BOTTOM NAV -->
     <nav class="bottom-nav">
-      <div class="bottom-nav-inner">
-        <button type="button" class="nav-btn active" data-screen="home">
-          <span class="icon">🏠</span> Bosh sahifa
-        </button>
-        <button type="button" class="nav-btn" data-screen="favorites">
-          <span class="icon">❤️</span> Sevimli
-        </button>
-        <button type="button" class="nav-btn" data-screen="history">
-          <span class="icon">🕒</span> Tarix
-        </button>
-        <button type="button" class="nav-btn" data-screen="profile">
-          <span class="icon">👤</span> Profil
-        </button>
-        <button type="button" class="nav-btn" data-screen="admin">
-          <span class="icon">⚙️</span> Admin
-        </button>
-      </div>
-    </nav>
+  <div class="bottom-nav-inner">
+    <button type="button" class="nav-btn active" data-screen="home">
+      <span class="icon">🔍</span>
+      <span>Qidirish</span>
+    </button>
+    <button type="button" class="nav-btn" data-screen="shops">
+      <span class="icon">🏪</span>
+      <span>Do‘konlar</span>
+    </button>
+    <button type="button" class="nav-btn" data-screen="chat">
+      <span class="icon">💬</span>
+      <span>Chat</span>
+    </button>
+    <button type="button" class="nav-btn" data-screen="settings">
+      <span class="icon">⚙️</span>
+      <span>Sozlamalar</span>
+    </button>
+  </div>
+</nav>
   </div>
 
   <!-- LIGHTBOX -->
@@ -1645,6 +1742,8 @@
   const screenNewAd2      = document.getElementById("screen-new-ad-step2");
   const screenNewAd3      = document.getElementById("screen-new-ad-step3");
   const screenNewAdSuccess= document.getElementById("screen-new-ad-success");
+  const screenShops      = document.getElementById("screen-shops");
+  const screenSettings   = document.getElementById("screen-settings");
 
   // Lists
   const feedList          = document.getElementById("feedList");
@@ -2005,7 +2104,7 @@
   }
 
   // ================== ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ ==================
-  const screens = {
+    const screens = {
     home: screenHome,
     favorites: screenFavorites,
     filters: screenFilters,
@@ -2018,7 +2117,9 @@
     newAd1: screenNewAd1,
     newAd2: screenNewAd2,
     newAd3: screenNewAd3,
-    newAdSuccess: screenNewAdSuccess
+    newAdSuccess: screenNewAdSuccess,
+    shops: screenShops,
+    settings: screenSettings
   };
 
   function showScreen(name) {
@@ -2593,6 +2694,42 @@
     });
   }
 
+  const settingsAccountBtn   = document.getElementById("settingsAccount");
+  const settingsFavoritesBtn = document.getElementById("settingsFavorites");
+  const settingsHistoryBtn   = document.getElementById("settingsHistory");
+  const settingsProfileBtn   = document.getElementById("settingsProfile");
+  const settingsAboutBtn     = document.getElementById("settingsAbout");
+
+  if (settingsAccountBtn) {
+    settingsAccountBtn.addEventListener("click", () => {
+      showScreen("profile"); // можно позже сделать отдельный экран
+    });
+  }
+
+  if (settingsFavoritesBtn) {
+    settingsFavoritesBtn.addEventListener("click", () => {
+      showScreen("favorites");
+    });
+  }
+
+  if (settingsHistoryBtn) {
+    settingsHistoryBtn.addEventListener("click", () => {
+      showScreen("history");
+    });
+  }
+
+  if (settingsProfileBtn) {
+    settingsProfileBtn.addEventListener("click", () => {
+      showScreen("profile");
+    });
+  }
+
+  if (settingsAboutBtn) {
+    settingsAboutBtn.addEventListener("click", () => {
+      alert("MarketHub — mini ilova test rejimida. 😊");
+    });
+  }
+    
   // ================== ADMIN PANEL ==================
   function updateAdminPanel() {
     if (!adminTotalAdsEl || !adminNewTodayEl || !adminLastAdsEl) return;
