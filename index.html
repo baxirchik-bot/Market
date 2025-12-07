@@ -1620,20 +1620,19 @@
       <div class="settings-arrow">›</div>
     </button>
 
-    <button class="settings-row">
-      <div class="settings-icon">💎</div>
-      <div class="settings-title">Pullik xizmatlar</div>
-      <div class="settings-arrow">›</div>
-    </button>
-  </div>
+    <!-- Pullik xizmatlar -> promo ekran -->
+<button class="settings-row" id="settingsPaidRow">
+  <div class="settings-icon">💎</div>
+  <div class="settings-title">Pullik xizmatlar</div>
+  <div class="settings-arrow">›</div>
+</button>
 
-  <!-- Qo‘shimcha bo‘limlar -->
-  <div class="settings-card">
-    <button class="settings-row">
-      <div class="settings-icon">📈</div>
-      <div class="settings-title">Zalvo biznes uchun</div>
-      <div class="settings-arrow">›</div>
-    </button>
+<!-- Zalvo biznes uchun -> hozircha ham promo -->
+<button class="settings-row" id="settingsBusinessRow">
+  <div class="settings-icon">📈</div>
+  <div class="settings-title">Zalvo biznes uchun</div>
+  <div class="settings-arrow">›</div>
+</button>
 
     <button class="settings-row">
       <div class="settings-icon">❓</div>
@@ -1901,6 +1900,8 @@
   // Settings rows (profil ekrani)
 const settingsFavoritesRow = document.getElementById("settingsFavoritesRow");
 const settingsHistoryRow   = document.getElementById("settingsHistoryRow");
+const settingsPaidRow      = document.getElementById("settingsPaidRow");
+const settingsBusinessRow  = document.getElementById("settingsBusinessRow");
     
   // Lists
   const feedList          = document.getElementById("feedList");
@@ -2913,16 +2914,28 @@ const settingsHistoryRow   = document.getElementById("settingsHistoryRow");
     });
   }
 
-    // ================== SETTINGS: SEVIMLILAR & TARIX ==================
+    // ================== SETTINGS: SEVIMLILAR, TARIX, PULLIK XIZMATLAR ==================
 if (settingsFavoritesRow) {
   settingsFavoritesRow.addEventListener("click", () => {
-    showScreen("favorites");   // ochiladi Sevimlilar ekrani
+    showScreen("favorites");
   });
 }
 
 if (settingsHistoryRow) {
   settingsHistoryRow.addEventListener("click", () => {
-    showScreen("history");     // ochiladi Ko‘rish tarixi ekrani
+    showScreen("history");
+  });
+}
+
+if (settingsPaidRow) {
+  settingsPaidRow.addEventListener("click", () => {
+    showScreen("promo");   // ochiladi "E’lonni ilgari surish" ekrani
+  });
+}
+
+if (settingsBusinessRow) {
+  settingsBusinessRow.addEventListener("click", () => {
+    showScreen("promo");   // vaqtinchalik ham shu yerga
   });
 }
 
