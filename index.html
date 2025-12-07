@@ -2060,15 +2060,20 @@
     if (name === "home")      resetFeedRender();
   }
 
-  // bottom nav
-  navButtons.forEach(btn => {
-    const handleNavTap = () => {
-      const target = btn.getAttribute("data-screen");
-      if (!target) return;
-      showScreen(target);
-    };
-    btn.addEventListener("click", handleNavTap);
+  // НОВЫЙ обработчик: делегирование клика от капсулы
+const bottomNavInner = document.querySelector(".bottom-nav-inner");
+
+if (bottomNavInner) {
+  bottomNavInner.addEventListener("click", (e) => {
+    const btn = e.target.closest(".nav-btn");
+    if (!btn) return;
+
+    const target = btn.getAttribute("data-screen");
+    if (!target) return;
+
+    showScreen(target);
   });
+}
 
   // infinite scroll on home
   if (screensContainer) {
