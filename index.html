@@ -336,87 +336,119 @@
     margin-top: 2px;
   }
 
-  /* PROFILE SCREEN */
-  .profile-card {
-    background: #ffffff;
-    border-radius: 20px;
-    padding: 14px;
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
-    margin-bottom: 14px;
-  }
+  /* PROFILE / SETTINGS — Telegram style */
+#screen-profile {
+  padding: 0 0 16px;
+}
 
-  .profile-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 8px;
-  }
+/* верхняя часть с аватаром, именем, номером */
+.settings-header {
+  padding: 32px 16px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-  .avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 999px;
-    background: #1d4ed8;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #ffffff;
-    font-weight: 600;
-    font-size: 18px;
-  }
+.settings-avatar {
+  width: 110px;
+  height: 110px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 12px;
+}
 
-  .profile-name {
-    font-size: 15px;
-    font-weight: 600;
-  }
+.settings-name {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  text-align: center;
+}
 
-  .profile-username {
-    font-size: 13px;
-    color: #64748b;
-  }
+.settings-phone-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+}
 
-  .profile-rating {
-    font-size: 13px;
-    color: #f59e0b;
-    margin-top: 2px;
-  }
+.settings-phone-link,
+.settings-username {
+  color: #1d4ed8;
+  text-decoration: none;
+}
 
-  .profile-desc {
-    font-size: 13px;
-    color: #475569;
-    margin-top: 6px;
-  }
+.settings-dot {
+  color: #6b7280;
+}
 
-  .profile-actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 10px;
-  }
+/* белые карты, как в Telegram */
+.settings-card {
+  margin: 8px 12px 0;
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+}
 
-  .outline-btn,
-  .secondary-btn {
-    flex: 1;
-    border-radius: 999px;
-    padding: 8px 10px;
-    font-size: 13px;
-    border: 1px solid #cbd5f5;
-    background: #f8fafc;
-    color: #1d4ed8;
-    cursor: pointer;
-  }
-  .secondary-btn {
-    background: #fff7ed;
-    border-color: #fed7aa;
-    color: #c2410c;
-  }
+/* строка внутри карты */
+.settings-row {
+  width: 100%;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
 
-  .profile-section-title {
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 6px;
-    margin-top: 6px;
-  }
+.settings-row + .settings-row {
+  border-top: 1px solid #e5e7eb;
+}
 
+.settings-row-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* квадратные иконки слева */
+.settings-row-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+/* цвета иконок под Telegram */
+.icon-photo     { background: #eff6ff; color: #1d4ed8; }
+.icon-profile   { background: #fee2e2; color: #b91c1c; }
+.icon-wallet    { background: #dbeafe; color: #1d4ed8; }
+.icon-fav       { background: #fef3c7; color: #f59e0b; }
+.icon-recent    { background: #dcfce7; color: #16a34a; }
+.icon-devices   { background: #ffedd5; color: #ea580c; }
+.icon-folders   { background: #e0f2fe; color: #0284c7; }
+.icon-bell      { background: #fee2e2; color: #b91c1c; }
+
+.settings-row-title {
+  font-size: 15px;
+}
+
+/* стрелка справа */
+.settings-row-arrow {
+  color: #cbd5f5;
+  font-size: 18px;
+}
+    
   /* NEW AD FORM */
   .back-link {
     font-size: 13px;
@@ -1549,76 +1581,91 @@
         </div>
       </section>
 
-      <!-- ================= SETTINGS (как в Telegram) ================= -->
+      <!-- ================= PROFILE / SETTINGS (Telegram style) ================= -->
 <section id="screen-profile" class="screen">
   <div class="settings-header">
-    <div class="settings-avatar">
-      <!-- можешь позже вставить <img src="avatar.jpg"> -->
-      <span>B</span>
-    </div>
+    <div class="settings-avatar">B</div>
     <div class="settings-name">Бахир B-R</div>
-    <div class="settings-contact">+1 619 547 9977 · @Baxir1987</div>
+    <div class="settings-phone-row">
+      <a href="tel:+16195479977" class="settings-phone-link">
+        +1 619 547 9977
+      </a>
+      <span class="settings-dot">·</span>
+      <a href="https://t.me/Baxir1987" class="settings-username">
+        @Baxir1987
+      </a>
+    </div>
   </div>
 
-  <!-- кнопка "Изменить фотографию" -->
+  <!-- Изменить фотографию -->
   <div class="settings-card">
-    <button type="button" class="settings-row">
-      <div class="settings-icon settings-icon-blue">📷</div>
-      <div class="settings-row-text">Изменить фотографию</div>
-      <div class="settings-row-arrow">›</div>
-    </button>
-  </div>
-
-  <!-- блок как на скрине: профиль / кошелёк / избранное / звонки / устройства / папки -->
-  <div class="settings-card">
-    <button type="button" class="settings-row">
-      <div class="settings-icon settings-icon-pink">👤</div>
-      <div class="settings-row-text">Мой профиль</div>
-      <div class="settings-row-arrow">›</div>
-    </button>
-
-    <button type="button" class="settings-row">
-      <div class="settings-icon settings-icon-blue">💳</div>
-      <div class="settings-row-text">Кошелёк</div>
-      <div class="settings-row-arrow">›</div>
-    </button>
-
-    <button type="button" class="settings-row">
-      <div class="settings-icon settings-icon-blue">⭐</div>
-      <div class="settings-row-text">Избранное</div>
-      <div class="settings-row-arrow">›</div>
-    </button>
-
-    <button type="button" class="settings-row">
-      <div class="settings-icon settings-icon-green">📞</div>
-      <div class="settings-row-text">Недавние звонки</div>
-      <div class="settings-row-arrow">›</div>
-    </button>
-
-    <button type="button" class="settings-row">
-      <div class="settings-icon settings-icon-orange">📱</div>
-      <div class="settings-row-text">Устройства</div>
-      <div class="settings-row-arrow">›</div>
-    </button>
-
-    <button type="button" class="settings-row">
-      <div class="settings-icon settings-icon-blue">📂</div>
-      <div class="settings-row-text">Папки с чатами</div>
+    <button class="settings-row">
+      <div class="settings-row-left">
+        <div class="settings-row-icon icon-photo">📷</div>
+        <div class="settings-row-title">Изменить фотографию</div>
+      </div>
       <div class="settings-row-arrow">›</div>
     </button>
   </div>
 
-  <!-- второй блок – уведомления и ещё что-нибудь -->
+  <!-- Блок как на скрине: профиль, кошелёк, избранное, недавние, устройства, папки -->
   <div class="settings-card">
-    <button type="button" class="settings-row">
-      <div class="settings-icon settings-icon-pink">🔔</div>
-      <div class="settings-row-text">Уведомления и звуки</div>
+    <button class="settings-row">
+      <div class="settings-row-left">
+        <div class="settings-row-icon icon-profile">👤</div>
+        <div class="settings-row-title">Мой профиль</div>
+      </div>
       <div class="settings-row-arrow">›</div>
     </button>
 
-    <button type="button" class="settings-row">
-      <div class="settings-icon settings-icon-green">📊</div>
-      <div class="settings-row-text">Данные и память</div>
+    <button class="settings-row">
+      <div class="settings-row-left">
+        <div class="settings-row-icon icon-wallet">💳</div>
+        <div class="settings-row-title">Кошелёк</div>
+      </div>
+      <div class="settings-row-arrow">›</div>
+    </button>
+
+    <button class="settings-row">
+      <div class="settings-row-left">
+        <div class="settings-row-icon icon-fav">⭐️</div>
+        <div class="settings-row-title">Избранное</div>
+      </div>
+      <div class="settings-row-arrow">›</div>
+    </button>
+
+    <button class="settings-row">
+      <div class="settings-row-left">
+        <div class="settings-row-icon icon-recent">📞</div>
+        <div class="settings-row-title">Недавние звонки</div>
+      </div>
+      <div class="settings-row-arrow">›</div>
+    </button>
+
+    <button class="settings-row">
+      <div class="settings-row-left">
+        <div class="settings-row-icon icon-devices">📱</div>
+        <div class="settings-row-title">Устройства</div>
+      </div>
+      <div class="settings-row-arrow">›</div>
+    </button>
+
+    <button class="settings-row">
+      <div class="settings-row-left">
+        <div class="settings-row-icon icon-folders">📂</div>
+        <div class="settings-row-title">Папки с чатами</div>
+      </div>
+      <div class="settings-row-arrow">›</div>
+    </button>
+  </div>
+
+  <!-- Уведомления и звуки (как отдельная карта) -->
+  <div class="settings-card">
+    <button class="settings-row">
+      <div class="settings-row-left">
+        <div class="settings-row-icon icon-bell">🔔</div>
+        <div class="settings-row-title">Уведомления и звуки</div>
+      </div>
       <div class="settings-row-arrow">›</div>
     </button>
   </div>
