@@ -1252,6 +1252,125 @@
   color: #cbd5e1;
 }
 
+    /* ========= SETTINGS SCREEN (как в Telegram) ========= */
+
+.settings-header {
+  padding: 18px 16px 12px;
+  text-align: center;
+}
+
+.settings-avatar {
+  width: 88px;
+  height: 88px;
+  border-radius: 999px;
+  margin: 0 auto 8px;
+
+  background: #e5e7eb;
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 36px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.settings-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.settings-name {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.settings-contact {
+  margin-top: 4px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* карточки с пунктами меню */
+.settings-card {
+  background: #ffffff;
+  border-radius: 22px;
+  margin: 10px 12px;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+}
+
+/* одна строка */
+.settings-row {
+  width: 100%;
+  border: none;
+  background: transparent;
+
+  display: flex;
+  align-items: center;
+  padding: 11px 14px;
+
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.settings-row + .settings-row {
+  border-top: 0.5px solid #e5e7eb;
+}
+
+.settings-row:active {
+  background: #f3f4f6;
+}
+
+/* иконка слева */
+.settings-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 18px;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+/* разные цвета как в Telegram */
+.settings-icon-blue {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+.settings-icon-pink {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+.settings-icon-green {
+  background: #dcfce7;
+  color: #16a34a;
+}
+.settings-icon-orange {
+  background: #ffedd5;
+  color: #ea580c;
+}
+
+/* текст + стрелка */
+.settings-row-text {
+  flex: 1;
+  text-align: left;
+}
+
+.settings-row-arrow {
+  font-size: 18px;
+  color: #d1d5db;
+  margin-left: 6px;
+}
+
   @media (max-width: 480px) {
     body {
       align-items: stretch;
@@ -1430,33 +1549,80 @@
         </div>
       </section>
 
-      <!-- ================= PROFILE ================= -->
-      <section id="screen-profile" class="screen">
-        <div class="screen-title">Profil</div>
+      <!-- ================= SETTINGS (как в Telegram) ================= -->
+<section id="screen-profile" class="screen">
+  <div class="settings-header">
+    <div class="settings-avatar">
+      <!-- можешь позже вставить <img src="avatar.jpg"> -->
+      <span>B</span>
+    </div>
+    <div class="settings-name">Бахир B-R</div>
+    <div class="settings-contact">+1 619 547 9977 · @Baxir1987</div>
+  </div>
 
-        <div class="profile-card">
-          <div class="profile-header">
-            <div class="avatar">B</div>
-            <div>
-              <div class="profile-name">Baxir B-R</div>
-              <div class="profile-username">@Baxir1987</div>
-              <div class="profile-rating">⭐ 4.9 (23 baho)</div>
-            </div>
-          </div>
+  <!-- кнопка "Изменить фотографию" -->
+  <div class="settings-card">
+    <button type="button" class="settings-row">
+      <div class="settings-icon settings-icon-blue">📷</div>
+      <div class="settings-row-text">Изменить фотографию</div>
+      <div class="settings-row-arrow">›</div>
+    </button>
+  </div>
 
-          <div class="profile-desc">Faol sotuvchi · 12 ta e’lon joylashtirilgan</div>
+  <!-- блок как на скрине: профиль / кошелёк / избранное / звонки / устройства / папки -->
+  <div class="settings-card">
+    <button type="button" class="settings-row">
+      <div class="settings-icon settings-icon-pink">👤</div>
+      <div class="settings-row-text">Мой профиль</div>
+      <div class="settings-row-arrow">›</div>
+    </button>
 
-          <div class="profile-section-title">Kontaktlar</div>
-          <div class="profile-contacts-row">
-            <div class="profile-contact-item">
-              <span class="profile-contact-icon">📞</span> +998 90 123 45 67
-            </div>
-            <div class="profile-contact-item">
-              <span class="profile-contact-icon">✉️</span> @Baxir1987
-            </div>
-          </div>
-        </div>
-      </section>
+    <button type="button" class="settings-row">
+      <div class="settings-icon settings-icon-blue">💳</div>
+      <div class="settings-row-text">Кошелёк</div>
+      <div class="settings-row-arrow">›</div>
+    </button>
+
+    <button type="button" class="settings-row">
+      <div class="settings-icon settings-icon-blue">⭐</div>
+      <div class="settings-row-text">Избранное</div>
+      <div class="settings-row-arrow">›</div>
+    </button>
+
+    <button type="button" class="settings-row">
+      <div class="settings-icon settings-icon-green">📞</div>
+      <div class="settings-row-text">Недавние звонки</div>
+      <div class="settings-row-arrow">›</div>
+    </button>
+
+    <button type="button" class="settings-row">
+      <div class="settings-icon settings-icon-orange">📱</div>
+      <div class="settings-row-text">Устройства</div>
+      <div class="settings-row-arrow">›</div>
+    </button>
+
+    <button type="button" class="settings-row">
+      <div class="settings-icon settings-icon-blue">📂</div>
+      <div class="settings-row-text">Папки с чатами</div>
+      <div class="settings-row-arrow">›</div>
+    </button>
+  </div>
+
+  <!-- второй блок – уведомления и ещё что-нибудь -->
+  <div class="settings-card">
+    <button type="button" class="settings-row">
+      <div class="settings-icon settings-icon-pink">🔔</div>
+      <div class="settings-row-text">Уведомления и звуки</div>
+      <div class="settings-row-arrow">›</div>
+    </button>
+
+    <button type="button" class="settings-row">
+      <div class="settings-icon settings-icon-green">📊</div>
+      <div class="settings-row-text">Данные и память</div>
+      <div class="settings-row-arrow">›</div>
+    </button>
+  </div>
+</section>
 
       <!-- ================= PROMOTION SCREEN ================= -->
       <section id="screen-promo" class="screen">
