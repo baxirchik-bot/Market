@@ -22,14 +22,15 @@
   }
 
   .app {
-    background: #f9fafb;
-    width: 100%;
-    max-width: 480px;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
-  }
+  position: relative;              /* ВАЖНО: якорь для bottom-nav */
+  background: #f9fafb;
+  width: 100%;
+  max-width: 480px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
 
   /* HEADER */
   .app-header {
@@ -2060,7 +2061,7 @@
     if (name === "home")      resetFeedRender();
   }
 
-  // НОВЫЙ обработчик: делегирование клика от капсулы
+  // Новый обработчик нижнего меню
 const bottomNavInner = document.querySelector(".bottom-nav-inner");
 
 if (bottomNavInner) {
@@ -2074,7 +2075,7 @@ if (bottomNavInner) {
     showScreen(target);
   });
 }
-
+    
   // infinite scroll on home
   if (screensContainer) {
     screensContainer.addEventListener("scroll", () => {
