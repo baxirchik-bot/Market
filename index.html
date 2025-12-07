@@ -547,14 +547,14 @@
   right: 0;
 
   width: 100%;
-  padding: 4px 10px calc(6px + env(safe-area-inset-bottom));
+  padding: 4px 10px 6px;  /* ← БЕЗ env(safe-area-inset-bottom) */
   background: transparent;
   z-index: 50;
 
   display: flex;
-  justify-content: center;   /* центрируем .bottom-nav-inner */
+  justify-content: center;
 }
-
+    
 .bottom-nav-inner {
   width: 100%;
   max-width: 480px;
@@ -576,8 +576,8 @@
   background: transparent;
   border-radius: 999px;
 
-  min-height: 60px;          /* большая зона тапа */
-  padding: 8px; 8px;
+  min-height: 56px;          /* большая зона тапа */
+  padding: 4px; 8px;
 
   display: flex;
   flex-direction: column;    /* иконка сверху, текст снизу */
