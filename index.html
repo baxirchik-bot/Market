@@ -64,7 +64,7 @@
     color: #64748b;
   }
 
-  /* SCREEN CONTAINER */
+  /* SCREEN CONTAINER (основное объявление) */
   .screens {
     flex: 1;
     overflow-y: auto;
@@ -224,7 +224,6 @@
     color: #64748b;
   }
 
-  /* Активная категория */
   .category-card.active {
     border-color: #1d4ed8;
     box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.3);
@@ -240,7 +239,7 @@
   }
 
   .ad-card {
-    position: relative; /* для бейджей */
+    position: relative;
     display: flex;
     gap: 10px;
     background: #ffffff;
@@ -251,7 +250,6 @@
     overflow: hidden;
   }
 
-  /* бейдж ТОП / РЕКЛАМА на карточке */
   .ad-card-badge {
     position: absolute;
     top: 8px;
@@ -284,7 +282,6 @@
     font-size: 11px;
   }
 
-  /* Сетка для плитки */
   .ad-list.grid-mode {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -529,94 +526,82 @@
     margin-bottom: 16px;
   }
 
-  /* SCREEN CONTAINER – чтобы контент не залезал под меню */
-.screens {
-  flex: 1;
-  overflow-y: auto;
-  padding: 12px 12px 120px; /* больше отступ снизу под таб-бар */
-  position: relative;
-  z-index: 1;               /* ниже, чем нижнее меню */
-}
+  /* Переопределяем .screens, чтобы дать запас под таб-бар */
+  .screens {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 12px 120px;
+    position: relative;
+    z-index: 1;
+  }
 
-/* === iOS-style tab bar с размытием === */
+  /* === iOS-style tab bar === */
+  .bottom-nav {
+    position: fixed;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    width: 100%;
+    padding: 4px 10px 6px;
+    background: transparent;
+    z-index: 50;
+    display: flex;
+    justify-content: center;
+  }
 
-.bottom-nav {
-  position: fixed;
-  bottom: 10px;
-  left: 0;
-  right: 0;
+  .bottom-nav-inner {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 999px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    padding: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+  }
 
-  width: 100%;
-  padding: 4px 10px 6px;  /* ← БЕЗ env(safe-area-inset-bottom) */
-  background: transparent;
-  z-index: 50;
+  .nav-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    border-radius: 999px;
+    min-height: 56px;
+    padding: 4px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    font-size: 11px;
+    color: #111827;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    pointer-events: auto;
+    touch-action: manipulation;
+  }
 
-  display: flex;
-  justify-content: center;
-}
-    
-.bottom-nav-inner {
-  width: 100%;
-  max-width: 480px;
-  margin: 0 auto;
+  .nav-btn .icon,
+  .nav-btn span {
+    pointer-events: none;
+  }
 
-  background: #ffffff;
-  border-radius: 999px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
-  padding: 4px;
-  display: flex;
-  justify-content: space-between;
-  align-items: stretch;
-}
+  .nav-btn:active {
+    opacity: 0.6;
+  }
 
-/* одна кнопка вкладки — iOS-стиль */
-.nav-btn {
-  flex: 1;
-  border: none;
-  background: transparent;
-  border-radius: 999px;
+  .nav-btn.active {
+    background: #ffffff;
+    color: #007aff;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.10);
+  }
 
-  min-height: 56px;          /* большая зона тапа */
-  padding: 4px 8px;
+  .nav-btn.active .icon {
+    color: #007aff;
+  }
 
-  display: flex;
-  flex-direction: column;    /* иконка сверху, текст снизу */
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-
-  font-size: 11px;
-  color: #111827;
-  cursor: pointer;
-
-  -webkit-tap-highlight-color: transparent;
-  outline: none;
-  pointer-events: auto;
-  touch-action: manipulation;
-}
-
-/* иконка */
-.nav-btn .icon,
-.nav-btn span {
-  pointer-events: none;
-}
-
-/* убираем масштаб, чтобы не было глюков с попаданием */
-.nav-btn:active {
-  opacity: 0.6;
-}
-
-/* активная вкладка */
-.nav-btn.active {
-  background: #ffffff;
-  color: #007aff;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.10);
-}
-
-.nav-btn.active .icon {
-  color: #007aff;
-}
-    
   /* HEADER в карточке объявления */
   .ad-view-header {
     display: flex;
@@ -643,7 +628,6 @@
     font-weight: 600;
   }
 
-  /* КАРТОЧКА ОБЪЯВЛЕНИЯ (детали) */
   .ad-view-card {
     background: #ffffff;
     border-radius: 20px;
@@ -651,7 +635,6 @@
     box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
   }
 
-  /* Главное фото со свайпом */
   #detailMainImage {
     width: 100%;
     height: 260px;
@@ -690,7 +673,6 @@
     flex-shrink: 0;
   }
 
-  /* Заголовок + иконки */
   .ad-view-title-row {
     display: flex;
     justify-content: space-between;
@@ -741,28 +723,10 @@
     margin-bottom: 2px;
   }
 
-  .ad-view-promo {
-    font-size: 12px;
-    color: #ea580c;
-    margin-bottom: 4px;
-  }
-
   .ad-view-meta {
     font-size: 13px;
     color: #6b7280;
     margin-bottom: 2px;
-  }
-
-  .ad-view-stats {
-    font-size: 12px;
-    color: #6b7280;
-    margin-bottom: 2px;
-  }
-
-  .ad-view-delivery {
-    font-size: 13px;
-    color: #475569;
-    margin-bottom: 8px;
   }
 
   .ad-view-description-title {
@@ -839,7 +803,6 @@
     background: #3b82f6;
   }
 
-  /* Похожие объявления */
   .similar-section {
     margin-top: 16px;
   }
@@ -961,9 +924,7 @@
     margin-top: 12px;
   }
 
-  /* === НОВЫЕ СТИЛИ ДЛЯ 1–8 ФУНКЦИЙ === */
-
-  /* 1. Страница "Продвижение объявлений" */
+  /* Promo screen */
   .promo-screen-card {
     background: #ffffff;
     border-radius: 20px;
@@ -1034,7 +995,7 @@
     margin-top: 10px;
   }
 
-  /* 2. Toast-уведомление "Ваше объявление поднялось в топ" */
+  /* Toast */
   .toast {
     position: fixed;
     left: 50%;
@@ -1077,7 +1038,7 @@
     transform: translateX(-50%) translateY(0);
   }
 
-  /* 3. Чат между покупателем и продавцом */
+  /* Chat */
   .chat-header {
     display: flex;
     align-items: center;
@@ -1129,13 +1090,6 @@
     border-bottom-left-radius: 4px;
   }
 
-  .chat-meta {
-    font-size: 11px;
-    color: #cbd5f5;
-    margin-top: 2px;
-    text-align: right;
-  }
-
   .chat-input-row {
     display: flex;
     align-items: center;
@@ -1166,39 +1120,13 @@
     cursor: pointer;
   }
 
-  /* 5. История просмотров (экран выглядит как список объявлений) */
   .history-empty-text {
     font-size: 13px;
     color: #94a3b8;
     margin-top: 6px;
   }
 
-  /* 7. Профиль с реальными данными: блок контактов */
-  .profile-contacts {
-    margin-top: 8px;
-    font-size: 13px;
-    color: #475569;
-  }
-
-  .profile-contacts-row {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    margin-top: 4px;
-  }
-
-  .profile-contact-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 13px;
-  }
-
-  .profile-contact-icon {
-    font-size: 14px;
-  }
-
-  /* 8. Панель администратора (простая статистика) */
+  /* Admin */
   .admin-card {
     background: #ffffff;
     border-radius: 20px;
@@ -1274,11 +1202,6 @@
     color: #b91c1c;
   }
 
-    .nav-btn .icon {
-  pointer-events: none; /* клики по иконке проходят сквозь неё в .nav-btn */
-}
-    
-  /* Адаптив */
   @media (max-width: 480px) {
     body {
       align-items: stretch;
@@ -1288,9 +1211,9 @@
       box-shadow: none;
     }
   }
-</style>
+  </style>
 </head>
-  <body>
+<body>
   <div class="app">
     <!-- HEADER -->
     <header class="app-header">
@@ -1308,7 +1231,6 @@
 
       <!-- ================= HOME SCREEN ================= -->
       <section id="screen-home" class="screen active">
-        <!-- SEARCH & FILTERS -->
         <div class="search-bar-row">
           <div class="search-bar">
             <input
@@ -1320,17 +1242,14 @@
           <button id="openFiltersBtn" class="filters-btn">⚙️ Filtr</button>
         </div>
 
-        <!-- BUTTON "PODAT OBYAVLENIE" -->
         <button id="btnOpenNewAd" class="primary-btn">
           ➕ E'lon joylash
         </button>
 
-        <!-- PROMO BANNER -->
         <div id="promoBanner" class="promo-banner">
           <img src="banner.png" alt="promo" />
         </div>
 
-        <!-- POPULAR CATEGORIES -->
         <div class="section-title">Mashhur bo‘limlar</div>
         <div id="homeCategoryGrid" class="category-grid">
           <div class="category-card" data-type="Транспорт">
@@ -1355,7 +1274,6 @@
           📌 Kategoriyani yana bir marta bosing — barcha e’lonlar qaytadi
         </div>
 
-        <!-- FEED LIST -->
         <div id="feedList" class="ad-list grid-mode"></div>
       </section>
 
@@ -1453,7 +1371,6 @@
             <a id="msgSellerBtn" href="#" class="msg-btn">✉️ Yozish</a>
           </div>
 
-          <!-- Similar Ads -->
           <div class="similar-section">
             <div class="similar-title">O‘xshash e’lonlar</div>
             <div id="similarList" class="similar-list"></div>
@@ -1649,24 +1566,24 @@
 
     <!-- BOTTOM NAV -->
     <nav class="bottom-nav">
-  <div class="bottom-nav-inner">
-    <button type="button" class="nav-btn active" data-screen="home">
-      <span class="icon">🏠</span> Bosh sahifa
-    </button>
-    <button type="button" class="nav-btn" data-screen="favorites">
-      <span class="icon">❤️</span> Sevimli
-    </button>
-    <button type="button" class="nav-btn" data-screen="history">
-      <span class="icon">🕒</span> Tarix
-    </button>
-    <button type="button" class="nav-btn" data-screen="profile">
-      <span class="icon">👤</span> Profil
-    </button>
-    <button type="button" class="nav-btn" data-screen="admin">
-      <span class="icon">⚙️</span> Admin
-    </button>
-  </div>
-</nav>
+      <div class="bottom-nav-inner">
+        <button type="button" class="nav-btn active" data-screen="home">
+          <span class="icon">🏠</span> Bosh sahifa
+        </button>
+        <button type="button" class="nav-btn" data-screen="favorites">
+          <span class="icon">❤️</span> Sevimli
+        </button>
+        <button type="button" class="nav-btn" data-screen="history">
+          <span class="icon">🕒</span> Tarix
+        </button>
+        <button type="button" class="nav-btn" data-screen="profile">
+          <span class="icon">👤</span> Profil
+        </button>
+        <button type="button" class="nav-btn" data-screen="admin">
+          <span class="icon">⚙️</span> Admin
+        </button>
+      </div>
+    </nav>
   </div>
 
   <!-- LIGHTBOX -->
@@ -1689,1046 +1606,1020 @@
   </div>
 
   <script>
-// ================== НАСТРОЙКИ / КОНСТАНТЫ ==================
-const ADS_API_URL    = "https://baxir.pythonanywhere.com/ads";
-const ADD_AD_API_URL = "https://baxir.pythonanywhere.com/api/add_ad";
+  // ================== НАСТРОЙКИ / КОНСТАНТЫ ==================
+  const ADS_API_URL    = "https://baxir.pythonanywhere.com/ads";
+  const ADD_AD_API_URL = "https://baxir.pythonanywhere.com/api/add_ad";
 
-const DEFAULT_PHONE    = "+998901234567"; // можно поменять
-const DEFAULT_TELEGRAM = "Baxir1987";     // без @
+  const DEFAULT_PHONE    = "+998901234567";
+  const DEFAULT_TELEGRAM = "Baxir1987";
 
-const EXCHANGE_RATE = 12500; // 1 USD = X so'm
+  const EXCHANGE_RATE = 12500; // 1 USD = X so'm
 
-// ImgBB
-const IMGBB_API_KEY     = "d6a3eac7b36101df3effee3f7d0c7493";
-const IMGBB_UPLOAD_URL  = "https://api.imgbb.com/1/upload";
+  // ImgBB
+  const IMGBB_API_KEY     = "d6a3eac7b36101df3effee3f7d0c7493";
+  const IMGBB_UPLOAD_URL  = "https://api.imgbb.com/1/upload";
 
-// Infinite scroll
-const FEED_CHUNK_SIZE = 10;
+  // Infinite scroll
+  const FEED_CHUNK_SIZE = 10;
 
-// localStorage keys
-const FAVORITES_KEY = "mh_favorites";
-const HISTORY_KEY   = "mh_history";
+  // localStorage keys
+  const FAVORITES_KEY = "mh_favorites";
+  const HISTORY_KEY   = "mh_history";
 
-// ================== DOM-ЭЛЕМЕНТЫ ==================
-const screensContainer = document.querySelector(".screens");
+  // ================== DOM-ЭЛЕМЕНТЫ ==================
+  const screensContainer = document.querySelector(".screens");
 
-// Screens
-const screenHome        = document.getElementById("screen-home");
-const screenFavorites   = document.getElementById("screen-favorites");
-const screenFilters     = document.getElementById("screen-filters");
-const screenAdDetails   = document.getElementById("screen-ad-details");
-const screenProfile     = document.getElementById("screen-profile");
-const screenPromo       = document.getElementById("screen-promo");
-const screenChat        = document.getElementById("screen-chat");
-const screenHistory     = document.getElementById("screen-history");
-const screenAdmin       = document.getElementById("screen-admin");
-const screenNewAd1      = document.getElementById("screen-new-ad-step1");
-const screenNewAd2      = document.getElementById("screen-new-ad-step2");
-const screenNewAd3      = document.getElementById("screen-new-ad-step3");
-const screenNewAdSuccess= document.getElementById("screen-new-ad-success");
+  // Screens
+  const screenHome        = document.getElementById("screen-home");
+  const screenFavorites   = document.getElementById("screen-favorites");
+  const screenFilters     = document.getElementById("screen-filters");
+  const screenAdDetails   = document.getElementById("screen-ad-details");
+  const screenProfile     = document.getElementById("screen-profile");
+  const screenPromo       = document.getElementById("screen-promo");
+  const screenChat        = document.getElementById("screen-chat");
+  const screenHistory     = document.getElementById("screen-history");
+  const screenAdmin       = document.getElementById("screen-admin");
+  const screenNewAd1      = document.getElementById("screen-new-ad-step1");
+  const screenNewAd2      = document.getElementById("screen-new-ad-step2");
+  const screenNewAd3      = document.getElementById("screen-new-ad-step3");
+  const screenNewAdSuccess= document.getElementById("screen-new-ad-success");
 
-// Lists
-const feedList          = document.getElementById("feedList");
-const favoritesList     = document.getElementById("favoritesList");
-const historyListEl     = document.getElementById("historyList");
-const adminLastAdsEl    = document.getElementById("adminLastAds");
+  // Lists
+  const feedList          = document.getElementById("feedList");
+  const favoritesList     = document.getElementById("favoritesList");
+  const historyListEl     = document.getElementById("historyList");
+  const adminLastAdsEl    = document.getElementById("adminLastAds");
 
-// Admin stats
-const adminTotalAdsEl   = document.getElementById("adminTotalAds");
-const adminNewTodayEl   = document.getElementById("adminNewToday");
+  // Admin stats
+  const adminTotalAdsEl   = document.getElementById("adminTotalAds");
+  const adminNewTodayEl   = document.getElementById("adminNewToday");
 
-// Search / filters
-const searchInput       = document.querySelector(".search-input");
-const openFiltersBtn    = document.getElementById("openFiltersBtn");
-const homeCategoryGrid  = document.getElementById("homeCategoryGrid");
+  // Search / filters
+  const searchInput       = document.querySelector(".search-input");
+  const openFiltersBtn    = document.getElementById("openFiltersBtn");
+  const homeCategoryGrid  = document.getElementById("homeCategoryGrid");
 
-const filterTypeRow     = document.getElementById("filterTypeRow");
-const filterCitySelect  = document.getElementById("filterCity");
-const filterCurrencyRow = document.getElementById("filterCurrencyRow");
-const filterPhotoChip   = document.getElementById("filterPhotoChip");
-const filterSortSelect  = document.getElementById("filterSort");
-const filtersApplyBtn   = document.getElementById("filtersApplyBtn");
-const filtersResetBtn   = document.getElementById("filtersResetBtn");
-const filtersBackBtn    = document.getElementById("filtersBack");
+  const filterTypeRow     = document.getElementById("filterTypeRow");
+  const filterCitySelect  = document.getElementById("filterCity");
+  const filterCurrencyRow = document.getElementById("filterCurrencyRow");
+  const filterPhotoChip   = document.getElementById("filterPhotoChip");
+  const filterSortSelect  = document.getElementById("filterSort");
+  const filtersApplyBtn   = document.getElementById("filtersApplyBtn");
+  const filtersResetBtn   = document.getElementById("filtersResetBtn");
+  const filtersBackBtn    = document.getElementById("filtersBack");
 
-// New ad
-const btnOpenNewAd      = document.getElementById("btnOpenNewAd");
-const backFromNewAd1    = document.getElementById("backFromNewAd1");
-const backFromNewAd2    = document.getElementById("backFromNewAd2");
-const backFromNewAd3    = document.getElementById("backFromNewAd3");
-const btnNewAdStep1Next = document.getElementById("btnNewAdStep1Next");
-const btnNewAdStep2Next = document.getElementById("btnNewAdStep2Next");
-const btnPublishAd      = document.getElementById("btnPublishAd");
-const btnGoHome         = document.getElementById("btnGoHome");
+  // New ad
+  const btnOpenNewAd      = document.getElementById("btnOpenNewAd");
+  const backFromNewAd1    = document.getElementById("backFromNewAd1");
+  const backFromNewAd2    = document.getElementById("backFromNewAd2");
+  const backFromNewAd3    = document.getElementById("backFromNewAd3");
+  const btnNewAdStep1Next = document.getElementById("btnNewAdStep1Next");
+  const btnNewAdStep2Next = document.getElementById("btnNewAdStep2Next");
+  const btnPublishAd      = document.getElementById("btnPublishAd");
+  const btnGoHome         = document.getElementById("btnGoHome");
 
-const inputCity         = document.getElementById("inputCity");
-const inputTitle        = document.getElementById("inputTitle");
-const inputPrice        = document.getElementById("inputPrice");
-const inputDescription  = document.getElementById("inputDescription");
-const btnUploadPhotos   = document.getElementById("btnUploadPhotos");
-const inputPhotos       = document.getElementById("inputPhotos");
-const photosPreview     = document.getElementById("photosPreview");
-const summaryTitle      = document.getElementById("summaryTitle");
-const summaryCityType   = document.getElementById("summaryCityType");
-const summaryPrice      = document.getElementById("summaryPrice");
-const summaryDescription= document.getElementById("summaryDescription");
-const summaryPhotosInfo = document.getElementById("summaryPhotosInfo");
+  const inputCity         = document.getElementById("inputCity");
+  const inputTitle        = document.getElementById("inputTitle");
+  const inputPrice        = document.getElementById("inputPrice");
+  const inputDescription  = document.getElementById("inputDescription");
+  const btnUploadPhotos   = document.getElementById("btnUploadPhotos");
+  const inputPhotos       = document.getElementById("inputPhotos");
+  const photosPreview     = document.getElementById("photosPreview");
+  const summaryTitle      = document.getElementById("summaryTitle");
+  const summaryCityType   = document.getElementById("summaryCityType");
+  const summaryPrice      = document.getElementById("summaryPrice");
+  const summaryDescription= document.getElementById("summaryDescription");
+  const summaryPhotosInfo = document.getElementById("summaryPhotosInfo");
 
-// Ad details
-const detailMainImage   = document.getElementById("detailMainImage");
-const detailThumbs      = document.getElementById("detailThumbs");
-const detailTitle       = document.getElementById("detailTitle");
-const detailPrice       = document.getElementById("detailPrice");
-const detailMeta        = document.getElementById("detailMeta");
-const detailDescription = document.getElementById("detailDescription");
-const detailBackBtn     = document.getElementById("detailBackBtn");
-const similarList       = document.getElementById("similarList");
-const favoriteBtn       = document.getElementById("favoriteBtn");
-const shareBtn          = document.getElementById("shareBtn");
-const sellerCard        = document.getElementById("sellerCard");
-const callSellerBtn     = document.getElementById("callSellerBtn");
-const msgSellerBtn      = document.getElementById("msgSellerBtn");
+  // Ad details
+  const detailMainImage   = document.getElementById("detailMainImage");
+  const detailThumbs      = document.getElementById("detailThumbs");
+  const detailTitle       = document.getElementById("detailTitle");
+  const detailPrice       = document.getElementById("detailPrice");
+  const detailMeta        = document.getElementById("detailMeta");
+  const detailDescription = document.getElementById("detailDescription");
+  const detailBackBtn     = document.getElementById("detailBackBtn");
+  const similarList       = document.getElementById("similarList");
+  const favoriteBtn       = document.getElementById("favoriteBtn");
+  const shareBtn          = document.getElementById("shareBtn");
+  const sellerCard        = document.getElementById("sellerCard");
+  const callSellerBtn     = document.getElementById("callSellerBtn");
+  const msgSellerBtn      = document.getElementById("msgSellerBtn");
 
-// Lightbox
-const imageLightbox     = document.getElementById("imageLightbox");
-const lightboxImg       = document.getElementById("lightboxImg");
-const lightboxPrev      = document.getElementById("lightboxPrev");
-const lightboxNext      = document.getElementById("lightboxNext");
+  // Lightbox
+  const imageLightbox     = document.getElementById("imageLightbox");
+  const lightboxImg       = document.getElementById("lightboxImg");
+  const lightboxPrev      = document.getElementById("lightboxPrev");
+  const lightboxNext      = document.getElementById("lightboxNext");
 
-// Toast
-const toastEl           = document.getElementById("toast");
+  // Toast
+  const toastEl           = document.getElementById("toast");
 
-// Promo
-const promoBanner       = document.getElementById("promoBanner");
+  // Promo
+  const promoBanner       = document.getElementById("promoBanner");
 
-// Chat
-const chatMessagesEl    = document.getElementById("chatMessages");
-const chatInput         = document.getElementById("chatInput");
-const chatSendBtn       = document.getElementById("chatSendBtn");
+  // Chat
+  const chatMessagesEl    = document.getElementById("chatMessages");
+  const chatInput         = document.getElementById("chatInput");
+  const chatSendBtn       = document.getElementById("chatSendBtn");
 
-// Bottom nav
-const navButtons        = document.querySelectorAll(".nav-btn");
+  // Bottom nav
+  const navButtons        = document.querySelectorAll(".nav-btn");
 
-// ================== ГЛОБАЛЬНОЕ СОСТОЯНИЕ ==================
-let allAds        = [];
-let filteredAds   = [];
-let favoritesSet  = loadFavoritesFromStorage();
-let historyArray  = loadHistoryFromStorage();
-let currentAd     = null;
-let currentScreen = "home";
+  // ================== ГЛОБАЛЬНОЕ СОСТОЯНИЕ ==================
+  let allAds        = [];
+  let filteredAds   = [];
+  let favoritesSet  = loadFavoritesFromStorage();
+  let historyArray  = loadHistoryFromStorage();
+  let currentAd     = null;
+  let currentScreen = "home";
 
-// lightbox
-let lightboxImages = [];
-let lightboxIndex  = 0;
+  // lightbox
+  let lightboxImages = [];
+  let lightboxIndex  = 0;
 
-// infinite scroll
-let feedRenderedCount = 0;
+  // infinite scroll
+  let feedRenderedCount = 0;
 
-// new ad draft
-let newAdDraft = {
-  city: "Toshkent",
-  title: "",
-  price: "",
-  description: "",
-  photos: []
-};
-
-// chat
-let chatHistory = []; // [{from:"me"|"seller", text, ts}]
-
-// filters
-const filterState = {
-  type: "all",
-  city: "all",
-  currency: "sum",
-  onlyWithPhoto: false,
-  sort: "default",
-  category: "all" // для главных категорий
-};
-
-// ================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==================
-function formatNumberWithSpaces(num) {
-  const s = String(num);
-  return s.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-}
-
-function formatPrice(price) {
-  if (price === null || price === undefined || price === "") {
-    return "Narx kelishiladi";
-  }
-  const p = Number(price || 0);
-  if (!isFinite(p) || p <= 0) return "Narx kelishiladi";
-
-  if (filterState.currency === "usd") {
-    const usd = p / EXCHANGE_RATE;
-    const rounded = Math.round(usd * 100) / 100;
-    return formatNumberWithSpaces(rounded) + " USD";
-  }
-  return formatNumberWithSpaces(p) + " so‘m";
-}
-
-function formatDateShort(iso) {
-  if (!iso) return "";
-  try {
-    const d = new Date(iso);
-    const dd = String(d.getDate()).padStart(2, "0");
-    const mm = String(d.getMonth() + 1).padStart(2, "0");
-    return `${dd}.${mm}`;
-  } catch (e) {
-    return "";
-  }
-}
-
-// favorites
-function loadFavoritesFromStorage() {
-  try {
-    const raw = localStorage.getItem(FAVORITES_KEY);
-    if (!raw) return new Set();
-    const arr = JSON.parse(raw);
-    if (!Array.isArray(arr)) return new Set();
-    return new Set(arr);
-  } catch {
-    return new Set();
-  }
-}
-function saveFavoritesToStorage() {
-  try {
-    localStorage.setItem(FAVORITES_KEY, JSON.stringify(Array.from(favoritesSet)));
-  } catch {}
-}
-
-// history
-function loadHistoryFromStorage() {
-  try {
-    const raw = localStorage.getItem(HISTORY_KEY);
-    if (!raw) return [];
-    const arr = JSON.parse(raw);
-    if (!Array.isArray(arr)) return [];
-    return arr;
-  } catch {
-    return [];
-  }
-}
-function saveHistoryToStorage() {
-  try {
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(historyArray));
-  } catch {}
-}
-
-// toast
-let toastTimeout = null;
-function showToast(mainText = "E’lon yuqoriga ko‘tarildi!", subText = "Endi odamlarga ko‘proq ko‘rinadi") {
-  if (!toastEl) return;
-  toastEl.querySelector(".toast-text-main") && (toastEl.querySelector(".toast-text-main").textContent = mainText);
-  toastEl.querySelector(".toast-text-sub") && (toastEl.querySelector(".toast-text-sub").textContent = subText);
-
-  toastEl.classList.add("visible");
-  if (toastTimeout) clearTimeout(toastTimeout);
-  toastTimeout = setTimeout(() => {
-    toastEl.classList.remove("visible");
-  }, 3000);
-}
-
-// ================== СОЗДАНИЕ КАРТОЧЕК ==================
-function createAdCard(ad) {
-  const card = document.createElement("div");
-  card.className = "ad-card";
-
-  const title  = ad.title || "E’lon";
-  const city   = ad.city || "Shahar";
-  const type   = ad.type || "Tovar";
-  const price  = formatPrice(ad.price);
-  const date   = formatDateShort(ad.created_at);
-  const image  = ad.images && ad.images.length ? ad.images[0] : null;
-
-  card.innerHTML = `
-    <div class="ad-image" style="${image ? `background-image:url('${image}');` : ""}"></div>
-    <div class="ad-content">
-      <div class="ad-title">${title}</div>
-      <div class="ad-meta">📍 ${city} · ${type}${date ? " · " + date : ""}</div>
-      <div class="ad-price">${price}</div>
-    </div>
-  `;
-
-  card.addEventListener("click", () => openAdDetails(ad));
-  return card;
-}
-
-// history card
-function createHistoryCard(item) {
-  const ad = allAds.find(a => a.id === item.id);
-  if (!ad) return null;
-  const card = createAdCard(ad);
-  return card;
-}
-
-// ================== РЕНДЕР ЛЕНТЫ + INFINITE SCROLL ==================
-function applyAllFilters() {
-  if (!allAds.length) {
-    filteredAds = [];
-    return;
-  }
-  const q = (searchInput?.value || "").toLowerCase().trim();
-
-  filteredAds = allAds.filter(ad => {
-    // тип
-    if (filterState.type !== "all" && ad.type !== filterState.type) return false;
-
-    // категория (с главной)
-    if (filterState.category !== "all") {
-      if ((ad.category || "").trim() !== filterState.category) return false;
-    }
-
-    // город
-    if (filterState.city !== "all") {
-      if ((ad.city || "").trim() !== filterState.city) return false;
-    }
-
-    // только с фото
-    if (filterState.onlyWithPhoto) {
-      if (!ad.images || !Array.isArray(ad.images) || !ad.images.length) return false;
-    }
-
-    // поиск
-    if (q) {
-      const text = (ad.title || "") + " " + (ad.description || "");
-      if (!text.toLowerCase().includes(q)) return false;
-    }
-
-    return true;
-  });
-
-  // сортировка
-  filteredAds.sort((a, b) => {
-    const pa = Number(a.price || 0);
-    const pb = Number(b.price || 0);
-    const da = a.created_at ? new Date(a.created_at).getTime() : 0;
-    const db = b.created_at ? new Date(b.created_at).getTime() : 0;
-
-    switch (filterState.sort) {
-      case "cheap":      return pa - pb;
-      case "expensive":  return pb - pa;
-      case "date":
-      case "default":
-      default:           return db - da;
-    }
-  });
-}
-
-function resetFeedRender() {
-  if (!feedList) return;
-  feedList.innerHTML = "";
-  feedRenderedCount = 0;
-  appendMoreToFeed();
-}
-
-function appendMoreToFeed() {
-  if (!feedList) return;
-  const start = feedRenderedCount;
-  const end   = Math.min(filteredAds.length, start + FEED_CHUNK_SIZE);
-  if (start >= end) return;
-
-  for (let i = start; i < end; i++) {
-    const ad = filteredAds[i];
-    feedList.appendChild(createAdCard(ad));
-  }
-  feedRenderedCount = end;
-
-  if (!filteredAds.length && !feedRenderedCount) {
-    feedList.innerHTML = "<div class='ad-meta'>E’lonlar topilmadi</div>";
-  }
-}
-
-function renderFavorites() {
-  if (!favoritesList) return;
-  favoritesList.innerHTML = "";
-  const ids = Array.from(favoritesSet);
-  if (!ids.length) {
-    favoritesList.innerHTML = "<div class='ad-meta'>Sevimlilar hozircha bo‘sh</div>";
-    return;
-  }
-  const favAds = allAds.filter(ad => ids.includes(ad.id));
-  if (!favAds.length) {
-    favoritesList.innerHTML = "<div class='ad-meta'>Sevimlilar hozircha bo‘sh</div>";
-    return;
-  }
-  favAds.forEach(ad => favoritesList.appendChild(createAdCard(ad)));
-}
-
-function renderHistory() {
-  if (!historyListEl) return;
-  historyListEl.innerHTML = "";
-  if (!historyArray.length) {
-    historyListEl.innerHTML = "<div class='ad-meta'>Tarix bo‘sh</div>";
-    return;
-  }
-  // последние сверху
-  const sorted = [...historyArray].sort((a,b)=>b.ts - a.ts);
-  sorted.forEach(item => {
-    const card = createHistoryCard(item);
-    if (card) historyListEl.appendChild(card);
-  });
-}
-
-// ================== ЗАГРУЗКА E’LONLAR ==================
-async function loadAds() {
-  try {
-    const res = await fetch(ADS_API_URL);
-    if (!res.ok) throw new Error("Bad response");
-    const data = await res.json();
-    if (!Array.isArray(data)) throw new Error("Not array");
-
-    allAds = data;
-    applyAllFilters();
-    resetFeedRender();
-    renderFavorites();
-    updateAdminPanel();
-  } catch (e) {
-    console.error("Error loadAds:", e);
-    if (feedList) {
-      feedList.innerHTML = "<div class='ad-meta'>E’lonlarni yuklashda xatolik</div>";
-    }
-  }
-}
-
-// ================== ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ ==================
-const screens = {
-  home: screenHome,
-  favorites: screenFavorites,
-  filters: screenFilters,
-  adDetails: screenAdDetails,
-  profile: screenProfile,
-  promo: screenPromo,
-  chat: screenChat,
-  history: screenHistory,
-  admin: screenAdmin,
-  newAd1: screenNewAd1,
-  newAd2: screenNewAd2,
-  newAd3: screenNewAd3,
-  newAdSuccess: screenNewAdSuccess
-};
-
-function showScreen(name) {
-  currentScreen = name;
-
-  Object.values(screens).forEach(el => {
-    if (!el) return;
-    el.classList.remove("active");
-    el.style.display = "none";
-  });
-
-  const target = screens[name];
-  if (target) {
-    target.classList.add("active");
-    target.style.display = "block";
-  }
-
-  // bottom nav active
-  navButtons.forEach(btn => {
-    const s = btn.getAttribute("data-screen");
-    btn.classList.toggle("active", s === name);
-  });
-
-  if (screensContainer) screensContainer.scrollTop = 0;
-
-  if (name === "favorites") renderFavorites();
-  if (name === "history")   renderHistory();
-  if (name === "filters")   syncFiltersUIFromState();
-  if (name === "home")      resetFeedRender();
-}
-
-// bottom nav — кликабельность на телефонах
-navButtons.forEach(btn => {
-  const handleNavTap = () => {
-    const target = btn.getAttribute("data-screen");
-    if (!target) return;
-    showScreen(target);
+  // new ad draft
+  let newAdDraft = {
+    city: "Toshkent",
+    title: "",
+    price: "",
+    description: "",
+    photos: []
   };
 
-  // обычный клик (iPad, десктоп)
-  btn.addEventListener("click", handleNavTap);
-  );
-});
+  // chat
+  let chatHistory = [];
 
-// infinite scroll on home
-if (screensContainer) {
-  screensContainer.addEventListener("scroll", () => {
-    if (currentScreen !== "home") return;
-    const nearBottom =
-      screensContainer.scrollTop + screensContainer.clientHeight >=
-      screensContainer.scrollHeight - 80;
-    if (nearBottom) appendMoreToFeed();
-  });
-}
+  // filters
+  const filterState = {
+    type: "all",
+    city: "all",
+    currency: "sum",
+    onlyWithPhoto: false,
+    sort: "default",
+    category: "all"
+  };
 
-// ================== ПОИСК ==================
-if (searchInput) {
-  searchInput.addEventListener("input", () => {
-    applyAllFilters();
-    resetFeedRender();
-  });
-}
+  // ================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==================
+  function formatNumberWithSpaces(num) {
+    const s = String(num);
+    return s.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  }
 
-// ================== ФИЛЬТРЫ ==================
-function syncFiltersUIFromState() {
-  if (filterTypeRow) {
-    filterTypeRow.querySelectorAll(".chip").forEach(ch => {
-      const t = ch.getAttribute("data-type") || "all";
-      ch.classList.toggle("chip-filled", t === filterState.type);
-    });
-  }
-  if (filterCitySelect) {
-    filterCitySelect.value = filterState.city === "all" ? "all" : filterState.city;
-  }
-  if (filterCurrencyRow) {
-    filterCurrencyRow.querySelectorAll(".chip").forEach(ch => {
-      const c = ch.getAttribute("data-currency") || "sum";
-      ch.classList.toggle("chip-filled", c === filterState.currency);
-    });
-  }
-  if (filterPhotoChip) {
-    filterPhotoChip.classList.toggle("chip-filled", filterState.onlyWithPhoto);
-  }
-  if (filterSortSelect) {
-    filterSortSelect.value = filterState.sort;
-  }
-}
+  function formatPrice(price) {
+    if (price === null || price === undefined || price === "") {
+      return "Narx kelishiladi";
+    }
+    const p = Number(price || 0);
+    if (!isFinite(p) || p <= 0) return "Narx kelishiladi";
 
-function readFiltersFromUI() {
-  if (filterTypeRow) {
-    const active = filterTypeRow.querySelector(".chip-filled");
-    filterState.type = active ? active.getAttribute("data-type") || "all" : "all";
+    if (filterState.currency === "usd") {
+      const usd = p / EXCHANGE_RATE;
+      const rounded = Math.round(usd * 100) / 100;
+      return formatNumberWithSpaces(rounded) + " USD";
+    }
+    return formatNumberWithSpaces(p) + " so‘m";
   }
-  if (filterCitySelect) {
-    const v = filterCitySelect.value;
-    filterState.city = v === "all" ? "all" : v;
-  }
-  if (filterCurrencyRow) {
-    const active = filterCurrencyRow.querySelector(".chip-filled");
-    filterState.currency = active ? active.getAttribute("data-currency") || "sum" : "sum";
-  }
-  if (filterPhotoChip) {
-    filterState.onlyWithPhoto = filterPhotoChip.classList.contains("chip-filled");
-  }
-  if (filterSortSelect) {
-    filterState.sort = filterSortSelect.value || "default";
-  }
-}
 
-if (filterTypeRow) {
-  filterTypeRow.addEventListener("click", e => {
-    const chip = e.target.closest(".chip");
-    if (!chip) return;
-    filterTypeRow.querySelectorAll(".chip").forEach(c => c.classList.remove("chip-filled"));
-    chip.classList.add("chip-filled");
-  });
-}
-if (filterCurrencyRow) {
-  filterCurrencyRow.addEventListener("click", e => {
-    const chip = e.target.closest(".chip");
-    if (!chip) return;
-    filterCurrencyRow.querySelectorAll(".chip").forEach(c => c.classList.remove("chip-filled"));
-    chip.classList.add("chip-filled");
-  });
-}
-if (filterPhotoChip) {
-  filterPhotoChip.addEventListener("click", () => {
-    filterPhotoChip.classList.toggle("chip-filled");
-  });
-}
+  function formatDateShort(iso) {
+    if (!iso) return "";
+    try {
+      const d = new Date(iso);
+      const dd = String(d.getDate()).padStart(2, "0");
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      return `${dd}.${mm}`;
+    } catch (e) {
+      return "";
+    }
+  }
 
-if (openFiltersBtn) {
-  openFiltersBtn.addEventListener("click", () => {
-    showScreen("filters");
-  });
-}
-if (filtersApplyBtn) {
-  filtersApplyBtn.addEventListener("click", () => {
-    readFiltersFromUI();
-    applyAllFilters();
-    resetFeedRender();
-    showScreen("home");
-  });
-}
-if (filtersResetBtn) {
-  filtersResetBtn.addEventListener("click", () => {
-    filterState.type         = "all";
-    filterState.city         = "all";
-    filterState.currency     = "sum";
-    filterState.onlyWithPhoto= false;
-    filterState.sort         = "default";
-    filterState.category     = "all";
-    syncFiltersUIFromState();
-    applyAllFilters();
-    resetFeedRender();
-  });
-}
-if (filtersBackBtn) {
-  filtersBackBtn.addEventListener("click", () => showScreen("home"));
-}
+  // favorites
+  function loadFavoritesFromStorage() {
+    try {
+      const raw = localStorage.getItem(FAVORITES_KEY);
+      if (!raw) return new Set();
+      const arr = JSON.parse(raw);
+      if (!Array.isArray(arr)) return new Set();
+      return new Set(arr);
+    } catch {
+      return new Set();
+    }
+  }
+  function saveFavoritesToStorage() {
+    try {
+      localStorage.setItem(FAVORITES_KEY, JSON.stringify(Array.from(favoritesSet)));
+    } catch {}
+  }
 
-// ================== ПОПУЛЯРНЫЕ КАТЕГОРИИ НА ГЛАВНОЙ ==================
-if (homeCategoryGrid) {
-  const cards = homeCategoryGrid.querySelectorAll(".category-card");
-  let activeCategory = null;
+  // history
+  function loadHistoryFromStorage() {
+    try {
+      const raw = localStorage.getItem(HISTORY_KEY);
+      if (!raw) return [];
+      const arr = JSON.parse(raw);
+      if (!Array.isArray(arr)) return [];
+      return arr;
+    } catch {
+      return [];
+    }
+  }
+  function saveHistoryToStorage() {
+    try {
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(historyArray));
+    } catch {}
+  }
 
-  cards.forEach(card => {
-    const type = card.getAttribute("data-type");
-    card.addEventListener("click", () => {
-      if (activeCategory === type) {
-        // снять фильтр
-        activeCategory = null;
-        filterState.category = "all";
-        cards.forEach(c => c.classList.remove("active"));
-      } else {
-        activeCategory = type;
-        filterState.category = type;
-        cards.forEach(c => c.classList.remove("active"));
-        card.classList.add("active");
+  // toast
+  let toastTimeout = null;
+  function showToast(mainText = "E’lon yuqoriga ko‘tarildi!", subText = "Endi odamlarga ko‘proq ko‘rinadi") {
+    if (!toastEl) return;
+    const mainEl = toastEl.querySelector(".toast-text-main");
+    const subEl  = toastEl.querySelector(".toast-text-sub");
+    if (mainEl) mainEl.textContent = mainText;
+    if (subEl)  subEl.textContent  = subText;
+
+    toastEl.classList.add("show");
+    if (toastTimeout) clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => {
+      toastEl.classList.remove("show");
+    }, 3000);
+  }
+
+  // ================== СОЗДАНИЕ КАРТОЧЕК ==================
+  function createAdCard(ad) {
+    const card = document.createElement("div");
+    card.className = "ad-card";
+
+    const title  = ad.title || "E’lon";
+    const city   = ad.city || "Shahar";
+    const type   = ad.type || "Tovar";
+    const price  = formatPrice(ad.price);
+    const date   = formatDateShort(ad.created_at);
+    const image  = ad.images && ad.images.length ? ad.images[0] : null;
+
+    card.innerHTML = `
+      <div class="ad-image" style="${image ? `background-image:url('${image}');` : ""}"></div>
+      <div class="ad-content">
+        <div class="ad-title">${title}</div>
+        <div class="ad-meta">📍 ${city} · ${type}${date ? " · " + date : ""}</div>
+        <div class="ad-price">${price}</div>
+      </div>
+    `;
+
+    card.addEventListener("click", () => openAdDetails(ad));
+    return card;
+  }
+
+  function createHistoryCard(item) {
+    const ad = allAds.find(a => a.id === item.id);
+    if (!ad) return null;
+    return createAdCard(ad);
+  }
+
+  // ================== РЕНДЕР ЛЕНТЫ + INFINITE SCROLL ==================
+  function applyAllFilters() {
+    if (!allAds.length) {
+      filteredAds = [];
+      return;
+    }
+    const q = (searchInput?.value || "").toLowerCase().trim();
+
+    filteredAds = allAds.filter(ad => {
+      if (filterState.type !== "all" && ad.type !== filterState.type) return false;
+
+      if (filterState.category !== "all") {
+        if ((ad.category || "").trim() !== filterState.category) return false;
       }
+
+      if (filterState.city !== "all") {
+        if ((ad.city || "").trim() !== filterState.city) return false;
+      }
+
+      if (filterState.onlyWithPhoto) {
+        if (!ad.images || !Array.isArray(ad.images) || !ad.images.length) return false;
+      }
+
+      if (q) {
+        const text = (ad.title || "") + " " + (ad.description || "");
+        if (!text.toLowerCase().includes(q)) return false;
+      }
+
+      return true;
+    });
+
+    filteredAds.sort((a, b) => {
+      const pa = Number(a.price || 0);
+      const pb = Number(b.price || 0);
+      const da = a.created_at ? new Date(a.created_at).getTime() : 0;
+      const db = b.created_at ? new Date(b.created_at).getTime() : 0;
+
+      switch (filterState.sort) {
+        case "cheap":      return pa - pb;
+        case "expensive":  return pb - pa;
+        case "date":
+        case "default":
+        default:           return db - da;
+      }
+    });
+  }
+
+  function resetFeedRender() {
+    if (!feedList) return;
+    feedList.innerHTML = "";
+    feedRenderedCount = 0;
+    appendMoreToFeed();
+  }
+
+  function appendMoreToFeed() {
+    if (!feedList) return;
+    const start = feedRenderedCount;
+    const end   = Math.min(filteredAds.length, start + FEED_CHUNK_SIZE);
+    if (start >= end) {
+      if (!filteredAds.length && !feedRenderedCount) {
+        feedList.innerHTML = "<div class='ad-meta'>E’lonlar topilmadi</div>";
+      }
+      return;
+    }
+
+    for (let i = start; i < end; i++) {
+      const ad = filteredAds[i];
+      feedList.appendChild(createAdCard(ad));
+    }
+    feedRenderedCount = end;
+  }
+
+  function renderFavorites() {
+    if (!favoritesList) return;
+    favoritesList.innerHTML = "";
+    const ids = Array.from(favoritesSet);
+    if (!ids.length) {
+      favoritesList.innerHTML = "<div class='ad-meta'>Sevimlilar hozircha bo‘sh</div>";
+      return;
+    }
+    const favAds = allAds.filter(ad => ids.includes(ad.id));
+    if (!favAds.length) {
+      favoritesList.innerHTML = "<div class='ad-meta'>Sevimlilar hozircha bo‘sh</div>";
+      return;
+    }
+    favAds.forEach(ad => favoritesList.appendChild(createAdCard(ad)));
+  }
+
+  function renderHistory() {
+    if (!historyListEl) return;
+    historyListEl.innerHTML = "";
+    if (!historyArray.length) {
+      historyListEl.innerHTML = "<div class='ad-meta'>Tarix bo‘sh</div>";
+      return;
+    }
+    const sorted = [...historyArray].sort((a,b)=>b.ts - a.ts);
+    sorted.forEach(item => {
+      const card = createHistoryCard(item);
+      if (card) historyListEl.appendChild(card);
+    });
+  }
+
+  // ================== ЗАГРУЗКА E’LONLAR ==================
+  async function loadAds() {
+    try {
+      const res = await fetch(ADS_API_URL);
+      if (!res.ok) throw new Error("Bad response");
+      const data = await res.json();
+      if (!Array.isArray(data)) throw new Error("Not array");
+
+      allAds = data;
+      applyAllFilters();
+      resetFeedRender();
+      renderFavorites();
+      updateAdminPanel();
+    } catch (e) {
+      console.error("Error loadAds:", e);
+      if (feedList) {
+        feedList.innerHTML = "<div class='ad-meta'>E’lonlarni yuklashda xatolik</div>";
+      }
+    }
+  }
+
+  // ================== ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ ==================
+  const screens = {
+    home: screenHome,
+    favorites: screenFavorites,
+    filters: screenFilters,
+    adDetails: screenAdDetails,
+    profile: screenProfile,
+    promo: screenPromo,
+    chat: screenChat,
+    history: screenHistory,
+    admin: screenAdmin,
+    newAd1: screenNewAd1,
+    newAd2: screenNewAd2,
+    newAd3: screenNewAd3,
+    newAdSuccess: screenNewAdSuccess
+  };
+
+  function showScreen(name) {
+    currentScreen = name;
+
+    Object.values(screens).forEach(el => {
+      if (!el) return;
+      el.classList.remove("active");
+      el.style.display = "none";
+    });
+
+    const target = screens[name];
+    if (target) {
+      target.classList.add("active");
+      target.style.display = "block";
+    }
+
+    navButtons.forEach(btn => {
+      const s = btn.getAttribute("data-screen");
+      btn.classList.toggle("active", s === name);
+    });
+
+    if (screensContainer) screensContainer.scrollTop = 0;
+
+    if (name === "favorites") renderFavorites();
+    if (name === "history")   renderHistory();
+    if (name === "filters")   syncFiltersUIFromState();
+    if (name === "home")      resetFeedRender();
+  }
+
+  // bottom nav
+  navButtons.forEach(btn => {
+    const handleNavTap = () => {
+      const target = btn.getAttribute("data-screen");
+      if (!target) return;
+      showScreen(target);
+    };
+    btn.addEventListener("click", handleNavTap);
+  });
+
+  // infinite scroll on home
+  if (screensContainer) {
+    screensContainer.addEventListener("scroll", () => {
+      if (currentScreen !== "home") return;
+      const nearBottom =
+        screensContainer.scrollTop + screensContainer.clientHeight >=
+        screensContainer.scrollHeight - 80;
+      if (nearBottom) appendMoreToFeed();
+    });
+  }
+
+  // ================== ПОИСК ==================
+  if (searchInput) {
+    searchInput.addEventListener("input", () => {
       applyAllFilters();
       resetFeedRender();
     });
-  });
-}
-
-// ================== НОВОЕ ОБЪЯВЛЕНИЕ ==================
-if (btnOpenNewAd) {
-  btnOpenNewAd.addEventListener("click", () => showScreen("newAd1"));
-}
-if (backFromNewAd1) {
-  backFromNewAd1.addEventListener("click", () => showScreen("home"));
-}
-if (backFromNewAd2) {
-  backFromNewAd2.addEventListener("click", () => showScreen("newAd1"));
-}
-if (backFromNewAd3) {
-  backFromNewAd3.addEventListener("click", () => showScreen("newAd2"));
-}
-if (btnGoHome) {
-  btnGoHome.addEventListener("click", () => showScreen("home"));
-}
-
-if (btnNewAdStep1Next) {
-  btnNewAdStep1Next.addEventListener("click", () => {
-    const title = (inputTitle.value || "").trim();
-    const price = (inputPrice.value || "").trim();
-    const desc  = (inputDescription.value || "").trim();
-
-    if (!title) return alert("Sarlavha kiriting");
-    if (!price) return alert("Narx kiriting");
-
-    newAdDraft.city        = inputCity.value;
-    newAdDraft.title       = title;
-    newAdDraft.price       = price;
-    newAdDraft.description = desc || "Tavsif berilmagan";
-
-    showScreen("newAd2");
-  });
-}
-
-if (btnUploadPhotos && inputPhotos) {
-  btnUploadPhotos.addEventListener("click", () => inputPhotos.click());
-
-  inputPhotos.addEventListener("change", async () => {
-    const files = Array.from(inputPhotos.files || []);
-    photosPreview.innerHTML = "";
-    newAdDraft.photos = [];
-
-    if (!files.length) return;
-
-    const max = 8;
-    const selected = files.slice(0, max);
-
-    for (const file of selected) {
-      // локальный предпросмотр
-      const reader = new FileReader();
-      reader.onload = e => {
-        const div = document.createElement("div");
-        div.className = "photo-thumb";
-        const img = document.createElement("img");
-        img.src = e.target.result;
-        div.appendChild(img);
-        photosPreview.appendChild(div);
-      };
-      reader.readAsDataURL(file);
-
-      // upload to ImgBB
-      try {
-        const url = await uploadToImgbb(file);
-        newAdDraft.photos.push(url);
-      } catch (e) {
-        console.error("ImgBB error:", e);
-      }
-    }
-  });
-}
-
-async function uploadToImgbb(file) {
-  const formData = new FormData();
-  formData.append("key", IMGBB_API_KEY);
-  formData.append("image", file);
-
-  const res = await fetch(IMGBB_UPLOAD_URL, {
-    method: "POST",
-    body: formData
-  });
-  if (!res.ok) throw new Error("upload_failed");
-  const json = await res.json();
-  if (!json.success || !json.data || !json.data.url) {
-    throw new Error("bad_response");
   }
-  return json.data.url;
-}
 
-if (btnNewAdStep2Next) {
-  btnNewAdStep2Next.addEventListener("click", () => {
-    // можно без фото
-    fillSummary();
-    showScreen("newAd3");
-  });
-}
-
-function fillSummary() {
-  if (summaryTitle)       summaryTitle.textContent       = newAdDraft.title;
-  if (summaryCityType)    summaryCityType.textContent    = newAdDraft.city;
-  if (summaryPrice)       summaryPrice.textContent       = formatPrice(newAdDraft.price);
-  if (summaryDescription) summaryDescription.textContent = newAdDraft.description;
-  if (summaryPhotosInfo)  summaryPhotosInfo.textContent  =
-    "Rasmlar: " + (newAdDraft.photos.length || 0) + " ta";
-}
-
-if (btnPublishAd) {
-  btnPublishAd.addEventListener("click", async () => {
-    btnPublishAd.disabled = true;
-    btnPublishAd.textContent = "Yuklanmoqda...";
-
-    try {
-      const payload = {
-        city: newAdDraft.city,
-        title: newAdDraft.title,
-        price: String(newAdDraft.price).replace(/\s+/g, ""),
-        description: newAdDraft.description,
-        images: newAdDraft.photos,
-        phone: DEFAULT_PHONE,
-        telegram: DEFAULT_TELEGRAM
-      };
-
-      const res = await fetch(ADD_AD_API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
+  // ================== ФИЛЬТРЫ ==================
+  function syncFiltersUIFromState() {
+    if (filterTypeRow) {
+      filterTypeRow.querySelectorAll(".chip").forEach(ch => {
+        const t = ch.getAttribute("data-type") || "all";
+        ch.classList.toggle("chip-filled", t === filterState.type);
       });
-      if (!res.ok) throw new Error("Bad response");
-
-      // очистка
-      inputTitle.value = "";
-      inputPrice.value = "";
-      inputDescription.value = "";
-      photosPreview.innerHTML = "";
-      if (inputPhotos) inputPhotos.value = "";
-
-      newAdDraft = {
-        city: "Toshkent",
-        title: "",
-        price: "",
-        description: "",
-        photos: []
-      };
-
-      showScreen("newAdSuccess");
-      loadAds();
-    } catch (e) {
-      console.error("publish error:", e);
-      alert("Xatolik, keyinroq urinib ko‘ring.");
-    } finally {
-      btnPublishAd.disabled = false;
-      btnPublishAd.textContent = "E’lonni joylash";
     }
-  });
-}
-
-// ================== ОТКРЫТИЕ ДЕТАЛЕЙ ОБЪЯВЛЕНИЯ ==================
-function openAdDetails(ad) {
-  currentAd = ad;
-
-  // history
-  if (ad.id != null) {
-    const without = historyArray.filter(x => x.id !== ad.id);
-    without.unshift({id: ad.id, ts: Date.now()});
-    historyArray = without.slice(0, 50);
-    saveHistoryToStorage();
+    if (filterCitySelect) {
+      filterCitySelect.value = filterState.city === "all" ? "all" : filterState.city;
+    }
+    if (filterCurrencyRow) {
+      filterCurrencyRow.querySelectorAll(".chip").forEach(ch => {
+        const c = ch.getAttribute("data-currency") || "sum";
+        ch.classList.toggle("chip-filled", c === filterState.currency);
+      });
+    }
+    if (filterPhotoChip) {
+      filterPhotoChip.classList.toggle("chip-filled", filterState.onlyWithPhoto);
+    }
+    if (filterSortSelect) {
+      filterSortSelect.value = filterState.sort;
+    }
   }
 
-  if (detailTitle)       detailTitle.textContent       = ad.title || "";
-  if (detailPrice)       detailPrice.textContent       = formatPrice(ad.price);
-  if (detailMeta)        detailMeta.textContent        = `${ad.city || ""}`;
-  if (detailDescription) detailDescription.textContent = ad.description || "";
+  function readFiltersFromUI() {
+    if (filterTypeRow) {
+      const active = filterTypeRow.querySelector(".chip-filled");
+      filterState.type = active ? active.getAttribute("data-type") || "all" : "all";
+    }
+    if (filterCitySelect) {
+      const v = filterCitySelect.value;
+      filterState.city = v === "all" ? "all" : v;
+    }
+    if (filterCurrencyRow) {
+      const active = filterCurrencyRow.querySelector(".chip-filled");
+      filterState.currency = active ? active.getAttribute("data-currency") || "sum" : "sum";
+    }
+    if (filterPhotoChip) {
+      filterState.onlyWithPhoto = filterPhotoChip.classList.contains("chip-filled");
+    }
+    if (filterSortSelect) {
+      filterState.sort = filterSortSelect.value || "default";
+    }
+  }
 
-  const images = Array.isArray(ad.images) ? ad.images : [];
+  if (filterTypeRow) {
+    filterTypeRow.addEventListener("click", e => {
+      const chip = e.target.closest(".chip");
+      if (!chip) return;
+      filterTypeRow.querySelectorAll(".chip").forEach(c => c.classList.remove("chip-filled"));
+      chip.classList.add("chip-filled");
+    });
+  }
+  if (filterCurrencyRow) {
+    filterCurrencyRow.addEventListener("click", e => {
+      const chip = e.target.closest(".chip");
+      if (!chip) return;
+      filterCurrencyRow.querySelectorAll(".chip").forEach(c => c.classList.remove("chip-filled"));
+      chip.classList.add("chip-filled");
+    });
+  }
+  if (filterPhotoChip) {
+    filterPhotoChip.addEventListener("click", () => {
+      filterPhotoChip.classList.toggle("chip-filled");
+    });
+  }
 
-  // main slider
-  if (detailMainImage) {
-    detailMainImage.innerHTML = "";
-    detailMainImage.style.display = "flex";
-    detailMainImage.style.overflowX = "auto";
-    detailMainImage.style.scrollSnapType = "x mandatory";
+  if (openFiltersBtn) {
+    openFiltersBtn.addEventListener("click", () => {
+      showScreen("filters");
+    });
+  }
+  if (filtersApplyBtn) {
+    filtersApplyBtn.addEventListener("click", () => {
+      readFiltersFromUI();
+      applyAllFilters();
+      resetFeedRender();
+      showScreen("home");
+    });
+  }
+  if (filtersResetBtn) {
+    filtersResetBtn.addEventListener("click", () => {
+      filterState.type         = "all";
+      filterState.city         = "all";
+      filterState.currency     = "sum";
+      filterState.onlyWithPhoto= false;
+      filterState.sort         = "default";
+      filterState.category     = "all";
+      syncFiltersUIFromState();
+      applyAllFilters();
+      resetFeedRender();
+    });
+  }
+  if (filtersBackBtn) {
+    filtersBackBtn.addEventListener("click", () => showScreen("home"));
+  }
 
-    if (images.length) {
-      images.forEach((url, idx) => {
+  // ================== ПОПУЛЯРНЫЕ КАТЕГОРИИ ==================
+  if (homeCategoryGrid) {
+    const cards = homeCategoryGrid.querySelectorAll(".category-card");
+    let activeCategory = null;
+
+    cards.forEach(card => {
+      const type = card.getAttribute("data-type");
+      card.addEventListener("click", () => {
+        if (activeCategory === type) {
+          activeCategory = null;
+          filterState.category = "all";
+          cards.forEach(c => c.classList.remove("active"));
+        } else {
+          activeCategory = type;
+          filterState.category = type;
+          cards.forEach(c => c.classList.remove("active"));
+          card.classList.add("active");
+        }
+        applyAllFilters();
+        resetFeedRender();
+      });
+    });
+  }
+
+  // ================== НОВОЕ ОБЪЯВЛЕНИЕ ==================
+  if (btnOpenNewAd) {
+    btnOpenNewAd.addEventListener("click", () => showScreen("newAd1"));
+  }
+  if (backFromNewAd1) {
+    backFromNewAd1.addEventListener("click", () => showScreen("home"));
+  }
+  if (backFromNewAd2) {
+    backFromNewAd2.addEventListener("click", () => showScreen("newAd1"));
+  }
+  if (backFromNewAd3) {
+    backFromNewAd3.addEventListener("click", () => showScreen("newAd2"));
+  }
+  if (btnGoHome) {
+    btnGoHome.addEventListener("click", () => showScreen("home"));
+  }
+
+  if (btnNewAdStep1Next) {
+    btnNewAdStep1Next.addEventListener("click", () => {
+      const title = (inputTitle.value || "").trim();
+      const price = (inputPrice.value || "").trim();
+      const desc  = (inputDescription.value || "").trim();
+
+      if (!title) return alert("Sarlavha kiriting");
+      if (!price) return alert("Narx kiriting");
+
+      newAdDraft.city        = inputCity.value;
+      newAdDraft.title       = title;
+      newAdDraft.price       = price;
+      newAdDraft.description = desc || "Tavsif berilmagan";
+
+      showScreen("newAd2");
+    });
+  }
+
+  if (btnUploadPhotos && inputPhotos) {
+    btnUploadPhotos.addEventListener("click", () => inputPhotos.click());
+
+    inputPhotos.addEventListener("change", async () => {
+      const files = Array.from(inputPhotos.files || []);
+      photosPreview.innerHTML = "";
+      newAdDraft.photos = [];
+
+      if (!files.length) return;
+
+      const max = 8;
+      const selected = files.slice(0, max);
+
+      for (const file of selected) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const div = document.createElement("div");
+          div.className = "photo-thumb";
+          const img = document.createElement("img");
+          img.src = e.target.result;
+          div.appendChild(img);
+          photosPreview.appendChild(div);
+        };
+        reader.readAsDataURL(file);
+
+        try {
+          const url = await uploadToImgbb(file);
+          newAdDraft.photos.push(url);
+        } catch (e) {
+          console.error("ImgBB error:", e);
+        }
+      }
+    });
+  }
+
+  async function uploadToImgbb(file) {
+    const formData = new FormData();
+    formData.append("key", IMGBB_API_KEY);
+    formData.append("image", file);
+
+    const res = await fetch(IMGBB_UPLOAD_URL, {
+      method: "POST",
+      body: formData
+    });
+    if (!res.ok) throw new Error("upload_failed");
+    const json = await res.json();
+    if (!json.success || !json.data || !json.data.url) {
+      throw new Error("bad_response");
+    }
+    return json.data.url;
+  }
+
+  if (btnNewAdStep2Next) {
+    btnNewAdStep2Next.addEventListener("click", () => {
+      fillSummary();
+      showScreen("newAd3");
+    });
+  }
+
+  function fillSummary() {
+    if (summaryTitle)       summaryTitle.textContent       = newAdDraft.title;
+    if (summaryCityType)    summaryCityType.textContent    = newAdDraft.city;
+    if (summaryPrice)       summaryPrice.textContent       = formatPrice(newAdDraft.price);
+    if (summaryDescription) summaryDescription.textContent = newAdDraft.description;
+    if (summaryPhotosInfo)  summaryPhotosInfo.textContent  =
+      "Rasmlar: " + (newAdDraft.photos.length || 0) + " ta";
+  }
+
+  if (btnPublishAd) {
+    btnPublishAd.addEventListener("click", async () => {
+      btnPublishAd.disabled = true;
+      btnPublishAd.textContent = "Yuklanmoqda...";
+
+      try {
+        const payload = {
+          city: newAdDraft.city,
+          title: newAdDraft.title,
+          price: String(newAdDraft.price).replace(/\s+/g, ""),
+          description: newAdDraft.description,
+          images: newAdDraft.photos,
+          phone: DEFAULT_PHONE,
+          telegram: DEFAULT_TELEGRAM
+        };
+
+        const res = await fetch(ADD_AD_API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error("Bad response");
+
+        inputTitle.value = "";
+        inputPrice.value = "";
+        inputDescription.value = "";
+        photosPreview.innerHTML = "";
+        if (inputPhotos) inputPhotos.value = "";
+
+        newAdDraft = {
+          city: "Toshkent",
+          title: "",
+          price: "",
+          description: "",
+          photos: []
+        };
+
+        showScreen("newAdSuccess");
+        loadAds();
+      } catch (e) {
+        console.error("publish error:", e);
+        alert("Xatolik, keyinroq urinib ko‘ring.");
+      } finally {
+        btnPublishAd.disabled = false;
+        btnPublishAd.textContent = "E’lonni joylash";
+      }
+    });
+  }
+
+  // ================== ОТКРЫТИЕ ДЕТАЛЕЙ ОБЪЯВЛЕНИЯ ==================
+  function openAdDetails(ad) {
+    currentAd = ad;
+
+    if (ad.id != null) {
+      const without = historyArray.filter(x => x.id !== ad.id);
+      without.unshift({id: ad.id, ts: Date.now()});
+      historyArray = without.slice(0, 50);
+      saveHistoryToStorage();
+    }
+
+    if (detailTitle)       detailTitle.textContent       = ad.title || "";
+    if (detailPrice)       detailPrice.textContent       = formatPrice(ad.price);
+    if (detailMeta)        detailMeta.textContent        = `${ad.city || ""}`;
+    if (detailDescription) detailDescription.textContent = ad.description || "";
+
+    const images = Array.isArray(ad.images) ? ad.images : [];
+
+    if (detailMainImage) {
+      detailMainImage.innerHTML = "";
+      detailMainImage.style.display = "flex";
+      detailMainImage.style.overflowX = "auto";
+      detailMainImage.style.scrollSnapType = "x mandatory";
+
+      if (images.length) {
+        images.forEach((url, idx) => {
+          const slide = document.createElement("div");
+          slide.className = "detail-main-slide";
+          slide.style.backgroundImage = `url('${url}')`;
+          slide.addEventListener("click", () => openLightbox(images, idx));
+          detailMainImage.appendChild(slide);
+        });
+      } else {
         const slide = document.createElement("div");
         slide.className = "detail-main-slide";
-        slide.style.backgroundImage = `url('${url}')`;
-        slide.addEventListener("click", () => openLightbox(images, idx));
+        slide.style.background = "#e5e7eb";
         detailMainImage.appendChild(slide);
-      });
-    } else {
-      const slide = document.createElement("div");
-      slide.className = "detail-main-slide";
-      slide.style.background = "#e5e7eb";
-      detailMainImage.appendChild(slide);
+      }
+      detailMainImage.scrollLeft = 0;
     }
-    detailMainImage.scrollLeft = 0;
-  }
 
-  // thumbs
-  if (detailThumbs) {
-    detailThumbs.innerHTML = "";
-    images.forEach((url, idx) => {
-      const div = document.createElement("div");
-      div.className = "detail-thumb";
-      div.style.backgroundImage = `url('${url}')`;
-      div.addEventListener("click", () => {
-        if (!detailMainImage) return;
-        detailMainImage.scrollTo({
-          left: idx * detailMainImage.clientWidth,
-          behavior: "smooth"
+    if (detailThumbs) {
+      detailThumbs.innerHTML = "";
+      images.forEach((url, idx) => {
+        const div = document.createElement("div");
+        div.className = "detail-thumb";
+        div.style.backgroundImage = `url('${url}')`;
+        div.addEventListener("click", () => {
+          if (!detailMainImage) return;
+          detailMainImage.scrollTo({
+            left: idx * detailMainImage.clientWidth,
+            behavior: "smooth"
+          });
         });
+        detailThumbs.appendChild(div);
       });
-      detailThumbs.appendChild(div);
-    });
-  }
-
-  // контакты
-  const phone    = ad.phone    || DEFAULT_PHONE;
-  const telegram = ad.telegram || DEFAULT_TELEGRAM;
-
-  if (callSellerBtn) {
-    if (phone) {
-      const clean = String(phone).replace(/\s+/g, "");
-      callSellerBtn.href = "tel:" + clean;
-      callSellerBtn.style.display = "flex";
-    } else {
-      callSellerBtn.style.display = "none";
     }
-  }
-  if (msgSellerBtn) {
-    if (telegram) {
-      const uname = String(telegram).replace(/^@/, "");
-      msgSellerBtn.href = "https://t.me/" + uname;
-      msgSellerBtn.style.display = "flex";
-      // открыть чат внутри mini-app
-      msgSellerBtn.addEventListener("click", e => {
-        e.preventDefault();
-        openChatForAd(ad);
-      }, { once:true });
-    } else {
-      msgSellerBtn.style.display = "none";
-    }
-  }
 
-  // избранное
-  if (favoriteBtn) {
-    const isFav = ad.id != null && favoritesSet.has(ad.id);
-    favoriteBtn.textContent = isFav ? "♥" : "♡";
-    favoriteBtn.onclick = () => {
-      if (ad.id == null) return;
-      if (favoritesSet.has(ad.id)) {
-        favoritesSet.delete(ad.id);
-        favoriteBtn.textContent = "♡";
+    const phone    = ad.phone    || DEFAULT_PHONE;
+    const telegram = ad.telegram || DEFAULT_TELEGRAM;
+
+    if (callSellerBtn) {
+      if (phone) {
+        const clean = String(phone).replace(/\s+/g, "");
+        callSellerBtn.href = "tel:" + clean;
+        callSellerBtn.style.display = "flex";
       } else {
-        favoritesSet.add(ad.id);
-        favoriteBtn.textContent = "♥";
+        callSellerBtn.style.display = "none";
       }
-      saveFavoritesToStorage();
-      renderFavorites();
-    };
-  }
+    }
+    if (msgSellerBtn) {
+      if (telegram) {
+        const uname = String(telegram).replace(/^@/, "");
+        msgSellerBtn.href = "https://t.me/" + uname;
+        msgSellerBtn.style.display = "flex";
+        msgSellerBtn.onclick = e => {
+          e.preventDefault();
+          openChatForAd(ad);
+        };
+      } else {
+        msgSellerBtn.style.display = "none";
+      }
+    }
 
-  // share
-  if (shareBtn) {
-    shareBtn.onclick = () => {
-      const shareData = {
-        title: ad.title || "E’lon",
-        text: ad.title || "E’lon",
-        url: window.location.href
+    if (favoriteBtn) {
+      const isFav = ad.id != null && favoritesSet.has(ad.id);
+      favoriteBtn.textContent = isFav ? "♥" : "♡";
+      favoriteBtn.onclick = () => {
+        if (ad.id == null) return;
+        if (favoritesSet.has(ad.id)) {
+          favoritesSet.delete(ad.id);
+          favoriteBtn.textContent = "♡";
+        } else {
+          favoritesSet.add(ad.id);
+          favoriteBtn.textContent = "♥";
+        }
+        saveFavoritesToStorage();
+        renderFavorites();
       };
-      if (navigator.share) {
-        navigator.share(shareData).catch(()=>{});
-      } else if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(shareData.url)
-          .then(()=>alert("Havola nusxa olindi"));
-      } else {
-        alert("Linkni manzillar satridan nusxa oling");
-      }
-    };
+    }
+
+    if (shareBtn) {
+      shareBtn.onclick = () => {
+        const shareData = {
+          title: ad.title || "E’lon",
+          text: ad.title || "E’lon",
+          url: window.location.href
+        };
+        if (navigator.share) {
+          navigator.share(shareData).catch(()=>{});
+        } else if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(shareData.url)
+            .then(()=>alert("Havola nusxa olindi"));
+        } else {
+          alert("Linkni manzillar satridan nusxa oling");
+        }
+      };
+    }
+
+    if (similarList) {
+      similarList.innerHTML = "";
+      const sameType = allAds.filter(x => x.id !== ad.id && x.type === ad.type);
+      const base = sameType.length ? sameType : allAds.filter(x => x.id !== ad.id);
+      base.slice(0, 3).forEach(item => {
+        const wrap = document.createElement("div");
+        wrap.className = "similar-card";
+        const img = item.images && item.images[0];
+        wrap.innerHTML = `
+          <div class="similar-image" style="${img ? `background-image:url('${img}');` : ""}"></div>
+          <div>
+            <div class="similar-content-title">${item.title || ""}</div>
+            <div class="similar-content-meta">${item.city || ""}</div>
+            <div class="similar-content-price">${formatPrice(item.price)}</div>
+          </div>
+        `;
+        wrap.addEventListener("click", () => openAdDetails(item));
+        similarList.appendChild(wrap);
+      });
+    }
+
+    showScreen("adDetails");
   }
 
-  // similar
-  if (similarList) {
-    similarList.innerHTML = "";
-    const sameType = allAds.filter(x => x.id !== ad.id && x.type === ad.type);
-    const base = sameType.length ? sameType : allAds.filter(x => x.id !== ad.id);
-    base.slice(0, 3).forEach(item => {
-      const wrap = document.createElement("div");
-      wrap.className = "similar-card";
-      const img = item.images && item.images[0];
-      wrap.innerHTML = `
-        <div class="similar-image" style="${img ? `background-image:url('${img}');` : ""}"></div>
-        <div>
-          <div class="similar-content-title">${item.title || ""}</div>
-          <div class="similar-content-meta">${item.city || ""}</div>
-          <div class="similar-content-price">${formatPrice(item.price)}</div>
-        </div>
-      `;
-      wrap.addEventListener("click", () => openAdDetails(item));
-      similarList.appendChild(wrap);
+  if (detailBackBtn) {
+    detailBackBtn.addEventListener("click", () => showScreen("home"));
+  }
+
+  // ================== LIGHTBOX ==================
+  function openLightbox(images, index) {
+    if (!imageLightbox || !lightboxImg) return;
+    lightboxImages = images.slice();
+    lightboxIndex  = index || 0;
+    updateLightboxImage();
+    imageLightbox.classList.add("visible");
+  }
+  function updateLightboxImage() {
+    if (!lightboxImg || !lightboxImages.length) return;
+    lightboxImg.src = lightboxImages[lightboxIndex];
+  }
+  if (imageLightbox) {
+    imageLightbox.addEventListener("click", () => {
+      imageLightbox.classList.remove("visible");
+    });
+  }
+  if (lightboxPrev) {
+    lightboxPrev.addEventListener("click", e => {
+      e.stopPropagation();
+      if (!lightboxImages.length) return;
+      lightboxIndex = (lightboxIndex - 1 + lightboxImages.length) % lightboxImages.length;
+      updateLightboxImage();
+    });
+  }
+  if (lightboxNext) {
+    lightboxNext.addEventListener("click", e => {
+      e.stopPropagation();
+      if (!lightboxImages.length) return;
+      lightboxIndex = (lightboxIndex + 1) % lightboxImages.length;
+      updateLightboxImage();
     });
   }
 
-  showScreen("adDetails");
-}
-
-if (detailBackBtn) {
-  detailBackBtn.addEventListener("click", () => showScreen("home"));
-}
-
-// ================== LIGHTBOX ==================
-function openLightbox(images, index) {
-  if (!imageLightbox || !lightboxImg) return;
-  lightboxImages = images.slice();
-  lightboxIndex  = index || 0;
-  updateLightboxImage();
-  imageLightbox.classList.add("visible");
-}
-function updateLightboxImage() {
-  if (!lightboxImg || !lightboxImages.length) return;
-  lightboxImg.src = lightboxImages[lightboxIndex];
-}
-if (imageLightbox) {
-  imageLightbox.addEventListener("click", () => {
-    imageLightbox.classList.remove("visible");
-  });
-}
-if (lightboxPrev) {
-  lightboxPrev.addEventListener("click", e => {
-    e.stopPropagation();
-    if (!lightboxImages.length) return;
-    lightboxIndex = (lightboxIndex - 1 + lightboxImages.length) % lightboxImages.length;
-    updateLightboxImage();
-  });
-}
-if (lightboxNext) {
-  lightboxNext.addEventListener("click", e => {
-    e.stopPropagation();
-    if (!lightboxImages.length) return;
-    lightboxIndex = (lightboxIndex + 1) % lightboxImages.length;
-    updateLightboxImage();
-  });
-}
-
-// ================== PROMO (ПРОДВИЖЕНИЕ) ==================
-if (promoBanner) {
-  promoBanner.addEventListener("click", () => {
-    showScreen("promo");
-  });
-}
-
-// клики по планам продвижения
-document.addEventListener("click", e => {
-  const plan = e.target.closest(".promo-plan");
-  if (!plan) return;
-  showToast("E’lon yuqoriga ko‘tarildi!", "TOP bo‘limida ko‘rinadi");
-});
-
-// ================== CHAT ==================
-function renderChat() {
-  if (!chatMessagesEl) return;
-  chatMessagesEl.innerHTML = "";
-  chatHistory.forEach(msg => {
-    const div = document.createElement("div");
-    div.className = "chat-message " + (msg.from === "me" ? "chat-me" : "chat-them");
-    div.textContent = msg.text;
-    chatMessagesEl.appendChild(div);
-  });
-  chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
-}
-
-function addChatMessage(from, text) {
-  chatHistory.push({
-    from,
-    text,
-    ts: Date.now()
-  });
-  renderChat();
-}
-
-function openChatForAd(ad) {
-  // можно как-нибудь показать заголовок, но у нас просто общий чат
-  if (!chatHistory.length) {
-    addChatMessage("seller", "Assalomu alaykum! Savollaringiz bo‘lsa, yozing 🙂");
+  // ================== PROMO ==================
+  if (promoBanner) {
+    promoBanner.addEventListener("click", () => {
+      showScreen("promo");
+    });
   }
-  showScreen("chat");
-}
 
-if (chatSendBtn && chatInput) {
-  chatSendBtn.addEventListener("click", () => {
-    const text = (chatInput.value || "").trim();
-    if (!text) return;
-    addChatMessage("me", text);
-    chatInput.value = "";
-    // простая авто-ответ симуляция
-    setTimeout(() => {
-      addChatMessage("seller", "Xabaringizni oldim, tez orada javob beraman ✅");
-    }, 800);
+  document.addEventListener("click", e => {
+    const plan = e.target.closest(".promo-plan");
+    if (!plan) return;
+    showToast("E’lon yuqoriga ko‘tarildi!", "TOP bo‘limida ko‘rinadi");
   });
-  chatInput.addEventListener("keydown", e => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      chatSendBtn.click();
+
+  // ================== CHAT ==================
+  function renderChat() {
+    if (!chatMessagesEl) return;
+    chatMessagesEl.innerHTML = "";
+    chatHistory.forEach(msg => {
+      const div = document.createElement("div");
+      div.className = "chat-message " + (msg.from === "me" ? "me" : "other");
+      div.textContent = msg.text;
+      chatMessagesEl.appendChild(div);
+    });
+    chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+  }
+
+  function addChatMessage(from, text) {
+    chatHistory.push({
+      from,
+      text,
+      ts: Date.now()
+    });
+    renderChat();
+  }
+
+  function openChatForAd(ad) {
+    if (!chatHistory.length) {
+      addChatMessage("seller", "Assalomu alaykum! Savollaringiz bo‘lsa, yozing 🙂");
     }
-  });
-}
+    showScreen("chat");
+  }
 
-// ================== ADMIN PANEL ==================
-function updateAdminPanel() {
-  if (!adminTotalAdsEl || !adminNewTodayEl || !adminLastAdsEl) return;
-  adminTotalAdsEl.textContent = allAds.length;
+  if (chatSendBtn && chatInput) {
+    chatSendBtn.addEventListener("click", () => {
+      const text = (chatInput.value || "").trim();
+      if (!text) return;
+      addChatMessage("me", text);
+      chatInput.value = "";
+      setTimeout(() => {
+        addChatMessage("seller", "Xabaringizni oldim, tez orada javob beraman ✅");
+      }, 800);
+    });
+    chatInput.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        chatSendBtn.click();
+      }
+    });
+  }
 
-  const now = new Date();
-  const todayStr = now.toISOString().slice(0, 10);
-  const newToday = allAds.filter(ad => (ad.created_at || "").startsWith(todayStr)).length;
-  adminNewTodayEl.textContent = newToday;
+  // ================== ADMIN PANEL ==================
+  function updateAdminPanel() {
+    if (!adminTotalAdsEl || !adminNewTodayEl || !adminLastAdsEl) return;
+    adminTotalAdsEl.textContent = allAds.length;
 
-  adminLastAdsEl.innerHTML = "";
-  const sorted = [...allAds].sort((a,b)=> {
-    const da = a.created_at ? new Date(a.created_at).getTime() : 0;
-    const db = b.created_at ? new Date(b.created_at).getTime() : 0;
-    return db - da;
-  }).slice(0, 10);
+    const now = new Date();
+    const todayStr = now.toISOString().slice(0, 10);
+    const newToday = allAds.filter(ad => (ad.created_at || "").startsWith(todayStr)).length;
+    adminNewTodayEl.textContent = newToday;
 
-  sorted.forEach(ad => {
-    const row = document.createElement("div");
-    row.className = "admin-list-item";
-    row.textContent = `${ad.title || "E’lon"} · ${ad.city || ""}`;
-    row.addEventListener("click", () => openAdDetails(ad));
-    adminLastAdsEl.appendChild(row);
-  });
-}
+    adminLastAdsEl.innerHTML = "";
+    const sorted = [...allAds].sort((a,b)=> {
+      const da = a.created_at ? new Date(a.created_at).getTime() : 0;
+      const db = b.created_at ? new Date(b.created_at).getTime() : 0;
+      return db - da;
+    }).slice(0, 10);
 
-// ================== СТАРТ ==================
-showScreen("home");
-loadAds();
-</script>
+    sorted.forEach(ad => {
+      const row = document.createElement("div");
+      row.className = "admin-list-item";
+      row.textContent = `${ad.title || "E’lon"} · ${ad.city || ""}`;
+      row.addEventListener("click", () => openAdDetails(ad));
+      adminLastAdsEl.appendChild(row);
+    });
+  }
+
+  // ================== СТАРТ ==================
+  showScreen("home");
+  loadAds();
+  </script>
 </body>
 </html>
