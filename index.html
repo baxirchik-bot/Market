@@ -538,7 +538,7 @@
   /* === iOS-style tab bar === */
   .bottom-nav {
     position: fixed;
-    bottom: 30px;
+    bottom: 32px;
     left: 0;
     right: 0;
     width: 100%;
@@ -552,7 +552,7 @@
   .bottom-nav-inner {
     width: 100%;
     max-width: 480px;
-    margin-bottom: -22px;   /* опускаем визуально вниз, не меняя зоны тапа */
+    margin auto;
     background: #ffffff;
     border-radius: 999px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
@@ -560,6 +560,7 @@
     display: flex;
     justify-content: space-between;
     align-items: stretch;
+    transform: translateY(18px);  /* опускаем внешний вид, не ломая тапы */
   }
 
   .nav-btn {
