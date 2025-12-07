@@ -542,18 +542,24 @@
 
 .bottom-nav {
   position: fixed;
-  bottom: 0; /* Прямо к нижнему краю экрана */
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 480px;
+  bottom: 0;
+  left: 0;
+  right: 0;
 
-  background: transparent;
+  width: 100%;
   padding: 4px 10px calc(6px + env(safe-area-inset-bottom));
+  background: transparent;
   z-index: 50;
+
+  display: flex;
+  justify-content: center;   /* центрируем .bottom-nav-inner */
 }
 
 .bottom-nav-inner {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+
   background: #ffffff;
   border-radius: 999px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
@@ -570,8 +576,8 @@
   background: transparent;
   border-radius: 999px;
 
-  min-height: 56px;          /* большая зона тапа */
-  padding: 4px 8px;
+  min-height: 60px;          /* большая зона тапа */
+  padding: 8px 8px;
 
   display: flex;
   flex-direction: column;    /* иконка сверху, текст снизу */
