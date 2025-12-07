@@ -582,18 +582,25 @@
   }
 
   .bottom-nav-inner {
-    width: 100%;
-    max-width: 480px;
-    margin: 0 auto;
-    background: #ffffff;
-    border-radius: 999px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
-    padding: 4px;
-    display: flex;
-    justify-content: space-between;
-    align-items: stretch;
-  }
+  width: 100%;
+  max-width: 480px;
 
+  background: rgba(255, 255, 255, 0.45); /* было 0.96 → стало намного прозрачнее */
+
+  border-radius: 26px;
+
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.20);
+
+  padding: 6px 10px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+
+  backdrop-filter: blur(28px) saturate(180%); /* сильное стеклянное размытие */
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+}
+    
   /* Нижнее меню — увеличенные иконки и текст */
 .nav-btn {
   flex: 1;
