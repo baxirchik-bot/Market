@@ -1952,7 +1952,7 @@ const settingsFavoritesRow = document.getElementById("settingsFavoritesRow");
 const settingsHistoryRow   = document.getElementById("settingsHistoryRow");
 const settingsPaidRow      = document.getElementById("settingsPaidRow");
 const settingsBusinessRow  = document.getElementById("settingsBusinessRow");
-const settingsShopRow  = document.getElementById("settingsShopRow");
+const settingsShopRow  = document.getElementById("settingsMyShopRow");
     
   // Lists
   const feedList          = document.getElementById("feedList");
@@ -3052,6 +3052,40 @@ if (settingsBusinessRow) {
     console.warn("Profile photo load error:", e);
   }
 }
+
+    // ================== SETTINGS: RASMINI O‘ZGARTIRISH ==================
+if (settingsChangePhoto && profilePhotoInput) {
+  // открыть выбор файла
+  settingsChangePhoto.addEventListener("click", () => {
+    profilePhotoInput.click();
+  });
+
+  // когда пользователь выбрал фото
+  profilePhotoInput.addEventListener("change", () => {
+    const file = profilePhotoInput.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = e => {
+      const url = e.target.result;
+
+      if (profileAvatar) {
+        profileAvatar.style.backgroundImage = `url('${url}')`;
+        profileAvatar.style.backgroundSize = "cover";
+        profileAvatar.style.backgroundPosition = "center";
+        profileAvatar.textContent = "";
+      }
+
+      try {
+        localStorage.setItem(PROFILE_PHOTO_KEY, url);
+      } catch (err) {
+        console.warn("Profile photo save error:", err);
+      }
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
     
     // ================== SETTINGS: TILNI TANLASH ==================
 if (settingsLangRow) {
@@ -3078,8 +3112,9 @@ if (languageRu) {
 }
 
   // ================== СТАРТ ==================
-  showScreen("home");
-  loadAds();
+applySavedProfilePhoto();
+showScreen("home");
+loadAds();
   </script>
 </body>
 </html>
