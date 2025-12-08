@@ -1565,7 +1565,7 @@
 
       <!-- ================= PROFILE / SETTINGS (Telegram style) ================= -->
 <section id="screen-profile" class="screen">
-  <!-- Profil sarlavhasi -->
+  <!-- Шапка профиля -->
   <div class="settings-profile-header">
     <div class="settings-avatar-big">B</div>
     <div class="settings-name">Baxir B-R</div>
@@ -1576,83 +1576,84 @@
     </div>
   </div>
 
-  <!-- Rasmni o‘zgartirish -->
+  <!-- 1. Rasmini o‘zgartirish -->
   <div class="settings-card">
-    <button class="settings-row">
+    <button id="settingsChangePhoto" class="settings-row">
       <div class="settings-icon">📷</div>
-      <div class="settings-title">Rasmni o‘zgartirish</div>
+      <div class="settings-title">Rasmini o‘zgartirish</div>
       <div class="settings-arrow">›</div>
     </button>
   </div>
 
-  <!-- Asosiy bo‘limlar -->
+  <!-- 2. Profil / Dokon / E'lonlar / Sevimlilar / Tarix -->
   <div class="settings-card">
-  <button class="settings-row">
-    <div class="settings-icon">👤</div>
-    <div class="settings-title">Profilim</div>
-    <div class="settings-arrow">›</div>
-  </button>
+    <button id="settingsProfileRow" class="settings-row">
+      <div class="settings-icon">👤</div>
+      <div class="settings-title">Profilim</div>
+      <div class="settings-arrow">›</div>
+    </button>
 
-  <!-- 🔹 НОВОЕ: Mening do‘konim -->
-  <button id="settingsShopRow" class="settings-row">
-    <div class="settings-icon">🏬</div>
-    <div class="settings-title">Mening do‘konim</div>
-    <div class="settings-arrow">›</div>
-  </button>
+    <button id="settingsMyShopRow" class="settings-row">
+      <div class="settings-icon">🏬</div>
+      <div class="settings-title">Mening do‘konim</div>
+      <div class="settings-arrow">›</div>
+    </button>
 
-  <!-- 🔹 НАШ РАБОЧИЙ ПУНКТ: Mening e’lonlarim -->
-  <button id="settingsMyAdsRow" class="settings-row">
-    <div class="settings-icon">📄</div>
-    <div class="settings-title">Mening e’lonlarim</div>
-    <div class="settings-arrow">›</div>
-  </button>
+    <button id="settingsMyAdsRow" class="settings-row">
+      <div class="settings-icon">📋</div>
+      <div class="settings-title">Mening e’lonlarim</div>
+      <div class="settings-arrow">›</div>
+    </button>
 
-  <button id="settingsFavoritesRow" class="settings-row">
-    <div class="settings-icon">⭐</div>
-    <div class="settings-title">Sevimlilar</div>
-    <div class="settings-arrow">›</div>
-  </button>
+    <button id="settingsFavoritesRow" class="settings-row">
+      <div class="settings-icon">⭐</div>
+      <div class="settings-title">Sevimlilar</div>
+      <div class="settings-arrow">›</div>
+    </button>
 
-  <button id="settingsHistoryRow" class="settings-row">
-    <div class="settings-icon">🕒</div>
-    <div class="settings-title">Ko‘rish tarixi</div>
-    <div class="settings-arrow">›</div>
-  </button>
+    <button id="settingsHistoryRow" class="settings-row">
+      <div class="settings-icon">🕒</div>
+      <div class="settings-title">Ko‘rish tarixi</div>
+      <div class="settings-arrow">›</div>
+    </button>
+  </div>
 
-  <button id="settingsLangRow" class="settings-row">
-    <div class="settings-icon">🌐</div>
-    <div class="settings-title">Tilni tanlash (uz/ru)</div>
-    <div class="settings-arrow">›</div>
-  </button>
+  <!-- 3. Til / Pullik / Admin / Biznes -->
+  <div class="settings-card">
+    <button id="settingsLangRow" class="settings-row">
+      <div class="settings-icon">🌐</div>
+      <div class="settings-title">Tilni tanlash (uz/ru)</div>
+      <div class="settings-arrow">›</div>
+    </button>
 
-    <!-- Pullik xizmatlar -> promo ekran -->
-<button class="settings-row" id="settingsPaidRow">
-  <div class="settings-icon">💎</div>
-  <div class="settings-title">Pullik xizmatlar</div>
-  <div class="settings-arrow">›</div>
-</button>
+    <button id="settingsPaidRow" class="settings-row">
+      <div class="settings-icon">💎</div>
+      <div class="settings-title">Pullik xizmatlar</div>
+      <div class="settings-arrow">›</div>
+    </button>
 
-    <!-- 🔹 НОВЫЙ ПУНКТ: ADMIN PANEL -->
-  <button id="settingsAdminRow" class="settings-row">
-    <div class="settings-icon">🛠</div>
-    <div class="settings-title">Admin paneli</div>
-    <div class="settings-arrow">›</div>
-  </button>
-    
-<!-- Zalvo biznes uchun -> hozircha ham promo -->
-<button class="settings-row" id="settingsBusinessRow">
-  <div class="settings-icon">📈</div>
-  <div class="settings-title">Zalvo biznes uchun</div>
-  <div class="settings-arrow">›</div>
-</button>
+    <button id="settingsAdminRow" class="settings-row">
+      <div class="settings-icon">🛠</div>
+      <div class="settings-title">Admin paneli</div>
+      <div class="settings-arrow">›</div>
+    </button>
 
-    <button class="settings-row">
+    <button id="settingsBusinessRow" class="settings-row">
+      <div class="settings-icon">📊</div>
+      <div class="settings-title">Zalvo biznes uchun</div>
+      <div class="settings-arrow">›</div>
+    </button>
+  </div>
+
+  <!-- 4. Yordam / Savollar -->
+  <div class="settings-card">
+    <button id="settingsHelpRow" class="settings-row">
       <div class="settings-icon">❓</div>
       <div class="settings-title">Yordam</div>
       <div class="settings-arrow">›</div>
     </button>
 
-    <button class="settings-row">
+    <button id="settingsQuestionsRow" class="settings-row">
       <div class="settings-icon">💬</div>
       <div class="settings-title">Zalvo haqida savollar</div>
       <div class="settings-arrow">›</div>
