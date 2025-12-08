@@ -1632,6 +1632,13 @@
   <div class="settings-arrow">›</div>
 </button>
 
+    <!-- 🔹 НОВЫЙ ПУНКТ: ADMIN PANEL -->
+  <button id="settingsAdminRow" class="settings-row">
+    <div class="settings-icon">🛠</div>
+    <div class="settings-title">Admin paneli</div>
+    <div class="settings-arrow">›</div>
+  </button>
+    
 <!-- Zalvo biznes uchun -> hozircha ham promo -->
 <button class="settings-row" id="settingsBusinessRow">
   <div class="settings-icon">📈</div>
@@ -2917,6 +2924,7 @@ const settingsShopRow  = document.getElementById("settingsShopRow");
   const settingsHistoryBtn   = document.getElementById("settingsHistory");
   const settingsProfileBtn   = document.getElementById("settingsProfile");
   const settingsAboutBtn     = document.getElementById("settingsAbout");
+  const settingsAdminRow  = document.getElementById("settingsAdminRow");
 
   if (settingsAccountBtn) {
     settingsAccountBtn.addEventListener("click", () => {
@@ -3009,6 +3017,12 @@ if (settingsBusinessRow) {
   settingsShopRow.addEventListener("click", () => {
     // потом здесь откроем экран магазинов
     alert("Mening do‘konim sahifasi tez orada tayyor bo‘ladi 🙂");
+  });
+}
+
+    if (settingsAdminRow) {
+  settingsAdminRow.addEventListener("click", () => {
+    showScreen("admin");   // ochiladi admin panel ekrani
   });
 }
     
