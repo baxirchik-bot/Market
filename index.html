@@ -1667,6 +1667,55 @@
     </button>
   </div>
 </section>
+
+      <!-- ================= MY SHOP (MENING DO‘KONIM) ================= -->
+<section id="screen-my-shop" class="screen">
+  <div class="screen-title">Mening do‘konim</div>
+
+  <div class="admin-card">
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
+      <div style="
+        width:52px;
+        height:52px;
+        border-radius:16px;
+        background:#e5e7eb;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-weight:700;
+        font-size:20px;
+      ">
+        Z
+      </div>
+      <div>
+        <div style="font-size:16px; font-weight:600;">Zalvo Shop</div>
+        <div style="font-size:13px; color:#64748b;">
+          Shaxsiy do‘koningiz. Bu yerda faqat siz joylagan e’lonlar bo‘ladi.
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-stat-row">
+      <div class="admin-stat">
+        <div class="admin-stat-number">12</div>
+        <div class="admin-stat-label">E’lonlar soni</div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat-number">1 250</div>
+        <div class="admin-stat-label">Ko‘rishlar</div>
+      </div>
+    </div>
+
+    <div class="admin-section-title">Qisqacha tavsif</div>
+    <div style="font-size:13px; color:#475569; margin-top:4px;">
+      Bu demo do‘kon. Keyinchalik profil sozlamalarida do‘kon nomi,
+      logotipi va tavsifini alohida o‘zgartirish mumkin bo‘ladi.
+    </div>
+  </div>
+
+  <div class="section-title">Mening e’lonlarim</div>
+  <div id="myShopAdsList" class="ad-list"></div>
+</section>
       
       <!-- ================= PROMOTION SCREEN ================= -->
       <section id="screen-promo" class="screen">
@@ -1946,6 +1995,9 @@
   const profileAvatar       = document.getElementById("profileAvatar");
   const profilePhotoInput   = document.getElementById("profilePhotoInput");
   const settingsChangePhoto = document.getElementById("settingsChangePhoto");
+  const screenMyShop     = document.getElementById("screen-my-shop");
+  const myShopAdsList    = document.getElementById("myShopAdsList");
+  const settingsMyShopRow = document.getElementById("settingsMyShopRow");
     
   // Settings rows (profil ekrani)
 const settingsFavoritesRow = document.getElementById("settingsFavoritesRow");
@@ -2339,24 +2391,24 @@ const settingsShopRow  = document.getElementById("settingsMyShopRow");
 
   // ================== ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ ==================
     const screens = {
-    home: screenHome,
-    favorites: screenFavorites,
-    filters: screenFilters,
-    adDetails: screenAdDetails,
-    profile: screenProfile,
-    promo: screenPromo,
-    chat: screenChat,
-    history: screenHistory,
-    admin: screenAdmin,
-    newAd1: screenNewAd1,
-    newAd2: screenNewAd2,
-    newAd3: screenNewAd3,
-    newAdSuccess: screenNewAdSuccess,
-    shops: screenShops,
-    settings: screenSettings,
-    language: screenLanguage,
-    myAds: screenMyAds,
-  };
+  home: screenHome,
+  favorites: screenFavorites,
+  filters: screenFilters,
+  adDetails: screenAdDetails,
+  profile: screenProfile,
+  promo: screenPromo,
+  chat: screenChat,
+  history: screenHistory,
+  admin: screenAdmin,
+  newAd1: screenNewAd1,
+  newAd2: screenNewAd2,
+  newAd3: screenNewAd3,
+  newAdSuccess: screenNewAdSuccess,
+  shops: screenShops,
+  language: screenLanguage,
+  myAds: screenMyAds,
+  myShop: screenMyShop
+};
 
   function showScreen(name) {
     currentScreen = name;
@@ -2385,6 +2437,8 @@ const settingsShopRow  = document.getElementById("settingsMyShopRow");
     if (name === "filters")   syncFiltersUIFromState();
     if (name === "home")      resetFeedRender();
     if (name === "myAds")     renderMyAds();
+    if (name === "myAds")     renderMyAds();
+    if (name === "myShop")    renderMyShopAds();
   }
 
   // bottom nav
@@ -3025,10 +3079,9 @@ if (settingsBusinessRow) {
   });
 }
 
-    if (settingsShopRow) {
-  settingsShopRow.addEventListener("click", () => {
-    // потом здесь откроем экран магазинов
-    alert("Mening do‘konim sahifasi tez orada tayyor bo‘ladi 🙂");
+if (settingsMyShopRow) {
+  settingsMyShopRow.addEventListener("click", () => {
+    showScreen("myShop");
   });
 }
 
@@ -3051,6 +3104,29 @@ if (settingsBusinessRow) {
   } catch (e) {
     console.warn("Profile photo load error:", e);
   }
+}
+
+    function renderMyShopAds() {
+  if (!myShopAdsList) return;
+  myShopAdsList.innerHTML = "";
+
+  const myPhone = DEFAULT_PHONE.replace(/\s+/g, "");
+  const myTg    = DEFAULT_TELEGRAM.replace(/^@/, "").toLowerCase();
+
+  const myAds = allAds.filter(ad => {
+    const adPhone = (ad.phone || "").replace(/\s+/g, "");
+    const adTg    = (ad.telegram || "").replace(/^@/, "").toLowerCase();
+    return (adPhone && adPhone === myPhone) || (adTg && adTg === myTg);
+  });
+
+  if (!myAds.length) {
+    myShopAdsList.innerHTML = "<div class='ad-meta'>Hozircha do‘koningizda e’lonlar yo‘q</div>";
+    return;
+  }
+
+  myAds.forEach(ad => {
+    myShopAdsList.appendChild(createAdCard(ad));
+  });
 }
 
     // ================== SETTINGS: RASMINI O‘ZGARTIRISH ==================
