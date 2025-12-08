@@ -1587,43 +1587,50 @@
 
   <!-- Asosiy bo‘limlar -->
   <div class="settings-card">
-    <button class="settings-row">
-      <div class="settings-icon">👤</div>
-      <div class="settings-title">Profilim</div>
-      <div class="settings-arrow">›</div>
-    </button>
+  <button class="settings-row">
+    <div class="settings-icon">👤</div>
+    <div class="settings-title">Profilim</div>
+    <div class="settings-arrow">›</div>
+  </button>
 
-    <button class="settings-row">
-      <div class="settings-icon">📋</div>
-      <div class="settings-title">E’lonlarim</div>
-      <div class="settings-arrow">›</div>
-    </button>
+  <!-- E’lonlarim (пока без логики, общий список) -->
+  <button class="settings-row">
+    <div class="settings-icon">📋</div>
+    <div class="settings-title">E’lonlarim</div>
+    <div class="settings-arrow">›</div>
+  </button>
 
-    <button id="settingsMyAdsRow" class="settings-row">
-  <div class="settings-icon">📋</div>
-  <div class="settings-title">Mening e’lonlarim</div>
-  <div class="settings-arrow">›</div>
-</button>
+  <!-- 🔹 НОВОЕ: Mening do‘konim -->
+  <button id="settingsShopRow" class="settings-row">
+    <div class="settings-icon">🏬</div>
+    <div class="settings-title">Mening do‘konim</div>
+    <div class="settings-arrow">›</div>
+  </button>
 
-    <!-- Sevimlilar -->
-<button class="settings-row" id="settingsFavoritesRow">
-  <div class="settings-icon">⭐</div>
-  <div class="settings-title">Sevimlilar</div>
-  <div class="settings-arrow">›</div>
-</button>
+  <!-- 🔹 НАШ РАБОЧИЙ ПУНКТ: Mening e’lonlarim -->
+  <button id="settingsMyAdsRow" class="settings-row">
+    <div class="settings-icon">📄</div>
+    <div class="settings-title">Mening e’lonlarim</div>
+    <div class="settings-arrow">›</div>
+  </button>
 
-<!-- Ko‘rish tarixi -->
-<button class="settings-row" id="settingsHistoryRow">
-  <div class="settings-icon">🕒</div>
-  <div class="settings-title">Ko‘rish tarixi</div>
-  <div class="settings-arrow">›</div>
-</button>
+  <button id="settingsFavoritesRow" class="settings-row">
+    <div class="settings-icon">⭐</div>
+    <div class="settings-title">Sevimlilar</div>
+    <div class="settings-arrow">›</div>
+  </button>
 
-    <button class="settings-row" id="settingsLangRow">
-  <div class="settings-icon">🌐</div>
-  <div class="settings-title">Tilni tanlash (uz/ru)</div>
-  <div class="settings-arrow">›</div>
-</button>
+  <button id="settingsHistoryRow" class="settings-row">
+    <div class="settings-icon">🕒</div>
+    <div class="settings-title">Ko‘rish tarixi</div>
+    <div class="settings-arrow">›</div>
+  </button>
+
+  <button id="settingsLangRow" class="settings-row">
+    <div class="settings-icon">🌐</div>
+    <div class="settings-title">Tilni tanlash (uz/ru)</div>
+    <div class="settings-arrow">›</div>
+  </button>
 
     <!-- Pullik xizmatlar -> promo ekran -->
 <button class="settings-row" id="settingsPaidRow">
@@ -1933,6 +1940,7 @@ const settingsFavoritesRow = document.getElementById("settingsFavoritesRow");
 const settingsHistoryRow   = document.getElementById("settingsHistoryRow");
 const settingsPaidRow      = document.getElementById("settingsPaidRow");
 const settingsBusinessRow  = document.getElementById("settingsBusinessRow");
+const settingsShopRow  = document.getElementById("settingsShopRow");
     
   // Lists
   const feedList          = document.getElementById("feedList");
@@ -3001,6 +3009,13 @@ if (settingsBusinessRow) {
     if (settingsMyAdsRow) {
   settingsMyAdsRow.addEventListener("click", () => {
     showScreen("myAds");
+  });
+}
+
+    if (settingsShopRow) {
+  settingsShopRow.addEventListener("click", () => {
+    // потом здесь откроем экран магазинов
+    alert("Mening do‘konim sahifasi tez orada tayyor bo‘ladi 🙂");
   });
 }
     
