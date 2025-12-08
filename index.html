@@ -1567,7 +1567,7 @@
 <section id="screen-profile" class="screen">
   <!-- Шапка профиля -->
   <div class="settings-profile-header">
-    <div class="settings-avatar-big">B</div>
+  <div id="profileAvatar" class="settings-avatar-big">B</div>
     <div class="settings-name">Baxir B-R</div>
     <div class="settings-username">
       <a href="tel:+16195479977" class="settings-link">+1 619 547 9977</a>
@@ -1576,6 +1576,13 @@
     </div>
   </div>
 
+  <input
+  id="profilePhotoInput"
+  type="file"
+  accept="image/*"
+  class="hidden-input"
+/>
+  
   <!-- 1. Rasmini o‘zgartirish -->
   <div class="settings-card">
     <button id="settingsChangePhoto" class="settings-row">
@@ -1908,6 +1915,7 @@
   // localStorage keys
   const FAVORITES_KEY = "mh_favorites";
   const HISTORY_KEY   = "mh_history";
+  const PROFILE_PHOTO_KEY = "zalvo_profile_photo";
 
   // ================== DOM-ЭЛЕМЕНТЫ ==================
   const screensContainer = document.querySelector(".screens");
@@ -1935,6 +1943,9 @@
   const screenMyAds      = document.getElementById("screen-my-ads");
   const myAdsList        = document.getElementById("myAdsList");
   const settingsMyAdsRow = document.getElementById("settingsMyAdsRow");
+  const profileAvatar       = document.getElementById("profileAvatar");
+  const profilePhotoInput   = document.getElementById("profilePhotoInput");
+  const settingsChangePhoto = document.getElementById("settingsChangePhoto");
     
   // Settings rows (profil ekrani)
 const settingsFavoritesRow = document.getElementById("settingsFavoritesRow");
@@ -3025,6 +3036,21 @@ if (settingsBusinessRow) {
   settingsAdminRow.addEventListener("click", () => {
     showScreen("admin");   // ochiladi admin panel ekrani
   });
+}
+
+    function applySavedProfilePhoto() {
+  if (!profileAvatar) return;
+  try {
+    const url = localStorage.getItem(PROFILE_PHOTO_KEY);
+    if (url) {
+      profileAvatar.style.backgroundImage = `url('${url}')`;
+      profileAvatar.style.backgroundSize = "cover";
+      profileAvatar.style.backgroundPosition = "center";
+      profileAvatar.textContent = "";
+    }
+  } catch (e) {
+    console.warn("Profile photo load error:", e);
+  }
 }
     
     // ================== SETTINGS: TILNI TANLASH ==================
