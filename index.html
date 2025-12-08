@@ -1463,6 +1463,11 @@
         <div id="favoritesList" class="ad-list"></div>
       </section>
 
+      <section id="screen-my-ads" class="screen">
+  <div class="screen-title">Mening e’lonlarim</div>
+  <div id="myAdsList" class="ad-list"></div>
+</section>
+
       <!-- ================= FILTERS SCREEN ================= -->
       <section id="screen-filters" class="screen">
         <div class="screen-title">Filtrlar</div>
@@ -1594,11 +1599,11 @@
       <div class="settings-arrow">›</div>
     </button>
 
-    <button class="settings-row">
-      <div class="settings-icon">🏬</div>
-      <div class="settings-title">Mening do‘konim</div>
-      <div class="settings-arrow">›</div>
-    </button>
+    <button id="settingsMyAdsRow" class="settings-row">
+  <div class="settings-icon">📋</div>
+  <div class="settings-title">Mening e’lonlarim</div>
+  <div class="settings-arrow">›</div>
+</button>
 
     <!-- Sevimlilar -->
 <button class="settings-row" id="settingsFavoritesRow">
@@ -1919,7 +1924,10 @@
   const screenLanguage    = document.getElementById("screen-language");
   const languageUz      = document.getElementById("languageUz");
   const languageRu      = document.getElementById("languageRu");
-
+  const screenMyAds      = document.getElementById("screen-my-ads");
+  const myAdsList        = document.getElementById("myAdsList");
+  const settingsMyAdsRow = document.getElementById("settingsMyAdsRow");
+    
   // Settings rows (profil ekrani)
 const settingsFavoritesRow = document.getElementById("settingsFavoritesRow");
 const settingsHistoryRow   = document.getElementById("settingsHistoryRow");
@@ -2263,6 +2271,31 @@ const settingsBusinessRow  = document.getElementById("settingsBusinessRow");
     });
   }
 
+    function renderMyAds() {
+  if (!myAdsList) return;
+  myAdsList.innerHTML = "";
+
+  // Фильтруем по твоему телефону / телеграму
+  const myPhone = DEFAULT_PHONE.replace(/\s+/g, "");
+  const myTg    = DEFAULT_TELEGRAM.replace(/^@/, "").toLowerCase();
+
+  const myAds = allAds.filter(ad => {
+    const adPhone = (ad.phone || "").replace(/\s+/g, "");
+    const adTg    = (ad.telegram || "").replace(/^@/, "").toLowerCase();
+
+    return (adPhone && adPhone === myPhone) || (adTg && adTg === myTg);
+  });
+
+  if (!myAds.length) {
+    myAdsList.innerHTML = "<div class='ad-meta'>Hozircha sizning e’lonlaringiz yo‘q</div>";
+    return;
+  }
+
+  myAds.forEach(ad => {
+    myAdsList.appendChild(createAdCard(ad));
+  });
+}
+    
   // ================== ЗАГРУЗКА E’LONLAR ==================
   async function loadAds() {
     try {
@@ -2302,6 +2335,7 @@ const settingsBusinessRow  = document.getElementById("settingsBusinessRow");
     shops: screenShops,
     settings: screenSettings,
     language: screenLanguage,
+    myAds: screenMyAds,
   };
 
   function showScreen(name) {
@@ -2330,6 +2364,7 @@ const settingsBusinessRow  = document.getElementById("settingsBusinessRow");
     if (name === "history")   renderHistory();
     if (name === "filters")   syncFiltersUIFromState();
     if (name === "home")      resetFeedRender();
+    if (name === "myAds")     renderMyAds();
   }
 
   // bottom nav
@@ -2963,6 +2998,12 @@ if (settingsBusinessRow) {
   });
 }
 
+    if (settingsMyAdsRow) {
+  settingsMyAdsRow.addEventListener("click", () => {
+    showScreen("myAds");
+  });
+}
+    
     // ================== SETTINGS: TILNI TANLASH ==================
 if (settingsLangRow) {
   settingsLangRow.addEventListener("click", () => {
