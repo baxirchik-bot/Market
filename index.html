@@ -1380,6 +1380,148 @@
   color: #cbd5f5;
 }
 
+    /* === ZALVO BIZNES UCHUN SCREEN === */
+
+#screen-business {
+  padding: 12px 16px 24px;
+}
+
+.business-header {
+  text-align: left;
+  margin-bottom: 16px;
+}
+
+.business-icon-wrap {
+  margin: 10px 0 12px;
+  display: flex;
+  justify-content: center;
+}
+
+.business-icon-inner {
+  width: 96px;
+  height: 96px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 20%, #a855f7, #6366f1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  color: #ffffff;
+  box-shadow: 0 16px 40px rgba(79, 70, 229, 0.35);
+}
+
+.business-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 6px;
+}
+
+.business-subtitle {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* карточка с преимуществами */
+.business-card {
+  margin-top: 16px;
+  background: #ffffff;
+  border-radius: 22px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  padding: 10px 0 8px;
+}
+
+.business-feature-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  gap: 10px;
+}
+
+.business-divider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 0 14px;
+}
+
+.business-feature-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #ffffff;
+}
+
+/* цвета иконок */
+.business-feature-icon-orange {
+  background: #f97316;
+}
+.business-feature-icon-blue {
+  background: #3b82f6;
+}
+.business-feature-icon-pink {
+  background: #ec4899;
+}
+.business-feature-icon-gold {
+  background: #f59e0b;
+}
+
+.business-feature-main {
+  flex: 1;
+}
+
+.business-feature-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.business-feature-sub {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* beta text */
+.business-beta {
+  font-size: 13px;
+  color: #4b5563;
+  padding: 10px 14px 12px;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 2px;
+}
+
+/* CTA */
+.business-cta {
+  margin-top: 18px;
+}
+
+.business-cta-btn {
+  width: 100%;
+  border: none;
+  border-radius: 999px;
+  padding: 13px 16px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  box-shadow: 0 10px 26px rgba(79, 70, 229, 0.4);
+  cursor: pointer;
+}
+
+.business-cta-btn:active {
+  transform: scale(0.97);
+}
+
+.business-cta-hint {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #9ca3af;
+  text-align: center;
+}
+
   @media (max-width: 480px) {
     body {
       align-items: stretch;
@@ -1786,6 +1928,87 @@
           Bu bo‘limda keyinchalik rasmiy do‘konlar va brendlar ro‘yxati paydo bo‘ladi.
         </div>
       </section>
+
+      <!-- ================= ZALVO BIZNES UCHUN ================= -->
+<section id="screen-business" class="screen">
+  <div class="business-header">
+    <div class="back-link" id="businessBack">← Orqaga</div>
+
+    <div class="business-icon-wrap">
+      <div class="business-icon-inner">
+        🔒
+      </div>
+    </div>
+
+    <h1 class="business-title">Zalvo biznes uchun</h1>
+    <p class="business-subtitle">
+      Oddiy ZALVO akkauntingizni to‘liq biznes-profilga aylantiring.
+      Do‘koningiz, manzilingiz, ish vaqtingiz va mahsulotlaringiz bir joyda.
+    </p>
+  </div>
+
+  <div class="business-card">
+    <div class="business-feature-row">
+      <div class="business-feature-icon business-feature-icon-orange">📍</div>
+      <div class="business-feature-main">
+        <div class="business-feature-title">Manzil</div>
+        <div class="business-feature-sub">
+          xaridorlar sizni xaritada ko‘ra oladi
+        </div>
+      </div>
+    </div>
+
+    <div class="business-divider"></div>
+
+    <div class="business-feature-row">
+      <div class="business-feature-icon business-feature-icon-blue">🕒</div>
+      <div class="business-feature-main">
+        <div class="business-feature-title">Ish vaqti</div>
+        <div class="business-feature-sub">
+          qaysi kuni nechagacha ishlashingiz ko‘rinadi
+        </div>
+      </div>
+    </div>
+
+    <div class="business-divider"></div>
+
+    <div class="business-feature-row">
+      <div class="business-feature-icon business-feature-icon-pink">🏬</div>
+      <div class="business-feature-main">
+        <div class="business-feature-title">Do‘kon sahifasi</div>
+        <div class="business-feature-sub">
+          barcha mahsulotlaringiz bitta sahifada
+        </div>
+      </div>
+    </div>
+
+    <div class="business-divider"></div>
+
+    <div class="business-feature-row">
+      <div class="business-feature-icon business-feature-icon-gold">⭐</div>
+      <div class="business-feature-main">
+        <div class="business-feature-title">Reyting</div>
+        <div class="business-feature-sub">
+          mijozlar fikri ishonchni oshiradi
+        </div>
+      </div>
+    </div>
+
+    <div class="business-beta">
+      <strong>Beta davri</strong> — hozircha do‘kon ochish mutlaqo bepul.
+      Keyinchalik oylik obuna narxi qo‘shiladi.
+    </div>
+  </div>
+
+  <div class="business-cta">
+    <button class="business-cta-btn">
+      Do‘konni bepul ochish
+    </button>
+    <div class="business-cta-hint">
+      Hoziroq bepul ulaning — keyin pullik obunaga o‘tish ixtiyoriy bo‘ladi.
+    </div>
+  </div>
+</section>
       
       <!-- ================= ADMIN PANEL ================= -->
       <section id="screen-admin" class="screen">
@@ -1998,6 +2221,8 @@
   const screenMyShop     = document.getElementById("screen-my-shop");
   const myShopAdsList    = document.getElementById("myShopAdsList");
   const settingsMyShopRow = document.getElementById("settingsMyShopRow");
+  const screenBusiness   = document.getElementById("screen-business");
+  const businessBackBtn = document.getElementById("businessBack");
     
   // Settings rows (profil ekrani)
 const settingsFavoritesRow = document.getElementById("settingsFavoritesRow");
@@ -2407,7 +2632,8 @@ const settingsShopRow  = document.getElementById("settingsMyShopRow");
   shops: screenShops,
   language: screenLanguage,
   myAds: screenMyAds,
-  myShop: screenMyShop
+  myShop: screenMyShop,
+  business: screenBusiness,
 };
 
   function showScreen(name) {
@@ -3073,9 +3299,9 @@ if (settingsBusinessRow) {
   });
 }
 
-    if (settingsMyAdsRow) {
-  settingsMyAdsRow.addEventListener("click", () => {
-    showScreen("myAds");
+    if (settingsBusinessRow) {
+  settingsBusinessRow.addEventListener("click", () => {
+    showScreen("business");
   });
 }
 
@@ -3160,6 +3386,12 @@ if (settingsChangePhoto && profilePhotoInput) {
     };
 
     reader.readAsDataURL(file);
+  });
+}
+
+    if (businessBackBtn) {
+  businessBackBtn.addEventListener("click", () => {
+    showScreen("profile");
   });
 }
     
