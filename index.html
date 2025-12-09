@@ -1659,6 +1659,25 @@
         </div>
       </section>
 
+      <!-- ================= MY SHOP (MENING DO'KONIM) ================= -->
+<section id="screen-my-shop" class="screen">
+  <div class="screen-title">Mening do‘konim</div>
+
+  <div class="settings-card">
+    <div class="settings-row">
+      <div class="settings-icon">🏬</div>
+      <div class="settings-title">
+        Do‘koningiz beta rejimida ishlamoqda.
+      </div>
+    </div>
+  </div>
+
+  <div class="hint" style="margin-top:12px;">
+    Keyinchalik bu yerda:
+    logotip, banner, mahsulotlar ro‘yxati va statistikalar paydo bo‘ladi.
+  </div>
+</section>
+
       <!-- ================= AD DETAILS ================= -->
       <section id="screen-ad-details" class="screen">
         <div class="ad-view-header">
@@ -2001,9 +2020,9 @@
   </div>
 
   <div class="business-cta">
-    <button class="business-cta-btn">
-      Do‘konni bepul ochish
-    </button>
+    <button id="businessOpenShopBtn" class="business-cta-btn">
+  Do‘konni bepul ochish
+</button>
     <div class="business-cta-hint">
       Hoziroq bepul ulaning — keyin pullik obunaga o‘tish ixtiyoriy bo‘ladi.
     </div>
@@ -2223,6 +2242,8 @@
   const settingsMyShopRow = document.getElementById("settingsMyShopRow");
   const screenBusiness   = document.getElementById("screen-business");
   const businessBackBtn = document.getElementById("businessBack");
+  const screenBusiness   = document.getElementById("screen-business");
+  const businessOpenShopBtn  = document.getElementById("businessOpenShopBtn");
     
   // Settings rows (profil ekrani)
 const settingsFavoritesRow = document.getElementById("settingsFavoritesRow");
@@ -2634,6 +2655,8 @@ const settingsShopRow  = document.getElementById("settingsMyShopRow");
   myAds: screenMyAds,
   myShop: screenMyShop,
   business: screenBusiness,
+  business: screenBusiness,   // экран “Zalvo biznes uchun”
+  myShop: screenMyShop       // экран “Mening do‘konim”
 };
 
   function showScreen(name) {
@@ -3307,7 +3330,13 @@ if (settingsBusinessRow) {
 
 if (settingsMyShopRow) {
   settingsMyShopRow.addEventListener("click", () => {
-    showScreen("myShop");
+    if (userHasShop()) {
+      // уже есть магазин → сразу открываем его
+      showScreen("myShop");
+    } else {
+      // первый раз → показываем “Zalvo biznes uchun”
+      showScreen("business");
+    }
   });
 }
 
@@ -3355,6 +3384,20 @@ if (settingsMyShopRow) {
   });
 }
 
+    function userHasShop() {
+  try {
+    return localStorage.getItem("zalvoHasShop") === "1";
+  } catch {
+    return false;
+  }
+}
+
+function setUserHasShop() {
+  try {
+    localStorage.setItem("zalvoHasShop", "1");
+  } catch {}
+}
+    
     // ================== SETTINGS: RASMINI O‘ZGARTIRISH ==================
 if (settingsChangePhoto && profilePhotoInput) {
   // открыть выбор файла
@@ -3392,6 +3435,22 @@ if (settingsChangePhoto && profilePhotoInput) {
     if (businessBackBtn) {
   businessBackBtn.addEventListener("click", () => {
     showScreen("profile");
+  });
+}
+
+    // Кнопка "Orqaga" на бизнес-экране
+if (businessBackBtn) {
+  businessBackBtn.addEventListener("click", () => {
+    showScreen("profile");
+  });
+}
+
+// Кнопка "Do‘konni bepul ochish"
+if (businessOpenShopBtn) {
+  businessOpenShopBtn.addEventListener("click", () => {
+    // здесь потом будет полноценное оформление магазина
+    setUserHasShop();      // запоминаем, что у пользователя уже есть магазин
+    showScreen("myShop");  // сразу открываем страницу магазина
   });
 }
     
