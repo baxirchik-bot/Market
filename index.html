@@ -1541,14 +1541,13 @@
 
   /* --- ОБЛОЖКА С ФОНОМ ТЕЛЕФОНОВ --- */
   .store-cover {
-    position: relative;
-    height: 190px;
-    border-radius: 22px;
-    overflow: hidden;
-    box-shadow: 0 14px 32px rgba(15, 23, 42, 0.16);
-    background: #e5e7eb;
-  }
-
+  position: relative;
+  height: 190px;
+  border-radius: 22px;
+  overflow: visible;          /* ← вот это главное изменение */
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.16);
+  background: #e5e7eb;
+}
   .store-cover img {
     width: 100%;
     height: 100%;
@@ -1558,18 +1557,18 @@
 
   /* --- АВАТАР С ЛОГОТИПОМ --- */
   .store-avatar {
-    position: absolute;
-    left: 50%;
-    bottom: -40px;
-    transform: translateX(-50%);
-    width: 96px;
-    height: 96px;
-    border-radius: 50%;
-    background: #ffffff;
-    padding: 6px;
-    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.28);
-  }
-
+  position: absolute;
+  left: 50%;
+  bottom: -48px;              /* было -40px, немного опустили */
+  transform: translateX(-50%);
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: #ffffff;
+  padding: 6px;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.28);
+}
+    
   .store-avatar img {
     width: 100%;
     height: 100%;
@@ -1587,9 +1586,9 @@
 
   /* --- КАРТОЧКА ПРОФИЛЯ МАГАЗИНА --- */
   .store-profile {
-    margin-top: 44px; /* чтобы освободить место под аватар */
-    text-align: center;
-  }
+  margin-top: 56px;
+  text-align: center;
+}
 
   .store-name {
     font-size: 20px;
