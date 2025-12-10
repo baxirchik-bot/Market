@@ -1528,16 +1528,16 @@
 
   /* --- БАЗОВЫЙ ФОН ДЛЯ ЭКРАНА МАГАЗИНА --- */
   .store-page {
-    background: #f5f6fa;
-    min-height: 100vh;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    max-width: 480px;
-    margin: 0 auto;
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
-  }
+  background: #f5f6fa;
+  min-height: 100vh;
+  padding: 0 16px 16px;   /* сверху отступ убрали, по бокам оставили */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 480px;
+  margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+}
 
   /* --- ОБЛОЖКА С ФОНОМ ТЕЛЕФОНОВ --- */
   .store-cover {
@@ -1559,7 +1559,7 @@
   .store-avatar {
   position: absolute;
   left: 50%;
-  bottom: -48px;              /* было -40px, немного опустили */
+  bottom: -48px;
   transform: translateX(-50%);
   width: 96px;
   height: 96px;
@@ -1567,6 +1567,7 @@
   background: #ffffff;
   padding: 6px;
   box-shadow: 0 10px 25px rgba(15, 23, 42, 0.28);
+  z-index: 2;
 }
     
   .store-avatar img {
@@ -1586,7 +1587,8 @@
 
   /* --- КАРТОЧКА ПРОФИЛЯ МАГАЗИНА --- */
   .store-profile {
-  margin-top: 56px;
+  margin-top: -32px;   /* поднимаем белый блок вверх, он залезает на фон */
+  padding-top: 48px;   /* внутри сверху добавляем воздух под аватар */
   text-align: center;
 }
 
