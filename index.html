@@ -1526,11 +1526,11 @@
   text-align: center;
 }
 
-  /* --- БАЗОВЫЙ ФОН ДЛЯ ЭКРАНА МАГАЗИНА --- */
-  .store-page {
+ /* --- БАЗОВЫЙ ФОН ДЛЯ ЭКРАНА МАГАЗИНА --- */
+.store-page {
   background: #f5f6fa;
   min-height: 100vh;
-  padding: 0;              /* отступы убрали */
+  padding: 0; /* без отступов, ширину контролируем самими карточками */
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -1539,27 +1539,28 @@
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
 }
 
-  /* --- ОБЛОЖКА С ФОНОМ ТЕЛЕФОНОВ --- */
-  .store-cover {
+/* --- ОБЛОЖКА С ФОНОМ ТЕЛЕФОНОВ --- */
+.store-cover {
   position: relative;
   height: 190px;
   border-radius: 22px;
-  overflow: visible;          /* ← вот это главное изменение */
+  overflow: visible; /* важно: чтобы аватар не обрезался */
   box-shadow: 0 14px 32px rgba(15, 23, 42, 0.16);
   background: #e5e7eb;
 }
-  .store-cover img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
 
-  /* --- АВАТАР С ЛОГОТИПОМ --- */
-  .store-avatar {
+.store-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* --- АВАТАР С ЛОГОТИПОМ --- */
+.store-avatar {
   position: absolute;
   left: 50%;
-  bottom: -50px;
+  bottom: -38px;            /* поднял выше, чтобы не закрывал текст */
   transform: translateX(-50%);
   width: 96px;
   height: 96px;
@@ -1567,346 +1568,344 @@
   background: #ffffff;
   padding: 6px;
   box-shadow: 0 10px 25px rgba(15, 23, 42, 0.28);
-  z-index: 2;
+  z-index: 2;               /* поверх фона и карточки */
 }
-    
-  .store-avatar img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-  }
 
-  /* --- ОБЩИЙ СТИЛЬ КАРТОЧЕК (iOS card view) --- */
-  .store-card {
+.store-avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* --- ОБЩИЙ СТИЛЬ КАРТОЧЕК (iOS card view) --- */
+.store-card {
   background: #ffffff;
   border-radius: 18px;
   padding: 16px 16px;
   box-shadow: 0 10px 26px rgba(15, 23, 42, 0.10);
-  /* УБИРАЕМ width, пусть будет auto */
-  /* width: auto;  <-- можно не писать, по умолчанию так */
-  margin: 0 12px 12px; /* слева/справа по 12px, снизу 12px */
+  margin: 0 10px 12px;      /* карточки стали чуть шире (отступ по бокам 10px) */
 }
 
-  /* --- КАРТОЧКА ПРОФИЛЯ МАГАЗИНА --- */
-  .store-profile {
-  margin-top: -20px;   /* поднимаем белый блок вверх, он залезает на фон */
-  padding-top: 60px;   /* внутри сверху добавляем воздух под аватар */
+/* --- КАРТОЧКА ПРОФИЛЯ МАГАЗИНА --- */
+.store-profile {
+  margin-top: -18px;        /* лёгкое наложение на фон */
+  padding-top: 54px;        /* текст начинается ниже аватарки */
   text-align: center;
 }
 
-  .store-name {
-    font-size: 20px;
-    font-weight: 700;
-    color: #111827;
-    margin-bottom: 4px;
-  }
+.store-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 4px;
+}
 
-  .store-subs {
-    font-size: 13px;
-    color: #6b7280;
-    margin-bottom: 8px;
-  }
+.store-subs {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
 
-  .store-rating {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 4px;
-    font-size: 13px;
-    color: #6b7280;
-    margin-bottom: 12px;
-  }
+.store-rating {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 12px;
+}
 
-  .store-rating-stars {
-    color: #fbbf24; /* золотые звёзды */
-    letter-spacing: 2px;
-    font-size: 14px;
-  }
+.store-rating-stars {
+  color: #fbbf24;           /* золотые звёзды */
+  letter-spacing: 2px;
+  font-size: 14px;
+}
 
-  .store-rating-count {
-    color: #6b7280;
-  }
+.store-rating-count {
+  color: #6b7280;
+}
 
-  /* --- РЯД КНОПОК: OBUNA, YOZISH, ... --- */
-  .store-actions {
-    display: grid;
-    grid-template-columns: 1.3fr 1.3fr 0.6fr;
-    gap: 8px;
-    margin-top: 4px;
-  }
+/* --- РЯД КНОПОК: OBUNA, YOZISH, ... --- */
+.store-actions {
+  display: grid;
+  grid-template-columns: 1.3fr 1.3fr 0.6fr;
+  gap: 8px;
+  margin-top: 4px;
+}
 
-  .store-btn {
-    border-radius: 999px;
-    padding: 10px 0;
-    border: none;
-    font-size: 14px;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-  }
+.store-btn {
+  border-radius: 999px;
+  padding: 10px 0;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
 
-  .store-btn-primary {
-    background: #5a4bff;
-    color: #ffffff;
-  }
+.store-btn-primary {
+  background: #5a4bff;
+  color: #ffffff;
+}
 
-  .store-btn-secondary {
-    background: #f3f4f6;
-    color: #111827;
-  }
+.store-btn-secondary {
+  background: #f3f4f6;
+  color: #111827;
+}
 
-  .store-btn-more {
-    background: #f3f4f6;
-    color: #111827;
-    font-size: 20px;
-  }
+.store-btn-more {
+  background: #f3f4f6;
+  color: #111827;
+  font-size: 20px;
+}
 
-  /* --- КАСТОМНЫЕ «ZALVO-СТАЙЛ» ИКОНКИ (простые кружочки) --- */
-  .icon-pill {
-    width: 20px;
-    height: 20px;
-    border-radius: 999px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    color: #ffffff;
-  }
+/* --- КАСТОМНЫЕ «ZALVO-СТАЙЛ» ИКОНКИ (простые кружочки) --- */
+.icon-pill {
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: #ffffff;
+}
 
-  .icon-pill-bell { background: #5a4bff; }
-  .icon-pill-msg { background: #10b981; }
+.icon-pill-bell { background: #5a4bff; }
+.icon-pill-msg  { background: #10b981; }
 
-  /* --- КАРТОЧКА КОНТАКТОВ --- */
-  .store-section-title {
-    font-size: 15px;
-    font-weight: 600;
-    color: #111827;
-    margin-bottom: 8px;
-  }
+/* --- КАРТОЧКА КОНТАКТОВ --- */
+.store-section-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 8px;
+}
 
-  .store-contacts-list {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    font-size: 13px;
-    color: #111827;
-  }
+.store-contacts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: #111827;
+}
 
-  .store-contact-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
+.store-contact-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
-  .store-contact-icon {
-    width: 22px;
-    height: 22px;
-    border-radius: 999px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    color: #ffffff;
-  }
+.store-contact-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: #ffffff;
+}
 
-  .store-contact-icon.phone { background: #5a4bff; }
-  .store-contact-icon.tg    { background: #1d9bf0; }
-  .store-contact-icon.ig    { background: #e11d48; }
-  .store-contact-icon.loc   { background: #f97316; }
-  .store-contact-icon.clock { background: #10b981; }
+.store-contact-icon.phone { background: #5a4bff; }
+.store-contact-icon.tg    { background: #1d9bf0; }
+.store-contact-icon.ig    { background: #e11d48; }
+.store-contact-icon.loc   { background: #f97316; }
+.store-contact-icon.clock { background: #10b981; }
 
-  .store-contact-row a {
-    color: #2563eb;
-    text-decoration: none;
-  }
+.store-contact-row a {
+  color: #2563eb;
+  text-decoration: none;
+}
 
-  .store-contact-row small {
-    color: #6b7280;
-  }
+.store-contact-row small {
+  color: #6b7280;
+}
 
-  .store-about-text {
-    font-size: 13px;
-    color: #6b7280;
-    line-height: 1.4;
-  }
+.store-about-text {
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.4;
+}
 
-  /* --- БЛОК E‘LONLAR: ЗАГОЛОВОК + ПОИСК + ФИЛЬТР --- */
-  .store-ads-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 8px;
-  }
+/* --- БЛОК E‘LONLAR: ЗАГОЛОВОК + ПОИСК + ФИЛЬТР --- */
+.store-ads-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
 
-  .store-ads-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: #111827;
-  }
+.store-ads-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
 
-  .store-search-row {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 4px;
-  }
+.store-search-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 4px;
+}
 
-  .store-search-input {
-    flex: 1;
-    background: #f3f4f6;
-    border-radius: 999px;
-    border: none;
-    padding: 9px 12px;
-    font-size: 13px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
+.store-search-input {
+  flex: 1;
+  background: #f3f4f6;
+  border-radius: 999px;
+  border: none;
+  padding: 9px 12px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
 
-  .store-search-input input {
-    border: none;
-    background: transparent;
-    outline: none;
-    font-size: 13px;
-    width: 100%;
-  }
+.store-search-input input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 13px;
+  width: 100%;
+}
 
-  .store-search-input span {
-    color: #6b7280;
-  }
+.store-search-input span {
+  color: #6b7280;
+}
 
-  .store-filter-btn {
-    width: 40px;
-    border-radius: 999px;
-    background: #f3f4f6;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-  }
+.store-filter-btn {
+  width: 40px;
+  border-radius: 999px;
+  background: #f3f4f6;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
 
-  /* --- КАРТОЧКА ОБЪЯВЛЕНИЯ --- */
-  .store-ad-card {
-    background: #ffffff;
-    border-radius: 16px;
-    padding: 10px;
-    display: flex;
-    gap: 10px;
-    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.10);
-  }
+/* --- КАРТОЧКА ОБЪЯВЛЕНИЯ --- */
+.store-ad-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 10px;
+  display: flex;
+  gap: 10px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.10);
+}
 
-  .store-ad-img {
-    width: 90px;
-    height: 90px;
-    border-radius: 12px;
-    overflow: hidden;
-    background: #e5e7eb;
-    flex-shrink: 0;
-  }
+.store-ad-img {
+  width: 90px;
+  height: 90px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #e5e7eb;
+  flex-shrink: 0;
+}
 
-  .store-ad-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
+.store-ad-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
-  .store-ad-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
+.store-ad-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
 
-  .store-ad-title {
-    font-size: 14px;
-    font-weight: 600;
-    color: #111827;
-    margin-bottom: 2px;
-  }
+.store-ad-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 2px;
+}
 
-  .store-ad-price {
-    font-size: 15px;
-    font-weight: 700;
-    color: #16a34a;
-    margin-bottom: 4px;
-  }
+.store-ad-price {
+  font-size: 15px;
+  font-weight: 700;
+  color: #16a34a;
+  margin-bottom: 4px;
+}
 
-  .store-ad-meta {
-    font-size: 11px;
-    color: #6b7280;
-    display: flex;
-    justify-content: space-between;
-  }
+.store-ad-meta {
+  font-size: 11px;
+  color: #6b7280;
+  display: flex;
+  justify-content: space-between;
+}
 
-  /* --- BOTTOM SHEET (меню по кнопке …) --- */
-  .store-sheet-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(15, 23, 42, 0.35);
-    display: none;           /* по умолчанию скрыто */
-    align-items: flex-end;    /* тянем панель к низу */
-    justify-content: center;
-    z-index: 999;
-  }
+/* --- BOTTOM SHEET (меню по кнопке …) --- */
+.store-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.35);
+  display: none;            /* по умолчанию скрыто */
+  align-items: flex-end;    /* тянем панель к низу */
+  justify-content: center;
+  z-index: 999;
+}
 
-  .store-sheet-backdrop.active {
-    display: flex;
-  }
+.store-sheet-backdrop.active {
+  display: flex;
+}
 
-  .store-sheet {
-    width: 100%;
-    max-width: 480px;
-    background: #ffffff;
-    border-radius: 24px 24px 0 0;
-    padding: 10px 16px 18px;
-    box-shadow: 0 -10px 30px rgba(15, 23, 42, 0.25);
-    animation: sheetUp 0.18s ease-out;
-  }
+.store-sheet {
+  width: 100%;
+  max-width: 480px;
+  background: #ffffff;
+  border-radius: 24px 24px 0 0;
+  padding: 10px 16px 18px;
+  box-shadow: 0 -10px 30px rgba(15, 23, 42, 0.25);
+  animation: sheetUp 0.18s ease-out;
+}
 
-  .store-sheet-handle {
-    width: 40px;
-    height: 4px;
-    border-radius: 999px;
-    background: #e5e7eb;
-    margin: 4px auto 10px;
-  }
+.store-sheet-handle {
+  width: 40px;
+  height: 4px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  margin: 4px auto 10px;
+}
 
-  .store-sheet-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
+.store-sheet-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
-  .store-sheet-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 15px;
-    color: #111827;
-  }
+.store-sheet-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  color: #111827;
+}
 
-  .store-sheet-icon {
-    width: 30px;
-    height: 30px;
-    border-radius: 999px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 15px;
-    color: #ffffff;
-  }
+.store-sheet-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  color: #ffffff;
+}
 
-  .store-sheet-icon.block { background: #6b7280; }
-  .store-sheet-icon.share { background: #2563eb; }
-  .store-sheet-icon.report { background: #ef4444; }
+.store-sheet-icon.block  { background: #6b7280; }
+.store-sheet-icon.share  { background: #2563eb; }
+.store-sheet-icon.report { background: #ef4444; }
 
-  @keyframes sheetUp {
-    from { transform: translateY(40px); opacity: 0; }
-    to   { transform: translateY(0); opacity: 1; }
-  }
+@keyframes sheetUp {
+  from { transform: translateY(40px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
 
   /* На маленьких экранах, чтобы не прилипало к бокам */
   @media (max-width: 480px) {
