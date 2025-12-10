@@ -1530,12 +1530,12 @@
   .store-page {
   background: #f5f6fa;
   min-height: 100vh;
-  padding: 0;   /* сверху отступ убрали, по бокам оставили */
+  padding: 0;              /* отступы убрали */
   display: flex;
   flex-direction: column;
   gap: 12px;
   max-width: 480px;
-  margin: 0;
+  margin: 0 auto;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
 }
 
@@ -1579,13 +1579,14 @@
 
   /* --- ОБЩИЙ СТИЛЬ КАРТОЧЕК (iOS card view) --- */
   .store-card {
-    background: #ffffff;
-    border-radius: 18px;
-    padding: 16px 16px;
-    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.10);
-    width: calc(100% - 24px); /* карточка расширяется */
-    margin: 0 auto;
-  }
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 16px 16px;
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.10);
+  /* УБИРАЕМ width, пусть будет auto */
+  /* width: auto;  <-- можно не писать, по умолчанию так */
+  margin: 0 12px 12px; /* слева/справа по 12px, снизу 12px */
+}
 
   /* --- КАРТОЧКА ПРОФИЛЯ МАГАЗИНА --- */
   .store-profile {
