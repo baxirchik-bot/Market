@@ -1530,12 +1530,11 @@
 .store-page {
   background: #f5f6fa;
   min-height: 100vh;
-  padding: 0; /* без отступов, ширину контролируем самими карточками */
+  padding: 0 0 16px 0;
   display: flex;
   flex-direction: column;
+  align-items: center; /* центрируем всё по экрану */
   gap: 12px;
-  max-width: 480px;
-  margin: 0 auto;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
 }
 
@@ -1543,8 +1542,10 @@
 .store-cover {
   position: relative;
   height: 190px;
+  width: 100vw;            /* ширина по экрану */
+  max-width: 480px;        /* чтобы на больших экранах не разъезжалось */
   border-radius: 22px;
-  overflow: visible; /* важно: чтобы аватар не обрезался */
+  overflow: visible;
   box-shadow: 0 14px 32px rgba(15, 23, 42, 0.16);
   background: #e5e7eb;
 }
@@ -1560,7 +1561,7 @@
 .store-avatar {
   position: absolute;
   left: 50%;
-  bottom: -38px;            /* поднял выше, чтобы не закрывал текст */
+  bottom: -40px;           /* отрегулировано, чтобы НЕ закрывать текст */
   transform: translateX(-50%);
   width: 96px;
   height: 96px;
@@ -1568,7 +1569,7 @@
   background: #ffffff;
   padding: 6px;
   box-shadow: 0 10px 25px rgba(15, 23, 42, 0.28);
-  z-index: 2;               /* поверх фона и карточки */
+  z-index: 2;
 }
 
 .store-avatar img {
@@ -1584,13 +1585,14 @@
   border-radius: 18px;
   padding: 16px 16px;
   box-shadow: 0 10px 26px rgba(15, 23, 42, 0.10);
-  margin: 0 10px 12px;      /* карточки стали чуть шире (отступ по бокам 10px) */
+  width: calc(100vw - 24px); /* ширина = экран - 12px слева/справа */
+  max-width: 472px;          /* 480 - 8 для красоты */
 }
 
 /* --- КАРТОЧКА ПРОФИЛЯ МАГАЗИНА --- */
 .store-profile {
-  margin-top: -18px;        /* лёгкое наложение на фон */
-  padding-top: 54px;        /* текст начинается ниже аватарки */
+  margin-top: -14px;         /* слегка залезаем на фон */
+  padding-top: 54px;         /* даём место под аватарку */
   text-align: center;
 }
 
@@ -1618,7 +1620,7 @@
 }
 
 .store-rating-stars {
-  color: #fbbf24;           /* золотые звёзды */
+  color: #fbbf24;
   letter-spacing: 2px;
   font-size: 14px;
 }
@@ -1663,7 +1665,7 @@
   font-size: 20px;
 }
 
-/* --- КАСТОМНЫЕ «ZALVO-СТАЙЛ» ИКОНКИ (простые кружочки) --- */
+/* --- КАСТОМНЫЕ ИКОНКИ --- */
 .icon-pill {
   width: 20px;
   height: 20px;
@@ -1840,13 +1842,13 @@
   justify-content: space-between;
 }
 
-/* --- BOTTOM SHEET (меню по кнопке …) --- */
+/* --- BOTTOM SHEET --- */
 .store-sheet-backdrop {
   position: fixed;
   inset: 0;
   background: rgba(15, 23, 42, 0.35);
-  display: none;            /* по умолчанию скрыто */
-  align-items: flex-end;    /* тянем панель к низу */
+  display: none;
+  align-items: flex-end;
   justify-content: center;
   z-index: 999;
 }
