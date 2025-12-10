@@ -1526,6 +1526,391 @@
   text-align: center;
 }
 
+  /* --- БАЗОВЫЙ ФОН ДЛЯ ЭКРАНА МАГАЗИНА --- */
+  .store-page {
+    background: #f5f6fa;
+    min-height: 100vh;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 480px;
+    margin: 0 auto;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+  }
+
+  /* --- ОБЛОЖКА С ФОНОМ ТЕЛЕФОНОВ --- */
+  .store-cover {
+    position: relative;
+    height: 190px;
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 14px 32px rgba(15, 23, 42, 0.16);
+    background: #e5e7eb;
+  }
+
+  .store-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* --- АВАТАР С ЛОГОТИПОМ --- */
+  .store-avatar {
+    position: absolute;
+    left: 50%;
+    bottom: -40px;
+    transform: translateX(-50%);
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: #ffffff;
+    padding: 6px;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.28);
+  }
+
+  .store-avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  /* --- ОБЩИЙ СТИЛЬ КАРТОЧЕК (iOS card view) --- */
+  .store-card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 16px 16px;
+    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.10);
+  }
+
+  /* --- КАРТОЧКА ПРОФИЛЯ МАГАЗИНА --- */
+  .store-profile {
+    margin-top: 44px; /* чтобы освободить место под аватар */
+    text-align: center;
+  }
+
+  .store-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 4px;
+  }
+
+  .store-subs {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 8px;
+  }
+
+  .store-rating {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 12px;
+  }
+
+  .store-rating-stars {
+    color: #fbbf24; /* золотые звёзды */
+    letter-spacing: 2px;
+    font-size: 14px;
+  }
+
+  .store-rating-count {
+    color: #6b7280;
+  }
+
+  /* --- РЯД КНОПОК: OBUNA, YOZISH, ... --- */
+  .store-actions {
+    display: grid;
+    grid-template-columns: 1.3fr 1.3fr 0.6fr;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .store-btn {
+    border-radius: 999px;
+    padding: 10px 0;
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .store-btn-primary {
+    background: #5a4bff;
+    color: #ffffff;
+  }
+
+  .store-btn-secondary {
+    background: #f3f4f6;
+    color: #111827;
+  }
+
+  .store-btn-more {
+    background: #f3f4f6;
+    color: #111827;
+    font-size: 20px;
+  }
+
+  /* --- КАСТОМНЫЕ «ZALVO-СТАЙЛ» ИКОНКИ (простые кружочки) --- */
+  .icon-pill {
+    width: 20px;
+    height: 20px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: #ffffff;
+  }
+
+  .icon-pill-bell { background: #5a4bff; }
+  .icon-pill-msg { background: #10b981; }
+
+  /* --- КАРТОЧКА КОНТАКТОВ --- */
+  .store-section-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 8px;
+  }
+
+  .store-contacts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+    color: #111827;
+  }
+
+  .store-contact-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .store-contact-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: #ffffff;
+  }
+
+  .store-contact-icon.phone { background: #5a4bff; }
+  .store-contact-icon.tg    { background: #1d9bf0; }
+  .store-contact-icon.ig    { background: #e11d48; }
+  .store-contact-icon.loc   { background: #f97316; }
+  .store-contact-icon.clock { background: #10b981; }
+
+  .store-contact-row a {
+    color: #2563eb;
+    text-decoration: none;
+  }
+
+  .store-contact-row small {
+    color: #6b7280;
+  }
+
+  .store-about-text {
+    font-size: 13px;
+    color: #6b7280;
+    line-height: 1.4;
+  }
+
+  /* --- БЛОК E‘LONLAR: ЗАГОЛОВОК + ПОИСК + ФИЛЬТР --- */
+  .store-ads-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .store-ads-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #111827;
+  }
+
+  .store-search-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+
+  .store-search-input {
+    flex: 1;
+    background: #f3f4f6;
+    border-radius: 999px;
+    border: none;
+    padding: 9px 12px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .store-search-input input {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 13px;
+    width: 100%;
+  }
+
+  .store-search-input span {
+    color: #6b7280;
+  }
+
+  .store-filter-btn {
+    width: 40px;
+    border-radius: 999px;
+    background: #f3f4f6;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  /* --- КАРТОЧКА ОБЪЯВЛЕНИЯ --- */
+  .store-ad-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 10px;
+    display: flex;
+    gap: 10px;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.10);
+  }
+
+  .store-ad-img {
+    width: 90px;
+    height: 90px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #e5e7eb;
+    flex-shrink: 0;
+  }
+
+  .store-ad-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .store-ad-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .store-ad-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 2px;
+  }
+
+  .store-ad-price {
+    font-size: 15px;
+    font-weight: 700;
+    color: #16a34a;
+    margin-bottom: 4px;
+  }
+
+  .store-ad-meta {
+    font-size: 11px;
+    color: #6b7280;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* --- BOTTOM SHEET (меню по кнопке …) --- */
+  .store-sheet-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.35);
+    display: none;           /* по умолчанию скрыто */
+    align-items: flex-end;    /* тянем панель к низу */
+    justify-content: center;
+    z-index: 999;
+  }
+
+  .store-sheet-backdrop.active {
+    display: flex;
+  }
+
+  .store-sheet {
+    width: 100%;
+    max-width: 480px;
+    background: #ffffff;
+    border-radius: 24px 24px 0 0;
+    padding: 10px 16px 18px;
+    box-shadow: 0 -10px 30px rgba(15, 23, 42, 0.25);
+    animation: sheetUp 0.18s ease-out;
+  }
+
+  .store-sheet-handle {
+    width: 40px;
+    height: 4px;
+    border-radius: 999px;
+    background: #e5e7eb;
+    margin: 4px auto 10px;
+  }
+
+  .store-sheet-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .store-sheet-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    color: #111827;
+  }
+
+  .store-sheet-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    color: #ffffff;
+  }
+
+  .store-sheet-icon.block { background: #6b7280; }
+  .store-sheet-icon.share { background: #2563eb; }
+  .store-sheet-icon.report { background: #ef4444; }
+
+  @keyframes sheetUp {
+    from { transform: translateY(40px); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+  }
+
+  /* На маленьких экранах, чтобы не прилипало к бокам */
+  @media (max-width: 480px) {
+    .store-page {
+      padding: 12px;
+    }
+  }
+
   @media (max-width: 480px) {
     body {
       align-items: stretch;
@@ -1814,54 +2199,109 @@
   </div>
 </section>
 
-      <!-- ================= MY SHOP (MENING DO‘KONIM) ================= -->
-<section id="screen-my-shop" class="screen">
-  <div class="screen-title">Mening do‘konim</div>
+            <!-- ================= MY SHOP (MENING DO‘KONIM) ================= -->
+      <section id="screen-my-shop" class="screen">
+        <div class="store-page">
 
-  <div class="admin-card">
-    <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
-      <div style="
-        width:52px;
-        height:52px;
-        border-radius:16px;
-        background:#e5e7eb;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        font-weight:700;
-        font-size:20px;
-      ">
-        Z
-      </div>
-      <div>
-        <div style="font-size:16px; font-weight:600;">Zalvo Shop</div>
-        <div style="font-size:13px; color:#64748b;">
-          Shaxsiy do‘koningiz. Bu yerda faqat siz joylagan e’lonlar bo‘ladi.
+          <!-- ОБЛОЖКА + АВАТАР -->
+          <div class="store-cover">
+            <!-- ЗАМЕНИ путь к картинке под себя -->
+            <img src="phones-cover.jpg" alt="Telefonlar">
+            <div class="store-avatar">
+              <!-- сюда ставишь логотип ZALVO -->
+              <img src="zalvo-logo.png" alt="Zalvo logo">
+            </div>
+          </div>
+
+          <!-- КАРТОЧКА ПРОФИЛЯ МАГАЗИНА -->
+          <div class="store-card store-profile">
+            <div class="store-name">Zalvo Phone Shop</div>
+            <div class="store-subs">451 obunachi</div>
+
+            <div class="store-rating">
+              <span class="store-rating-stars">★★★★★</span>
+              <span class="store-rating-count">4.9 (451 baho)</span>
+            </div>
+
+            <div class="store-actions">
+              <button class="store-btn store-btn-primary">
+                <span class="icon-pill icon-pill-bell">🔔</span>
+                <span>Obuna bo‘lish</span>
+              </button>
+
+              <button class="store-btn store-btn-secondary">
+                <span class="icon-pill icon-pill-msg">💬</span>
+                <span>Yozish</span>
+              </button>
+
+              <!-- КНОПКА "…" ОТКРЫВАЕТ BOTTOM SHEET -->
+              <button class="store-btn store-btn-more" id="storeMoreBtn">…</button>
+            </div>
+          </div>
+
+          <!-- КОНТАКТЫ -->
+          <div class="store-card">
+            <div class="store-section-title">Kontaktlar</div>
+
+            <div class="store-contacts-list">
+              <div class="store-contact-row">
+                <span class="store-contact-icon phone">📞</span>
+                <a href="tel:+998991234567">+998 99 123 45 67</a>
+              </div>
+
+              <div class="store-contact-row">
+                <span class="store-contact-icon tg">✈️</span>
+                <a href="https://t.me/gulzor_shop" target="_blank">@gulzor_shop</a>
+              </div>
+
+              <div class="store-contact-row">
+                <span class="store-contact-icon ig">📸</span>
+                <a href="https://instagram.com/zalvo_shop" target="_blank">@zalvo_shop</a>
+              </div>
+
+              <div class="store-contact-row">
+                <span class="store-contact-icon loc">📍</span>
+                <span>Mirzo Ulug‘bek tumani, Toshkent</span>
+              </div>
+
+              <div class="store-contact-row">
+                <span class="store-contact-icon clock">⏰</span>
+                <span>
+                  <strong>Bugun ochiq</strong>: Du–Ju 09:00–20:00, Ju 09:00–18:00
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- О МАГАЗИНЕ -->
+          <div class="store-card">
+            <div class="store-section-title">Do‘kon haqida</div>
+            <p class="store-about-text">
+              Zalvo Phone Shop — original smartfonlar va aksessuarlar do‘koni.
+              Kafolat, tezkor yetkazib berish va qulay narxlar.
+            </p>
+          </div>
+
+          <!-- E‘LONLAR DO‘KON ICHIDA -->
+          <div class="store-card">
+            <div class="store-ads-header">
+              <div class="store-ads-title">E‘lonlar</div>
+            </div>
+
+            <div class="store-search-row">
+              <div class="store-search-input">
+                <span>🔍</span>
+                <input type="text" placeholder="E‘lonlar ichidan qidirish">
+              </div>
+              <button class="store-filter-btn">≡</button>
+            </div>
+
+            <!-- ВАЖНО: ОСТАВЛЯЕМ ЭТОТ DIV, ЧТОБЫ РАБОТАЛ КОД renderMyShopAds() -->
+            <div id="myShopAdsList" class="ad-list"></div>
+          </div>
+
         </div>
-      </div>
-    </div>
-
-    <div class="admin-stat-row">
-      <div class="admin-stat">
-        <div class="admin-stat-number">12</div>
-        <div class="admin-stat-label">E’lonlar soni</div>
-      </div>
-      <div class="admin-stat">
-        <div class="admin-stat-number">1 250</div>
-        <div class="admin-stat-label">Ko‘rishlar</div>
-      </div>
-    </div>
-
-    <div class="admin-section-title">Qisqacha tavsif</div>
-    <div style="font-size:13px; color:#475569; margin-top:4px;">
-      Bu demo do‘kon. Keyinchalik profil sozlamalarida do‘kon nomi,
-      logotipi va tavsifini alohida o‘zgartirish mumkin bo‘ladi.
-    </div>
-  </div>
-
-  <div class="section-title">Mening e’lonlarim</div>
-  <div id="myShopAdsList" class="ad-list"></div>
-</section>
+      </section>
       
       <!-- ================= PROMOTION SCREEN ================= -->
       <section id="screen-promo" class="screen">
@@ -2129,6 +2569,30 @@
 </section>
     </main>
 
+        <!-- BOTTOM SHEET MENYUSI (Do‘kon uchun) -->
+    <div class="store-sheet-backdrop" id="storeSheet">
+      <div class="store-sheet">
+        <div class="store-sheet-handle"></div>
+
+        <div class="store-sheet-list">
+          <div class="store-sheet-item">
+            <div class="store-sheet-icon block">🚫</div>
+            <span>Bloklash</span>
+          </div>
+
+          <div class="store-sheet-item">
+            <div class="store-sheet-icon share">↗️</div>
+            <span>Ulashish</span>
+          </div>
+
+          <div class="store-sheet-item">
+            <div class="store-sheet-icon report">⚠️</div>
+            <span>Shikoyat qilish</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
     <!-- BOTTOM NAV -->
     <nav class="bottom-nav">
   <div class="bottom-nav-inner">
@@ -2228,6 +2692,8 @@
   const screenBusiness   = document.getElementById("screen-business");
   const businessBackBtn = document.getElementById("businessBack");
   const businessOpenShopBtn  = document.getElementById("businessOpenShopBtn");
+  const storeMoreBtn = document.getElementById("storeMoreBtn");
+  const storeSheet   = document.getElementById("storeSheet");
     
   // Settings rows (profil ekrani)
 const settingsFavoritesRow = document.getElementById("settingsFavoritesRow");
@@ -3461,6 +3927,21 @@ if (languageRu) {
   });
 }
 
+      // === Bottom sheet для do‘kon sahifasi (… tugmasi) ===
+  if (storeMoreBtn && storeSheet) {
+    // открыть окно
+    storeMoreBtn.addEventListener("click", () => {
+      storeSheet.classList.add("active");
+    });
+
+    // закрыть, если кликнули по затемнённому фону
+    storeSheet.addEventListener("click", (event) => {
+      if (event.target === storeSheet) {
+        storeSheet.classList.remove("active");
+      }
+    });
+  }
+    
   // ================== СТАРТ ==================
 applySavedProfilePhoto();
 showScreen("home");
