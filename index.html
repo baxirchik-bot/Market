@@ -1916,6 +1916,44 @@
     }
   }
 
+    /* Обёртка, чтобы кнопка была над фоном магазина */
+.store-back-wrapper {
+  position: relative;
+  z-index: 3;
+  padding: 16px 0 0 16px; /* отступ от верхнего края и слева */
+}
+
+/* Кнопка назад в стиле iOS */
+.store-back-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.18);
+
+  cursor: pointer;
+}
+
+/* Блюр, если поддерживается */
+@supports (backdrop-filter: blur(16px)) {
+  .store-back-button {
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(16px);
+  }
+}
+
+.store-back-icon {
+  width: 18px;
+  height: 18px;
+  fill: #111827;
+}
+
   @media (max-width: 480px) {
     body {
       align-items: stretch;
@@ -2207,6 +2245,13 @@
             <!-- ================= MY SHOP (MENING DO‘KONIM) ================= -->
       <section id="screen-my-shop" class="screen">
         <div class="store-page">
+<div class="store-back-wrapper">
+  <button class="store-back-button" type="button" onclick="window.history.back()">
+    <svg viewBox="0 0 24 24" class="store-back-icon" aria-hidden="true">
+      <path d="M14.7 5.3a1 1 0 0 1 0 1.4L10.41 11l4.29 4.3a1 1 0 0 1-1.42 1.4l-5-5a1 1 0 0 1 0-1.4l5-5a1 1 0 0 1 1.42 0z"/>
+    </svg>
+  </button>
+</div>
 
           <!-- ОБЛОЖКА + АВАТАР -->
           <div class="store-cover">
