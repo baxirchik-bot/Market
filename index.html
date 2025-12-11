@@ -3947,49 +3947,6 @@ if (languageRu) {
     });
   }
 
-  (function () {
-    const backButton = document.getElementById('backButton');
-    const appRoot = document.querySelector('.app');
-
-    if (!backButton || !appRoot) return;
-
-    // --- 1. Проверяем, можно ли идти назад через history ---
-    function canGoBack() {
-      // Если история > 1 — значит есть откуда возвращаться
-      return window.history.length > 1;
-    }
-
-    function updateBackButtonVisibility() {
-      if (canGoBack()) {
-        backButton.classList.add('back-button--visible');
-      } else {
-        backButton.classList.remove('back-button--visible');
-      }
-    }
-
-    // --- 2. Обработчик клика по кнопке ---
-    backButton.addEventListener('click', () => {
-      if (!canGoBack()) return;
-
-      // добавляем класс для анимации слайд-вправо
-      appRoot.classList.add('app-slide-back');
-
-      // ждём завершения анимации и откатываем history
-      setTimeout(() => {
-        window.history.back();
-      }, 180); // столько же, сколько transition в CSS
-    });
-
-    // --- 3. Обновляем видимость при загрузке страницы ---
-    updateBackButtonVisibility();
-
-    // --- 4. Если используется SPA и меняется history.pushState ---
-    window.addEventListener('popstate', updateBackButtonVisibility);
-
-    // Дополнительно: если ты где-то вручную делаешь pushState,
-    // можно вызывать updateBackButtonVisibility() после этого.
-  })();
-
   // ================== СТАРТ ==================
 applySavedProfilePhoto();
 showScreen("home");
