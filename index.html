@@ -1909,6 +1909,66 @@
   to   { transform: translateY(0); opacity: 1; }
 }
 
+    /* iOS-кнопка "назад" — круглая, с блюром */
+.back-button {
+  position: fixed;
+  top: 52px;           /* при необходимости подстрой под твой header */
+  left: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.18);
+
+  cursor: pointer;
+  z-index: 1000;
+
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-8px);
+  transition: opacity 0.18s ease-out, transform 0.18s ease-out;
+}
+
+/* Блюр, если доступен */
+@supports (backdrop-filter: blur(16px)) {
+  .back-button {
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(16px);
+  }
+}
+
+/* когда можно вернуться назад — показываем */
+.back-button.back-button--visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+
+.back-button-icon {
+  width: 18px;
+  height: 18px;
+  fill: #111827; /* тёмная стрелка */
+}
+
+/* --- Анимация слайда приложения вправо при "назад" --- */
+
+.app {
+  transition: transform 0.18s ease-out, opacity 0.18s ease-out;
+  will-change: transform;
+}
+
+/* класс, который добавляем перед возвратом назад */
+.app.app-slide-back {
+  transform: translateX(40px);
+  opacity: 0.96;
+}
+
   /* На маленьких экранах, чтобы не прилипало к бокам */
   @media (max-width: 480px) {
     .store-page {
@@ -1929,6 +1989,12 @@
 </head>
 <body>
   <div class="app">
+    <!-- Кнопка назад (одна на всё приложение) -->
+    <button class="back-button" id="backButton" type="button" aria-label="Orqaga qaytish">
+      <svg viewBox="0 0 24 24" class="back-button-icon" aria-hidden="true">
+        <path d="M14.7 5.3a1 1 0 0 1 0 1.4L10.41 11l4.29 4.3a1 1 0 0 1-1.42 1.4l-5-5a1 1 0 0 1 0-1.4l5-5a1 1 0 0 1 1.42 0z"/>
+      </svg>
+    </button>
     <!-- HEADER -->
     <header class="app-header">
       <div class="app-header-left">
@@ -3946,7 +4012,50 @@ if (languageRu) {
       }
     });
   }
-    
+
+  (function () {
+    const backButton = document.getElementById('backButton');
+    const appRoot = document.querySelector('.app');
+
+    if (!backButton || !appRoot) return;
+
+    // --- 1. Проверяем, можно ли идти назад через history ---
+    function canGoBack() {
+      // Если история > 1 — значит есть откуда возвращаться
+      return window.history.length > 1;
+    }
+
+    function updateBackButtonVisibility() {
+      if (canGoBack()) {
+        backButton.classList.add('back-button--visible');
+      } else {
+        backButton.classList.remove('back-button--visible');
+      }
+    }
+
+    // --- 2. Обработчик клика по кнопке ---
+    backButton.addEventListener('click', () => {
+      if (!canGoBack()) return;
+
+      // добавляем класс для анимации слайд-вправо
+      appRoot.classList.add('app-slide-back');
+
+      // ждём завершения анимации и откатываем history
+      setTimeout(() => {
+        window.history.back();
+      }, 180); // столько же, сколько transition в CSS
+    });
+
+    // --- 3. Обновляем видимость при загрузке страницы ---
+    updateBackButtonVisibility();
+
+    // --- 4. Если используется SPA и меняется history.pushState ---
+    window.addEventListener('popstate', updateBackButtonVisibility);
+
+    // Дополнительно: если ты где-то вручную делаешь pushState,
+    // можно вызывать updateBackButtonVisibility() после этого.
+  })();
+
   // ================== СТАРТ ==================
 applySavedProfilePhoto();
 showScreen("home");
