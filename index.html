@@ -1842,68 +1842,6 @@
   justify-content: space-between;
 }
 
-/* --- BOTTOM SHEET --- */
-.store-sheet-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.35);
-  display: none;
-  align-items: flex-end;
-  justify-content: center;
-  z-index: 999;
-}
-
-.store-sheet-backdrop.active {
-  display: flex;
-}
-
-.store-sheet {
-  width: 100%;
-  max-width: 480px;
-  background: #ffffff;
-  border-radius: 24px 24px 0 0;
-  padding: 10px 16px 18px;
-  box-shadow: 0 -10px 30px rgba(15, 23, 42, 0.25);
-  animation: sheetUp 0.18s ease-out;
-}
-
-.store-sheet-handle {
-  width: 40px;
-  height: 4px;
-  border-radius: 999px;
-  background: #e5e7eb;
-  margin: 4px auto 10px;
-}
-
-.store-sheet-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.store-sheet-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 15px;
-  color: #111827;
-}
-
-.store-sheet-icon {
-  width: 30px;
-  height: 30px;
-  border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 15px;
-  color: #ffffff;
-}
-
-.store-sheet-icon.block  { background: #6b7280; }
-.store-sheet-icon.share  { background: #2563eb; }
-.store-sheet-icon.report { background: #ef4444; }
-
 @keyframes sheetUp {
   from { transform: translateY(40px); opacity: 0; }
   to   { transform: translateY(0); opacity: 1; }
@@ -2245,13 +2183,6 @@
             <!-- ================= MY SHOP (MENING DO‘KONIM) ================= -->
       <section id="screen-my-shop" class="screen">
         <div class="store-page">
-<div class="store-back-wrapper">
-  <button class="store-back-button" type="button" onclick="window.history.back()">
-    <svg viewBox="0 0 24 24" class="store-back-icon" aria-hidden="true">
-      <path d="M14.7 5.3a1 1 0 0 1 0 1.4L10.41 11l4.29 4.3a1 1 0 0 1-1.42 1.4l-5-5a1 1 0 0 1 0-1.4l5-5a1 1 0 0 1 1.42 0z"/>
-    </svg>
-  </button>
-</div>
 
           <!-- ОБЛОЖКА + АВАТАР -->
           <div class="store-cover">
@@ -3976,21 +3907,6 @@ if (languageRu) {
     showScreen("profile");
   });
 }
-
-      // === Bottom sheet для do‘kon sahifasi (… tugmasi) ===
-  if (storeMoreBtn && storeSheet) {
-    // открыть окно
-    storeMoreBtn.addEventListener("click", () => {
-      storeSheet.classList.add("active");
-    });
-
-    // закрыть, если кликнули по затемнённому фону
-    storeSheet.addEventListener("click", (event) => {
-      if (event.target === storeSheet) {
-        storeSheet.classList.remove("active");
-      }
-    });
-  }
 
   // ================== СТАРТ ==================
 applySavedProfilePhoto();
