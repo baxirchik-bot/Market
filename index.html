@@ -2084,6 +2084,42 @@
 .toast {
   pointer-events: none;
 }
+
+    /* ===== iOS-style actions row in store profile ===== */
+.store-actions-ios {
+  display: grid;
+  grid-template-columns: 1fr auto auto; /* большая + 2 маленькие */
+  gap: 10px;
+  margin-top: 6px;
+}
+
+/* большая кнопка подписки */
+.store-btn-subscribe {
+  padding: 12px 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* маленькая кнопка "написать" — только иконка */
+.store-btn-icon {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 999px;
+
+  background: #f3f4f6;
+  color: #111827;
+  font-size: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.store-btn-icon:active {
+  background: #e5e7eb;
+  transform: scale(0.96);
+}
     
   @media (max-width: 480px) {
     body {
@@ -2397,16 +2433,17 @@
               <span class="store-rating-count">4.9 (451 baho)</span>
             </div>
 
-            <div class="store-actions">
-              <button class="store-btn store-btn-primary">
-                <span class="icon-pill icon-pill-bell">🔔</span>
-                <span>Obuna bo‘lish</span>
-              </button>
+            <div class="store-actions store-actions-ios">
+  <button class="store-btn store-btn-primary store-btn-subscribe">
+    Obuna bo‘lish
+  </button>
 
-              <button class="store-btn store-btn-secondary">
-                <span class="icon-pill icon-pill-msg">💬</span>
-                <span>Yozish</span>
-              </button>
+  <button class="store-btn store-btn-icon" aria-label="Yozish">
+    ✉️
+  </button>
+
+  <button class="store-btn store-btn-more">⋯</button>
+</div>
 
               <!-- КНОПКА "…" ОТКРЫВАЕТ BOTTOM SHEET -->
               <button class="store-btn store-btn-more" id="storeMoreBtn">…</button>
