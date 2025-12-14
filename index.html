@@ -3934,15 +3934,19 @@ function setCaretByDigits(el, digitsPos) {
 
       try {
         const payload = {
-          city: newAdDraft.city,
-          category: newAdDraft.category,
-          title: newAdDraft.title,
-          price: String(newAdDraft.price).replace(/\s+/g, ""),
-          description: newAdDraft.description,
-          images: newAdDraft.photos,
-          phone: DEFAULT_PHONE,
-          telegram: DEFAULT_TELEGRAM
-        };
+  city: newAdDraft.city,
+
+  // ✅ отправляем оба поля — чтобы backend точно сохранил категорию
+  category: newAdDraft.category,
+  type: newAdDraft.category,
+
+  title: newAdDraft.title,
+  price: String(newAdDraft.price).replace(/\s+/g, ""),
+  description: newAdDraft.description,
+  images: newAdDraft.photos,
+  phone: DEFAULT_PHONE,
+  telegram: DEFAULT_TELEGRAM
+};
 
         const res = await fetch(ADD_AD_API_URL, {
           method: "POST",
