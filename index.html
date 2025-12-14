@@ -2242,9 +2242,12 @@
 </div>
 
         <div class="filters-section-title">Viloyat</div>
+
 <select id="filterCity" class="form-select">
   <option value="all">Hammasi</option>
 
+  <option value="Toshkent shahri">Toshkent shahri</option>
+  <option value="Toshkent viloyati">Toshkent viloyati</option>
   <option value="Andijon">Andijon</option>
   <option value="Buxoro">Buxoro</option>
   <option value="Farg‘ona">Farg‘ona</option>
@@ -2256,7 +2259,7 @@
   <option value="Samarqand">Samarqand</option>
   <option value="Sirdaryo">Sirdaryo</option>
   <option value="Surxondaryo">Surxondaryo</option>
-  <option value="Toshkent">Toshkent</option>
+  <option value="Qoraqalpog‘iston">Qoraqalpog‘iston</option>
 </select>
 
         <div class="filters-section-title">Valyuta</div>
@@ -2721,15 +2724,39 @@
         <div class="form-group">
           <label class="form-label">Shahar</label>
           <select id="inputCity" class="form-select">
-            <option value="Toshkent">Toshkent</option>
-            <option value="Farg‘ona">Farg‘ona</option>
-            <option value="Namangan">Namangan</option>
-            <option value="Andijon">Andijon</option>
-            <option value="Samarqand">Samarqand</option>
-            <option value="Buxoro">Buxoro</option>
+            <option value="Toshkent shahri">Toshkent shahri</option>
+<option value="Toshkent viloyati">Toshkent viloyati</option>
+<option value="Andijon">Andijon</option>
+<option value="Buxoro">Buxoro</option>
+<option value="Farg‘ona">Farg‘ona</option>
+<option value="Jizzax">Jizzax</option>
+<option value="Xorazm">Xorazm</option>
+<option value="Namangan">Namangan</option>
+<option value="Navoiy">Navoiy</option>
+<option value="Qashqadaryo">Qashqadaryo</option>
+<option value="Samarqand">Samarqand</option>
+<option value="Sirdaryo">Sirdaryo</option>
+<option value="Surxondaryo">Surxondaryo</option>
+<option value="Qoraqalpog‘iston">Qoraqalpog‘iston</option>
           </select>
         </div>
 
+        <div class="form-group">
+  <label class="form-label">Kategoriya</label>
+  <select id="inputCategory" class="form-select">
+    <option value="Transport">Transport</option>
+    <option value="Ko‘chmas mulk">Ko‘chmas mulk</option>
+    <option value="Elektronika">Elektronika</option>
+    <option value="Xizmatlar">Xizmatlar</option>
+    <option value="Uy va bog‘">Uy va bog‘</option>
+    <option value="Kiyim-kechak">Kiyim-kechak</option>
+    <option value="Bolalar">Bolalar</option>
+    <option value="Hayvonlar">Hayvonlar</option>
+    <option value="Ish">Ish</option>
+    <option value="Boshqa">Boshqa</option>
+  </select>
+</div>
+        
         <div class="form-group">
           <label class="form-label">Sarlavha</label>
           <input id="inputTitle" type="text" class="form-input" />
@@ -3049,6 +3076,7 @@ const settingsShopRow  = document.getElementById("settingsMyShopRow");
   const summaryPrice      = document.getElementById("summaryPrice");
   const summaryDescription= document.getElementById("summaryDescription");
   const summaryPhotosInfo = document.getElementById("summaryPhotosInfo");
+  const inputCategory     = document.getElementById("inputCategory");
 
   // Ad details
   const detailMainImage   = document.getElementById("detailMainImage");
@@ -3144,6 +3172,7 @@ function updateBackButtonVisibility() {
   // new ad draft
   let newAdDraft = {
     city: "Toshkent",
+    category: "Transport",
     title: "",
     price: "",
     description: "",
@@ -3772,6 +3801,7 @@ if (shopAdsSearchInput) {
       if (!price) return alert("Narx kiriting");
 
       newAdDraft.city        = inputCity.value;
+      newAdDraft.category    = inputCategory ? inputCategory.value : "Boshqa";
       newAdDraft.title       = title;
       newAdDraft.price       = price;
       newAdDraft.description = desc || "Tavsif berilmagan";
@@ -3841,7 +3871,7 @@ if (shopAdsSearchInput) {
 
   function fillSummary() {
     if (summaryTitle)       summaryTitle.textContent       = newAdDraft.title;
-    if (summaryCityType)    summaryCityType.textContent    = newAdDraft.city;
+    if (summaryCityType) summaryCityType.textContent = `${newAdDraft.city} · ${newAdDraft.category}`;
     if (summaryPrice)       summaryPrice.textContent       = formatPrice(newAdDraft.price);
     if (summaryDescription) summaryDescription.textContent = newAdDraft.description;
     if (summaryPhotosInfo)  summaryPhotosInfo.textContent  =
@@ -3856,6 +3886,7 @@ if (shopAdsSearchInput) {
       try {
         const payload = {
           city: newAdDraft.city,
+          category: newAdDraft.category,
           title: newAdDraft.title,
           price: String(newAdDraft.price).replace(/\s+/g, ""),
           description: newAdDraft.description,
@@ -3879,6 +3910,7 @@ if (shopAdsSearchInput) {
 
         newAdDraft = {
           city: "Toshkent",
+          category: "Transport",
           title: "",
           price: "",
           description: "",
