@@ -2419,9 +2419,9 @@
             <div class="store-search-row">
               <div class="store-search-input">
                 <span>🔍</span>
-                <input type="text" placeholder="E‘lonlar ichidan qidirish">
+                <input id="shopAdsSearchInput" type="text" placeholder="E‘lonlar ichidan qidirish">
               </div>
-              <button class="store-filter-btn">≡</button>
+              <button class="store-filter-btn" id="shopAdsFilterBtn">≡</button>
             </div>
 
             <!-- ВАЖНО: ОСТАВЛЯЕМ ЭТОТ DIV, ЧТОБЫ РАБОТАЛ КОД renderMyShopAds() -->
@@ -2697,6 +2697,44 @@
 </section>
     </main>
 
+<!-- BOTTOM SHEET: FILTER (Do‘kon e‘lonlari uchun) -->
+<div class="store-sheet-backdrop" id="shopAdsFilterSheet">
+  <div class="store-sheet">
+    <div class="store-sheet-handle"></div>
+
+    <div style="font-weight:700; font-size:16px; margin-bottom:10px;">Filtr</div>
+
+    <div style="display:flex; flex-direction:column; gap:10px;">
+
+      <div>
+        <div style="font-size:13px; color:#6b7280; margin-bottom:6px;">Saralash</div>
+        <select id="shopAdsSort" class="form-select">
+          <option value="new">Yangi e’lonlar</option>
+          <option value="cheap">Arzon</option>
+          <option value="expensive">Qimmat</option>
+        </select>
+      </div>
+
+      <div>
+        <div style="font-size:13px; color:#6b7280; margin-bottom:6px;">Narx (so‘m)</div>
+        <div style="display:flex; gap:8px;">
+          <input id="shopAdsMinPrice" class="form-input" type="number" placeholder="Min" />
+          <input id="shopAdsMaxPrice" class="form-input" type="number" placeholder="Max" />
+        </div>
+        <div class="hint">Bo‘sh qoldirsangiz — cheklanmaydi</div>
+      </div>
+
+      <button id="shopAdsOnlyPhoto" class="chip" type="button">Faqat rasmlar bilan</button>
+
+      <div style="display:flex; gap:10px; margin-top:6px;">
+        <button id="shopAdsApply" class="primary-btn" type="button" style="margin:0;">Qo‘llash</button>
+        <button id="shopAdsReset" class="outline-btn" type="button" style="margin:0;">Tozalash</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+    
         <!-- BOTTOM SHEET MENYUSI (Do‘kon uchun) -->
     <div class="store-sheet-backdrop" id="storeSheet">
       <div class="store-sheet">
@@ -2822,6 +2860,26 @@
   const businessOpenShopBtn  = document.getElementById("businessOpenShopBtn");
   const storeMoreBtn = document.getElementById("storeMoreBtn");
   const storeSheet   = document.getElementById("storeSheet");
+
+    // ===== Shop Ads Filter DOM =====
+const shopAdsFilterBtn   = document.getElementById("shopAdsFilterBtn");
+const shopAdsFilterSheet = document.getElementById("shopAdsFilterSheet");
+
+const shopAdsSearchInput = document.getElementById("shopAdsSearchInput");
+const shopAdsSort        = document.getElementById("shopAdsSort");
+const shopAdsMinPrice    = document.getElementById("shopAdsMinPrice");
+const shopAdsMaxPrice    = document.getElementById("shopAdsMaxPrice");
+const shopAdsOnlyPhotoBtn= document.getElementById("shopAdsOnlyPhoto");
+const shopAdsApplyBtn    = document.getElementById("shopAdsApply");
+const shopAdsResetBtn    = document.getElementById("shopAdsReset");
+
+// local state для фильтров магазина
+const shopAdsFilterState = {
+  sort: "new",
+  minPrice: "",
+  maxPrice: "",
+  onlyWithPhoto: false,
+};
     
   // Settings rows (profil ekrani)
 const settingsFavoritesRow = document.getElementById("settingsFavoritesRow");
@@ -2990,6 +3048,84 @@ function updateBackButtonVisibility() {
     category: "all"
   };
 
+    function openShopAdsFilterSheet() {
+  if (!shopAdsFilterSheet) return;
+  shopAdsFilterSheet.classList.add("active");
+}
+
+function closeShopAdsFilterSheet() {
+  if (!shopAdsFilterSheet) return;
+  shopAdsFilterSheet.classList.remove("active");
+}
+
+function syncShopAdsFilterUI() {
+  if (shopAdsSort) shopAdsSort.value = shopAdsFilterState.sort;
+  if (shopAdsMinPrice) shopAdsMinPrice.value = shopAdsFilterState.minPrice;
+  if (shopAdsMaxPrice) shopAdsMaxPrice.value = shopAdsFilterState.maxPrice;
+
+  if (shopAdsOnlyPhotoBtn) {
+    shopAdsOnlyPhotoBtn.classList.toggle("chip-filled", shopAdsFilterState.onlyWithPhoto);
+  }
+}
+
+if (shopAdsFilterBtn) {
+  shopAdsFilterBtn.addEventListener("click", () => {
+    syncShopAdsFilterUI();
+    openShopAdsFilterSheet();
+  });
+}
+
+if (shopAdsFilterSheet) {
+  // закрытие по клику на фон
+  shopAdsFilterSheet.addEventListener("click", (e) => {
+    if (e.target === shopAdsFilterSheet) closeShopAdsFilterSheet();
+  });
+
+  // чтобы клики внутри панели не закрывали
+  const inner = shopAdsFilterSheet.querySelector(".store-sheet");
+  if (inner) inner.addEventListener("click", (e) => e.stopPropagation());
+}
+
+if (shopAdsOnlyPhotoBtn) {
+  shopAdsOnlyPhotoBtn.addEventListener("click", () => {
+    shopAdsFilterState.onlyWithPhoto = !shopAdsFilterState.onlyWithPhoto;
+    syncShopAdsFilterUI();
+  });
+}
+
+if (shopAdsApplyBtn) {
+  shopAdsApplyBtn.addEventListener("click", () => {
+    shopAdsFilterState.sort = (shopAdsSort?.value || "new");
+    shopAdsFilterState.minPrice = (shopAdsMinPrice?.value || "").trim();
+    shopAdsFilterState.maxPrice = (shopAdsMaxPrice?.value || "").trim();
+
+    closeShopAdsFilterSheet();
+    renderMyShopAds(); // перерисуем товары в магазине
+  });
+}
+
+if (shopAdsResetBtn) {
+  shopAdsResetBtn.addEventListener("click", () => {
+    shopAdsFilterState.sort = "new";
+    shopAdsFilterState.minPrice = "";
+    shopAdsFilterState.maxPrice = "";
+    shopAdsFilterState.onlyWithPhoto = false;
+
+    if (shopAdsSearchInput) shopAdsSearchInput.value = "";
+
+    syncShopAdsFilterUI();
+    renderMyShopAds();
+    closeShopAdsFilterSheet();
+  });
+}
+
+// поиск по объявлениям магазина
+if (shopAdsSearchInput) {
+  shopAdsSearchInput.addEventListener("input", () => {
+    renderMyShopAds();
+  });
+}
+    
   // ================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==================
   function formatNumberWithSpaces(num) {
     const s = String(num);
@@ -4027,6 +4163,56 @@ function setUserHasShop() {
     localStorage.setItem("zalvoHasShop", "1");
   } catch {}
 }
+
+      // ===== APPLY STORE SEARCH + FILTERS =====
+  const q = (shopAdsSearchInput?.value || "").toLowerCase().trim();
+
+  let result = myAds.filter(ad => {
+    if (shopAdsFilterState.onlyWithPhoto) {
+      if (!ad.images || !Array.isArray(ad.images) || !ad.images.length) return false;
+    }
+
+    // price range (so'm)
+    const p = Number(ad.price || 0);
+    const min = Number(shopAdsFilterState.minPrice || 0);
+    const max = Number(shopAdsFilterState.maxPrice || 0);
+
+    if (shopAdsFilterState.minPrice && isFinite(min) && p < min) return false;
+    if (shopAdsFilterState.maxPrice && isFinite(max) && p > max) return false;
+
+    // search
+    if (q) {
+      const text = ((ad.title || "") + " " + (ad.description || "")).toLowerCase();
+      if (!text.includes(q)) return false;
+    }
+
+    return true;
+  });
+
+  // sort
+  result.sort((a,b) => {
+    const pa = Number(a.price || 0);
+    const pb = Number(b.price || 0);
+    const da = a.created_at ? new Date(a.created_at).getTime() : 0;
+    const db = b.created_at ? new Date(b.created_at).getTime() : 0;
+
+    if (shopAdsFilterState.sort === "cheap") return pa - pb;
+    if (shopAdsFilterState.sort === "expensive") return pb - pa;
+    return db - da; // new
+  });
+
+  // дальше рендерим result (а не myAds)
+  myShopAdsList.innerHTML = "";
+  if (!result.length) {
+    myShopAdsList.innerHTML = "<div class='ad-meta'>Mos e’lon topilmadi</div>";
+    return;
+  }
+
+  result.forEach(ad => {
+    myShopAdsList.appendChild(createAdCard(ad));
+  });
+
+  return; // чтобы ниже старый код не отработал
     
     // ================== SETTINGS: RASMINI O‘ZGARTIRISH ==================
 if (settingsChangePhoto && profilePhotoInput) {
