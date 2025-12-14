@@ -2085,40 +2085,52 @@
   pointer-events: none;
 }
 
-    /* ===== iOS-style actions row in store profile ===== */
-.store-actions-ios {
-  display: grid;
-  grid-template-columns: 1fr auto auto; /* большая + 2 маленькие */
+    /* --- РЯД КНОПОК: OBUNA (big) + YOZISH (icon) + … (icon) --- */
+.store-actions{
+  display: flex;
+  align-items: center;
   gap: 10px;
-  margin-top: 6px;
+  margin-top: 8px;
+  flex-wrap: nowrap;
 }
 
-/* большая кнопка подписки */
-.store-btn-subscribe {
-  padding: 12px 0;
-  font-size: 15px;
-  font-weight: 600;
-}
-
-/* маленькая кнопка "написать" — только иконка */
-.store-btn-icon {
-  width: 44px;
-  height: 44px;
-  padding: 0;
+.store-btn{
+  height: 46px;
   border-radius: 999px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
 
+/* большая кнопка */
+.store-btn-primary{
+  flex: 1;
+  min-width: 0;
+  padding: 0 16px;
+  background: #5a4bff;
+  color: #fff;
+}
+
+/* маленькие иконки */
+.store-btn-icon{
+  width: 46px;
+  padding: 0;
   background: #f3f4f6;
   color: #111827;
   font-size: 18px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  font-weight: 700;
 }
 
-.store-btn-icon:active {
-  background: #e5e7eb;
-  transform: scale(0.96);
+/* чтобы иконка внутри не ловила клики */
+.store-btn-icon span,
+.store-btn-primary span{
+  pointer-events: none;
 }
     
   @media (max-width: 480px) {
@@ -2433,16 +2445,19 @@
               <span class="store-rating-count">4.9 (451 baho)</span>
             </div>
 
-            <div class="store-actions store-actions-ios">
-  <button class="store-btn store-btn-primary store-btn-subscribe">
-    Obuna bo‘lish
+      <div class="store-actions">
+  <button class="store-btn store-btn-primary" id="storeSubscribeBtn" type="button">
+    <span class="icon-pill icon-pill-bell">🔔</span>
+    <span>Obuna bo‘lish</span>
   </button>
 
-  <button class="store-btn store-btn-icon" aria-label="Yozish">
+  <button class="store-btn store-btn-icon" id="storeMsgBtn" type="button" aria-label="Yozish">
     ✉️
   </button>
 
-  <button class="store-btn store-btn-more">⋯</button>
+  <button class="store-btn store-btn-icon" id="storeMoreBtn" type="button" aria-label="Ko‘proq">
+    …
+  </button>
 </div>
 
               <!-- КНОПКА "…" ОТКРЫВАЕТ BOTTOM SHEET -->
@@ -2943,6 +2958,13 @@
   const businessOpenShopBtn  = document.getElementById("businessOpenShopBtn");
   const storeMoreBtn = document.getElementById("storeMoreBtn");
   const storeSheet   = document.getElementById("storeSheet");
+  const storeMsgBtn = document.getElementById("storeMsgBtn");
+
+    if (storeMsgBtn) {
+  storeMsgBtn.addEventListener("click", () => {
+    showScreen("chat");
+  });
+}
 
     // ===== Shop Ads Filter DOM =====
 const shopAdsFilterBtn   = document.getElementById("shopAdsFilterBtn");
