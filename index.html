@@ -4126,7 +4126,21 @@ if (settingsMyShopRow) {
   }
 }
 
-    function renderMyShopAds() {
+    function userHasShop() {
+  try {
+    return localStorage.getItem("zalvoHasShop") === "1";
+  } catch {
+    return false;
+  }
+}
+
+function setUserHasShop() {
+  try {
+    localStorage.setItem("zalvoHasShop", "1");
+  } catch {}
+}
+
+function renderMyShopAds() {
   if (!myShopAdsList) return;
   myShopAdsList.innerHTML = "";
 
@@ -4139,13 +4153,11 @@ if (settingsMyShopRow) {
     return (adPhone && adPhone === myPhone) || (adTg && adTg === myTg);
   });
 
-  // если нет объявлений вообще
   if (!myAds.length) {
     myShopAdsList.innerHTML = "<div class='ad-meta'>Hozircha do‘koningizda e’lonlar yo‘q</div>";
     return;
   }
 
-  // ===== APPLY STORE SEARCH + FILTERS (ВНУТРИ ФУНКЦИИ!) =====
   const q = (shopAdsSearchInput?.value || "").toLowerCase().trim();
 
   let result = myAds.filter(ad => {
@@ -4186,52 +4198,6 @@ if (settingsMyShopRow) {
 
   result.forEach(ad => myShopAdsList.appendChild(createAdCard(ad)));
 }
-  }
-
-  myAds.forEach(ad => {
-    myShopAdsList.appendChild(createAdCard(ad));
-  });
-}
-
-    function userHasShop() {
-  try {
-    return localStorage.getItem("zalvoHasShop") === "1";
-  } catch {
-    return false;
-  }
-}
-
-function setUserHasShop() {
-  try {
-    localStorage.setItem("zalvoHasShop", "1");
-  } catch {}
-}
-  });
-
-  // sort
-  result.sort((a,b) => {
-    const pa = Number(a.price || 0);
-    const pb = Number(b.price || 0);
-    const da = a.created_at ? new Date(a.created_at).getTime() : 0;
-    const db = b.created_at ? new Date(b.created_at).getTime() : 0;
-
-    if (shopAdsFilterState.sort === "cheap") return pa - pb;
-    if (shopAdsFilterState.sort === "expensive") return pb - pa;
-    return db - da; // new
-  });
-
-  // дальше рендерим result (а не myAds)
-  myShopAdsList.innerHTML = "";
-  if (!result.length) {
-    myShopAdsList.innerHTML = "<div class='ad-meta'>Mos e’lon topilmadi</div>";
-    return;
-  }
-
-  result.forEach(ad => {
-    myShopAdsList.appendChild(createAdCard(ad));
-  });
-
-  return; // чтобы ниже старый код не отработал
     
     // ================== SETTINGS: RASMINI O‘ZGARTIRISH ==================
 if (settingsChangePhoto && profilePhotoInput) {
