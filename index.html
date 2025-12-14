@@ -3408,7 +3408,6 @@ if (shopAdsSearchInput) {
   shops: screenShops,
   language: screenLanguage,
   myAds: screenMyAds,
-  myShop: screenMyShop,
   business: screenBusiness,  // экран “Zalvo biznes uchun”
   myShop: screenMyShop,       // экран “Mening do‘konim”
 };
@@ -4140,9 +4139,53 @@ if (settingsMyShopRow) {
     return (adPhone && adPhone === myPhone) || (adTg && adTg === myTg);
   });
 
+  // если нет объявлений вообще
   if (!myAds.length) {
     myShopAdsList.innerHTML = "<div class='ad-meta'>Hozircha do‘koningizda e’lonlar yo‘q</div>";
     return;
+  }
+
+  // ===== APPLY STORE SEARCH + FILTERS (ВНУТРИ ФУНКЦИИ!) =====
+  const q = (shopAdsSearchInput?.value || "").toLowerCase().trim();
+
+  let result = myAds.filter(ad => {
+    if (shopAdsFilterState.onlyWithPhoto) {
+      if (!ad.images || !Array.isArray(ad.images) || !ad.images.length) return false;
+    }
+
+    const p = Number(ad.price || 0);
+    const min = Number(shopAdsFilterState.minPrice || 0);
+    const max = Number(shopAdsFilterState.maxPrice || 0);
+
+    if (shopAdsFilterState.minPrice && isFinite(min) && p < min) return false;
+    if (shopAdsFilterState.maxPrice && isFinite(max) && p > max) return false;
+
+    if (q) {
+      const text = ((ad.title || "") + " " + (ad.description || "")).toLowerCase();
+      if (!text.includes(q)) return false;
+    }
+
+    return true;
+  });
+
+  result.sort((a,b) => {
+    const pa = Number(a.price || 0);
+    const pb = Number(b.price || 0);
+    const da = a.created_at ? new Date(a.created_at).getTime() : 0;
+    const db = b.created_at ? new Date(b.created_at).getTime() : 0;
+
+    if (shopAdsFilterState.sort === "cheap") return pa - pb;
+    if (shopAdsFilterState.sort === "expensive") return pb - pa;
+    return db - da; // new
+  });
+
+  if (!result.length) {
+    myShopAdsList.innerHTML = "<div class='ad-meta'>Mos e’lon topilmadi</div>";
+    return;
+  }
+
+  result.forEach(ad => myShopAdsList.appendChild(createAdCard(ad)));
+}
   }
 
   myAds.forEach(ad => {
@@ -4163,30 +4206,6 @@ function setUserHasShop() {
     localStorage.setItem("zalvoHasShop", "1");
   } catch {}
 }
-
-      // ===== APPLY STORE SEARCH + FILTERS =====
-  const q = (shopAdsSearchInput?.value || "").toLowerCase().trim();
-
-  let result = myAds.filter(ad => {
-    if (shopAdsFilterState.onlyWithPhoto) {
-      if (!ad.images || !Array.isArray(ad.images) || !ad.images.length) return false;
-    }
-
-    // price range (so'm)
-    const p = Number(ad.price || 0);
-    const min = Number(shopAdsFilterState.minPrice || 0);
-    const max = Number(shopAdsFilterState.maxPrice || 0);
-
-    if (shopAdsFilterState.minPrice && isFinite(min) && p < min) return false;
-    if (shopAdsFilterState.maxPrice && isFinite(max) && p > max) return false;
-
-    // search
-    if (q) {
-      const text = ((ad.title || "") + " " + (ad.description || "")).toLowerCase();
-      if (!text.includes(q)) return false;
-    }
-
-    return true;
   });
 
   // sort
