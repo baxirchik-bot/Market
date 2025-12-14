@@ -2185,23 +2185,26 @@
 
         <div class="section-title">Mashhur bo‘limlar</div>
         <div id="homeCategoryGrid" class="category-grid">
-          <div class="category-card" data-type="Транспорт">
-            <div class="category-card-title">Transport</div>
-            <div class="category-card-sub">Mashinalar, mopedlar</div>
-          </div>
-          <div class="category-card" data-type="Недвижимость">
-            <div class="category-card-title">Ko'chmas mulk</div>
-            <div class="category-card-sub">Ijaraga, sotiladi</div>
-          </div>
-          <div class="category-card" data-type="Электроника">
-            <div class="category-card-title">Elektronika</div>
-            <div class="category-card-sub">Telefon, laptop</div>
-          </div>
-          <div class="category-card" data-type="Услуги">
-            <div class="category-card-title">Xizmatlar</div>
-            <div class="category-card-sub">Usta, servis</div>
-          </div>
-        </div>
+  <div class="category-card" data-category="Transport">
+    <div class="category-card-title">Transport</div>
+    <div class="category-card-sub">Mashinalar, mopedlar</div>
+  </div>
+
+  <div class="category-card" data-category="Ko‘chmas mulk">
+    <div class="category-card-title">Ko'chmas mulk</div>
+    <div class="category-card-sub">Ijaraga, sotiladi</div>
+  </div>
+
+  <div class="category-card" data-category="Elektronika">
+    <div class="category-card-title">Elektronika</div>
+    <div class="category-card-sub">Telefon, laptop</div>
+  </div>
+
+  <div class="category-card" data-category="Xizmatlar">
+    <div class="category-card-title">Xizmatlar</div>
+    <div class="category-card-sub">Usta, servis</div>
+  </div>
+</div>
 
         <div class="hint" style="margin-bottom:10px;">
           📌 Kategoriyani yana bir marta bosing — barcha e’lonlar qaytadi
@@ -3294,6 +3297,11 @@ if (shopAdsSearchInput) {
     return s.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
   }
 
+    // ✅ ЕДИНЫЙ источник категории (поддерживает старые объявления с type)
+function getAdCategory(ad) {
+  return String(ad?.category || ad?.type || "Boshqa").trim();
+}
+    
     function formatInputNumberSpaces(value) {
   const digits = String(value || "").replace(/\D/g, "");
   return digits.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
@@ -3403,7 +3411,7 @@ function setCaretByDigits(el, digitsPos) {
 
     const title  = ad.title || "E’lon";
     const city   = ad.city || "Shahar";
-    const type   = ad.type || "Tovar";
+    const category = getAdCategory(ad);
     const price  = formatPrice(ad.price);
     const date   = formatDateShort(ad.created_at);
     const image  = ad.images && ad.images.length ? ad.images[0] : null;
@@ -3412,7 +3420,7 @@ function setCaretByDigits(el, digitsPos) {
       <div class="ad-image" style="${image ? `background-image:url('${image}');` : ""}"></div>
       <div class="ad-content">
         <div class="ad-title">${title}</div>
-        <div class="ad-meta">📍 ${city} · ${type}${date ? " · " + date : ""}</div>
+        <div class="ad-meta">📍 ${city} · ${category}${date ? " · " + date : ""}</div>
         <div class="ad-price">${price}</div>
       </div>
     `;
@@ -3436,11 +3444,11 @@ function setCaretByDigits(el, digitsPos) {
     const q = (searchInput?.value || "").toLowerCase().trim();
 
     filteredAds = allAds.filter(ad => {
-      if (filterState.type !== "all" && ad.type !== filterState.type) return false;
+      // if (filterState.type !== "all" && ad.type !== filterState.type) return false;
 
       if (filterState.category !== "all") {
-        if ((ad.category || "").trim() !== filterState.category) return false;
-      }
+  if (getAdCategory(ad) !== filterState.category) return false;
+}
 
       if (filterState.city !== "all") {
         if ((ad.city || "").trim() !== filterState.city) return false;
@@ -3797,7 +3805,7 @@ function setCaretByDigits(el, digitsPos) {
     let activeCategory = null;
 
     cards.forEach(card => {
-      const type = card.getAttribute("data-type");
+      const type = card.getAttribute("data-category");
       card.addEventListener("click", () => {
         if (activeCategory === type) {
           activeCategory = null;
@@ -3983,7 +3991,7 @@ function setCaretByDigits(el, digitsPos) {
 
     if (detailTitle)       detailTitle.textContent       = ad.title || "";
     if (detailPrice)       detailPrice.textContent       = formatPrice(ad.price);
-    if (detailMeta)        detailMeta.textContent        = `${ad.city || ""}`;
+    if (detailMeta) detailMeta.textContent = `${ad.city || ""} · ${getAdCategory(ad)}`;
     if (detailDescription) detailDescription.textContent = ad.description || "";
 
     const images = Array.isArray(ad.images) ? ad.images : [];
@@ -4091,7 +4099,8 @@ function setCaretByDigits(el, digitsPos) {
 
     if (similarList) {
       similarList.innerHTML = "";
-      const sameType = allAds.filter(x => x.id !== ad.id && x.type === ad.type);
+      const adCat = getAdCategory(ad);
+      const sameType = allAds.filter(x => x.id !== ad.id && getAdCategory(x) === adCat);
       const base = sameType.length ? sameType : allAds.filter(x => x.id !== ad.id);
       base.slice(0, 3).forEach(item => {
         const wrap = document.createElement("div");
