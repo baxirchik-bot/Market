@@ -3679,28 +3679,40 @@ function setCaretByDigits(el, digitsPos) {
 
   // ================== ФИЛЬТРЫ ==================
   function syncFiltersUIFromState() {
-    if (filterTypeRow) {
-      filterTypeRow.querySelectorAll(".chip").forEach(ch => {
-        const t = ch.getAttribute("data-type") || "all";
-        ch.classList.toggle("chip-filled", t === filterState.type);
-      });
-    }
-    if (filterCitySelect) {
-      filterCitySelect.value = filterState.city === "all" ? "all" : filterState.city;
-    }
-    if (filterCurrencyRow) {
-      filterCurrencyRow.querySelectorAll(".chip").forEach(ch => {
-        const c = ch.getAttribute("data-currency") || "sum";
-        ch.classList.toggle("chip-filled", c === filterState.currency);
-      });
-    }
-    if (filterPhotoChip) {
-      filterPhotoChip.classList.toggle("chip-filled", filterState.onlyWithPhoto);
-    }
-    if (filterSortSelect) {
-      filterSortSelect.value = filterState.sort;
-    }
+  if (filterTypeRow) {
+    filterTypeRow.querySelectorAll(".chip").forEach(ch => {
+      const t = ch.getAttribute("data-type") || "all";
+      ch.classList.toggle("chip-filled", t === filterState.type);
+    });
   }
+
+  if (filterCitySelect) {
+    filterCitySelect.value = filterState.city === "all" ? "all" : filterState.city;
+  }
+
+  if (filterCurrencyRow) {
+    filterCurrencyRow.querySelectorAll(".chip").forEach(ch => {
+      const c = ch.getAttribute("data-currency") || "sum";
+      ch.classList.toggle("chip-filled", c === filterState.currency);
+    });
+  }
+
+  if (filterPhotoChip) {
+    filterPhotoChip.classList.toggle("chip-filled", filterState.onlyWithPhoto);
+  }
+
+  if (filterSortSelect) {
+    filterSortSelect.value = filterState.sort;
+  }
+
+  // ✅ ВОТ ЭТО главное: обновляем chips категории
+  if (filterCategoryRow) {
+    filterCategoryRow.querySelectorAll(".chip").forEach(ch => {
+      const c = ch.getAttribute("data-category") || "all";
+      ch.classList.toggle("chip-filled", c === filterState.category);
+    });
+  }
+}
 
   function readFiltersFromUI() {
     if (filterTypeRow) {
@@ -3785,15 +3797,9 @@ function setCaretByDigits(el, digitsPos) {
       syncFiltersUIFromState();
       applyAllFilters();
       resetFeedRender();
+      showScreen("home");
     });
   }
-
-    if (filterCategoryRow) {
-  filterCategoryRow.querySelectorAll(".chip").forEach(ch => {
-    const c = ch.getAttribute("data-category") || "all";
-    ch.classList.toggle("chip-filled", c === filterState.category);
-  });
-}
     
   if (filtersBackBtn) {
     filtersBackBtn.addEventListener("click", () => showScreen("home"));
