@@ -1842,6 +1842,42 @@
   justify-content: space-between;
 }
 
+    /* ===== GRID объявлений внутри магазина ===== */
+#screen-my-shop .ad-list{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+    /* карточка объявления в магазине */
+#screen-my-shop .ad-card{
+  flex-direction: column;
+  padding: 8px;
+  border-radius: 16px;
+}
+
+    #screen-my-shop .ad-image{
+  width: 100%;
+  aspect-ratio: 1 / 1;   /* 🔥 квадрат */
+  height: auto;
+  border-radius: 12px;
+  margin-bottom: 6px;
+}
+
+    #screen-my-shop .ad-title{
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+#screen-my-shop .ad-price{
+  font-size: 14px;
+  font-weight: 700;
+}
+
+#screen-my-shop .ad-meta{
+  font-size: 11px;
+}
+    
 @keyframes sheetUp {
   from { transform: translateY(40px); opacity: 0; }
   to   { transform: translateY(0); opacity: 1; }
