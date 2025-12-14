@@ -1892,6 +1892,117 @@
   fill: #111827;
 }
 
+    /* ===== iOS BACK BUTTON (global) ===== */
+.ios-back-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: none;
+  padding: 0;
+  display: none;              /* скрыта по умолчанию */
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.14);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+@supports (backdrop-filter: blur(16px)) {
+  .ios-back-btn {
+    background: rgba(255, 255, 255, 0.70);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+}
+.ios-back-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: #111827;
+}
+.ios-back-btn:active {
+  transform: scale(0.96);
+}
+
+/* маленький отступ между кнопкой назад и логотипом */
+.app-header-left {
+  gap: 10px;
+}
+
+/* ===== iOS-like slide animation on back ===== */
+.screens.ios-back-anim {
+  transition: transform 0.22s ease-out, opacity 0.22s ease-out;
+  transform: translateX(22px);
+  opacity: 0.92;
+}
+
+/* ===== STORE BOTTOM SHEET (вернул то, что ты случайно “сломал”) ===== */
+.store-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.35);
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 999;
+}
+
+.store-sheet-backdrop.active {
+  display: flex;
+}
+
+.store-sheet {
+  width: 100%;
+  max-width: 480px;
+  background: #ffffff;
+  border-radius: 24px 24px 0 0;
+  padding: 10px 16px 18px;
+  box-shadow: 0 -10px 30px rgba(15, 23, 42, 0.25);
+  animation: sheetUp 0.18s ease-out;
+}
+
+.store-sheet-handle {
+  width: 40px;
+  height: 4px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  margin: 4px auto 10px;
+}
+
+.store-sheet-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.store-sheet-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  color: #111827;
+  padding: 10px 6px;
+  border-radius: 12px;
+}
+
+.store-sheet-item:active {
+  background: #f3f4f6;
+}
+
+.store-sheet-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  color: #ffffff;
+}
+
+.store-sheet-icon.block { background: #6b7280; }
+.store-sheet-icon.share { background: #2563eb; }
+.store-sheet-icon.report { background: #ef4444; }
+
   @media (max-width: 480px) {
     body {
       align-items: stretch;
@@ -2773,6 +2884,47 @@ const settingsShopRow  = document.getElementById("settingsMyShopRow");
   let currentAd     = null;
   let currentScreen = "home";
 
+    // ===== GLOBAL BACK NAV (one button for all screens) =====
+const navStack = [];  // стек экранов: куда возвращаться
+let backBtnEl = null;
+
+function ensureGlobalBackButton() {
+  const headerLeft = document.querySelector(".app-header-left");
+  if (!headerLeft) return;
+
+  if (backBtnEl) return;
+
+  backBtnEl = document.createElement("button");
+  backBtnEl.className = "ios-back-btn";
+  backBtnEl.type = "button";
+  backBtnEl.innerHTML = `
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M15.5 5.5a1 1 0 0 1 0 1.4L10.4 12l5.1 5.1a1 1 0 1 1-1.4 1.4l-5.8-5.8a1 1 0 0 1 0-1.4l5.8-5.8a1 1 0 0 1 1.4 0z"/>
+    </svg>
+  `;
+
+  // вставляем ПЕРЕД логотипом
+  headerLeft.prepend(backBtnEl);
+
+  backBtnEl.addEventListener("click", () => {
+    if (!navStack.length) return;
+
+    // анимация как iOS
+    if (screensContainer) {
+      screensContainer.classList.add("ios-back-anim");
+      setTimeout(() => screensContainer.classList.remove("ios-back-anim"), 230);
+    }
+
+    const prev = navStack.pop();
+    showScreen(prev, { push: false }); // важно: НЕ пушим обратно
+  });
+}
+
+function updateBackButtonVisibility() {
+  if (!backBtnEl) return;
+  backBtnEl.style.display = navStack.length ? "inline-flex" : "none";
+}
+
   // lightbox
   let lightboxImages = [];
   let lightboxIndex  = 0;
@@ -3089,43 +3241,55 @@ const settingsShopRow  = document.getElementById("settingsMyShopRow");
   myShop: screenMyShop,       // экран “Mening do‘konim”
 };
 
-  function showScreen(name) {
-    currentScreen = name;
+  function showScreen(name, opts = {}) {
+  ensureGlobalBackButton();
 
-    Object.values(screens).forEach(el => {
-      if (!el) return;
-      el.classList.remove("active");
-      el.style.display = "none";
-    });
+  const push = opts.push !== false;          // по умолчанию пушим
+  const resetStack = opts.resetStack === true;
 
-    const target = screens[name];
-    if (target) {
-      target.classList.add("active");
-      target.style.display = "block";
-    }
+  if (resetStack) navStack.length = 0;
 
-    navButtons.forEach(btn => {
-      const s = btn.getAttribute("data-screen");
-      btn.classList.toggle("active", s === name);
-    });
-
-    if (screensContainer) screensContainer.scrollTop = 0;
-
-    if (name === "favorites") renderFavorites();
-    if (name === "history")   renderHistory();
-    if (name === "filters")   syncFiltersUIFromState();
-    if (name === "home")      resetFeedRender();
-    if (name === "myAds")     renderMyAds();
-    if (name === "myAds")     renderMyAds();
-    if (name === "myShop")    renderMyShopAds();
+  if (push && currentScreen && currentScreen !== name) {
+    navStack.push(currentScreen);
   }
 
+  currentScreen = name;
+
+  Object.values(screens).forEach(el => {
+    if (!el) return;
+    el.classList.remove("active");
+    el.style.display = "none";
+  });
+
+  const target = screens[name];
+  if (target) {
+    target.classList.add("active");
+    target.style.display = "block";
+  }
+
+  navButtons.forEach(btn => {
+    const s = btn.getAttribute("data-screen");
+    btn.classList.toggle("active", s === name);
+  });
+
+  if (screensContainer) screensContainer.scrollTop = 0;
+
+  if (name === "favorites") renderFavorites();
+  if (name === "history")   renderHistory();
+  if (name === "filters")   syncFiltersUIFromState();
+  if (name === "home")      resetFeedRender();
+  if (name === "myAds")     renderMyAds();
+  if (name === "myShop")    renderMyShopAds();
+
+  updateBackButtonVisibility();
+}
+    
   // bottom nav
   navButtons.forEach(btn => {
     const handleNavTap = () => {
       const target = btn.getAttribute("data-screen");
       if (!target) return;
-      showScreen(target);
+      showScreen(target, { push: false, resetStack: true });
     };
     btn.addEventListener("click", handleNavTap);
   });
@@ -3906,6 +4070,27 @@ if (languageRu) {
     alert("Язык установлен: Русский");
     showScreen("profile");
   });
+}
+
+    // ===== STORE BOTTOM SHEET OPEN/CLOSE =====
+if (storeMoreBtn && storeSheet) {
+  storeMoreBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    storeSheet.classList.add("active");
+  });
+
+  // закрыть по клику на фон
+  storeSheet.addEventListener("click", (e) => {
+    if (e.target === storeSheet) {
+      storeSheet.classList.remove("active");
+    }
+  });
+
+  // чтобы клик внутри панели не закрывал
+  const sheetInner = storeSheet.querySelector(".store-sheet");
+  if (sheetInner) {
+    sheetInner.addEventListener("click", (e) => e.stopPropagation());
+  }
 }
 
   // ================== СТАРТ ==================
