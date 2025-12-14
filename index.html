@@ -1556,34 +1556,6 @@
   object-fit: cover;
   display: block;
 }
-
-    /* HERO (обложка + первый блок) */
-.store-hero{
-  width: 100%;
-  max-width: 480px;
-  position: relative;
-}
-
-/* обложку оставляем как есть, но можно чуть сильнее радиус */
-.store-cover{
-  border-radius: 22px;
-  overflow: hidden;          /* важно: чтобы картинка не вылезала */
-}
-
-/* Профиль “заезжает” на картинку */
-.store-profile{
-  position: relative;
-  margin-top: -34px;         /* ← вот тут главный эффект (можешь -28 / -40) */
-  padding-top: 58px;         /* место под аватар */
-  z-index: 2;
-  box-shadow: 0 14px 36px rgba(15,23,42,.10);
-}
-
-/* чтобы первая карточка стояла ровно и не прилипала */
-.store-hero .store-profile{
-  margin-left: auto;
-  margin-right: auto;
-}
     
 /* --- АВАТАР С ЛОГОТИПОМ --- */
 .store-avatar {
