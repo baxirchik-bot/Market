@@ -2080,6 +2080,10 @@
   position: relative;
   z-index: 100;
 }
+    /* toast не перехватывает клики, даже когда он hidden */
+.toast {
+  pointer-events: none;
+}
     
   @media (max-width: 480px) {
     body {
