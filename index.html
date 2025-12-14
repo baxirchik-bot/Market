@@ -2764,7 +2764,7 @@
 
         <div class="form-group">
           <label class="form-label">Narx (so‘m)</label>
-          <input id="inputPrice" type="number" class="form-input" />
+          <input id="inputPrice" type="text" inputmode="numeric" class="form-input" placeholder="Masalan: 123 456 789" />
         </div>
 
         <div class="form-group">
@@ -3078,6 +3078,24 @@ const settingsShopRow  = document.getElementById("settingsMyShopRow");
   const summaryPhotosInfo = document.getElementById("summaryPhotosInfo");
   const inputCategory     = document.getElementById("inputCategory");
 
+    if (inputPrice) {
+  inputPrice.addEventListener("input", () => {
+    const el = inputPrice;
+
+    // позиция курсора в "цифрах" (сколько цифр слева от курсора)
+    const caret = el.selectionStart || 0;
+    const leftPart = el.value.slice(0, caret);
+    const digitsPos = leftPart.replace(/\D/g, "").length;
+
+    // форматируем
+    const formatted = formatInputNumberSpaces(el.value);
+    el.value = formatted;
+
+    // возвращаем курсор туда же по количеству цифр
+    setCaretByDigits(el, digitsPos);
+  });
+}
+    
   // Ad details
   const detailMainImage   = document.getElementById("detailMainImage");
   const detailThumbs      = document.getElementById("detailThumbs");
@@ -3276,6 +3294,29 @@ if (shopAdsSearchInput) {
     return s.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
   }
 
+    function formatInputNumberSpaces(value) {
+  const digits = String(value || "").replace(/\D/g, "");
+  return digits.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+}
+
+// сохраняем курсор так, чтобы он не прыгал при вставке пробелов
+function setCaretByDigits(el, digitsPos) {
+  const str = el.value;
+  let digitsSeen = 0;
+
+  for (let i = 0; i <= str.length; i++) {
+    if (i === str.length) {
+      el.setSelectionRange(i, i);
+      return;
+    }
+    if (/\d/.test(str[i])) digitsSeen++;
+    if (digitsSeen >= digitsPos) {
+      el.setSelectionRange(i + 1, i + 1);
+      return;
+    }
+  }
+}
+    
   function formatPrice(price) {
     if (price === null || price === undefined || price === "") {
       return "Narx kelishiladi";
@@ -3803,7 +3844,7 @@ if (shopAdsSearchInput) {
       newAdDraft.city        = inputCity.value;
       newAdDraft.category    = inputCategory ? inputCategory.value : "Boshqa";
       newAdDraft.title       = title;
-      newAdDraft.price       = price;
+      newAdDraft.price       = price.replace(/\s+/g, "");
       newAdDraft.description = desc || "Tavsif berilmagan";
 
       showScreen("newAd2");
