@@ -2226,25 +2226,38 @@
         <div class="screen-title">Filtrlar</div>
 
         <div class="filters-section-title">Turi</div>
-        <div id="filterTypeRow" class="chip-row">
-          <div class="chip" data-type="all">Hammasi</div>
-          <div class="chip" data-type="Товар">Tovar</div>
-          <div class="chip" data-type="Услуга">Xizmat</div>
-          <div class="chip" data-type="Недвижимость">Ko‘chmas mulk</div>
-        </div>
+        <div class="filters-section-title">Kategoriya</div>
+<div id="filterCategoryRow" class="chip-row">
+  <div class="chip chip-filled" data-category="all">Hammasi</div>
+  <div class="chip" data-category="Transport">Transport</div>
+  <div class="chip" data-category="Ko‘chmas mulk">Ko‘chmas mulk</div>
+  <div class="chip" data-category="Elektronika">Elektronika</div>
+  <div class="chip" data-category="Xizmatlar">Xizmatlar</div>
+  <div class="chip" data-category="Ish">Ish</div>
+  <div class="chip" data-category="Uy-rozg‘or">Uy-rozg‘or</div>
+  <div class="chip" data-category="Bolalar">Bolalar</div>
+  <div class="chip" data-category="Hayvonlar">Hayvonlar</div>
+  <div class="chip" data-category="Hobbi/Sport">Hobbi/Sport</div>
+  <div class="chip" data-category="Boshqa">Boshqa</div>
+</div>
 
-        <div class="filters-section-title">Shahar</div>
-        <select id="filterCity" class="form-select">
-          <option value="all">Hammasi</option>
-          <option value="Toshkent">Toshkent</option>
-          <option value="Farg‘ona">Farg‘ona</option>
-          <option value="Namangan">Namangan</option>
-          <option value="Andijon">Andijon</option>
-          <option value="Samarqand">Samarqand</option>
-          <option value="Buxoro">Buxoro</option>
-          <option value="Xorazm">Xorazm</option>
-          <option value="Qoraqalpog‘iston">Qoraqalpog‘iston</option>
-        </select>
+        <div class="filters-section-title">Viloyat</div>
+<select id="filterCity" class="form-select">
+  <option value="all">Hammasi</option>
+
+  <option value="Andijon">Andijon</option>
+  <option value="Buxoro">Buxoro</option>
+  <option value="Farg‘ona">Farg‘ona</option>
+  <option value="Jizzax">Jizzax</option>
+  <option value="Xorazm">Xorazm</option>
+  <option value="Namangan">Namangan</option>
+  <option value="Navoiy">Navoiy</option>
+  <option value="Qashqadaryo">Qashqadaryo</option>
+  <option value="Samarqand">Samarqand</option>
+  <option value="Sirdaryo">Sirdaryo</option>
+  <option value="Surxondaryo">Surxondaryo</option>
+  <option value="Toshkent">Toshkent</option>
+</select>
 
         <div class="filters-section-title">Valyuta</div>
         <div id="filterCurrencyRow" class="chip-row">
@@ -2955,6 +2968,7 @@
   const storeMoreBtn = document.getElementById("storeMoreBtn");
   const storeSheet   = document.getElementById("storeSheet");
   const storeMsgBtn = document.getElementById("storeMsgBtn");
+  const filterCategoryRow = document.getElementById("filterCategoryRow");
 
     if (storeMsgBtn) {
   storeMsgBtn.addEventListener("click", () => {
@@ -3615,6 +3629,12 @@ if (shopAdsSearchInput) {
       const active = filterTypeRow.querySelector(".chip-filled");
       filterState.type = active ? active.getAttribute("data-type") || "all" : "all";
     }
+
+    if (filterCategoryRow) {
+  const active = filterCategoryRow.querySelector(".chip-filled");
+  filterState.category = active ? active.getAttribute("data-category") || "all" : "all";
+}
+    
     if (filterCitySelect) {
       const v = filterCitySelect.value;
       filterState.city = v === "all" ? "all" : v;
@@ -3639,6 +3659,16 @@ if (shopAdsSearchInput) {
       chip.classList.add("chip-filled");
     });
   }
+
+    if (filterCategoryRow) {
+  filterCategoryRow.addEventListener("click", e => {
+    const chip = e.target.closest(".chip");
+    if (!chip) return;
+    filterCategoryRow.querySelectorAll(".chip").forEach(c => c.classList.remove("chip-filled"));
+    chip.classList.add("chip-filled");
+  });
+}
+    
   if (filterCurrencyRow) {
     filterCurrencyRow.addEventListener("click", e => {
       const chip = e.target.closest(".chip");
@@ -3679,6 +3709,14 @@ if (shopAdsSearchInput) {
       resetFeedRender();
     });
   }
+
+    if (filterCategoryRow) {
+  filterCategoryRow.querySelectorAll(".chip").forEach(ch => {
+    const c = ch.getAttribute("data-category") || "all";
+    ch.classList.toggle("chip-filled", c === filterState.category);
+  });
+}
+    
   if (filtersBackBtn) {
     filtersBackBtn.addEventListener("click", () => showScreen("home"));
   }
