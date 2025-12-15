@@ -1,1739 +1,4546 @@
-<!-- ===========================
-     ЧАСТЬ 4 — ПОЛНЫЙ index.html
-     СКОПИРОВАЛ → СОХРАНИЛ → ОТКРЫЛ
-=========================== -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>ZALVO Biznes uchun</title>
-
+  <title>Zalvo Mini App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <style>
-    :root{
-      --bg:#0b1220;
-      --card:#0f1a2e;
-      --card2:#0d172a;
-      --muted:#9aa6bf;
-      --text:#eaf0ff;
-      --line:rgba(255,255,255,.08);
-      --accent:#6d5efc;
-      --accent2:#14b8a6;
-      --danger:#ef4444;
-      --good:#22c55e;
-      --shadow: 0 12px 30px rgba(0,0,0,.45);
-      --radius:18px;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family: -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,Segoe UI,Roboto,Arial,sans-serif;
-      background: radial-gradient(900px 500px at 20% 0%, rgba(109,94,252,.28), transparent 60%),
-                  radial-gradient(900px 500px at 80% 0%, rgba(20,184,166,.18), transparent 60%),
-                  var(--bg);
-      color:var(--text);
-      overflow-x:hidden;
-    }
-    a{color:inherit}
-    button,input,select,textarea{font:inherit}
-    .app{
-      width:100%;
-      max-width:520px;
-      margin:0 auto;
-      min-height:100vh;
-      padding-bottom:92px;
-      position:relative;
-    }
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+  }
 
-    /* ===== Top header ===== */
-    .topbar{
-      position:sticky; top:0; z-index:50;
-      padding: 14px 14px 12px;
-      backdrop-filter: blur(14px);
-      background: linear-gradient(to bottom, rgba(11,18,32,.92), rgba(11,18,32,.65));
-      border-bottom: 1px solid var(--line);
-    }
-    .topbar-row{display:flex; align-items:center; gap:10px;}
-    .brand{
-      display:flex; align-items:center; gap:10px;
-      min-width:0;
-    }
-    .logo{
-      width:34px; height:34px; border-radius:12px;
-      background: linear-gradient(135deg, var(--accent), #9b8cff);
-      display:grid; place-items:center;
-      box-shadow: 0 10px 22px rgba(109,94,252,.25);
-      font-weight:900;
-    }
-    .brand-title{
-      min-width:0;
-      line-height:1.05;
-    }
-    .brand-title b{
-      display:block;
-      font-size:15px;
-      letter-spacing:.2px;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-    .brand-title span{
-      display:block;
-      font-size:12px;
-      color:var(--muted);
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-    .topbar-actions{margin-left:auto; display:flex; gap:8px; align-items:center;}
-    .chip{
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.04);
-      color:var(--text);
-      border-radius: 14px;
-      padding: 8px 10px;
-      display:flex; align-items:center; gap:8px;
-      cursor:pointer;
-      transition:.15s;
-    }
-    .chip:active{transform:scale(.98)}
-    .chip small{color:var(--muted)}
-    .icon{
-      width:18px; height:18px; display:inline-grid; place-items:center;
-      opacity:.9;
-    }
+  body {
+    background: #f1f4ff;
+    color: #0f172a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
 
-    /* ===== Screens ===== */
-    .screen{display:none; padding:14px;}
-    .screen.active{display:block;}
+  .app {
+    background: #f9fafb;
+    width: 100%;
+    max-width: 480px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  }
 
-    .section-title{
-      font-size:14px;
-      margin: 10px 0 10px;
-      color:rgba(234,240,255,.92);
-      letter-spacing:.2px;
-    }
-    .hint{color:var(--muted); padding:14px; text-align:center}
+  /* HEADER */
+  .app-header {
+    padding: 12px 16px 10px;
+    background: #ffffff;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 
-    /* ===== Cards ===== */
-    .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 14px;
-      box-shadow: var(--shadow);
-    }
-    .card + .card{margin-top:12px}
+  .app-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
 
-    /* ===== Category Grid ===== */
-    .cat-grid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    .category-card{
-      text-align:left;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      border-radius: 16px;
+  .app-logo-small {
+    width: 45px;
+    height: 45px;
+    border-radius: 9px;
+  }
+
+  .app-title {
+    font-weight: 600;
+    font-size: 16px;
+    color: #0f172a;
+  }
+
+  .app-subtitle {
+    font-size: 12px;
+    color: #64748b;
+  }
+
+  /* SCREEN CONTAINER (основное объявление) */
+  .screens {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 12px 72px;
+  }
+
+  .screen {
+    display: none;
+  }
+  .screen.active {
+    display: block;
+  }
+
+  .screen-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  /* SEARCH + FILTER BUTTON */
+  .search-bar-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+    margin-bottom: 12px;
+    align-items: stretch;
+  }
+
+  .search-bar {
+    flex: 1;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.6);
+    font-size: 14px;
+    padding-left: 32px;
+    background: #ffffff
+      url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 5a6 6 0 014.472 9.972l3.278 3.278a1 1 0 01-1.414 1.414l-3.278-3.278A6 6 0 1111 5zm0 2a4 4 0 100 8 4 4 0 000-8z' fill='%2394a3b8'/%3E%3C/svg%3E")
+      no-repeat 10px center;
+    background-size: 16px;
+  }
+
+  .filters-btn {
+    border-radius: 14px;
+    border: 1px solid rgba(148, 163, 184, 0.6);
+    padding: 0 10px;
+    font-size: 13px;
+    background: #ffffff;
+    color: #1d4ed8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  /* QUICK ACTIONS */
+  .quick-actions-title {
+    font-size: 14px;
+    color: #64748b;
+    margin-bottom: 6px;
+  }
+
+  .primary-btn {
+    width: 100%;
+    border: none;
+    border-radius: 999px;
+    padding: 13px 16px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #ffffff;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+
+  /* ПРОМО-БАННЕР ПОД КНОПКОЙ */
+  .promo-banner {
+    margin: 8px 0 14px;
+    border-radius: 18px;
+    overflow: hidden;
+    background: #000;
+    cursor: pointer;
+  }
+
+  .promo-banner img {
+    display: block;
+    width: 100%;
+    height: 195px;
+    object-fit: cover;
+  }
+
+  .chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .chip {
+    border-radius: 999px;
+    padding: 7px 12px;
+    font-size: 13px;
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    background: #ffffff;
+    color: #0f172a;
+    cursor: pointer;
+  }
+  .chip.chip-filled {
+    background: #1d4ed8;
+    color: #ffffff;
+    border-color: transparent;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+  }
+
+  .section-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    margin-top: 4px;
+  }
+
+  /* POPULAR CATEGORIES */
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .category-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 10px 12px;
+    box-shadow: 0 3px 10px rgba(15, 23, 42, 0.06);
+    font-size: 14px;
+    cursor: pointer;
+    border: 1px solid transparent;
+  }
+
+  .category-card-title {
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+
+  .category-card-sub {
+    font-size: 12px;
+    color: #64748b;
+  }
+
+  .category-card.active {
+    border-color: #1d4ed8;
+    box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.3);
+    background: #eff6ff;
+  }
+
+  /* LIST (TILE) */
+  .ad-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .ad-card {
+    position: relative;
+    display: flex;
+    gap: 10px;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 10px;
+    box-shadow: 0 3px 10px rgba(15, 23, 42, 0.06);
+    cursor: pointer;
+    overflow: hidden;
+  }
+
+  .ad-card-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #fb923c, #f97316);
+    color: #ffffff;
+  }
+
+  .ad-card-stats-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 4px;
+    font-size: 11px;
+    color: #94a3b8;
+  }
+
+  .ad-card-views {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .ad-card-views::before {
+    content: "👁";
+    font-size: 11px;
+  }
+
+  .ad-list.grid-mode {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .ad-list.grid-mode .ad-card {
+    flex-direction: column;
+    padding: 8px;
+  }
+  .ad-list.grid-mode .ad-image {
+    width: 100%;
+    height: 120px;
+  }
+
+  .ad-image {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    flex-shrink: 0;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .ad-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .ad-title {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .ad-meta {
+    font-size: 12px;
+    color: #64748b;
+  }
+
+  .ad-price {
+    font-size: 14px;
+    font-weight: 600;
+    color: #16a34a;
+    margin-top: 2px;
+  }
+
+  .ad-photos-count {
+    font-size: 11px;
+    color: #64748b;
+    margin-top: 2px;
+  }
+
+  /* PROFILE / SETTINGS — Telegram style */
+#screen-profile {
+  padding: 0 0 16px;
+}
+
+/* верхняя часть с аватаром, именем, номером */
+.settings-header {
+  padding: 32px 16px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.settings-avatar {
+  width: 110px;
+  height: 110px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 12px;
+}
+
+.settings-name {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.settings-phone-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+}
+
+.settings-phone-link,
+.settings-username {
+  color: #1d4ed8;
+  text-decoration: none;
+}
+
+.settings-dot {
+  color: #6b7280;
+}
+
+/* белые карты, как в Telegram */
+.settings-card {
+  margin: 8px 12px 0;
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+}
+
+/* строка внутри карты */
+.settings-row {
+  width: 100%;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.settings-row + .settings-row {
+  border-top: 1px solid #e5e7eb;
+}
+
+.settings-row-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* квадратные иконки слева */
+.settings-row-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+/* цвета иконок под Telegram */
+.icon-photo     { background: #eff6ff; color: #1d4ed8; }
+.icon-profile   { background: #fee2e2; color: #b91c1c; }
+.icon-wallet    { background: #dbeafe; color: #1d4ed8; }
+.icon-fav       { background: #fef3c7; color: #f59e0b; }
+.icon-recent    { background: #dcfce7; color: #16a34a; }
+.icon-devices   { background: #ffedd5; color: #ea580c; }
+.icon-folders   { background: #e0f2fe; color: #0284c7; }
+.icon-bell      { background: #fee2e2; color: #b91c1c; }
+
+.settings-row-title {
+  font-size: 15px;
+}
+
+/* стрелка справа */
+.settings-row-arrow {
+  color: #cbd5f5;
+  font-size: 18px;
+}
+    
+  /* NEW AD FORM */
+  .back-link {
+    font-size: 13px;
+    color: #1d4ed8;
+    margin-bottom: 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .form-group {
+    margin-bottom: 10px;
+  }
+
+  .form-label {
+    font-size: 13px;
+    margin-bottom: 4px;
+    display: block;
+    color: #475569;
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid rgba(148, 163, 184, 0.6);
+    padding: 9px 10px;
+    font-size: 14px;
+    background: #ffffff;
+  }
+
+  .form-textarea {
+    resize: vertical;
+    min-height: 60px;
+  }
+
+  .hint {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-top: 2px;
+  }
+
+  .step-tag {
+    display: inline-block;
+    font-size: 11px;
+    padding: 3px 7px;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    margin-left: 4px;
+  }
+
+  .photos-preview-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-top: 6px;
+  }
+
+  .photo-thumb {
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #e5e7eb;
+    flex-shrink: 0;
+  }
+  .photo-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .hidden-input {
+    display: none;
+  }
+
+  /* SUCCESS SCREEN */
+  .success-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 999px;
+    background: #dcfce7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    margin: 12px auto;
+  }
+
+  .success-text-main {
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    margin-top: 6px;
+  }
+
+  .success-text-sub {
+    font-size: 13px;
+    color: #6b7280;
+    text-align: center;
+    margin-top: 4px;
+    margin-bottom: 16px;
+  }
+
+  /* Переопределяем .screens, чтобы дать запас под таб-бар */
+  .screens {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 12px 120px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* === iOS-style tab bar === */
+  .bottom-nav {
+    position: fixed;
+    bottom: 32px;
+    left: 0;
+    right: 0;
+    width: 100%;
+    padding: 4px 10px 6px;
+    background: transparent;
+    z-index: 50;
+    display: flex;
+    justify-content: center;
+  }
+
+  .bottom-nav-inner {
+  width: 100%;
+  max-width: 480px;
+
+  background: rgba(255, 255, 255, 0.45); /* было 0.96 → стало намного прозрачнее */
+
+  border-radius: 26px;
+
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.20);
+
+  padding: 6px 10px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+
+  backdrop-filter: blur(28px) saturate(180%); /* сильное стеклянное размытие */
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+}
+    
+  /* Нижнее меню — увеличенные иконки и текст */
+.nav-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  border-radius: 999px;
+
+  min-height: 64px;               /* больше высота */
+  padding: 6px 8px;               /* чуть больше отступы */
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 4px;                       /* больше расстояние между иконкой и текстом */
+
+  font-size: 13px;                /* текст больше */
+  color: #111827;
+
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  pointer-events: auto;
+}
+
+/* увеличиваем иконки */
+.nav-btn .icon {
+  font-size: 23px;                /* ***Иконка больше*** */
+  line-height: 1;
+  pointer-events: none;
+}
+
+.nav-btn span {
+  pointer-events: none;
+  font-weight: 500;               /* чуть чётче */
+}
+
+/* активная вкладка */
+.nav-btn.active {
+  background: #ffffff;
+  color: #007aff;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+}
+
+.nav-btn.active .icon {
+  color: #007aff;
+}
+
+  /* HEADER в карточке объявления */
+  .ad-view-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .ad-view-back-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    cursor: pointer;
+    font-size: 18px;
+  }
+
+  .ad-view-header-title {
+    font-size: 17px;
+    font-weight: 600;
+  }
+
+  .ad-view-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 12px;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+  }
+
+  #detailMainImage {
+    width: 100%;
+    height: 260px;
+    border-radius: 16px;
+    background: #e5e7eb;
+    margin-bottom: 12px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    display: flex;
+  }
+
+  .detail-main-slide {
+    min-width: 100%;
+    height: 100%;
+    flex-shrink: 0;
+    scroll-snap-align: center;
+    background-size: cover;
+    background-position: center;
+    border-radius: 16px;
+  }
+
+  .detail-thumbs {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    margin-bottom: 10px;
+  }
+
+  .detail-thumb {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    background: #e5e7eb;
+    background-size: cover;
+    background-position: center;
+    flex-shrink: 0;
+  }
+
+  .ad-view-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 8px;
+    margin-bottom: 4px;
+  }
+
+  .ad-view-title-box {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ad-view-icon-row {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .icon-circle-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    cursor: pointer;
+    padding: 0;
+  }
+  .icon-circle-btn:active {
+    transform: scale(0.96);
+  }
+
+  .ad-view-main-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .ad-view-price {
+    font-size: 18px;
+    font-weight: 700;
+    color: #16a34a;
+    margin-bottom: 2px;
+  }
+
+  .ad-view-meta {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 2px;
+  }
+
+  .ad-view-description-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 8px;
+    margin-bottom: 4px;
+  }
+
+  .ad-view-description {
+    font-size: 14px;
+    color: #374151;
+    margin-bottom: 8px;
+  }
+
+  .ad-view-seller-card {
+    margin-top: 8px;
+    padding: 10px;
+    border-radius: 16px;
+    background: #f9fafb;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+
+  .ad-view-seller-card:hover {
+    background: #eef2ff;
+  }
+
+  .ad-view-seller-info-main {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .ad-view-seller-info-sub {
+    font-size: 12px;
+    color: #6b7280;
+  }
+
+  .ad-view-seller-status {
+    font-size: 12px;
+    color: #16a34a;
+    margin-top: 2px;
+  }
+
+  .ad-view-actions-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+    align-items: stretch;
+  }
+
+  .call-btn,
+  .msg-btn {
+    flex: 1;
+    padding: 13px 0;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 999px;
+    text-align: center;
+    text-decoration: none;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .call-btn {
+    background: #22c55e;
+  }
+
+  .msg-btn {
+    background: #3b82f6;
+  }
+
+  .similar-section {
+    margin-top: 16px;
+  }
+
+  .similar-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .similar-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .similar-card {
+    display: flex;
+    gap: 8px;
+    padding: 8px;
+    border-radius: 12px;
+    background: #f9fafb;
+    cursor: pointer;
+  }
+
+  .similar-image {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    background: #e5e7eb;
+    background-size: cover;
+    background-position: center;
+    flex-shrink: 0;
+  }
+
+  .similar-content-title {
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .similar-content-meta {
+    font-size: 11px;
+    color: #6b7280;
+  }
+
+  .similar-content-price {
+    font-size: 13px;
+    font-weight: 600;
+    color: #16a34a;
+  }
+
+  /* Лайтбокс */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.9);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
+
+  .lightbox.visible {
+    display: flex;
+  }
+
+  .lightbox img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  .lightbox-close-hint {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 12px;
+  }
+
+  .lightbox-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    border: none;
+    background: rgba(15, 23, 42, 0.6);
+    color: #ffffff;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .lightbox-prev {
+    left: 12px;
+  }
+
+  .lightbox-next {
+    right: 12px;
+  }
+
+  /* ФИЛЬТРЫ ЭКРАН */
+  .filters-section-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 10px 0 6px;
+  }
+
+  .filters-actions-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  /* Promo screen */
+  .promo-screen-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 14px;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+    margin-bottom: 14px;
+  }
+
+  .promo-screen-subtitle {
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 10px;
+  }
+
+  .promo-plan-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .promo-plan {
+    border-radius: 16px;
+    padding: 10px 12px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .promo-plan-main {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .promo-plan-name {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .promo-plan-desc {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 2px;
+  }
+
+  .promo-plan-price {
+    font-size: 14px;
+    font-weight: 600;
+    color: #16a34a;
+    white-space: nowrap;
+  }
+
+  .promo-plan-tag {
+    display: inline-block;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    margin-top: 4px;
+  }
+
+  .promo-help-text {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-top: 10px;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: 80px;
+    transform: translateX(-50%) translateY(120%);
+    opacity: 0;
+    transition: all 0.25s ease-out;
+    max-width: 460px;
+    width: calc(100% - 40px);
+    z-index: 9998;
+  }
+
+  .toast-inner {
+    background: #0f172a;
+    color: #f9fafb;
+    border-radius: 999px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.4);
+  }
+
+  .toast-icon {
+    font-size: 16px;
+  }
+
+  .toast-text-main {
+    font-weight: 600;
+  }
+
+  .toast-text-sub {
+    font-size: 12px;
+    color: #e5e7eb;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Chat */
+  .chat-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .chat-header-title {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .chat-header-sub {
+    font-size: 12px;
+    color: #64748b;
+  }
+
+  .chat-messages {
+    background: #e5e7eb;
+    border-radius: 16px;
+    padding: 8px;
+    max-height: 420px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .chat-message {
+    max-width: 80%;
+    padding: 7px 10px;
+    border-radius: 14px;
+    font-size: 13px;
+    line-height: 1.35;
+    background: #ffffff;
+    align-self: flex-start;
+  }
+
+  .chat-message.me {
+    background: #1d4ed8;
+    color: #ffffff;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+  }
+
+  .chat-message.other {
+    background: #ffffff;
+    color: #0f172a;
+    border-bottom-left-radius: 4px;
+  }
+
+  .chat-input-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .chat-input {
+    flex: 1;
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.7);
+    padding: 8px 10px;
+    font-size: 14px;
+    background: #ffffff;
+  }
+
+  .chat-send-btn {
+    flex-shrink: 0;
+    border-radius: 999px;
+    border: none;
+    padding: 9px 12px;
+    font-size: 14px;
+    background: #1d4ed8;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .history-empty-text {
+    font-size: 13px;
+    color: #94a3b8;
+    margin-top: 6px;
+  }
+
+  /* Admin */
+  .admin-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 14px;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+    margin-bottom: 14px;
+  }
+
+  .admin-section-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .admin-stat-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .admin-stat {
+    flex: 1;
+    background: #f9fafb;
+    border-radius: 16px;
+    padding: 8px 10px;
+    border: 1px solid #e5e7eb;
+  }
+
+  .admin-stat-number {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1d4ed8;
+  }
+
+  .admin-stat-label {
+    font-size: 12px;
+    color: #6b7280;
+  }
+
+  .admin-list {
+    margin-top: 4px;
+  }
+
+  .admin-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 13px;
+  }
+
+  .admin-list-item:last-child {
+    border-bottom: none;
+  }
+
+  .admin-list-label {
+    color: #475569;
+  }
+
+  .admin-list-value {
+    font-weight: 600;
+    color: #0f172a;
+  }
+
+  .admin-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    background: #fee2e2;
+    color: #b91c1c;
+  }
+
+    .settings-list {
+  margin-top: 8px;
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(15, 23, 42, 0.06);
+}
+
+.settings-item {
+  width: 100%;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  border: none;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  cursor: pointer;
+  text-align: left;
+}
+
+.settings-item:last-child {
+  border-bottom: none;
+}
+
+.settings-item-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.settings-item-icon {
+  font-size: 18px;
+}
+
+.settings-item-chevron {
+  font-size: 14px;
+  color: #cbd5e1;
+}
+
+    /* ===== Профиль / Настройки (в стиле Телеграма) ===== */
+
+.settings-profile-header {
+  padding: 24px 16px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.settings-avatar-big {
+  width: 96px;
+  height: 96px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 12px;
+}
+
+.settings-name {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.settings-username {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.settings-link {
+  color: #1d4ed8;
+  text-decoration: none;
+}
+
+.settings-card {
+  margin: 10px 12px 0;
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+}
+
+.settings-row {
+  width: 100%;
+  padding: 13px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: transparent;
+  border: none;
+  border-top: 1px solid #f1f5f9;
+  font: inherit;
+  cursor: pointer;
+}
+
+.settings-row:first-child {
+  border-top: none;
+}
+
+.settings-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 19px;
+}
+
+.settings-title {
+  flex: 1;
+  text-align: left;
+  font-size: 15px;
+  color: #111827;
+}
+
+.settings-arrow {
+  font-size: 16px;
+  color: #cbd5f5;
+}
+
+    /* === ZALVO BIZNES UCHUN SCREEN === */
+
+#screen-business {
+  padding: 12px 16px 24px;
+}
+
+.business-header {
+  text-align: left;
+  margin-bottom: 16px;
+}
+
+.business-icon-wrap {
+  margin: 10px 0 12px;
+  display: flex;
+  justify-content: center;
+}
+
+.business-icon-inner {
+  width: 96px;
+  height: 96px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 20%, #a855f7, #6366f1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  color: #ffffff;
+  box-shadow: 0 16px 40px rgba(79, 70, 229, 0.35);
+}
+
+.business-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 6px;
+  text-align: center; 
+}
+
+.business-subtitle {
+  font-size: 14px;
+  color: #6b7280;
+  text-align: center;
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+/* карточка с преимуществами */
+.business-card {
+  margin-top: 16px;
+  background: #ffffff;
+  border-radius: 22px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  padding: 10px 0 8px;
+}
+
+.business-feature-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  gap: 10px;
+}
+
+.business-divider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 0 14px;
+}
+
+.business-feature-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #ffffff;
+}
+
+/* цвета иконок */
+.business-feature-icon-orange {
+  background: #f97316;
+}
+.business-feature-icon-blue {
+  background: #3b82f6;
+}
+.business-feature-icon-pink {
+  background: #ec4899;
+}
+.business-feature-icon-gold {
+  background: #f59e0b;
+}
+
+.business-feature-main {
+  flex: 1;
+}
+
+.business-feature-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.business-feature-sub {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* beta text */
+.business-beta {
+  font-size: 13px;
+  color: #4b5563;
+  padding: 10px 14px 12px;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 2px;
+}
+
+/* CTA */
+.business-cta {
+  margin-top: 18px;
+}
+
+.business-cta-btn {
+  width: 100%;
+  border: none;
+  border-radius: 999px;
+  padding: 13px 16px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  box-shadow: 0 10px 26px rgba(79, 70, 229, 0.4);
+  cursor: pointer;
+}
+
+.business-cta-btn:active {
+  transform: scale(0.97);
+}
+
+.business-cta-hint {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #9ca3af;
+  text-align: center;
+}
+
+ /* --- БАЗОВЫЙ ФОН ДЛЯ ЭКРАНА МАГАЗИНА --- */
+.store-page {
+  background: #f5f6fa;
+  min-height: 100vh;
+  padding: 0 0 16px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* центрируем всё по экрану */
+  gap: 12px;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+}
+
+/* --- ОБЛОЖКА С ФОНОМ ТЕЛЕФОНОВ --- */
+.store-cover {
+  position: relative;
+  height: 190px;
+  width: 100vw;            /* ширина по экрану */
+  max-width: 480px;        /* чтобы на больших экранах не разъезжалось */
+  border-radius: 22px;
+  overflow: visible;
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.16);
+  background: #e5e7eb;
+}
+
+.store-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+    
+/* --- АВАТАР С ЛОГОТИПОМ --- */
+.store-avatar {
+  position: absolute;
+  left: 50%;
+  bottom: -40px;           /* отрегулировано, чтобы НЕ закрывать текст */
+  transform: translateX(-50%);
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: #ffffff;
+  padding: 6px;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.28);
+  z-index: 2;
+}
+
+.store-avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* --- ОБЩИЙ СТИЛЬ КАРТОЧЕК (iOS card view) --- */
+.store-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 16px 16px;
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.10);
+  width: calc(100vw - 24px); /* ширина = экран - 12px слева/справа */
+  max-width: 472px;          /* 480 - 8 для красоты */
+}
+
+/* --- КАРТОЧКА ПРОФИЛЯ МАГАЗИНА --- */
+.store-profile {
+  margin-top: -14px;         /* слегка залезаем на фон */
+  padding-top: 54px;         /* даём место под аватарку */
+  text-align: center;
+}
+
+.store-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.store-subs {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.store-rating {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 12px;
+}
+
+.store-rating-stars {
+  color: #fbbf24;
+  letter-spacing: 2px;
+  font-size: 14px;
+}
+
+.store-rating-count {
+  color: #6b7280;
+}
+
+/* --- РЯД КНОПОК: OBUNA, YOZISH, ... --- */
+.store-actions {
+  display: grid;
+  grid-template-columns: 1.3fr 1.3fr 0.6fr;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.store-btn {
+  border-radius: 999px;
+  padding: 10px 0;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.store-btn-primary {
+  background: #5a4bff;
+  color: #ffffff;
+}
+
+.store-btn-secondary {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.store-btn-more {
+  background: #f3f4f6;
+  color: #111827;
+  font-size: 20px;
+}
+
+/* --- КАСТОМНЫЕ ИКОНКИ --- */
+.icon-pill {
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: #ffffff;
+}
+
+.icon-pill-bell { background: #5a4bff; }
+.icon-pill-msg  { background: #10b981; }
+
+/* --- КАРТОЧКА КОНТАКТОВ --- */
+.store-section-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.store-contacts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: #111827;
+}
+
+.store-contact-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.store-contact-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: #ffffff;
+}
+
+.store-contact-icon.phone { background: #5a4bff; }
+.store-contact-icon.tg    { background: #1d9bf0; }
+.store-contact-icon.ig    { background: #e11d48; }
+.store-contact-icon.loc   { background: #f97316; }
+.store-contact-icon.clock { background: #10b981; }
+
+.store-contact-row a {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.store-contact-row small {
+  color: #6b7280;
+}
+
+.store-about-text {
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+/* --- БЛОК E‘LONLAR: ЗАГОЛОВОК + ПОИСК + ФИЛЬТР --- */
+.store-ads-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.store-ads-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.store-search-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.store-search-input {
+  flex: 1;
+  background: #f3f4f6;
+  border-radius: 999px;
+  border: none;
+  padding: 9px 12px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.store-search-input input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 13px;
+  width: 100%;
+}
+
+.store-search-input span {
+  color: #6b7280;
+}
+
+.store-filter-btn {
+  width: 40px;
+  border-radius: 999px;
+  background: #f3f4f6;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+/* --- КАРТОЧКА ОБЪЯВЛЕНИЯ --- */
+.store-ad-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 10px;
+  display: flex;
+  gap: 10px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.10);
+}
+
+.store-ad-img {
+  width: 90px;
+  height: 90px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #e5e7eb;
+  flex-shrink: 0;
+}
+
+.store-ad-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.store-ad-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.store-ad-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 2px;
+}
+
+.store-ad-price {
+  font-size: 15px;
+  font-weight: 700;
+  color: #16a34a;
+  margin-bottom: 4px;
+}
+
+.store-ad-meta {
+  font-size: 11px;
+  color: #6b7280;
+  display: flex;
+  justify-content: space-between;
+}
+
+    /* ===== GRID объявлений внутри магазина ===== */
+#screen-my-shop .ad-list{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+    /* карточка объявления в магазине */
+#screen-my-shop .ad-card{
+  flex-direction: column;
+  padding: 8px;
+  border-radius: 16px;
+}
+
+    #screen-my-shop .ad-image{
+  width: 100%;
+  aspect-ratio: 1 / 1;   /* 🔥 квадрат */
+  height: auto;
+  border-radius: 12px;
+  margin-bottom: 6px;
+}
+
+    #screen-my-shop .ad-title{
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+#screen-my-shop .ad-price{
+  font-size: 14px;
+  font-weight: 700;
+}
+
+#screen-my-shop .ad-meta{
+  font-size: 11px;
+}
+    
+@keyframes sheetUp {
+  from { transform: translateY(40px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+  /* На маленьких экранах, чтобы не прилипало к бокам */
+  @media (max-width: 480px) {
+    .store-page {
       padding: 12px;
-      cursor:pointer;
-      transition:.15s;
-      box-shadow: 0 10px 22px rgba(0,0,0,.25);
     }
-    .category-card:active{transform:scale(.99)}
-    .category-card-title{font-weight:800; font-size:14px}
-    .category-card-sub{font-size:12px; color:var(--muted); margin-top:6px; line-height:1.2}
+  }
 
-    /* ===== Ads list ===== */
-    .ad-list{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-      margin-top: 10px;
-    }
-    .ad-list.grid-mode{
-      grid-template-columns: 1fr 1fr;
-    }
-    .ad-card{
-      position:relative;
-      border-radius: 18px;
-      overflow:hidden;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      cursor:pointer;
-      box-shadow: 0 14px 28px rgba(0,0,0,.28);
-    }
-    .ad-card:active{transform:scale(.997)}
-    .ad-card-thumb{
-      width:100%;
-      height: 140px;
-      object-fit: cover;
-      display:block;
-      filter:saturate(1.05) contrast(1.05);
-    }
-    .ad-card-body{padding: 10px 10px 12px}
-    .ad-card-title{
-      font-size:13px; font-weight:800;
-      line-height:1.2;
-      min-height: 32px;
-      display:-webkit-box;
-      -webkit-line-clamp:2;
-      -webkit-box-orient:vertical;
-      overflow:hidden;
-    }
-    .ad-card-price{
-      margin-top:6px;
-      font-weight:900;
-      letter-spacing:.2px;
-    }
-    .ad-card-meta{
-      margin-top:8px;
-      display:flex;
-      gap:6px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
-    .badge{
-      font-size:11px;
-      color:rgba(234,240,255,.92);
-      padding: 5px 8px;
-      border-radius: 999px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-    }
-    .badge.usd{border-color: rgba(109,94,252,.35); background: rgba(109,94,252,.12)}
-    .badge.good{border-color: rgba(34,197,94,.35); background: rgba(34,197,94,.12)}
-    .ad-card-top{
-      position:absolute; top:10px; left:10px;
-      background: rgba(34,197,94,.16);
-      border:1px solid rgba(34,197,94,.35);
-      padding:6px 9px;
-      border-radius: 999px;
-      font-weight:900;
-      font-size:11px;
-      letter-spacing:.6px;
-    }
-    .ad-card-fav{
-      position:absolute; top:10px; right:10px;
-      width:36px; height:36px;
-      border-radius: 999px;
-      border:1px solid var(--line);
-      background: rgba(11,18,32,.55);
-      backdrop-filter: blur(10px);
-      color:var(--text);
-      cursor:pointer;
-      display:grid; place-items:center;
-      font-size:16px;
-    }
-    .ad-card-fav:active{transform:scale(.96)}
+    /* Обёртка, чтобы кнопка была над фоном магазина */
+.store-back-wrapper {
+  position: relative;
+  z-index: 3;
+  padding: 16px 0 0 16px; /* отступ от верхнего края и слева */
+}
 
-    /* ===== Search bar ===== */
-    .searchbar{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      margin-top:12px;
-    }
-    .searchbar input{
-      width:100%;
-      padding: 12px 14px;
-      border-radius: 14px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      color:var(--text);
-      outline:none;
-    }
-    .btn{
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.04);
-      color:var(--text);
-      border-radius: 14px;
-      padding: 12px 12px;
-      cursor:pointer;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-      transition:.15s;
-      user-select:none;
-    }
-    .btn:active{transform:scale(.99)}
-    .btn.primary{
-      background: linear-gradient(135deg, var(--accent), #9b8cff);
-      border-color: rgba(255,255,255,.14);
-      font-weight:900;
-    }
-    .btn.danger{
-      background: rgba(239,68,68,.12);
-      border-color: rgba(239,68,68,.35);
-      color: #ffd2d2;
-    }
-    .btn.slim{padding:10px 12px; border-radius: 12px}
+/* Кнопка назад в стиле iOS */
+.store-back-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-    /* ===== Detail ===== */
-    .detail-hero{
-      border-radius: 18px;
-      overflow:hidden;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      box-shadow: 0 14px 30px rgba(0,0,0,.35);
-    }
-    .detail-hero img{width:100%; height:220px; object-fit:cover; display:block}
-    .detail-thumbs{
-      display:flex; gap:8px; margin-top:10px; overflow:auto; padding-bottom:2px;
-    }
-    .detail-thumbs img{
-      width:74px; height:52px; object-fit:cover; border-radius: 12px;
-      border:1px solid var(--line);
-      opacity:.95;
-      cursor:pointer;
-    }
-    .detail-title{font-size:16px; font-weight:900; margin: 12px 0 6px}
-    .detail-price{font-size:18px; font-weight:1000}
-    .detail-meta{color:var(--muted); margin-top:6px; font-size:12px}
-    .detail-desc{
-      margin-top:12px;
-      white-space:pre-wrap;
-      color: rgba(234,240,255,.92);
-      line-height:1.35;
-      font-size:13px;
-    }
-    .seller-row{
-      margin-top:12px;
-      display:flex; align-items:center; gap:10px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      padding: 12px;
-      border-radius: 16px;
-    }
-    .seller-avatar{
-      width:42px; height:42px; border-radius: 16px;
-      background: linear-gradient(135deg, rgba(20,184,166,.8), rgba(109,94,252,.7));
-      display:grid; place-items:center;
-      font-weight:1000;
-    }
-    .seller-info{min-width:0}
-    .seller-info b{display:block; font-size:14px}
-    .seller-info span{display:block; color:var(--muted); font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-    .seller-status{margin-left:auto; font-size:11px; padding:6px 10px; border-radius:999px; border:1px solid var(--line); background: rgba(255,255,255,.03)}
-    .actions-row{
-      display:flex; gap:10px; margin-top:12px;
-    }
-    .actions-row .btn{flex:1}
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.18);
 
-    /* ===== Chat ===== */
-    .chat-head{
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      border-radius: 16px;
-      padding: 12px;
-      display:flex; align-items:center; gap:10px;
-    }
-    .chat-head .back{width:38px; height:38px; border-radius: 14px}
-    .chat-title{min-width:0}
-    .chat-title b{display:block}
-    .chat-title span{display:block; color:var(--muted); font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-    .chat-body{
-      margin-top:12px;
-      height: 54vh;
-      overflow:auto;
-      padding: 10px;
-      border-radius: 16px;
-      border:1px solid var(--line);
-      background: rgba(0,0,0,.18);
-    }
-    .msg-bubble{
-      max-width: 82%;
-      padding: 10px 12px;
-      border-radius: 16px;
-      margin: 8px 0;
-      font-size: 13px;
-      line-height:1.35;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.04);
-    }
-    .msg-me{
-      margin-left:auto;
-      background: rgba(109,94,252,.14);
-      border-color: rgba(109,94,252,.35);
-    }
-    .msg-them{
-      background: rgba(20,184,166,.10);
-      border-color: rgba(20,184,166,.28);
-    }
-    .chat-input{
-      margin-top:10px;
-      display:flex; gap:10px;
-    }
-    .chat-input input{
-      width:100%;
-      padding: 12px 14px;
-      border-radius: 14px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      color:var(--text);
-      outline:none;
-    }
+  cursor: pointer;
+}
 
-    /* ===== Profile ===== */
-    .profile-head{
-      display:flex; align-items:center; gap:12px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      padding: 14px;
-      border-radius: 18px;
-    }
-    .profile-avatar{
-      width:52px; height:52px; border-radius: 18px;
-      background: linear-gradient(135deg, rgba(109,94,252,.85), rgba(20,184,166,.65));
-      display:grid; place-items:center;
-      font-weight:1000;
-      font-size:18px;
-    }
-    .profile-info b{display:block; font-size:15px}
-    .profile-info span{display:block; color:var(--muted); font-size:12px}
-    .profile-actions{
-      margin-top:12px;
-      display:grid; gap:10px;
-    }
+/* Блюр, если поддерживается */
+@supports (backdrop-filter: blur(16px)) {
+  .store-back-button {
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(16px);
+  }
+}
 
-    /* ===== Store ===== */
-    .store-hero{
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      border-radius: 18px;
-      padding: 14px;
-      display:flex;
-      align-items:center;
-      gap:12px;
-    }
-    .store-badge{
-      margin-left:auto;
-      display:flex; align-items:center; gap:8px;
-    }
-    .dots-btn{
-      width:40px; height:40px;
-      border-radius: 14px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.04);
-      cursor:pointer;
-      display:grid; place-items:center;
-    }
+.store-back-icon {
+  width: 18px;
+  height: 18px;
+  fill: #111827;
+}
 
-    .work-hours{
-      margin-top:12px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      border-radius: 18px;
-      padding: 12px;
-    }
-    .work-hours .row{
-      display:flex;
-      gap:10px;
-      overflow:auto;
-      padding-bottom:4px;
-    }
-    .wh-chip{
-      flex:0 0 auto;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      padding: 10px 12px;
-      border-radius: 14px;
-      min-width: 132px;
-    }
-    .wh-chip b{display:block; font-size:12px}
-    .wh-chip span{display:block; color:var(--muted); font-size:11px; margin-top:4px}
+    /* ===== iOS BACK BUTTON (global) ===== */
+.ios-back-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: none;
+  padding: 0;
+  display: none;              /* скрыта по умолчанию */
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.14);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+@supports (backdrop-filter: blur(16px)) {
+  .ios-back-btn {
+    background: rgba(255, 255, 255, 0.70);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+}
+.ios-back-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: #111827;
+}
+.ios-back-btn:active {
+  transform: scale(0.96);
+}
 
-    /* ===== Admin ===== */
-    .admin-stats{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:10px;
-      margin-top:10px;
-    }
-    .stat{
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      border-radius: 18px;
-      padding: 14px;
-    }
-    .stat b{display:block; font-size:22px}
-    .stat span{display:block; color:var(--muted); font-size:12px}
+/* маленький отступ между кнопкой назад и логотипом */
+.app-header-left {
+  gap: 10px;
+}
 
-    .admin-item{
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      border-radius: 16px;
-      padding: 12px;
-      margin-top:10px;
-    }
-    .admin-item-title{font-weight:900}
-    .admin-item-sub{color:var(--muted); font-size:12px; margin-top:4px}
+/* ===== iOS-like slide animation on back ===== */
+.screens.ios-back-anim {
+  transition: transform 0.22s ease-out, opacity 0.22s ease-out;
+  transform: translateX(22px);
+  opacity: 0.92;
+}
 
-    /* ===== Filters ===== */
-    .form{
-      display:grid; gap:10px;
-    }
-    .field label{
-      display:block;
-      color:var(--muted);
-      font-size:12px;
-      margin: 0 0 6px 2px;
-    }
-    .field input, .field select{
-      width:100%;
-      padding: 12px 14px;
-      border-radius: 14px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      color:var(--text);
-      outline:none;
-    }
-    .checkrow{
-      display:flex; align-items:center; gap:10px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      border-radius: 14px;
-      padding: 12px 14px;
-    }
-    .checkrow input{width:18px; height:18px}
+/* ===== STORE BOTTOM SHEET (вернул то, что ты случайно “сломал”) ===== */
+.store-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.35);
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 999;
+}
 
-    /* ===== Add Ad ===== */
-    textarea{
-      width:100%;
-      padding: 12px 14px;
-      border-radius: 14px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      color:var(--text);
-      outline:none;
-      resize:vertical;
-      min-height: 110px;
-    }
-    .photo-preview{
-      width: 72px;
-      height: 54px;
-      object-fit: cover;
-      border-radius: 12px;
-      border:1px solid var(--line);
-    }
-    .photos-row{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px}
+.store-sheet-backdrop.active {
+  display: flex;
+}
 
-    /* ===== Bottom Nav ===== */
-    .bottom-nav{
-      position:fixed;
-      left:50%;
-      transform:translateX(-50%);
-      bottom: 12px;
-      width: calc(100% - 22px);
-      max-width: 520px;
-      border-radius: 22px;
-      border:1px solid var(--line);
-      background: rgba(11,18,32,.70);
-      backdrop-filter: blur(18px);
-      box-shadow: 0 18px 38px rgba(0,0,0,.45);
-      padding: 10px 10px;
-      display:flex;
-      gap: 8px;
-      z-index:60;
-    }
-    .nav-btn{
-      flex:1;
-      border-radius: 18px;
-      border:1px solid transparent;
-      background: transparent;
-      color: rgba(234,240,255,.85);
-      padding: 10px 8px;
-      cursor:pointer;
-      display:flex; flex-direction:column;
-      align-items:center; gap:4px;
-      font-size:11px;
-    }
-    .nav-btn .ico{font-size:18px; line-height:1}
-    .nav-btn.active{
-      background: rgba(109,94,252,.16);
-      border-color: rgba(109,94,252,.25);
-      color: #fff;
-    }
+.store-sheet {
+  width: 100%;
+  max-width: 480px;
+  background: #ffffff;
+  border-radius: 24px 24px 0 0;
+  padding: 10px 16px 18px;
+  box-shadow: 0 -10px 30px rgba(15, 23, 42, 0.25);
+  animation: sheetUp 0.18s ease-out;
+}
 
-    /* ===== Toast ===== */
-    .toast{
-      position:fixed;
-      left:50%;
-      transform:translateX(-50%);
-      top: 16px;
-      width: calc(100% - 22px);
-      max-width:520px;
-      border-radius: 18px;
-      border:1px solid var(--line);
-      background: rgba(11,18,32,.78);
-      backdrop-filter: blur(16px);
-      box-shadow: 0 16px 34px rgba(0,0,0,.45);
-      padding: 12px 12px;
-      display:flex; align-items:center; gap:10px;
-      opacity:0; pointer-events:none;
-      transition:.18s;
-      z-index:100;
-    }
-    .toast.show{opacity:1; pointer-events:auto}
-    .toast .ticon{
-      width:38px; height:38px; border-radius: 16px;
-      display:grid; place-items:center;
-      background: rgba(255,255,255,.06);
-      border:1px solid var(--line);
-      font-size:18px;
-    }
-    .toast b{display:block}
-    .toast span{display:block; color:var(--muted); font-size:12px; margin-top:2px}
+.store-sheet-handle {
+  width: 40px;
+  height: 4px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  margin: 4px auto 10px;
+}
 
-    /* ===== Lightbox ===== */
-    .lightbox{
-      position:fixed; inset:0;
-      background: rgba(0,0,0,.72);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      z-index:120;
-      padding: 18px;
-    }
-    .lightbox.show{display:flex}
-    .lightbox-inner{
-      width:100%;
-      max-width:520px;
-      border-radius: 20px;
-      overflow:hidden;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(11,18,32,.9);
-      box-shadow: 0 20px 50px rgba(0,0,0,.55);
-    }
-    .lightbox-inner img{
-      width:100%;
-      height: 62vh;
-      object-fit:contain;
-      display:block;
-      background: rgba(0,0,0,.25);
-    }
-    .lightbox-controls{
-      display:flex;
-      gap:10px;
-      padding: 10px;
-      border-top:1px solid rgba(255,255,255,.10);
-    }
-    .lightbox-controls .btn{flex:1}
+.store-sheet-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
-    /* ===== Store Sheet (3 dots menu) ===== */
-    .sheet-backdrop{
-      position:fixed; inset:0;
-      background: rgba(0,0,0,.55);
-      display:none;
-      z-index:110;
-      padding: 16px;
-      align-items:flex-end;
-      justify-content:center;
-    }
-    .sheet-backdrop.show{display:flex}
-    .sheet{
-      width:100%;
-      max-width:520px;
-      border-radius: 22px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(11,18,32,.92);
-      backdrop-filter: blur(16px);
-      box-shadow: 0 20px 50px rgba(0,0,0,.55);
-      padding: 12px;
-    }
-    .sheet .sheet-btn{
-      width:100%;
-      text-align:left;
-      padding: 12px 12px;
-      border-radius: 16px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      color: var(--text);
-      cursor:pointer;
-      margin-top:10px;
-      display:flex; align-items:center; gap:10px;
-    }
-    .sheet .sheet-btn:active{transform:scale(.995)}
-    .sheet .sheet-btn.danger{
-      background: rgba(239,68,68,.12);
-      border-color: rgba(239,68,68,.30);
-    }
+.store-sheet-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  color: #111827;
+  padding: 10px 6px;
+  border-radius: 12px;
+}
 
-    /* ===== Small responsive ===== */
-    @media (max-width:380px){
-      .ad-card-thumb{height:128px}
-      .detail-hero img{height:200px}
+.store-sheet-item:active {
+  background: #f3f4f6;
+}
+
+.store-sheet-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  color: #ffffff;
+}
+
+.store-sheet-icon.block { background: #6b7280; }
+.store-sheet-icon.share { background: #2563eb; }
+.store-sheet-icon.report { background: #ef4444; }
+
+    /* iOS-style secondary / outline button */
+.outline-btn {
+  width: 100%;
+  border-radius: 999px;
+  padding: 13px 16px;
+  font-size: 15px;
+  font-weight: 500;
+
+  background: #f3f4f6;        /* светло-серый как iOS */
+  color: #111827;
+
+  border: 1px solid #e5e7eb;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.outline-btn:active {
+  transform: scale(0.97);
+  background: #e5e7eb;
+}
+
+    /* Нижний бар не должен перехватывать клики по экрану */
+.bottom-nav {
+  pointer-events: none;
+}
+
+/* Но сами кнопки должны оставаться кликабельными */
+.bottom-nav-inner,
+.nav-btn {
+  pointer-events: auto;
+}
+
+    .filters-actions-row {
+  position: relative;
+  z-index: 100;
+}
+    /* toast не перехватывает клики, даже когда он hidden */
+.toast {
+  pointer-events: none;
+}
+
+    /* --- РЯД КНОПОК: OBUNA (big) + YOZISH (icon) + … (icon) --- */
+.store-actions{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  flex-wrap: nowrap;
+}
+
+.store-btn{
+  height: 46px;
+  border-radius: 999px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* большая кнопка */
+.store-btn-primary{
+  flex: 1;
+  min-width: 0;
+  padding: 0 16px;
+  background: #5a4bff;
+  color: #fff;
+}
+
+/* маленькие иконки */
+.store-btn-icon{
+  width: 46px;
+  padding: 0;
+  background: #f3f4f6;
+  color: #111827;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* чтобы иконка внутри не ловила клики */
+.store-btn-icon span,
+.store-btn-primary span{
+  pointer-events: none;
+}
+    
+  @media (max-width: 480px) {
+    body {
+      align-items: stretch;
     }
+    .app {
+      border-radius: 0;
+      box-shadow: none;
+    }
+  }
   </style>
 </head>
-
 <body>
   <div class="app">
-
-    <!-- TOPBAR -->
-    <div class="topbar">
-      <div class="topbar-row">
-        <div class="brand">
-          <div class="logo">Z</div>
-          <div class="brand-title">
-            <b>Zalvo biznes uchun</b>
-            <span>Mini App • Marketplace</span>
-          </div>
-        </div>
-
-        <div class="topbar-actions">
-          <button class="chip" id="toggleViewBtn" title="View">
-            <span class="icon">🔳</span><small>View</small>
-          </button>
-          <button class="chip" id="createAdBtn" title="Add">
-            <span class="icon">➕</span><small>Add</small>
-          </button>
+    <!-- HEADER -->
+    <header class="app-header">
+      <div class="app-header-left">
+        <img src="zalvo-logo.png" alt="MarketHub" class="app-logo-small" />
+        <div>
+          <div class="app-title">Zalvo</div>
+          <div class="app-subtitle">Uzbekiston · elonlari</div>
         </div>
       </div>
-    </div>
+    </header>
 
-    <!-- ===== SCREENS ===== -->
+    <!-- SCREENS -->
+    <main class="screens">
 
-    <!-- HOME -->
-    <section class="screen" id="home">
-      <div class="section-title">Kategoriyalar</div>
-      <div class="cat-grid" id="categoryGrid"></div>
-
-      <div class="section-title" style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
-        <span>Yangi e’lonlar</span>
-        <button class="btn slim" id="openFiltersBtn">🎛️ Filtr</button>
-      </div>
-
-      <div class="ad-list" id="homeAdList"></div>
-    </section>
-
-    <!-- SEARCH -->
-    <section class="screen" id="search">
-      <div class="searchbar">
-        <input id="searchInput" placeholder="Qidirish: telefon, mashina, uy..." />
-        <button class="btn" id="openFiltersBtn2" title="Filters">🎛️</button>
-      </div>
-      <div class="ad-list grid-mode" id="searchAdList"></div>
-    </section>
-
-    <!-- FAVORITES -->
-    <section class="screen" id="favorites">
-      <div class="section-title">Sevimlilar</div>
-      <div class="ad-list grid-mode" id="favoritesAdList"></div>
-    </section>
-
-    <!-- PROFILE -->
-    <section class="screen" id="profile">
-      <div class="profile-head">
-        <div class="profile-avatar">B</div>
-        <div class="profile-info">
-          <b id="profileName">—</b>
-          <span id="profileUsername">—</span>
+      <!-- ================= HOME SCREEN ================= -->
+      <section id="screen-home" class="screen active">
+        <div class="search-bar-row">
+          <div class="search-bar">
+            <input
+              type="text"
+              placeholder="Nima qidiryapsiz?"
+              class="search-input"
+            />
+          </div>
+          <button id="openFiltersBtn" class="filters-btn">⚙️ Filtr</button>
         </div>
-      </div>
 
-      <div class="profile-actions">
-        <button class="btn primary" id="goMyStoreBtn">🏪 Mening do‘konim</button>
-        <button class="btn" id="goAdminBtn">🛡️ Admin panel</button>
-        <button class="btn danger" id="clearLocalBtn">🧹 Local reset (demo)</button>
-      </div>
+        <button id="btnOpenNewAd" class="primary-btn">
+          ➕ E'lon joylash
+        </button>
 
-      <div class="card" style="margin-top:12px">
-        <div class="section-title" style="margin:0 0 8px">Eslatma</div>
-        <div style="color:var(--muted); font-size:13px; line-height:1.35">
-          Bu demo-versiya. Keyin serverga ulanganda login/SMS, do‘konlar, e’lon joylash, chat real bo‘ladi.
+        <div id="promoBanner" class="promo-banner">
+  <img src="zalvo-promo-banner.jpg" alt="MarketHub — biznesingiz uchun yangi mijozlar" 
+    alt="MarketHub promo"
+  />
+</div>
+
+        <div class="section-title">Mashhur bo‘limlar</div>
+        <div id="homeCategoryGrid" class="category-grid">
+  <div class="category-card" data-category="Transport">
+    <div class="category-card-title">Transport</div>
+    <div class="category-card-sub">Mashinalar, mopedlar</div>
+  </div>
+
+  <div class="category-card" data-category="Ko‘chmas mulk">
+    <div class="category-card-title">Ko'chmas mulk</div>
+    <div class="category-card-sub">Ijaraga, sotiladi</div>
+  </div>
+
+  <div class="category-card" data-category="Elektronika">
+    <div class="category-card-title">Elektronika</div>
+    <div class="category-card-sub">Telefon, laptop</div>
+  </div>
+
+  <div class="category-card" data-category="Xizmatlar">
+    <div class="category-card-title">Xizmatlar</div>
+    <div class="category-card-sub">Usta, servis</div>
+  </div>
+</div>
+
+        <div class="hint" style="margin-bottom:10px;">
+          📌 Kategoriyani yana bir marta bosing — barcha e’lonlar qaytadi
         </div>
-      </div>
-    </section>
 
-    <!-- FILTERS -->
-    <section class="screen" id="filters">
-      <div class="card">
-        <div class="section-title" style="margin:0 0 10px">Filtrlar</div>
+        <div id="feedList" class="ad-list grid-mode"></div>
+      </section>
 
-        <div class="form">
-          <div class="field">
-            <label>Qidiruv so‘zi</label>
-            <input id="filterQuery" placeholder="Masalan: iPhone, lacetti..." />
-          </div>
+      <!-- ================= FAVORITES ================= -->
+      <section id="screen-favorites" class="screen">
+        <div class="screen-title">Sevimlilar</div>
+        <div id="favoritesList" class="ad-list"></div>
+      </section>
 
-          <div class="field">
-            <label>Shahar</label>
-            <input id="filterCity" placeholder="Masalan: Toshkent" />
-          </div>
+      <section id="screen-my-ads" class="screen">
+  <div class="screen-title">Mening e’lonlarim</div>
+  <div id="myAdsList" class="ad-list"></div>
+</section>
 
-          <div class="field">
-            <label>Valyuta</label>
-            <select id="filterPriceType">
-              <option value="">Hammasi</option>
-              <option value="uzs">UZS</option>
-              <option value="usd">USD</option>
-            </select>
-          </div>
+      <!-- ================= FILTERS SCREEN ================= -->
+      <section id="screen-filters" class="screen">
+        <div class="screen-title">Filtrlar</div>
 
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <div class="field">
-              <label>Min narx</label>
-              <input id="filterMinPrice" inputmode="numeric" placeholder="0" />
+        <div class="filters-section-title">Turi</div>
+        <div class="filters-section-title">Kategoriya</div>
+<div id="filterCategoryRow" class="chip-row">
+  <div class="chip chip-filled" data-category="all">Hammasi</div>
+  <div class="chip" data-category="Transport">Transport</div>
+  <div class="chip" data-category="Ko‘chmas mulk">Ko‘chmas mulk</div>
+  <div class="chip" data-category="Elektronika">Elektronika</div>
+  <div class="chip" data-category="Xizmatlar">Xizmatlar</div>
+  <div class="chip" data-category="Ish">Ish</div>
+  <div class="chip" data-category="Uy-rozg‘or">Uy-rozg‘or</div>
+  <div class="chip" data-category="Bolalar">Bolalar</div>
+  <div class="chip" data-category="Hayvonlar">Hayvonlar</div>
+  <div class="chip" data-category="Hobbi/Sport">Hobbi/Sport</div>
+  <div class="chip" data-category="Boshqa">Boshqa</div>
+</div>
+
+        <div class="filters-section-title">Viloyat</div>
+
+<select id="filterCity" class="form-select">
+  <option value="all">Hammasi</option>
+
+  <option value="Toshkent shahri">Toshkent shahri</option>
+  <option value="Toshkent viloyati">Toshkent viloyati</option>
+  <option value="Andijon">Andijon</option>
+  <option value="Buxoro">Buxoro</option>
+  <option value="Farg‘ona">Farg‘ona</option>
+  <option value="Jizzax">Jizzax</option>
+  <option value="Xorazm">Xorazm</option>
+  <option value="Namangan">Namangan</option>
+  <option value="Navoiy">Navoiy</option>
+  <option value="Qashqadaryo">Qashqadaryo</option>
+  <option value="Samarqand">Samarqand</option>
+  <option value="Sirdaryo">Sirdaryo</option>
+  <option value="Surxondaryo">Surxondaryo</option>
+  <option value="Qoraqalpog‘iston">Qoraqalpog‘iston</option>
+</select>
+
+        <div class="filters-section-title">Valyuta</div>
+        <div id="filterCurrencyRow" class="chip-row">
+          <div class="chip" data-currency="sum">So‘m</div>
+          <div class="chip" data-currency="usd">USD</div>
+        </div>
+
+        <div class="filters-section-title">Qo‘shimcha</div>
+        <div id="filterPhotoChip" class="chip">Faqat rasmlar bilan</div>
+
+        <div class="filters-section-title">Saralash</div>
+        <select id="filterSort" class="form-select">
+          <option value="default">Standart</option>
+          <option value="date">Yangi e’lonlar</option>
+          <option value="cheap">Arzon</option>
+          <option value="expensive">Qimmat</option>
+        </select>
+
+        <div class="filters-actions-row">
+          <button id="filtersApplyBtn" class="primary-btn">Natijalarni ko‘rsatish</button>
+          <button id="filtersResetBtn" class="outline-btn">Tozalash</button>
+          <button id="filtersBack" class="outline-btn">Orqaga</button>
+        </div>
+      </section>
+
+      <!-- ================= AD DETAILS ================= -->
+      <section id="screen-ad-details" class="screen">
+        <div class="ad-view-header">
+          <div id="detailBackBtn" class="ad-view-back-btn">←</div>
+          <div class="ad-view-header-title">E'lon</div>
+        </div>
+
+        <div class="ad-view-card">
+          <div id="detailMainImage"></div>
+          <div id="detailThumbs" class="detail-thumbs"></div>
+
+          <div class="ad-view-title-row">
+            <div class="ad-view-title-box">
+              <div id="detailTitle" class="ad-view-main-title"></div>
+              <div id="detailPrice" class="ad-view-price"></div>
+              <div id="detailMeta" class="ad-view-meta"></div>
             </div>
-            <div class="field">
-              <label>Max narx</label>
-              <input id="filterMaxPrice" inputmode="numeric" placeholder="999999999" />
-            </div>
-          </div>
-
-          <div class="checkrow">
-            <input type="checkbox" id="filterOnlyTop" />
-            <label for="filterOnlyTop" style="margin:0; color:rgba(234,240,255,.92)">Faqat TOP</label>
-          </div>
-
-          <div style="display:flex; gap:10px; margin-top:4px;">
-            <button class="btn danger" id="resetFiltersBtn">🧼 Reset</button>
-            <button class="btn primary" id="applyFiltersBtn" style="flex:1">🎯 Apply</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- DETAIL -->
-    <section class="screen" id="detail">
-      <div style="display:flex; gap:10px; align-items:center; margin-bottom:10px;">
-        <button class="btn slim" id="detailBackBtn">← Orqaga</button>
-        <div style="color:var(--muted); font-size:12px;">E’lon</div>
-      </div>
-
-      <div class="detail-hero" id="detailMainImage"></div>
-      <div class="detail-thumbs" id="detailThumbs"></div>
-
-      <div class="detail-title" id="detailTitle">—</div>
-      <div class="detail-price" id="detailPrice">—</div>
-      <div class="detail-meta" id="detailMeta">—</div>
-
-      <div class="seller-row">
-        <div class="seller-avatar">S</div>
-        <div class="seller-info">
-          <b id="detailSellerName">—</b>
-          <span id="detailSellerSub">—</span>
-        </div>
-        <div class="seller-status" id="detailSellerStatus">—</div>
-      </div>
-
-      <div class="actions-row">
-        <button class="btn" id="detailCallBtn">📞 Call</button>
-        <button class="btn primary" id="detailMsgBtn">💬 Message</button>
-      </div>
-
-      <div class="detail-desc" id="detailDesc"></div>
-
-      <div class="section-title">O‘xshash e’lonlar</div>
-      <div class="ad-list grid-mode" id="detailSimilarList"></div>
-    </section>
-
-    <!-- CHAT -->
-    <section class="screen" id="chat">
-      <div class="chat-head">
-        <button class="btn back" data-back>←</button>
-        <div class="chat-title">
-          <b id="chatTitle">—</b>
-          <span id="chatSub">—</span>
-        </div>
-      </div>
-
-      <div class="chat-body" id="chatMessages"></div>
-
-      <div class="chat-input">
-        <input id="chatInput" placeholder="Xabar yozing..." />
-        <button class="btn primary" id="chatSendBtn">➤</button>
-      </div>
-    </section>
-
-    <!-- STORE -->
-    <section class="screen" id="store">
-      <div style="display:flex; gap:10px; align-items:center; margin-bottom:10px;">
-        <button class="btn slim" data-back>← Orqaga</button>
-        <div style="color:var(--muted); font-size:12px;">Mening do‘konim</div>
-      </div>
-
-      <div class="store-hero">
-        <div class="profile-avatar" style="width:46px;height:46px;border-radius:16px;">🏪</div>
-        <div style="min-width:0">
-          <b id="storeName">—</b>
-          <div id="storeSub" style="color:var(--muted); font-size:12px; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">—</div>
-        </div>
-
-        <div class="store-badge">
-          <button class="dots-btn" id="storeMenuBtn" title="Menu">⋯</button>
-        </div>
-      </div>
-
-      <div class="work-hours">
-        <div class="section-title" style="margin:0 0 10px">Grafik ish vaqti</div>
-        <div class="row">
-          <div class="wh-chip"><b>Dushanba</b><span>09:00 – 19:00</span></div>
-          <div class="wh-chip"><b>Seshanba</b><span>09:00 – 19:00</span></div>
-          <div class="wh-chip"><b>Chorshanba</b><span>09:00 – 19:00</span></div>
-          <div class="wh-chip"><b>Payshanba</b><span>09:00 – 19:00</span></div>
-          <div class="wh-chip"><b>Juma</b><span>09:00 – 19:00</span></div>
-          <div class="wh-chip"><b>Shanba</b><span>10:00 – 17:00</span></div>
-          <div class="wh-chip"><b>Yakshanba</b><span>Dam olish</span></div>
-        </div>
-      </div>
-
-      <div class="card" style="margin-top:12px">
-        <div class="section-title" style="margin:0 0 8px">Do‘kon sozlamalari</div>
-        <div style="display:grid; gap:10px">
-          <button class="btn">✏️ Profilni tahrirlash (demo)</button>
-          <button class="btn">📦 Mahsulotlarim (demo)</button>
-          <button class="btn primary">➕ E’lon qo‘shish</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ADMIN -->
-    <section class="screen" id="admin">
-      <div style="display:flex; gap:10px; align-items:center; margin-bottom:10px;">
-        <button class="btn slim" data-back>← Orqaga</button>
-        <div style="color:var(--muted); font-size:12px;">Admin</div>
-      </div>
-
-      <div class="admin-stats">
-        <div class="stat">
-          <b id="adminTotalAds">0</b>
-          <span>Jami e’lonlar</span>
-        </div>
-        <div class="stat">
-          <b id="adminTotalFavs">0</b>
-          <span>Jami sevimlilar</span>
-        </div>
-      </div>
-
-      <div class="section-title">Oxirgi e’lonlar</div>
-      <div id="adminLatestList"></div>
-
-      <div class="card" style="margin-top:12px">
-        <div class="section-title" style="margin:0 0 8px">Moderator actions (demo)</div>
-        <div style="display:grid; gap:10px">
-          <button class="btn">✅ Tasdiqlash</button>
-          <button class="btn danger">⛔ Bloklash</button>
-          <button class="btn">📝 Shikoyatlar</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ADD AD -->
-    <section class="screen" id="addAd">
-      <div style="display:flex; gap:10px; align-items:center; margin-bottom:10px;">
-        <button class="btn slim" data-back>← Orqaga</button>
-        <div style="color:var(--muted); font-size:12px;">E’lon qo‘shish</div>
-      </div>
-
-      <div class="card">
-        <div class="form">
-          <div class="field">
-            <label>Sarlavha</label>
-            <input id="adCreateTitle" placeholder="Masalan: iPhone 13 Pro..." />
-          </div>
-
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <div class="field">
-              <label>Narx</label>
-              <input id="adCreatePrice" inputmode="numeric" placeholder="0" />
-            </div>
-            <div class="field">
-              <label>Valyuta</label>
-              <select id="adCreatePriceType">
-                <option value="uzs">UZS</option>
-                <option value="usd">USD</option>
-              </select>
+            <div class="ad-view-icon-row">
+              <button id="favoriteBtn" class="icon-circle-btn">♡</button>
+              <button id="shareBtn" class="icon-circle-btn">⤴️</button>
             </div>
           </div>
 
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <div class="field">
-              <label>Shahar</label>
-              <input id="adCreateCity" placeholder="Toshkent" />
+          <div class="ad-view-description-title">Tavsif</div>
+          <div id="detailDescription" class="ad-view-description"></div>
+
+          <div id="sellerCard" class="ad-view-seller-card">
+            <div>
+              <div class="ad-view-seller-info-main">Baxir B-R (@Baxir1987)</div>
+              <div class="ad-view-seller-info-sub">⭐ 4.9 · 23 sharh · 12 e’lon</div>
+              <div class="ad-view-seller-status">🟢 Oxirgi marta: yaqinda</div>
             </div>
-            <div class="field">
-              <label>Tuman</label>
-              <input id="adCreateDistrict" placeholder="Yunusobod" />
-            </div>
           </div>
 
-          <div class="field">
-            <label>Rasmlar (demo)</label>
-            <input id="adCreatePhotosInput" type="file" accept="image/*" multiple />
-            <div class="photos-row" id="adCreatePhotosPreview"></div>
+          <div class="ad-view-actions-row">
+            <a id="callSellerBtn" href="#" class="call-btn">📞 Qo‘ng‘iroq</a>
+            <a id="msgSellerBtn" href="#" class="msg-btn">✉️ Yozish</a>
           </div>
 
-          <div class="field">
-            <label>Tavsif</label>
-            <textarea id="adCreateDesc" placeholder="Qisqa tavsif yozing..."></textarea>
+          <div class="similar-section">
+            <div class="similar-title">O‘xshash e’lonlar</div>
+            <div id="similarList" class="similar-list"></div>
           </div>
-
-          <button class="btn primary" id="adCreateSubmitBtn">✅ E’lonni saqlash</button>
         </div>
-      </div>
-    </section>
+      </section>
 
-  </div><!-- /app -->
-
-  <!-- ===== BOTTOM NAV ===== -->
-  <nav class="bottom-nav">
-    <button class="nav-btn active" data-nav="home"><div class="ico">🏠</div>Home</button>
-    <button class="nav-btn" data-nav="search"><div class="ico">🔎</div>Search</button>
-    <button class="nav-btn" data-nav="favorites"><div class="ico">❤️</div>Fav</button>
-    <button class="nav-btn" data-nav="profile"><div class="ico">👤</div>Profile</button>
-  </nav>
-
-  <!-- ===== TOAST ===== -->
-  <div class="toast" id="toast">
-    <div class="ticon" id="toastIcon">✅</div>
-    <div>
-      <b id="toastMain">—</b>
-      <span id="toastSub">—</span>
+      <!-- ================= PROFILE / SETTINGS (Telegram style) ================= -->
+<section id="screen-profile" class="screen">
+  <!-- Шапка профиля -->
+  <div class="settings-profile-header">
+  <div id="profileAvatar" class="settings-avatar-big">B</div>
+    <div class="settings-name">Baxir B-R</div>
+    <div class="settings-username">
+      <a href="tel:+16195479977" class="settings-link">+1 619 547 9977</a>
+      ·
+      <span class="settings-link">@Baxir1987</span>
     </div>
   </div>
 
-  <!-- ===== LIGHTBOX ===== -->
-  <div class="lightbox" id="lightbox">
-    <div class="lightbox-inner">
-      <img id="lightboxImg" src="" alt="">
-      <div class="lightbox-controls">
-        <button class="btn" id="lightboxPrev">⬅️ Prev</button>
-        <button class="btn primary" id="lightboxNext">Next ➡️</button>
+  <input
+  id="profilePhotoInput"
+  type="file"
+  accept="image/*"
+  class="hidden-input"
+/>
+  
+  <!-- 1. Rasmini o‘zgartirish -->
+  <div class="settings-card">
+    <button id="settingsChangePhoto" class="settings-row">
+      <div class="settings-icon">📷</div>
+      <div class="settings-title">Rasmini o‘zgartirish</div>
+      <div class="settings-arrow">›</div>
+    </button>
+  </div>
+
+  <!-- 2. Profil / Dokon / E'lonlar / Sevimlilar / Tarix -->
+  <div class="settings-card">
+    <button id="settingsProfileRow" class="settings-row">
+      <div class="settings-icon">👤</div>
+      <div class="settings-title">Profilim</div>
+      <div class="settings-arrow">›</div>
+    </button>
+
+    <button id="settingsMyShopRow" class="settings-row">
+      <div class="settings-icon">🏬</div>
+      <div class="settings-title">Mening do‘konim</div>
+      <div class="settings-arrow">›</div>
+    </button>
+
+    <button id="settingsMyAdsRow" class="settings-row">
+      <div class="settings-icon">📋</div>
+      <div class="settings-title">Mening e’lonlarim</div>
+      <div class="settings-arrow">›</div>
+    </button>
+
+    <button id="settingsFavoritesRow" class="settings-row">
+      <div class="settings-icon">⭐</div>
+      <div class="settings-title">Sevimlilar</div>
+      <div class="settings-arrow">›</div>
+    </button>
+
+    <button id="settingsHistoryRow" class="settings-row">
+      <div class="settings-icon">🕒</div>
+      <div class="settings-title">Ko‘rish tarixi</div>
+      <div class="settings-arrow">›</div>
+    </button>
+  </div>
+
+  <!-- 3. Til / Pullik / Admin / Biznes -->
+  <div class="settings-card">
+    <button id="settingsLangRow" class="settings-row">
+      <div class="settings-icon">🌐</div>
+      <div class="settings-title">Tilni tanlash (uz/ru)</div>
+      <div class="settings-arrow">›</div>
+    </button>
+
+    <button id="settingsPaidRow" class="settings-row">
+      <div class="settings-icon">💎</div>
+      <div class="settings-title">Pullik xizmatlar</div>
+      <div class="settings-arrow">›</div>
+    </button>
+
+    <button id="settingsAdminRow" class="settings-row">
+      <div class="settings-icon">🛠</div>
+      <div class="settings-title">Admin paneli</div>
+      <div class="settings-arrow">›</div>
+    </button>
+
+    <button id="settingsBusinessRow" class="settings-row">
+      <div class="settings-icon">📊</div>
+      <div class="settings-title">Zalvo biznes uchun</div>
+      <div class="settings-arrow">›</div>
+    </button>
+  </div>
+
+  <!-- 4. Yordam / Savollar -->
+  <div class="settings-card">
+    <button id="settingsHelpRow" class="settings-row">
+      <div class="settings-icon">❓</div>
+      <div class="settings-title">Yordam</div>
+      <div class="settings-arrow">›</div>
+    </button>
+
+    <button id="settingsQuestionsRow" class="settings-row">
+      <div class="settings-icon">💬</div>
+      <div class="settings-title">Zalvo haqida savollar</div>
+      <div class="settings-arrow">›</div>
+    </button>
+  </div>
+</section>
+
+            <!-- ================= MY SHOP (MENING DO‘KONIM) ================= -->
+      <section id="screen-my-shop" class="screen">
+        <div class="store-page">
+          
+          <!-- ОБЛОЖКА + АВАТАР -->
+          <div class="store-cover">
+            <!-- ЗАМЕНИ путь к картинке под себя -->
+            <img src="iphone14-pro.jpg" alt="Telefonlar">
+            <div class="store-avatar">
+              <!-- сюда ставишь логотип ZALVO -->
+              <img src="zalvo-logo.png" alt="Zalvo logo">
+            </div>
+          </div>
+
+          <!-- КАРТОЧКА ПРОФИЛЯ МАГАЗИНА -->
+          <div class="store-card store-profile">
+            <div class="store-name">Zalvo Phone Shop</div>
+            <div class="store-subs">451 obunachi</div>
+
+            <div class="store-rating">
+              <span class="store-rating-stars">★★★★★</span>
+              <span class="store-rating-count">4.9 (451 baho)</span>
+            </div>
+
+      <div class="store-actions">
+  <button class="store-btn store-btn-primary" id="storeSubscribeBtn" type="button">
+    <span class="icon-pill icon-pill-bell">🔔</span>
+    <span>Obuna bo‘lish</span>
+  </button>
+
+  <button class="store-btn store-btn-icon" id="storeMsgBtn" type="button" aria-label="Yozish">
+    ✉️
+  </button>
+
+  <button class="store-btn store-btn-icon" id="storeMoreBtn" type="button" aria-label="Ko‘proq">
+    …
+  </button>
+</div>
+          </div>
+        
+          <!-- КОНТАКТЫ -->
+          <div class="store-card">
+            <div class="store-section-title">Kontaktlar</div>
+
+            <div class="store-contacts-list">
+              <div class="store-contact-row">
+                <span class="store-contact-icon phone">📞</span>
+                <a href="tel:+998991234567">+998 99 123 45 67</a>
+              </div>
+
+              <div class="store-contact-row">
+                <span class="store-contact-icon tg">✈️</span>
+                <a href="https://t.me/gulzor_shop" target="_blank">@gulzor_shop</a>
+              </div>
+
+              <div class="store-contact-row">
+                <span class="store-contact-icon ig">📸</span>
+                <a href="https://instagram.com/zalvo_shop" target="_blank">@zalvo_shop</a>
+              </div>
+
+              <div class="store-contact-row">
+                <span class="store-contact-icon loc">📍</span>
+                <span>Mirzo Ulug‘bek tumani, Toshkent</span>
+              </div>
+
+              <div class="store-contact-row">
+                <span class="store-contact-icon clock">⏰</span>
+                <span>
+                  <strong>Bugun ochiq</strong>: Du–Ju 09:00–20:00, Ju 09:00–18:00
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- О МАГАЗИНЕ -->
+          <div class="store-card">
+            <div class="store-section-title">Do‘kon haqida</div>
+            <p class="store-about-text">
+              Zalvo Phone Shop — original smartfonlar va aksessuarlar do‘koni.
+              Kafolat, tezkor yetkazib berish va qulay narxlar.
+            </p>
+          </div>
+
+          <!-- E‘LONLAR DO‘KON ICHIDA -->
+          <div class="store-card">
+            <div class="store-ads-header">
+              <div class="store-ads-title">E‘lonlar</div>
+            </div>
+
+            <div class="store-search-row">
+              <div class="store-search-input">
+                <span>🔍</span>
+                <input id="shopAdsSearchInput" type="text" placeholder="E‘lonlar ichidan qidirish">
+              </div>
+              <button class="store-filter-btn" id="shopAdsFilterBtn">≡</button>
+            </div>
+
+            <!-- ВАЖНО: ОСТАВЛЯЕМ ЭТОТ DIV, ЧТОБЫ РАБОТАЛ КОД renderMyShopAds() -->
+            <div id="myShopAdsList" class="ad-list"></div>
+          </div>
+
+        </div>
+      </section>
+      
+      <!-- ================= PROMOTION SCREEN ================= -->
+      <section id="screen-promo" class="screen">
+        <div class="screen-title">E’lonni ilgari surish</div>
+
+        <div class="promo-screen-card">
+          <div class="promo-screen-subtitle">
+            E’loningizni yuqori o‘ringa olib chiqing!
+          </div>
+
+          <div class="promo-plan-list">
+            <div class="promo-plan">
+              <div class="promo-plan-main">
+                <div class="promo-plan-name">TOP 24 soat</div>
+                <div class="promo-plan-desc">E’lon 1 kun yuqorida turadi</div>
+              </div>
+              <div class="promo-plan-price">6 000 so‘m</div>
+            </div>
+
+            <div class="promo-plan">
+              <div class="promo-plan-main">
+                <div class="promo-plan-name">TOP 7 kun</div>
+                <div class="promo-plan-desc">E’lon hafta davomida ustida turadi</div>
+              </div>
+              <div class="promo-plan-price">25 000 so‘m</div>
+            </div>
+
+            <div class="promo-plan">
+              <div class="promo-plan-main">
+                <div class="promo-plan-name">Super-Tezkor</div>
+                <div class="promo-plan-desc">E’loningiz birinchi qatorga chiqadi</div>
+                <div class="promo-plan-tag">Tavsiya etiladi</div>
+              </div>
+              <div class="promo-plan-price">40 000 so‘m</div>
+            </div>
+          </div>
+
+          <div class="promo-help-text">
+            💡 Tezkor sotish uchun “Super-Tezkor” paket tavsiya qilinadi.
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= CHAT ================= -->
+      <section id="screen-chat" class="screen">
+        <div class="chat-header">
+          <div class="chat-header-title">Chat bilan sotuvchi</div>
+        </div>
+
+        <div id="chatMessages" class="chat-messages"></div>
+
+        <div class="chat-input-row">
+          <input id="chatInput" type="text" class="chat-input" placeholder="Xabar yozish..." />
+          <button id="chatSendBtn" class="chat-send-btn">➤</button>
+        </div>
+      </section>
+
+      <!-- ================= HISTORY ================= -->
+      <section id="screen-history" class="screen">
+        <div class="screen-title">Ko‘rish tarixi</div>
+        <div id="historyList" class="ad-list"></div>
+      </section>
+
+            <!-- ================= SHOPS (DO'KONLAR) ================= -->
+      <section id="screen-shops" class="screen">
+        <div class="screen-title">Do‘konlar</div>
+        <div class="hint">
+          Bu bo‘limda keyinchalik rasmiy do‘konlar va brendlar ro‘yxati paydo bo‘ladi.
+        </div>
+      </section>
+
+      <!-- ================= ZALVO BIZNES UCHUN ================= -->
+<section id="screen-business" class="screen">
+  <div class="business-header">
+    <div class="back-link" id="businessBack">← Orqaga</div>
+
+    <div class="business-icon-wrap">
+      <div class="business-icon-inner">
+        🔒
+      </div>
+    </div>
+
+    <h1 class="business-title">Zalvo biznes uchun</h1>
+    <p class="business-subtitle">
+      Oddiy ZALVO akkauntingizni to‘liq biznes-profilga aylantiring.
+      Do‘koningiz, manzilingiz, ish vaqtingiz va mahsulotlaringiz bir joyda.
+    </p>
+  </div>
+
+  <div class="business-card">
+    <div class="business-feature-row">
+      <div class="business-feature-icon business-feature-icon-orange">📍</div>
+      <div class="business-feature-main">
+        <div class="business-feature-title">Manzil</div>
+        <div class="business-feature-sub">
+          xaridorlar sizni xaritada ko‘ra oladi
+        </div>
+      </div>
+    </div>
+
+    <div class="business-divider"></div>
+
+    <div class="business-feature-row">
+      <div class="business-feature-icon business-feature-icon-blue">🕒</div>
+      <div class="business-feature-main">
+        <div class="business-feature-title">Ish vaqti</div>
+        <div class="business-feature-sub">
+          qaysi kuni nechagacha ishlashingiz ko‘rinadi
+        </div>
+      </div>
+    </div>
+
+    <div class="business-divider"></div>
+
+    <div class="business-feature-row">
+      <div class="business-feature-icon business-feature-icon-pink">🏬</div>
+      <div class="business-feature-main">
+        <div class="business-feature-title">Do‘kon sahifasi</div>
+        <div class="business-feature-sub">
+          barcha mahsulotlaringiz bitta sahifada
+        </div>
+      </div>
+    </div>
+
+    <div class="business-divider"></div>
+
+    <div class="business-feature-row">
+      <div class="business-feature-icon business-feature-icon-gold">⭐</div>
+      <div class="business-feature-main">
+        <div class="business-feature-title">Reyting</div>
+        <div class="business-feature-sub">
+          mijozlar fikri ishonchni oshiradi
+        </div>
+      </div>
+    </div>
+
+    <div class="business-beta">
+      <strong>Beta davri</strong> — hozircha do‘kon ochish mutlaqo bepul.
+      Keyinchalik oylik obuna narxi qo‘shiladi.
+    </div>
+  </div>
+
+  <div class="business-cta">
+    <button id="businessOpenShopBtn" class="business-cta-btn">
+  Do‘konni bepul ochish
+</button>
+    <div class="business-cta-hint">
+      Hoziroq bepul ulaning — keyin pullik obunaga o‘tish ixtiyoriy bo‘ladi.
+    </div>
+  </div>
+</section>
+      
+      <!-- ================= ADMIN PANEL ================= -->
+      <section id="screen-admin" class="screen">
+        <div class="screen-title">Admin Panel</div>
+
+        <div class="admin-card">
+          <div class="admin-section-title">Statistika</div>
+
+          <div class="admin-stat-row">
+            <div class="admin-stat">
+              <div class="admin-stat-number" id="adminTotalAds">0</div>
+              <div class="admin-stat-label">E’lonlar</div>
+            </div>
+
+            <div class="admin-stat">
+              <div class="admin-stat-number" id="adminNewToday">0</div>
+              <div class="admin-stat-label">Bugun yangi</div>
+            </div>
+          </div>
+
+          <div class="admin-section-title">So‘nggi 10 ta e’lon</div>
+          <div class="admin-list" id="adminLastAds"></div>
+        </div>
+      </section>
+
+      <!-- ================= NEW AD: STEP 1 ================= -->
+      <section id="screen-new-ad-step1" class="screen">
+        <div class="back-link" id="backFromNewAd1">← Orqaga</div>
+        <div class="screen-title">Yangi e’lon</div>
+
+        <div class="form-group">
+          <label class="form-label">Shahar</label>
+          <select id="inputCity" class="form-select">
+            <option value="Toshkent shahri">Toshkent shahri</option>
+<option value="Toshkent viloyati">Toshkent viloyati</option>
+<option value="Andijon">Andijon</option>
+<option value="Buxoro">Buxoro</option>
+<option value="Farg‘ona">Farg‘ona</option>
+<option value="Jizzax">Jizzax</option>
+<option value="Xorazm">Xorazm</option>
+<option value="Namangan">Namangan</option>
+<option value="Navoiy">Navoiy</option>
+<option value="Qashqadaryo">Qashqadaryo</option>
+<option value="Samarqand">Samarqand</option>
+<option value="Sirdaryo">Sirdaryo</option>
+<option value="Surxondaryo">Surxondaryo</option>
+<option value="Qoraqalpog‘iston">Qoraqalpog‘iston</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+  <label class="form-label">Kategoriya</label>
+  <select id="inputCategory" class="form-select">
+    <option value="Transport">Transport</option>
+    <option value="Ko‘chmas mulk">Ko‘chmas mulk</option>
+    <option value="Elektronika">Elektronika</option>
+    <option value="Xizmatlar">Xizmatlar</option>
+    <option value="Uy va bog‘">Uy va bog‘</option>
+    <option value="Kiyim-kechak">Kiyim-kechak</option>
+    <option value="Bolalar">Bolalar</option>
+    <option value="Hayvonlar">Hayvonlar</option>
+    <option value="Ish">Ish</option>
+    <option value="Boshqa">Boshqa</option>
+  </select>
+</div>
+        
+        <div class="form-group">
+          <label class="form-label">Sarlavha</label>
+          <input id="inputTitle" type="text" class="form-input" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Narx (so‘m)</label>
+          <input id="inputPrice" type="text" inputmode="numeric" class="form-input" placeholder="Masalan: 123 456 789" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Tavsif</label>
+          <textarea id="inputDescription" class="form-textarea"></textarea>
+        </div>
+
+        <button id="btnNewAdStep1Next" class="primary-btn">Davom etish</button>
+      </section>
+
+      <!-- ================= NEW AD: STEP 2 ================= -->
+      <section id="screen-new-ad-step2" class="screen">
+        <div class="back-link" id="backFromNewAd2">← Orqaga</div>
+        <div class="screen-title">Rasmlar</div>
+
+        <button id="btnUploadPhotos" class="primary-btn">Rasmlar yuklash</button>
+        <input id="inputPhotos" type="file" multiple class="hidden-input" />
+
+        <div id="photosPreview" class="photos-preview-row"></div>
+
+        <button id="btnNewAdStep2Next" class="primary-btn">Davom etish</button>
+      </section>
+
+      <!-- ================= NEW AD: STEP 3 ================= -->
+      <section id="screen-new-ad-step3" class="screen">
+        <div class="back-link" id="backFromNewAd3">← Orqaga</div>
+        <div class="screen-title">Tasdiqlash</div>
+
+        <div id="summaryTitle" class="screen-title"></div>
+        <div id="summaryCityType"></div>
+        <div id="summaryPrice"></div>
+        <div id="summaryDescription" class="ad-view-description"></div>
+        <div id="summaryPhotosInfo" class="ad-view-meta"></div>
+
+        <button id="btnPublishAd" class="primary-btn">E’lonni joylash</button>
+      </section>
+
+      <!-- ================= SUCCESS ================= -->
+      <section id="screen-new-ad-success" class="screen">
+        <div class="success-icon">✔</div>
+        <div class="success-text-main">E’lon joylandi!</div>
+        <div class="success-text-sub">Moderatsiyadan o‘tishi kutilmoqda.</div>
+
+        <button id="btnGoHome" class="primary-btn">Bosh sahifa</button>
+      </section>
+
+      <!-- ================= TILNI TANLASH (UZ/RU) ================= -->
+<section id="screen-language" class="screen">
+  <div class="screen-title">Tilni tanlash</div>
+
+  <div class="settings-card">
+    <button class="settings-row" id="languageUz">
+      <div class="settings-icon">🇺🇿</div>
+      <div class="settings-title">O‘zbek tili</div>
+      <div class="settings-arrow">›</div>
+    </button>
+
+    <button class="settings-row" id="languageRu">
+      <div class="settings-icon">🇷🇺</div>
+      <div class="settings-title">Русский язык</div>
+      <div class="settings-arrow">›</div>
+    </button>
+  </div>
+</section>
+    </main>
+
+<!-- BOTTOM SHEET: FILTER (Do‘kon e‘lonlari uchun) -->
+<div class="store-sheet-backdrop" id="shopAdsFilterSheet">
+  <div class="store-sheet">
+    <div class="store-sheet-handle"></div>
+
+    <div style="font-weight:700; font-size:16px; margin-bottom:10px;">Filtr</div>
+
+    <div style="display:flex; flex-direction:column; gap:10px;">
+
+      <div>
+        <div style="font-size:13px; color:#6b7280; margin-bottom:6px;">Saralash</div>
+        <select id="shopAdsSort" class="form-select">
+          <option value="new">Yangi e’lonlar</option>
+          <option value="cheap">Arzon</option>
+          <option value="expensive">Qimmat</option>
+        </select>
+      </div>
+
+      <div>
+        <div style="font-size:13px; color:#6b7280; margin-bottom:6px;">Narx (so‘m)</div>
+        <div style="display:flex; gap:8px;">
+          <input id="shopAdsMinPrice" class="form-input" type="number" placeholder="Min" />
+          <input id="shopAdsMaxPrice" class="form-input" type="number" placeholder="Max" />
+        </div>
+        <div class="hint">Bo‘sh qoldirsangiz — cheklanmaydi</div>
+      </div>
+
+      <button id="shopAdsOnlyPhoto" class="chip" type="button">Faqat rasmlar bilan</button>
+
+      <div style="display:flex; gap:10px; margin-top:6px;">
+        <button id="shopAdsApply" class="primary-btn" type="button" style="margin:0;">Qo‘llash</button>
+        <button id="shopAdsReset" class="outline-btn" type="button" style="margin:0;">Tozalash</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+    
+        <!-- BOTTOM SHEET MENYUSI (Do‘kon uchun) -->
+    <div class="store-sheet-backdrop" id="storeSheet">
+      <div class="store-sheet">
+        <div class="store-sheet-handle"></div>
+
+        <div class="store-sheet-list">
+          <div class="store-sheet-item">
+            <div class="store-sheet-icon block">🚫</div>
+            <span>Bloklash</span>
+          </div>
+
+          <div class="store-sheet-item">
+            <div class="store-sheet-icon share">↗️</div>
+            <span>Ulashish</span>
+          </div>
+
+          <div class="store-sheet-item">
+            <div class="store-sheet-icon report">⚠️</div>
+            <span>Shikoyat qilish</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <button type="button" class="nav-btn active" data-screen="home">
+      <span class="icon">🔍</span>
+      <span>Qidirish</span>
+    </button>
+    <button type="button" class="nav-btn" data-screen="shops">
+      <span class="icon">🏪</span>
+      <span>Do‘konlar</span>
+    </button>
+    <button type="button" class="nav-btn" data-screen="chat">
+      <span class="icon">💬</span>
+      <span>Chat</span>
+    </button>
+    <button type="button" class="nav-btn" data-screen="profile">
+  <span class="icon">⚙️</span>
+  <span>Sozlamalar</span>
+</button>
+  </div>
+</nav>
+  </div>
+
+  <!-- LIGHTBOX -->
+  <div id="imageLightbox" class="lightbox">
+    <button id="lightboxPrev" class="lightbox-arrow lightbox-prev">←</button>
+    <img id="lightboxImg" src="" alt="Preview" />
+    <button id="lightboxNext" class="lightbox-arrow lightbox-next">→</button>
+    <div class="lightbox-close-hint">Yopish uchun ekranga bosing</div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast" class="toast">
+    <div class="toast-inner">
+      <div class="toast-icon">🚀</div>
+      <div>
+        <div class="toast-text-main">E’lon yuqoriga ko‘tarildi!</div>
+        <div class="toast-text-sub">Odamlarga ko‘proq ko‘rinadi</div>
       </div>
     </div>
   </div>
 
-  <!-- ===== STORE SHEET ===== -->
-  <div class="sheet-backdrop" id="storeSheetBackdrop">
-    <div class="sheet">
-      <div style="color:var(--muted); font-size:12px; padding: 4px 4px 0;">Do‘kon menyu</div>
-      <button class="sheet-btn" id="storeSheetShare">🔗 Ulashish</button>
-      <button class="sheet-btn" id="storeSheetReport">🚩 Shikoyat</button>
-      <button class="sheet-btn danger" id="storeSheetBlock">⛔ Bloklash</button>
-      <button class="sheet-btn" onclick="document.getElementById('storeSheetBackdrop').classList.remove('show')">✖️ Yopish</button>
-    </div>
-  </div>
-
-  <!-- ===========================
-       JS (ЧАСТЬ 3 ВСТРОЕНА)
-  ============================ -->
   <script>
-  /* =========================================================
-     ZALVO MINI APP — JS
-     Сервер: заглушки (потом подключим).
-  ========================================================= */
+  // ================== НАСТРОЙКИ / КОНСТАНТЫ ==================
+  const ADS_API_URL    = "https://baxir.pythonanywhere.com/ads";
+  const ADD_AD_API_URL = "https://baxir.pythonanywhere.com/api/add_ad";
 
-  const API_BASE_URL = "https://YOUR-SERVER-DOMAIN.COM/api"; // <-- потом заменишь
-  const UPLOADS_BASE_URL = "https://YOUR-SERVER-DOMAIN.COM/uploads"; // <-- потом заменишь
+  const DEFAULT_PHONE    = "+998901234567";
+  const DEFAULT_TELEGRAM = "Baxir1987";
 
-  const $ = (sel, root=document) => root.querySelector(sel);
-  const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+  const EXCHANGE_RATE = 12500; // 1 USD = X so'm
 
-  function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
-  function formatMoneyUZS(n){
-    const num = typeof n === "string" ? Number(String(n).replace(/[^\d.-]/g,"")) : n;
-    if (!Number.isFinite(num)) return String(n);
-    return new Intl.NumberFormat("ru-RU").format(num) + " so'm";
-  }
-  function formatMoneyUSD(n){
-    const num = typeof n === "string" ? Number(String(n).replace(/[^\d.-]/g,"")) : n;
-    if (!Number.isFinite(num)) return String(n);
-    return "$" + new Intl.NumberFormat("en-US", {maximumFractionDigits:0}).format(num);
-  }
-  function nowISO(){ return new Date().toISOString(); }
-  function safeJSONParse(s, fallback){ try { return JSON.parse(s); } catch { return fallback; } }
-  function uuid(){ return "id_" + Math.random().toString(16).slice(2) + "_" + Date.now().toString(16); }
-  function escapeHtml(s){
-    return String(s ?? "")
-      .replaceAll("&","&amp;")
-      .replaceAll("<","&lt;")
-      .replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;")
-      .replaceAll("'","&#039;");
-  }
+  // ImgBB
+  const IMGBB_API_KEY     = "d6a3eac7b36101df3effee3f7d0c7493";
+  const IMGBB_UPLOAD_URL  = "https://api.imgbb.com/1/upload";
 
-  const Storage = {
-    get(key, fallback){ return safeJSONParse(localStorage.getItem(key), fallback); },
-    set(key, value){ localStorage.setItem(key, JSON.stringify(value)); },
-    del(key){ localStorage.removeItem(key); }
-  };
+  // Infinite scroll
+  const FEED_CHUNK_SIZE = 10;
 
-  let toastTimer=null;
-  function showToast(main, sub="", icon="✅"){
-    const toast=$("#toast"); if(!toast) return;
-    $("#toastIcon").textContent=icon;
-    $("#toastMain").textContent=main;
-    $("#toastSub").textContent=sub;
-    toast.classList.add("show");
-    clearTimeout(toastTimer);
-    toastTimer=setTimeout(()=>toast.classList.remove("show"), 2200);
-  }
+  // localStorage keys
+  const FAVORITES_KEY = "mh_favorites";
+  const HISTORY_KEY   = "mh_history";
+  const PROFILE_PHOTO_KEY = "zalvo_profile_photo";
 
-  const Router = {
-    current:null,
-    stack:[],
-    go(screenId, opts={}){
-      $$(".screen").forEach(s=>s.classList.remove("active"));
-      const target=document.getElementById(screenId);
-      if(!target){ console.warn("Screen not found:", screenId); return; }
-      target.classList.add("active");
-      this.current=screenId;
+  // ================== DOM-ЭЛЕМЕНТЫ ==================
+  const screensContainer = document.querySelector(".screens");
 
-      if(!opts.replace){
-        if(this.stack.length===0 || this.stack[this.stack.length-1]!==screenId) this.stack.push(screenId);
-      } else {
-        if(this.stack.length) this.stack[this.stack.length-1]=screenId;
-        else this.stack.push(screenId);
-      }
-      Hooks.onEnter(screenId);
-    },
-    back(){
-      if(this.stack.length<=1){ this.go("home",{replace:true}); return; }
-      this.stack.pop();
-      const prev=this.stack[this.stack.length-1];
-      this.go(prev,{replace:true});
+  // Screens
+  const screenHome        = document.getElementById("screen-home");
+  const screenFavorites   = document.getElementById("screen-favorites");
+  const screenFilters     = document.getElementById("screen-filters");
+  const screenAdDetails   = document.getElementById("screen-ad-details");
+  const screenProfile     = document.getElementById("screen-profile");
+  const screenPromo       = document.getElementById("screen-promo");
+  const screenChat        = document.getElementById("screen-chat");
+  const screenHistory     = document.getElementById("screen-history");
+  const screenAdmin       = document.getElementById("screen-admin");
+  const screenNewAd1      = document.getElementById("screen-new-ad-step1");
+  const screenNewAd2      = document.getElementById("screen-new-ad-step2");
+  const screenNewAd3      = document.getElementById("screen-new-ad-step3");
+  const screenNewAdSuccess= document.getElementById("screen-new-ad-success");
+  const screenShops      = document.getElementById("screen-shops");
+  const screenSettings   = document.getElementById("screen-settings");
+  const settingsLangRow = document.getElementById("settingsLangRow");
+  const screenLanguage    = document.getElementById("screen-language");
+  const languageUz      = document.getElementById("languageUz");
+  const languageRu      = document.getElementById("languageRu");
+  const screenMyAds      = document.getElementById("screen-my-ads");
+  const myAdsList        = document.getElementById("myAdsList");
+  const settingsMyAdsRow = document.getElementById("settingsMyAdsRow");
+  const profileAvatar       = document.getElementById("profileAvatar");
+  const profilePhotoInput   = document.getElementById("profilePhotoInput");
+  const settingsChangePhoto = document.getElementById("settingsChangePhoto");
+  const screenMyShop     = document.getElementById("screen-my-shop");
+  const myShopAdsList    = document.getElementById("myShopAdsList");
+  const settingsMyShopRow = document.getElementById("settingsMyShopRow");
+  const screenBusiness   = document.getElementById("screen-business");
+  const businessBackBtn = document.getElementById("businessBack");
+  const businessOpenShopBtn  = document.getElementById("businessOpenShopBtn");
+  const storeMoreBtn = document.getElementById("storeMoreBtn");
+  const storeSheet   = document.getElementById("storeSheet");
+  const storeMsgBtn = document.getElementById("storeMsgBtn");
+  const filterCategoryRow = document.getElementById("filterCategoryRow");
+
+    if (storeMsgBtn) {
+  storeMsgBtn.addEventListener("click", () => {
+    showScreen("chat");
+  });
+}
+
+    // ===== Shop Ads Filter DOM =====
+const shopAdsFilterBtn   = document.getElementById("shopAdsFilterBtn");
+const shopAdsFilterSheet = document.getElementById("shopAdsFilterSheet");
+
+const shopAdsSearchInput = document.getElementById("shopAdsSearchInput");
+const shopAdsSort        = document.getElementById("shopAdsSort");
+const shopAdsMinPrice    = document.getElementById("shopAdsMinPrice");
+const shopAdsMaxPrice    = document.getElementById("shopAdsMaxPrice");
+const shopAdsOnlyPhotoBtn= document.getElementById("shopAdsOnlyPhoto");
+const shopAdsApplyBtn    = document.getElementById("shopAdsApply");
+const shopAdsResetBtn    = document.getElementById("shopAdsReset");
+
+// local state для фильтров магазина
+const shopAdsFilterState = {
+  sort: "new",
+  minPrice: "",
+  maxPrice: "",
+  onlyWithPhoto: false,
+};
+    
+  // Settings rows (profil ekrani)
+const settingsFavoritesRow = document.getElementById("settingsFavoritesRow");
+const settingsHistoryRow   = document.getElementById("settingsHistoryRow");
+const settingsPaidRow      = document.getElementById("settingsPaidRow");
+const settingsBusinessRow  = document.getElementById("settingsBusinessRow");
+const settingsShopRow  = document.getElementById("settingsMyShopRow");
+    
+  // Lists
+  const feedList          = document.getElementById("feedList");
+  const favoritesList     = document.getElementById("favoritesList");
+  const historyListEl     = document.getElementById("historyList");
+  const adminLastAdsEl    = document.getElementById("adminLastAds");
+
+  // Admin stats
+  const adminTotalAdsEl   = document.getElementById("adminTotalAds");
+  const adminNewTodayEl   = document.getElementById("adminNewToday");
+
+  // Search / filters
+  const searchInput       = document.querySelector(".search-input");
+  const openFiltersBtn    = document.getElementById("openFiltersBtn");
+  const homeCategoryGrid  = document.getElementById("homeCategoryGrid");
+
+  const filterTypeRow     = document.getElementById("filterTypeRow");
+  const filterCitySelect  = document.getElementById("filterCity");
+  const filterCurrencyRow = document.getElementById("filterCurrencyRow");
+  const filterPhotoChip   = document.getElementById("filterPhotoChip");
+  const filterSortSelect  = document.getElementById("filterSort");
+  const filtersApplyBtn   = document.getElementById("filtersApplyBtn");
+  const filtersResetBtn   = document.getElementById("filtersResetBtn");
+  const filtersBackBtn    = document.getElementById("filtersBack");
+
+  // New ad
+  const btnOpenNewAd      = document.getElementById("btnOpenNewAd");
+  const backFromNewAd1    = document.getElementById("backFromNewAd1");
+  const backFromNewAd2    = document.getElementById("backFromNewAd2");
+  const backFromNewAd3    = document.getElementById("backFromNewAd3");
+  const btnNewAdStep1Next = document.getElementById("btnNewAdStep1Next");
+  const btnNewAdStep2Next = document.getElementById("btnNewAdStep2Next");
+  const btnPublishAd      = document.getElementById("btnPublishAd");
+  const btnGoHome         = document.getElementById("btnGoHome");
+
+  const inputCity         = document.getElementById("inputCity");
+  const inputTitle        = document.getElementById("inputTitle");
+  const inputPrice        = document.getElementById("inputPrice");
+  const inputDescription  = document.getElementById("inputDescription");
+  const btnUploadPhotos   = document.getElementById("btnUploadPhotos");
+  const inputPhotos       = document.getElementById("inputPhotos");
+  const photosPreview     = document.getElementById("photosPreview");
+  const summaryTitle      = document.getElementById("summaryTitle");
+  const summaryCityType   = document.getElementById("summaryCityType");
+  const summaryPrice      = document.getElementById("summaryPrice");
+  const summaryDescription= document.getElementById("summaryDescription");
+  const summaryPhotosInfo = document.getElementById("summaryPhotosInfo");
+  const inputCategory     = document.getElementById("inputCategory");
+
+    if (inputPrice) {
+  inputPrice.addEventListener("input", () => {
+    const el = inputPrice;
+
+    // позиция курсора в "цифрах" (сколько цифр слева от курсора)
+    const caret = el.selectionStart || 0;
+    const leftPart = el.value.slice(0, caret);
+    const digitsPos = leftPart.replace(/\D/g, "").length;
+
+    // форматируем
+    const formatted = formatInputNumberSpaces(el.value);
+    el.value = formatted;
+
+    // возвращаем курсор туда же по количеству цифр
+    setCaretByDigits(el, digitsPos);
+  });
+}
+    
+  // Ad details
+  const detailMainImage   = document.getElementById("detailMainImage");
+  const detailThumbs      = document.getElementById("detailThumbs");
+  const detailTitle       = document.getElementById("detailTitle");
+  const detailPrice       = document.getElementById("detailPrice");
+  const detailMeta        = document.getElementById("detailMeta");
+  const detailDescription = document.getElementById("detailDescription");
+  const detailBackBtn     = document.getElementById("detailBackBtn");
+  const similarList       = document.getElementById("similarList");
+  const favoriteBtn       = document.getElementById("favoriteBtn");
+  const shareBtn          = document.getElementById("shareBtn");
+  const sellerCard        = document.getElementById("sellerCard");
+  const callSellerBtn     = document.getElementById("callSellerBtn");
+  const msgSellerBtn      = document.getElementById("msgSellerBtn");
+
+  // Lightbox
+  const imageLightbox     = document.getElementById("imageLightbox");
+  const lightboxImg       = document.getElementById("lightboxImg");
+  const lightboxPrev      = document.getElementById("lightboxPrev");
+  const lightboxNext      = document.getElementById("lightboxNext");
+
+  // Toast
+  const toastEl           = document.getElementById("toast");
+
+  // Promo
+  const promoBanner       = document.getElementById("promoBanner");
+
+  // Chat
+  const chatMessagesEl    = document.getElementById("chatMessages");
+  const chatInput         = document.getElementById("chatInput");
+  const chatSendBtn       = document.getElementById("chatSendBtn");
+
+  // Bottom nav
+  const navButtons        = document.querySelectorAll(".nav-btn");
+
+  // ================== ГЛОБАЛЬНОЕ СОСТОЯНИЕ ==================
+  let allAds        = [];
+  let filteredAds   = [];
+  let favoritesSet  = loadFavoritesFromStorage();
+  let historyArray  = loadHistoryFromStorage();
+  let currentAd     = null;
+  let currentScreen = "home";
+
+    // ===== GLOBAL BACK NAV (one button for all screens) =====
+const navStack = [];  // стек экранов: куда возвращаться
+let backBtnEl = null;
+
+function ensureGlobalBackButton() {
+  const headerLeft = document.querySelector(".app-header-left");
+  if (!headerLeft) return;
+
+  if (backBtnEl) return;
+
+  backBtnEl = document.createElement("button");
+  backBtnEl.className = "ios-back-btn";
+  backBtnEl.type = "button";
+  backBtnEl.innerHTML = `
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M15.5 5.5a1 1 0 0 1 0 1.4L10.4 12l5.1 5.1a1 1 0 1 1-1.4 1.4l-5.8-5.8a1 1 0 0 1 0-1.4l5.8-5.8a1 1 0 0 1 1.4 0z"/>
+    </svg>
+  `;
+
+  // вставляем ПЕРЕД логотипом
+  headerLeft.prepend(backBtnEl);
+
+  backBtnEl.addEventListener("click", () => {
+    if (!navStack.length) return;
+
+    // анимация как iOS
+    if (screensContainer) {
+      screensContainer.classList.add("ios-back-anim");
+      setTimeout(() => screensContainer.classList.remove("ios-back-anim"), 230);
     }
+
+    const prev = navStack.pop();
+    showScreen(prev, { push: false }); // важно: НЕ пушим обратно
+  });
+}
+
+function updateBackButtonVisibility() {
+  if (!backBtnEl) return;
+  backBtnEl.style.display = navStack.length ? "inline-flex" : "none";
+}
+
+  // lightbox
+  let lightboxImages = [];
+  let lightboxIndex  = 0;
+
+  // infinite scroll
+  let feedRenderedCount = 0;
+
+  // new ad draft
+  let newAdDraft = {
+    city: "Toshkent",
+    category: "Transport",
+    title: "",
+    price: "",
+    description: "",
+    photos: []
   };
 
-  const Hooks = {
-    onEnter(screenId){
-      if(screenId==="home"){ App.renderHome(); BottomNav.setActive("home"); }
-      if(screenId==="search"){ App.renderSearch(); BottomNav.setActive("search"); $("#searchInput")?.focus(); }
-      if(screenId==="favorites"){ App.renderFavorites(); BottomNav.setActive("favorites"); }
-      if(screenId==="profile"){ App.renderProfile(); BottomNav.setActive("profile"); }
-      if(screenId==="store"){ App.renderStore(); }
-      if(screenId==="admin"){ App.renderAdmin(); }
-      if(screenId==="chat"){ Chat.render(); }
-      if(screenId==="filters"){ Filters.syncUIFromState(); }
-    }
+  // chat
+  let chatHistory = [];
+
+  // filters
+  const filterState = {
+    type: "all",
+    city: "all",
+    currency: "sum",
+    onlyWithPhoto: false,
+    sort: "default",
+    category: "all"
   };
 
-  const BottomNav = {
-    setActive(key){
-      $$(".nav-btn").forEach(btn=>btn.classList.remove("active"));
-      const btn=$(`.nav-btn[data-nav="${key}"]`);
-      if(btn) btn.classList.add("active");
-    },
-    init(){
-      $$(".nav-btn").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          const nav=btn.dataset.nav;
-          if(nav==="home") Router.go("home");
-          if(nav==="search") Router.go("search");
-          if(nav==="favorites") Router.go("favorites");
-          if(nav==="profile") Router.go("profile");
-        });
-      });
-    }
-  };
+    function openShopAdsFilterSheet() {
+  if (!shopAdsFilterSheet) return;
+  shopAdsFilterSheet.classList.add("active");
+}
 
-  const Mock = {
-    categories:[
-      {id:"transport", title:"Transport", sub:"Mashina • Moto • Zapchast"},
-      {id:"realty", title:"Uy-joy", sub:"Kvartira • Hovli • Ijara"},
-      {id:"jobs", title:"Ish", sub:"Vakansiya • Xizmatlar"},
-      {id:"electronics", title:"Texnika", sub:"Telefon • Noutbuk • TV"},
-      {id:"services", title:"Xizmatlar", sub:"Usta • Ta’mir • SMM"},
-      {id:"kids", title:"Bolalar", sub:"Kiyim • O‘yinchoq • Arava"},
-    ],
-    ads(){
-      return [
-        {
-          id:"a1",
-          title:"iPhone 13 Pro 256GB, ideal holat",
-          priceType:"usd",
-          price:650,
-          city:"Toshkent",
-          district:"Yunusobod",
-          condition:"Like new",
-          isTop:true,
-          imgs:[
-            "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=70",
-            "https://images.unsplash.com/photo-1510557880182-3b3f4dbf0e30?auto=format&fit=crop&w=1200&q=70",
-            "https://images.unsplash.com/photo-1523206489230-c012c64b2b48?auto=format&fit=crop&w=1200&q=70"
-          ],
-          desc:"Telefon juda ehtiyot qilingan.\nAkkum 88%.\nKomplekt: quti, zaryadka.",
-          seller:{name:"Aziz", phone:"+998 90 123 45 67", online:true}
-        },
-        {
-          id:"a2",
-          title:"Lacetti 1.8 avtomat, 2019, 78 000 km",
-          priceType:"uzs",
-          price:119000000,
-          city:"Farg‘ona",
-          district:"Markaz",
-          condition:"Used",
-          isTop:false,
-          imgs:[
-            "https://images.unsplash.com/photo-1542362567-b07e54358753?auto=format&fit=crop&w=1200&q=70",
-            "https://images.unsplash.com/photo-1489824904134-891ab64532f1?auto=format&fit=crop&w=1200&q=70"
-          ],
-          desc:"Mashina yaxshi holatda.\nYangi rezina.\nHujjatlar joyida.",
-          seller:{name:"Bek", phone:"+998 91 555 77 11", online:false}
-        },
-        {
-          id:"a3",
-          title:"Usta: gipsokarton / shpatlyovka / bo‘yoq",
-          priceType:"uzs",
-          price:0,
-          city:"Samarqand",
-          district:"Urgut",
-          condition:"Service",
-          isTop:true,
-          imgs:[
-            "https://images.unsplash.com/photo-1581579185169-553dcd2a1601?auto=format&fit=crop&w=1200&q=70",
-            "https://images.unsplash.com/photo-1523413651479-597eb2da0ad6?auto=format&fit=crop&w=1200&q=70"
-          ],
-          desc:"Tez va sifatli.\nNarx kelishiladi.\nTelefon qiling.",
-          seller:{name:"Rustam", phone:"+998 93 222 11 22", online:true}
-        },
-        {
-          id:"a4",
-          title:"2 xonali kvartira, ijaraga, metro yaqin",
-          priceType:"usd",
-          price:450,
-          city:"Toshkent",
-          district:"Chilonzor",
-          condition:"Rent",
-          isTop:false,
-          imgs:[
-            "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=70",
-            "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1200&q=70"
-          ],
-          desc:"Toza kvartira.\nDepozit bor.\nOilaga beriladi.",
-          seller:{name:"Dilnoza", phone:"+998 97 444 33 22", online:true}
-        }
-      ];
-    }
-  };
+function closeShopAdsFilterSheet() {
+  if (!shopAdsFilterSheet) return;
+  shopAdsFilterSheet.classList.remove("active");
+}
 
-  const State = {
-    user: Storage.get("zalvo_user", {
-      id:"u_demo",
-      name:"Baxirjon",
-      username:"@zalvo_user",
-      phone:"+1 (___) ___-____",
-      city:"Chicago",
-      isSeller:true,
-      createdAt: nowISO()
-    }),
-    favorites: new Set(Storage.get("zalvo_favs", [])),
-    ads: [],
-    activeAd: null,
-    filters: Storage.get("zalvo_filters", {
-      category:null,
-      city:null,
-      priceType:null,
-      minPrice:null,
-      maxPrice:null,
-      onlyTop:false,
-      query:""
-    }),
-    ui: { homeView: Storage.get("zalvo_home_view", "list") },
-    chat: Storage.get("zalvo_chat", { threads:{} })
-  };
+function syncShopAdsFilterUI() {
+  if (shopAdsSort) shopAdsSort.value = shopAdsFilterState.sort;
+  if (shopAdsMinPrice) shopAdsMinPrice.value = shopAdsFilterState.minPrice;
+  if (shopAdsMaxPrice) shopAdsMaxPrice.value = shopAdsFilterState.maxPrice;
 
-  function persist(){
-    Storage.set("zalvo_user", State.user);
-    Storage.set("zalvo_favs", Array.from(State.favorites));
-    Storage.set("zalvo_filters", State.filters);
-    Storage.set("zalvo_home_view", State.ui.homeView);
-    Storage.set("zalvo_chat", State.chat);
+  if (shopAdsOnlyPhotoBtn) {
+    shopAdsOnlyPhotoBtn.classList.toggle("chip-filled", shopAdsFilterState.onlyWithPhoto);
+  }
+}
+
+if (shopAdsFilterBtn) {
+  shopAdsFilterBtn.addEventListener("click", () => {
+    syncShopAdsFilterUI();
+    openShopAdsFilterSheet();
+  });
+}
+
+if (shopAdsFilterSheet) {
+  // закрытие по клику на фон
+  shopAdsFilterSheet.addEventListener("click", (e) => {
+    if (e.target === shopAdsFilterSheet) closeShopAdsFilterSheet();
+  });
+
+  // чтобы клики внутри панели не закрывали
+  const inner = shopAdsFilterSheet.querySelector(".store-sheet");
+  if (inner) inner.addEventListener("click", (e) => e.stopPropagation());
+}
+
+if (shopAdsOnlyPhotoBtn) {
+  shopAdsOnlyPhotoBtn.addEventListener("click", () => {
+    shopAdsFilterState.onlyWithPhoto = !shopAdsFilterState.onlyWithPhoto;
+    syncShopAdsFilterUI();
+  });
+}
+
+if (shopAdsApplyBtn) {
+  shopAdsApplyBtn.addEventListener("click", () => {
+    shopAdsFilterState.sort = (shopAdsSort?.value || "new");
+    shopAdsFilterState.minPrice = (shopAdsMinPrice?.value || "").trim();
+    shopAdsFilterState.maxPrice = (shopAdsMaxPrice?.value || "").trim();
+
+    closeShopAdsFilterSheet();
+    renderMyShopAds(); // перерисуем товары в магазине
+  });
+}
+
+if (shopAdsResetBtn) {
+  shopAdsResetBtn.addEventListener("click", () => {
+    shopAdsFilterState.sort = "new";
+    shopAdsFilterState.minPrice = "";
+    shopAdsFilterState.maxPrice = "";
+    shopAdsFilterState.onlyWithPhoto = false;
+
+    if (shopAdsSearchInput) shopAdsSearchInput.value = "";
+
+    syncShopAdsFilterUI();
+    renderMyShopAds();
+    closeShopAdsFilterSheet();
+  });
+}
+
+// поиск по объявлениям магазина
+if (shopAdsSearchInput) {
+  shopAdsSearchInput.addEventListener("input", () => {
+    renderMyShopAds();
+  });
+}
+    
+  // ================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==================
+  function formatNumberWithSpaces(num) {
+    const s = String(num);
+    return s.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
   }
 
-  const API = {
-    async fetchAds(){
-      return new Promise(resolve=> setTimeout(()=> resolve(Mock.ads()), 150));
-    },
-    async createAd(payload){
-      return new Promise(resolve=> setTimeout(()=> resolve({ok:true, id:uuid(), ...payload}), 250));
-    }
-  };
+    // ✅ ЕДИНЫЙ источник категории (поддерживает старые объявления с type)
+function getAdCategory(ad) {
+  return String(ad?.category || ad?.type || "Boshqa").trim();
+}
+    
+    function formatInputNumberSpaces(value) {
+  const digits = String(value || "").replace(/\D/g, "");
+  return digits.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+}
 
-  function adToPriceText(ad){
-    if(ad.price===0) return "Kelishiladi";
-    return ad.priceType==="usd" ? formatMoneyUSD(ad.price) : formatMoneyUZS(ad.price);
+// сохраняем курсор так, чтобы он не прыгал при вставке пробелов
+function setCaretByDigits(el, digitsPos) {
+  const str = el.value;
+  let digitsSeen = 0;
+
+  for (let i = 0; i <= str.length; i++) {
+    if (i === str.length) {
+      el.setSelectionRange(i, i);
+      return;
+    }
+    if (/\d/.test(str[i])) digitsSeen++;
+    if (digitsSeen >= digitsPos) {
+      el.setSelectionRange(i + 1, i + 1);
+      return;
+    }
+  }
+}
+    
+  function formatPrice(price) {
+    if (price === null || price === undefined || price === "") {
+      return "Narx kelishiladi";
+    }
+    const p = Number(price || 0);
+    if (!isFinite(p) || p <= 0) return "Narx kelishiladi";
+
+    if (filterState.currency === "usd") {
+      const usd = p / EXCHANGE_RATE;
+      const rounded = Math.round(usd * 100) / 100;
+      return formatNumberWithSpaces(rounded) + " USD";
+    }
+    return formatNumberWithSpaces(p) + " so‘m";
   }
 
-  function makeAdCard(ad){
-    const isFav = State.favorites.has(ad.id);
-    const badges=[];
-    if(ad.priceType==="usd") badges.push(`<span class="badge usd">USD</span>`);
-    if(ad.condition) badges.push(`<span class="badge">${escapeHtml(ad.condition)}</span>`);
-    if(ad.isTop) badges.push(`<span class="badge good">TOP</span>`);
+  function formatDateShort(iso) {
+    if (!iso) return "";
+    try {
+      const d = new Date(iso);
+      const dd = String(d.getDate()).padStart(2, "0");
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      return `${dd}.${mm}`;
+    } catch (e) {
+      return "";
+    }
+  }
 
-    return `
-      <div class="ad-card" data-ad-id="${ad.id}">
-        ${ad.isTop ? `<div class="ad-card-top">TOP</div>` : ``}
-        <button class="ad-card-fav" data-fav="${ad.id}" aria-label="favorite">${isFav ? "❤️" : "🤍"}</button>
-        <img class="ad-card-thumb" src="${ad.imgs?.[0] || ""}" alt="">
-        <div class="ad-card-body">
-          <div class="ad-card-title">${escapeHtml(ad.title)}</div>
-          <div class="ad-card-price">${adToPriceText(ad)}</div>
-          <div class="ad-card-meta">
-            <span class="badge">${escapeHtml(ad.city || "")}</span>
-            <span class="badge">${escapeHtml(ad.district || "")}</span>
-            ${badges.join("")}
-          </div>
-        </div>
+  // favorites
+  function loadFavoritesFromStorage() {
+    try {
+      const raw = localStorage.getItem(FAVORITES_KEY);
+      if (!raw) return new Set();
+      const arr = JSON.parse(raw);
+      if (!Array.isArray(arr)) return new Set();
+      return new Set(arr);
+    } catch {
+      return new Set();
+    }
+  }
+  function saveFavoritesToStorage() {
+    try {
+      localStorage.setItem(FAVORITES_KEY, JSON.stringify(Array.from(favoritesSet)));
+    } catch {}
+  }
+
+  // history
+  function loadHistoryFromStorage() {
+    try {
+      const raw = localStorage.getItem(HISTORY_KEY);
+      if (!raw) return [];
+      const arr = JSON.parse(raw);
+      if (!Array.isArray(arr)) return [];
+      return arr;
+    } catch {
+      return [];
+    }
+  }
+  function saveHistoryToStorage() {
+    try {
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(historyArray));
+    } catch {}
+  }
+
+  // toast
+  let toastTimeout = null;
+  function showToast(mainText = "E’lon yuqoriga ko‘tarildi!", subText = "Endi odamlarga ko‘proq ko‘rinadi") {
+    if (!toastEl) return;
+    const mainEl = toastEl.querySelector(".toast-text-main");
+    const subEl  = toastEl.querySelector(".toast-text-sub");
+    if (mainEl) mainEl.textContent = mainText;
+    if (subEl)  subEl.textContent  = subText;
+
+    toastEl.classList.add("show");
+    if (toastTimeout) clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => {
+      toastEl.classList.remove("show");
+    }, 3000);
+  }
+
+  // ================== СОЗДАНИЕ КАРТОЧЕК ==================
+  function createAdCard(ad) {
+    const card = document.createElement("div");
+    card.className = "ad-card";
+
+    const title  = ad.title || "E’lon";
+    const city   = ad.city || "Shahar";
+    const category = getAdCategory(ad);
+    const price  = formatPrice(ad.price);
+    const date   = formatDateShort(ad.created_at);
+    const image  = ad.images && ad.images.length ? ad.images[0] : null;
+
+    card.innerHTML = `
+      <div class="ad-image" style="${image ? `background-image:url('${image}');` : ""}"></div>
+      <div class="ad-content">
+        <div class="ad-title">${title}</div>
+        <div class="ad-meta">📍 ${city} · ${category}${date ? " · " + date : ""}</div>
+        <div class="ad-price">${price}</div>
       </div>
     `;
+
+    card.addEventListener("click", () => openAdDetails(ad));
+    return card;
   }
 
-  const Filters = {
-    apply(list){
-      const f=State.filters;
-      let out=[...list];
+  function createHistoryCard(item) {
+    const ad = allAds.find(a => a.id === item.id);
+    if (!ad) return null;
+    return createAdCard(ad);
+  }
 
-      if(f.query){
-        const q=f.query.trim().toLowerCase();
-        out=out.filter(a =>
-          (a.title||"").toLowerCase().includes(q) ||
-          (a.desc||"").toLowerCase().includes(q) ||
-          (a.city||"").toLowerCase().includes(q) ||
-          (a.district||"").toLowerCase().includes(q)
-        );
-      }
-      if(f.category){ out=out.filter(a => a.category===f.category); } // mock не использует
-      if(f.city){ out=out.filter(a => (a.city||"").toLowerCase()===f.city.toLowerCase()); }
-      if(f.priceType){ out=out.filter(a => a.priceType===f.priceType); }
-      if(f.onlyTop){ out=out.filter(a => !!a.isTop); }
-
-      const min = f.minPrice!=null && f.minPrice!=="" ? Number(f.minPrice) : null;
-      const max = f.maxPrice!=null && f.maxPrice!=="" ? Number(f.maxPrice) : null;
-      if(Number.isFinite(min)) out=out.filter(a => (a.price||0) >= min);
-      if(Number.isFinite(max)) out=out.filter(a => (a.price||0) <= max || a.price===0);
-
-      return out;
-    },
-    reset(){
-      State.filters={category:null,city:null,priceType:null,minPrice:null,maxPrice:null,onlyTop:false,query:""};
-      persist();
-      showToast("Filtrlar tozalandi","Hammasi qayta tiklandi","🧼");
-    },
-    syncUIFromState(){
-      const f=State.filters;
-      $("#filterQuery") && ($("#filterQuery").value = f.query || "");
-      $("#filterCity") && ($("#filterCity").value = f.city || "");
-      $("#filterPriceType") && ($("#filterPriceType").value = f.priceType || "");
-      $("#filterMinPrice") && ($("#filterMinPrice").value = f.minPrice ?? "");
-      $("#filterMaxPrice") && ($("#filterMaxPrice").value = f.maxPrice ?? "");
-      $("#filterOnlyTop") && ($("#filterOnlyTop").checked = !!f.onlyTop);
-    },
-    readUIToState(){
-      State.filters.query = ($("#filterQuery")?.value ?? "").trim();
-      const city = ($("#filterCity")?.value ?? "").trim();
-      State.filters.city = city || null;
-      const type = ($("#filterPriceType")?.value ?? "").trim();
-      State.filters.priceType = type || null;
-      const min = ($("#filterMinPrice")?.value ?? "").trim();
-      const max = ($("#filterMaxPrice")?.value ?? "").trim();
-      State.filters.minPrice = min || null;
-      State.filters.maxPrice = max || null;
-      State.filters.onlyTop = !!($("#filterOnlyTop")?.checked ?? false);
-      persist();
+  // ================== РЕНДЕР ЛЕНТЫ + INFINITE SCROLL ==================
+  function applyAllFilters() {
+    if (!allAds.length) {
+      filteredAds = [];
+      return;
     }
-  };
+    const q = (searchInput?.value || "").toLowerCase().trim();
 
-  const Ads = {
-    toggleFav(adId){
-      if(State.favorites.has(adId)){ State.favorites.delete(adId); showToast("Sevimlilardan olib tashlandi","","💔"); }
-      else { State.favorites.add(adId); showToast("Sevimlilarga qo‘shildi","","❤️"); }
-      persist();
-    },
-    openDetail(adId){
-      const ad=State.ads.find(a=>a.id===adId);
-      if(!ad){ showToast("E’lon topilmadi","","⚠️"); return; }
-      State.activeAd=ad;
-      this.renderDetail(ad);
-      Router.go("detail");
-    },
-    renderDetail(ad){
-      $("#detailTitle").textContent = ad.title;
-      $("#detailPrice").textContent = adToPriceText(ad);
-      $("#detailMeta").textContent = `${ad.city} • ${ad.district}`;
-      $("#detailDesc").textContent = ad.desc || "";
+    filteredAds = allAds.filter(ad => {
+      // if (filterState.type !== "all" && ad.type !== filterState.type) return false;
 
-      $("#detailSellerName").textContent = ad.seller?.name || "Seller";
-      $("#detailSellerSub").textContent = ad.seller?.phone || "";
-      $("#detailSellerStatus").textContent = ad.seller?.online ? "Online" : "Offline";
+      if (filterState.category !== "all") {
+  if (getAdCategory(ad) !== filterState.category) return false;
+}
 
-      const main=$("#detailMainImage");
-      const thumbs=$("#detailThumbs");
-      if(main){
-        main.innerHTML = `<img src="${ad.imgs?.[0] || ""}" alt="">`;
-        main.onclick = ()=> Lightbox.open(ad.imgs||[],0);
-      }
-      if(thumbs){
-        thumbs.innerHTML = (ad.imgs||[]).map((src,idx)=>`<img src="${src}" data-idx="${idx}" alt="">`).join("");
-        $$("img", thumbs).forEach(img=>{
-          img.addEventListener("click", ()=>{
-            const idx=Number(img.dataset.idx||"0");
-            if(main) main.innerHTML = `<img src="${ad.imgs[idx]}" alt="">`;
-          });
-          img.addEventListener("dblclick", ()=>{
-            const idx=Number(img.dataset.idx||"0");
-            Lightbox.open(ad.imgs||[], idx);
-          });
-        });
+      if (filterState.city !== "all") {
+        if ((ad.city || "").trim() !== filterState.city) return false;
       }
 
-      $("#detailCallBtn").onclick = ()=>{
-        const phone = ad.seller?.phone || "";
-        if(!phone){ showToast("Telefon yo‘q","","☎️"); return; }
-        window.location.href = `tel:${phone.replace(/\s+/g,"")}`;
-      };
-      $("#detailMsgBtn").onclick = ()=>{
-        Chat.openThreadForAd(ad);
-        Router.go("chat");
-      };
-
-      const similar=$("#detailSimilarList");
-      if(similar){
-        const pool=State.ads.filter(x=>x.id!==ad.id).slice(0,4);
-        similar.innerHTML = pool.map(makeAdCard).join("");
-        App.bindAdCards(similar);
-      }
-    }
-  };
-
-  const Lightbox = {
-    imgs:[],
-    idx:0,
-    open(imgs, idx=0){
-      const box=$("#lightbox"); if(!box) return;
-      this.imgs = imgs || [];
-      this.idx = clamp(idx,0,this.imgs.length-1);
-      $("#lightboxImg").src = this.imgs[this.idx] || "";
-      box.classList.add("show");
-    },
-    close(){ $("#lightbox")?.classList.remove("show"); },
-    prev(){
-      if(!this.imgs.length) return;
-      this.idx = (this.idx - 1 + this.imgs.length) % this.imgs.length;
-      $("#lightboxImg").src = this.imgs[this.idx];
-    },
-    next(){
-      if(!this.imgs.length) return;
-      this.idx = (this.idx + 1) % this.imgs.length;
-      $("#lightboxImg").src = this.imgs[this.idx];
-    },
-    init(){
-      $("#lightbox")?.addEventListener("click",(e)=>{ if(e.target.id==="lightbox") this.close(); });
-      $("#lightboxPrev")?.addEventListener("click",(e)=>{ e.stopPropagation(); this.prev(); });
-      $("#lightboxNext")?.addEventListener("click",(e)=>{ e.stopPropagation(); this.next(); });
-    }
-  };
-
-  const Chat = {
-    currentThreadId:null,
-    openThreadForAd(ad){
-      const threadId="t_"+ad.id;
-      if(!State.chat.threads[threadId]){
-        State.chat.threads[threadId]={
-          adId:ad.id,
-          sellerName: ad.seller?.name || "Seller",
-          messages:[
-            {from:"them", text:`Salom! ${ad.title} bo‘yicha savolingiz bormi?`, ts:nowISO()}
-          ]
-        };
-        persist();
-      }
-      this.currentThreadId=threadId;
-      $("#chatTitle").textContent = State.chat.threads[threadId].sellerName;
-      $("#chatSub").textContent = ad.title;
-    },
-    render(){
-      const root=$("#chatMessages"); if(!root) return;
-      const t=State.chat.threads[this.currentThreadId];
-      if(!t){ root.innerHTML=`<div class="hint">Chat yo‘q</div>`; return; }
-      root.innerHTML = t.messages.map(m=>`
-        <div class="msg-bubble ${m.from==="me" ? "msg-me" : "msg-them"}">${escapeHtml(m.text)}</div>
-      `).join("");
-      root.scrollTop = root.scrollHeight;
-    },
-    sendFromInput(){
-      const input=$("#chatInput"); if(!input) return;
-      const text=input.value.trim();
-      if(!text) return;
-      const t=State.chat.threads[this.currentThreadId];
-      if(!t) return;
-      t.messages.push({from:"me", text, ts:nowISO()});
-      input.value="";
-      persist();
-      this.render();
-
-      setTimeout(()=>{
-        t.messages.push({from:"them", text:"Qabul qilindi ✅ Tez orada javob beraman.", ts:nowISO()});
-        persist();
-        this.render();
-      }, 650);
-    }
-  };
-
-  const StoreSheet = {
-    open(){ $("#storeSheetBackdrop")?.classList.add("show"); },
-    close(){ $("#storeSheetBackdrop")?.classList.remove("show"); },
-    init(){
-      $("#storeMenuBtn")?.addEventListener("click", ()=> this.open());
-      $("#storeSheetBackdrop")?.addEventListener("click", (e)=>{ if(e.target.id==="storeSheetBackdrop") this.close(); });
-      $("#storeSheetShare")?.addEventListener("click", ()=>{
-        this.close();
-        showToast("Ulashish","Link nusxalandi (demo)","🔗");
-        navigator.clipboard?.writeText("https://zalvo.uz/store/demo").catch(()=>{});
-      });
-      $("#storeSheetReport")?.addEventListener("click", ()=>{ this.close(); showToast("Shikoyat yuborildi","Moderator ko‘radi (demo)","🚩"); });
-      $("#storeSheetBlock")?.addEventListener("click", ()=>{ this.close(); showToast("Blok qilindi","Siz bu do‘konni ko‘rmaysiz (demo)","⛔"); });
-    }
-  };
-
-  const AdsCreate = {
-    selectedFiles:[],
-    previewPhotos(e){
-      const files=Array.from(e.target.files||[]);
-      this.selectedFiles=files;
-      const preview=$("#adCreatePhotosPreview"); if(!preview) return;
-      preview.innerHTML="";
-      files.slice(0,6).forEach(file=>{
-        const url=URL.createObjectURL(file);
-        const img=document.createElement("img");
-        img.className="photo-preview";
-        img.src=url;
-        preview.appendChild(img);
-      });
-    },
-    async submit(){
-      const title=$("#adCreateTitle")?.value?.trim()||"";
-      const price=$("#adCreatePrice")?.value?.trim()||"";
-      const priceType=$("#adCreatePriceType")?.value?.trim()||"uzs";
-      const city=$("#adCreateCity")?.value?.trim()||"";
-      const district=$("#adCreateDistrict")?.value?.trim()||"";
-      const desc=$("#adCreateDesc")?.value?.trim()||"";
-
-      if(title.length<3){ showToast("Sarlavha kerak","Kamida 3 ta belgi","⚠️"); return; }
-
-      const payload={
-        title,
-        priceType,
-        price: price ? Number(price) : 0,
-        city, district,
-        desc,
-        imgs: this.selectedFiles.length
-          ? ["https://images.unsplash.com/photo-1523413651479-597eb2da0ad6?auto=format&fit=crop&w=1200&q=70"]
-          : ["https://images.unsplash.com/photo-1523413651479-597eb2da0ad6?auto=format&fit=crop&w=1200&q=70"],
-        seller:{name:State.user.name, phone:State.user.phone, online:true},
-        isTop:false,
-        condition:"New"
-      };
-
-      const created=await API.createAd(payload);
-      if(created?.ok){
-        State.ads.unshift({id:created.id, ...payload});
-        persist();
-        showToast("E’lon qo‘shildi","Tabriklayman!","✅");
-
-        ["adCreateTitle","adCreatePrice","adCreateCity","adCreateDistrict","adCreateDesc"].forEach(id=>{
-          const el=document.getElementById(id); if(el) el.value="";
-        });
-        $("#adCreatePhotosInput") && ($("#adCreatePhotosInput").value="");
-        $("#adCreatePhotosPreview") && ($("#adCreatePhotosPreview").innerHTML="");
-
-        Router.go("home");
-      } else {
-        showToast("Xatolik","Keyinroq urinib ko‘ring","❌");
-      }
-    }
-  };
-
-  const App = {
-    async init(){
-      BottomNav.init();
-      this.bindGlobalButtons();
-      State.ads = await API.fetchAds();
-      Router.go("home",{replace:true});
-    },
-
-    bindGlobalButtons(){
-      // search input
-      $("#searchInput")?.addEventListener("input", (e)=>{
-        State.filters.query = e.target.value;
-        persist();
-        this.renderSearch();
-      });
-
-      // open filters (две кнопки — home и search)
-      $("#openFiltersBtn")?.addEventListener("click", ()=> Router.go("filters"));
-      $("#openFiltersBtn2")?.addEventListener("click", ()=> Router.go("filters"));
-
-      $("#applyFiltersBtn")?.addEventListener("click", ()=>{
-        Filters.readUIToState();
-        showToast("Filtrlar qo‘llandi","Natijalar yangilandi","🎯");
-        Router.back();
-        this.renderHome();
-        this.renderSearch();
-      });
-
-      $("#resetFiltersBtn")?.addEventListener("click", ()=>{
-        Filters.reset();
-        Filters.syncUIFromState();
-        this.renderHome();
-        this.renderSearch();
-      });
-
-      $("#detailBackBtn")?.addEventListener("click", ()=> Router.back());
-
-      $("#goMyStoreBtn")?.addEventListener("click", ()=> Router.go("store"));
-      $("#goAdminBtn")?.addEventListener("click", ()=> Router.go("admin"));
-
-      $("#chatSendBtn")?.addEventListener("click", ()=> Chat.sendFromInput());
-      $("#chatInput")?.addEventListener("keydown", (e)=>{
-        if(e.key==="Enter"){ e.preventDefault(); Chat.sendFromInput(); }
-      });
-
-      $("#createAdBtn")?.addEventListener("click", ()=> Router.go("addAd"));
-      $("#adCreateSubmitBtn")?.addEventListener("click", ()=> AdsCreate.submit());
-      $("#adCreatePhotosInput")?.addEventListener("change", (e)=> AdsCreate.previewPhotos(e));
-
-      $("#toggleViewBtn")?.addEventListener("click", ()=>{
-        State.ui.homeView = (State.ui.homeView==="list") ? "grid" : "list";
-        persist();
-        this.renderHome();
-      });
-
-      // local reset
-      $("#clearLocalBtn")?.addEventListener("click", ()=>{
-        localStorage.removeItem("zalvo_user");
-        localStorage.removeItem("zalvo_favs");
-        localStorage.removeItem("zalvo_filters");
-        localStorage.removeItem("zalvo_home_view");
-        localStorage.removeItem("zalvo_chat");
-        showToast("Tozalandi","LocalStorage reset","🧹");
-        location.reload();
-      });
-
-      // universal back
-      $$("[data-back]").forEach(btn=> btn.addEventListener("click", ()=> Router.back()));
-    },
-
-    renderHome(){
-      const cat=$("#categoryGrid");
-      if(cat){
-        cat.innerHTML = Mock.categories.map(c=>`
-          <button class="category-card" data-cat="${c.id}">
-            <div class="category-card-title">${escapeHtml(c.title)}</div>
-            <div class="category-card-sub">${escapeHtml(c.sub)}</div>
-          </button>
-        `).join("");
-        $$(".category-card", cat).forEach(btn=>{
-          btn.addEventListener("click", ()=>{
-            State.filters.category = btn.dataset.cat;
-            persist();
-            showToast("Kategoriya tanlandi","Qidiruvga o‘tdik","📌");
-            Router.go("search");
-          });
-        });
+      if (filterState.onlyWithPhoto) {
+        if (!ad.images || !Array.isArray(ad.images) || !ad.images.length) return false;
       }
 
-      const listRoot=$("#homeAdList");
-      if(!listRoot) return;
-      const filtered=Filters.apply(State.ads);
-      listRoot.classList.toggle("grid-mode", State.ui.homeView==="grid");
-      listRoot.innerHTML = filtered.map(makeAdCard).join("") || `<div class="hint">Hozircha e’lon yo‘q</div>`;
-      this.bindAdCards(listRoot);
-    },
-
-    renderSearch(){
-      const listRoot=$("#searchAdList");
-      if(!listRoot) return;
-      const si=$("#searchInput");
-      if(si && si.value !== (State.filters.query||"")) si.value = State.filters.query||"";
-      const filtered=Filters.apply(State.ads);
-      listRoot.innerHTML = filtered.map(makeAdCard).join("") || `<div class="hint">Natija topilmadi</div>`;
-      this.bindAdCards(listRoot);
-    },
-
-    renderFavorites(){
-      const listRoot=$("#favoritesAdList");
-      if(!listRoot) return;
-      const favAds=State.ads.filter(a=>State.favorites.has(a.id));
-      listRoot.innerHTML = favAds.map(makeAdCard).join("") || `<div class="hint">Sevimlilar bo‘sh</div>`;
-      this.bindAdCards(listRoot);
-    },
-
-    renderProfile(){
-      $("#profileName") && ($("#profileName").textContent = State.user.name);
-      $("#profileUsername") && ($("#profileUsername").textContent = State.user.username);
-      // avatar первая буква
-      const av=$(".profile-avatar");
-      if(av) av.textContent = (State.user.name||"B").trim().slice(0,1).toUpperCase();
-    },
-
-    renderStore(){
-      $("#storeName") && ($("#storeName").textContent = "Zalvo Do‘koni");
-      $("#storeSub") && ($("#storeSub").textContent = "Premium • Ishonchli sotuvchi");
-    },
-
-    renderAdmin(){
-      $("#adminTotalAds") && ($("#adminTotalAds").textContent = String(State.ads.length));
-      $("#adminTotalFavs") && ($("#adminTotalFavs").textContent = String(State.favorites.size));
-      const list=$("#adminLatestList");
-      if(list){
-        const latest=[...State.ads].slice(0,4);
-        list.innerHTML = latest.map(a=>`
-          <div class="admin-item">
-            <div class="admin-item-title">${escapeHtml(a.title)}</div>
-            <div class="admin-item-sub">${escapeHtml(a.city)} • ${adToPriceText(a)}</div>
-          </div>
-        `).join("");
+      if (q) {
+        const text = (ad.title || "") + " " + (ad.description || "");
+        if (!text.toLowerCase().includes(q)) return false;
       }
-    },
 
-    bindAdCards(root){
-      $$(".ad-card", root).forEach(card=>{
-        card.addEventListener("click", (e)=>{
-          const heart=e.target.closest("[data-fav]");
-          if(heart) return;
-          const id=card.dataset.adId;
-          if(!id) return;
-          Ads.openDetail(id);
-        });
-      });
-
-      $$("[data-fav]", root).forEach(btn=>{
-        btn.addEventListener("click", (e)=>{
-          e.preventDefault();
-          e.stopPropagation();
-          const id=btn.getAttribute("data-fav");
-          if(!id) return;
-          Ads.toggleFav(id);
-          this.refreshCurrent();
-        });
-      });
-    },
-
-    refreshCurrent(){
-      const s=Router.current;
-      if(s==="home") this.renderHome();
-      if(s==="search") this.renderSearch();
-      if(s==="favorites") this.renderFavorites();
-      if(s==="admin") this.renderAdmin();
-      if(s==="store") this.renderStore();
-    }
-  };
-
-  document.addEventListener("DOMContentLoaded", ()=>{
-    Lightbox.init();
-    StoreSheet.init();
-    App.init().catch(err=>{
-      console.error(err);
-      showToast("Xatolik","App ishga tushmadi","⚠️");
+      return true;
     });
+
+    filteredAds.sort((a, b) => {
+      const pa = Number(a.price || 0);
+      const pb = Number(b.price || 0);
+      const da = a.created_at ? new Date(a.created_at).getTime() : 0;
+      const db = b.created_at ? new Date(b.created_at).getTime() : 0;
+
+      switch (filterState.sort) {
+        case "cheap":      return pa - pb;
+        case "expensive":  return pb - pa;
+        case "date":
+        case "default":
+        default:           return db - da;
+      }
+    });
+  }
+
+  function resetFeedRender() {
+    if (!feedList) return;
+    feedList.innerHTML = "";
+    feedRenderedCount = 0;
+    appendMoreToFeed();
+  }
+
+  function appendMoreToFeed() {
+    if (!feedList) return;
+    const start = feedRenderedCount;
+    const end   = Math.min(filteredAds.length, start + FEED_CHUNK_SIZE);
+    if (start >= end) {
+      if (!filteredAds.length && !feedRenderedCount) {
+        feedList.innerHTML = "<div class='ad-meta'>E’lonlar topilmadi</div>";
+      }
+      return;
+    }
+
+    for (let i = start; i < end; i++) {
+      const ad = filteredAds[i];
+      feedList.appendChild(createAdCard(ad));
+    }
+    feedRenderedCount = end;
+  }
+
+  function renderFavorites() {
+    if (!favoritesList) return;
+    favoritesList.innerHTML = "";
+    const ids = Array.from(favoritesSet);
+    if (!ids.length) {
+      favoritesList.innerHTML = "<div class='ad-meta'>Sevimlilar hozircha bo‘sh</div>";
+      return;
+    }
+    const favAds = allAds.filter(ad => ids.includes(ad.id));
+    if (!favAds.length) {
+      favoritesList.innerHTML = "<div class='ad-meta'>Sevimlilar hozircha bo‘sh</div>";
+      return;
+    }
+    favAds.forEach(ad => favoritesList.appendChild(createAdCard(ad)));
+  }
+
+  function renderHistory() {
+    if (!historyListEl) return;
+    historyListEl.innerHTML = "";
+    if (!historyArray.length) {
+      historyListEl.innerHTML = "<div class='ad-meta'>Tarix bo‘sh</div>";
+      return;
+    }
+    const sorted = [...historyArray].sort((a,b)=>b.ts - a.ts);
+    sorted.forEach(item => {
+      const card = createHistoryCard(item);
+      if (card) historyListEl.appendChild(card);
+    });
+  }
+
+    function renderMyAds() {
+  if (!myAdsList) return;
+  myAdsList.innerHTML = "";
+
+  // Фильтруем по твоему телефону / телеграму
+  const myPhone = DEFAULT_PHONE.replace(/\s+/g, "");
+  const myTg    = DEFAULT_TELEGRAM.replace(/^@/, "").toLowerCase();
+
+  const myAds = allAds.filter(ad => {
+    const adPhone = (ad.phone || "").replace(/\s+/g, "");
+    const adTg    = (ad.telegram || "").replace(/^@/, "").toLowerCase();
+
+    return (adPhone && adPhone === myPhone) || (adTg && adTg === myTg);
   });
+
+  if (!myAds.length) {
+    myAdsList.innerHTML = "<div class='ad-meta'>Hozircha sizning e’lonlaringiz yo‘q</div>";
+    return;
+  }
+
+  myAds.forEach(ad => {
+    myAdsList.appendChild(createAdCard(ad));
+  });
+}
+    
+  // ================== ЗАГРУЗКА E’LONLAR ==================
+  async function loadAds() {
+    try {
+      const res = await fetch(ADS_API_URL);
+      if (!res.ok) throw new Error("Bad response");
+      const data = await res.json();
+      if (!Array.isArray(data)) throw new Error("Not array");
+
+      allAds = data;
+      applyAllFilters();
+      resetFeedRender();
+      renderFavorites();
+      updateAdminPanel();
+    } catch (e) {
+      console.error("Error loadAds:", e);
+      if (feedList) {
+        feedList.innerHTML = "<div class='ad-meta'>E’lonlarni yuklashda xatolik</div>";
+      }
+    }
+  }
+
+  // ================== ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ ==================
+    const screens = {
+  home: screenHome,
+  favorites: screenFavorites,
+  filters: screenFilters,
+  adDetails: screenAdDetails,
+  profile: screenProfile,
+  promo: screenPromo,
+  chat: screenChat,
+  history: screenHistory,
+  admin: screenAdmin,
+  newAd1: screenNewAd1,
+  newAd2: screenNewAd2,
+  newAd3: screenNewAd3,
+  newAdSuccess: screenNewAdSuccess,
+  shops: screenShops,
+  language: screenLanguage,
+  myAds: screenMyAds,
+  business: screenBusiness,  // экран “Zalvo biznes uchun”
+  myShop: screenMyShop,       // экран “Mening do‘konim”
+};
+
+  function showScreen(name, opts = {}) {
+  ensureGlobalBackButton();
+
+  const push = opts.push !== false;          // по умолчанию пушим
+  const resetStack = opts.resetStack === true;
+
+  if (resetStack) navStack.length = 0;
+
+  if (push && currentScreen && currentScreen !== name) {
+    navStack.push(currentScreen);
+  }
+
+  currentScreen = name;
+
+  Object.values(screens).forEach(el => {
+    if (!el) return;
+    el.classList.remove("active");
+    el.style.display = "none";
+  });
+
+  const target = screens[name];
+  if (target) {
+    target.classList.add("active");
+    target.style.display = "block";
+  }
+
+  navButtons.forEach(btn => {
+    const s = btn.getAttribute("data-screen");
+    btn.classList.toggle("active", s === name);
+  });
+
+  if (screensContainer) screensContainer.scrollTop = 0;
+
+  if (name === "favorites") renderFavorites();
+  if (name === "history")   renderHistory();
+  if (name === "filters")   syncFiltersUIFromState();
+  if (name === "home")      resetFeedRender();
+  if (name === "myAds")     renderMyAds();
+  if (name === "myShop")    renderMyShopAds();
+
+  updateBackButtonVisibility();
+}
+    
+  // bottom nav
+  navButtons.forEach(btn => {
+    const handleNavTap = () => {
+      const target = btn.getAttribute("data-screen");
+      if (!target) return;
+      showScreen(target, { push: false, resetStack: true });
+    };
+    btn.addEventListener("click", handleNavTap);
+  });
+
+  // infinite scroll on home
+  if (screensContainer) {
+    screensContainer.addEventListener("scroll", () => {
+      if (currentScreen !== "home") return;
+      const nearBottom =
+        screensContainer.scrollTop + screensContainer.clientHeight >=
+        screensContainer.scrollHeight - 80;
+      if (nearBottom) appendMoreToFeed();
+    });
+  }
+
+  // ================== ПОИСК ==================
+  if (searchInput) {
+    searchInput.addEventListener("input", () => {
+      applyAllFilters();
+      resetFeedRender();
+    });
+  }
+
+  // ================== ФИЛЬТРЫ ==================
+  function syncFiltersUIFromState() {
+  if (filterTypeRow) {
+    filterTypeRow.querySelectorAll(".chip").forEach(ch => {
+      const t = ch.getAttribute("data-type") || "all";
+      ch.classList.toggle("chip-filled", t === filterState.type);
+    });
+  }
+
+  if (filterCitySelect) {
+    filterCitySelect.value = filterState.city === "all" ? "all" : filterState.city;
+  }
+
+  if (filterCurrencyRow) {
+    filterCurrencyRow.querySelectorAll(".chip").forEach(ch => {
+      const c = ch.getAttribute("data-currency") || "sum";
+      ch.classList.toggle("chip-filled", c === filterState.currency);
+    });
+  }
+
+  if (filterPhotoChip) {
+    filterPhotoChip.classList.toggle("chip-filled", filterState.onlyWithPhoto);
+  }
+
+  if (filterSortSelect) {
+    filterSortSelect.value = filterState.sort;
+  }
+
+  // ✅ ВОТ ЭТО главное: обновляем chips категории
+  if (filterCategoryRow) {
+    filterCategoryRow.querySelectorAll(".chip").forEach(ch => {
+      const c = ch.getAttribute("data-category") || "all";
+      ch.classList.toggle("chip-filled", c === filterState.category);
+    });
+  }
+}
+
+  function readFiltersFromUI() {
+    if (filterTypeRow) {
+      const active = filterTypeRow.querySelector(".chip-filled");
+      filterState.type = active ? active.getAttribute("data-type") || "all" : "all";
+    }
+
+    if (filterCategoryRow) {
+  const active = filterCategoryRow.querySelector(".chip-filled");
+  filterState.category = active ? active.getAttribute("data-category") || "all" : "all";
+}
+    
+    if (filterCitySelect) {
+      const v = filterCitySelect.value;
+      filterState.city = v === "all" ? "all" : v;
+    }
+    if (filterCurrencyRow) {
+      const active = filterCurrencyRow.querySelector(".chip-filled");
+      filterState.currency = active ? active.getAttribute("data-currency") || "sum" : "sum";
+    }
+    if (filterPhotoChip) {
+      filterState.onlyWithPhoto = filterPhotoChip.classList.contains("chip-filled");
+    }
+    if (filterSortSelect) {
+      filterState.sort = filterSortSelect.value || "default";
+    }
+  }
+
+  if (filterTypeRow) {
+    filterTypeRow.addEventListener("click", e => {
+      const chip = e.target.closest(".chip");
+      if (!chip) return;
+      filterTypeRow.querySelectorAll(".chip").forEach(c => c.classList.remove("chip-filled"));
+      chip.classList.add("chip-filled");
+    });
+  }
+
+    if (filterCategoryRow) {
+  filterCategoryRow.addEventListener("click", e => {
+    const chip = e.target.closest(".chip");
+    if (!chip) return;
+    filterCategoryRow.querySelectorAll(".chip").forEach(c => c.classList.remove("chip-filled"));
+    chip.classList.add("chip-filled");
+  });
+}
+    
+  if (filterCurrencyRow) {
+    filterCurrencyRow.addEventListener("click", e => {
+      const chip = e.target.closest(".chip");
+      if (!chip) return;
+      filterCurrencyRow.querySelectorAll(".chip").forEach(c => c.classList.remove("chip-filled"));
+      chip.classList.add("chip-filled");
+    });
+  }
+  if (filterPhotoChip) {
+    filterPhotoChip.addEventListener("click", () => {
+      filterPhotoChip.classList.toggle("chip-filled");
+    });
+  }
+
+  if (openFiltersBtn) {
+    openFiltersBtn.addEventListener("click", () => {
+      showScreen("filters");
+    });
+  }
+  if (filtersApplyBtn) {
+    filtersApplyBtn.addEventListener("click", () => {
+      readFiltersFromUI();
+      applyAllFilters();
+      resetFeedRender();
+      showScreen("home");
+    });
+  }
+  if (filtersResetBtn) {
+    filtersResetBtn.addEventListener("click", () => {
+      filterState.type         = "all";
+      filterState.city         = "all";
+      filterState.currency     = "sum";
+      filterState.onlyWithPhoto= false;
+      filterState.sort         = "default";
+      filterState.category     = "all";
+      syncFiltersUIFromState();
+      applyAllFilters();
+      resetFeedRender();
+    });
+  }
+    
+  if (filtersBackBtn) {
+    filtersBackBtn.addEventListener("click", () => showScreen("home"));
+  }
+
+  // ================== ПОПУЛЯРНЫЕ КАТЕГОРИИ ==================
+  if (homeCategoryGrid) {
+    const cards = homeCategoryGrid.querySelectorAll(".category-card");
+    let activeCategory = null;
+
+    cards.forEach(card => {
+      const type = card.getAttribute("data-category");
+      card.addEventListener("click", () => {
+        if (activeCategory === type) {
+          activeCategory = null;
+          filterState.category = "all";
+          cards.forEach(c => c.classList.remove("active"));
+        } else {
+          activeCategory = type;
+          filterState.category = type;
+          cards.forEach(c => c.classList.remove("active"));
+          card.classList.add("active");
+        }
+        applyAllFilters();
+        resetFeedRender();
+      });
+    });
+  }
+
+  // ================== НОВОЕ ОБЪЯВЛЕНИЕ ==================
+  if (btnOpenNewAd) {
+    btnOpenNewAd.addEventListener("click", () => showScreen("newAd1"));
+  }
+  if (backFromNewAd1) {
+    backFromNewAd1.addEventListener("click", () => showScreen("home"));
+  }
+  if (backFromNewAd2) {
+    backFromNewAd2.addEventListener("click", () => showScreen("newAd1"));
+  }
+  if (backFromNewAd3) {
+    backFromNewAd3.addEventListener("click", () => showScreen("newAd2"));
+  }
+  if (btnGoHome) {
+    btnGoHome.addEventListener("click", () => showScreen("home"));
+  }
+
+  if (btnNewAdStep1Next) {
+    btnNewAdStep1Next.addEventListener("click", () => {
+      const title = (inputTitle.value || "").trim();
+      const price = (inputPrice.value || "").trim();
+      const desc  = (inputDescription.value || "").trim();
+
+      if (!title) return alert("Sarlavha kiriting");
+      if (!price) return alert("Narx kiriting");
+
+      newAdDraft.city        = inputCity.value;
+      newAdDraft.category    = inputCategory ? inputCategory.value : "Boshqa";
+      newAdDraft.title       = title;
+      newAdDraft.price       = price.replace(/\s+/g, "");
+      newAdDraft.description = desc || "Tavsif berilmagan";
+
+      showScreen("newAd2");
+    });
+  }
+
+  if (btnUploadPhotos && inputPhotos) {
+    btnUploadPhotos.addEventListener("click", () => inputPhotos.click());
+
+    inputPhotos.addEventListener("change", async () => {
+      const files = Array.from(inputPhotos.files || []);
+      photosPreview.innerHTML = "";
+      newAdDraft.photos = [];
+
+      if (!files.length) return;
+
+      const max = 8;
+      const selected = files.slice(0, max);
+
+      for (const file of selected) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const div = document.createElement("div");
+          div.className = "photo-thumb";
+          const img = document.createElement("img");
+          img.src = e.target.result;
+          div.appendChild(img);
+          photosPreview.appendChild(div);
+        };
+        reader.readAsDataURL(file);
+
+        try {
+          const url = await uploadToImgbb(file);
+          newAdDraft.photos.push(url);
+        } catch (e) {
+          console.error("ImgBB error:", e);
+        }
+      }
+    });
+  }
+
+  async function uploadToImgbb(file) {
+    const formData = new FormData();
+    formData.append("key", IMGBB_API_KEY);
+    formData.append("image", file);
+
+    const res = await fetch(IMGBB_UPLOAD_URL, {
+      method: "POST",
+      body: formData
+    });
+    if (!res.ok) throw new Error("upload_failed");
+    const json = await res.json();
+    if (!json.success || !json.data || !json.data.url) {
+      throw new Error("bad_response");
+    }
+    return json.data.url;
+  }
+
+  if (btnNewAdStep2Next) {
+    btnNewAdStep2Next.addEventListener("click", () => {
+      fillSummary();
+      showScreen("newAd3");
+    });
+  }
+
+  function fillSummary() {
+    if (summaryTitle)       summaryTitle.textContent       = newAdDraft.title;
+    if (summaryCityType) summaryCityType.textContent = `${newAdDraft.city} · ${newAdDraft.category}`;
+    if (summaryPrice)       summaryPrice.textContent       = formatPrice(newAdDraft.price);
+    if (summaryDescription) summaryDescription.textContent = newAdDraft.description;
+    if (summaryPhotosInfo)  summaryPhotosInfo.textContent  =
+      "Rasmlar: " + (newAdDraft.photos.length || 0) + " ta";
+  }
+
+  if (btnPublishAd) {
+    btnPublishAd.addEventListener("click", async () => {
+      btnPublishAd.disabled = true;
+      btnPublishAd.textContent = "Yuklanmoqda...";
+
+      try {
+        const payload = {
+  city: newAdDraft.city,
+
+  // ✅ отправляем оба поля — чтобы backend точно сохранил категорию
+  category: newAdDraft.category,
+  type: newAdDraft.category,
+
+  title: newAdDraft.title,
+  price: String(newAdDraft.price).replace(/\s+/g, ""),
+  description: newAdDraft.description,
+  images: newAdDraft.photos,
+  phone: DEFAULT_PHONE,
+  telegram: DEFAULT_TELEGRAM
+};
+
+        const res = await fetch(ADD_AD_API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error("Bad response");
+
+        inputTitle.value = "";
+        inputPrice.value = "";
+        inputDescription.value = "";
+        photosPreview.innerHTML = "";
+        if (inputPhotos) inputPhotos.value = "";
+
+        newAdDraft = {
+          city: "Toshkent",
+          category: "Transport",
+          title: "",
+          price: "",
+          description: "",
+          photos: []
+        };
+
+        showScreen("newAdSuccess");
+        loadAds();
+      } catch (e) {
+        console.error("publish error:", e);
+        alert("Xatolik, keyinroq urinib ko‘ring.");
+      } finally {
+        btnPublishAd.disabled = false;
+        btnPublishAd.textContent = "E’lonni joylash";
+      }
+    });
+  }
+
+  // ================== ОТКРЫТИЕ ДЕТАЛЕЙ ОБЪЯВЛЕНИЯ ==================
+  function openAdDetails(ad) {
+    currentAd = ad;
+
+    if (ad.id != null) {
+      const without = historyArray.filter(x => x.id !== ad.id);
+      without.unshift({id: ad.id, ts: Date.now()});
+      historyArray = without.slice(0, 50);
+      saveHistoryToStorage();
+    }
+
+    if (detailTitle)       detailTitle.textContent       = ad.title || "";
+    if (detailPrice)       detailPrice.textContent       = formatPrice(ad.price);
+    if (detailMeta) detailMeta.textContent = `${ad.city || ""} · ${getAdCategory(ad)}`;
+    if (detailDescription) detailDescription.textContent = ad.description || "";
+
+    const images = Array.isArray(ad.images) ? ad.images : [];
+
+    if (detailMainImage) {
+      detailMainImage.innerHTML = "";
+      detailMainImage.style.display = "flex";
+      detailMainImage.style.overflowX = "auto";
+      detailMainImage.style.scrollSnapType = "x mandatory";
+
+      if (images.length) {
+        images.forEach((url, idx) => {
+          const slide = document.createElement("div");
+          slide.className = "detail-main-slide";
+          slide.style.backgroundImage = `url('${url}')`;
+          slide.addEventListener("click", () => openLightbox(images, idx));
+          detailMainImage.appendChild(slide);
+        });
+      } else {
+        const slide = document.createElement("div");
+        slide.className = "detail-main-slide";
+        slide.style.background = "#e5e7eb";
+        detailMainImage.appendChild(slide);
+      }
+      detailMainImage.scrollLeft = 0;
+    }
+
+    if (detailThumbs) {
+      detailThumbs.innerHTML = "";
+      images.forEach((url, idx) => {
+        const div = document.createElement("div");
+        div.className = "detail-thumb";
+        div.style.backgroundImage = `url('${url}')`;
+        div.addEventListener("click", () => {
+          if (!detailMainImage) return;
+          detailMainImage.scrollTo({
+            left: idx * detailMainImage.clientWidth,
+            behavior: "smooth"
+          });
+        });
+        detailThumbs.appendChild(div);
+      });
+    }
+
+    const phone    = ad.phone    || DEFAULT_PHONE;
+    const telegram = ad.telegram || DEFAULT_TELEGRAM;
+
+    if (callSellerBtn) {
+      if (phone) {
+        const clean = String(phone).replace(/\s+/g, "");
+        callSellerBtn.href = "tel:" + clean;
+        callSellerBtn.style.display = "flex";
+      } else {
+        callSellerBtn.style.display = "none";
+      }
+    }
+    if (msgSellerBtn) {
+      if (telegram) {
+        const uname = String(telegram).replace(/^@/, "");
+        msgSellerBtn.href = "https://t.me/" + uname;
+        msgSellerBtn.style.display = "flex";
+        msgSellerBtn.onclick = e => {
+          e.preventDefault();
+          openChatForAd(ad);
+        };
+      } else {
+        msgSellerBtn.style.display = "none";
+      }
+    }
+
+    if (favoriteBtn) {
+      const isFav = ad.id != null && favoritesSet.has(ad.id);
+      favoriteBtn.textContent = isFav ? "♥" : "♡";
+      favoriteBtn.onclick = () => {
+        if (ad.id == null) return;
+        if (favoritesSet.has(ad.id)) {
+          favoritesSet.delete(ad.id);
+          favoriteBtn.textContent = "♡";
+        } else {
+          favoritesSet.add(ad.id);
+          favoriteBtn.textContent = "♥";
+        }
+        saveFavoritesToStorage();
+        renderFavorites();
+      };
+    }
+
+    if (shareBtn) {
+      shareBtn.onclick = () => {
+        const shareData = {
+          title: ad.title || "E’lon",
+          text: ad.title || "E’lon",
+          url: window.location.href
+        };
+        if (navigator.share) {
+          navigator.share(shareData).catch(()=>{});
+        } else if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(shareData.url)
+            .then(()=>alert("Havola nusxa olindi"));
+        } else {
+          alert("Linkni manzillar satridan nusxa oling");
+        }
+      };
+    }
+
+    if (similarList) {
+      similarList.innerHTML = "";
+      const adCat = getAdCategory(ad);
+      const sameType = allAds.filter(x => x.id !== ad.id && getAdCategory(x) === adCat);
+      const base = sameType.length ? sameType : allAds.filter(x => x.id !== ad.id);
+      base.slice(0, 3).forEach(item => {
+        const wrap = document.createElement("div");
+        wrap.className = "similar-card";
+        const img = item.images && item.images[0];
+        wrap.innerHTML = `
+          <div class="similar-image" style="${img ? `background-image:url('${img}');` : ""}"></div>
+          <div>
+            <div class="similar-content-title">${item.title || ""}</div>
+            <div class="similar-content-meta">${item.city || ""}</div>
+            <div class="similar-content-price">${formatPrice(item.price)}</div>
+          </div>
+        `;
+        wrap.addEventListener("click", () => openAdDetails(item));
+        similarList.appendChild(wrap);
+      });
+    }
+
+    showScreen("adDetails");
+  }
+
+  if (detailBackBtn) {
+    detailBackBtn.addEventListener("click", () => showScreen("home"));
+  }
+
+  // ================== LIGHTBOX ==================
+  function openLightbox(images, index) {
+    if (!imageLightbox || !lightboxImg) return;
+    lightboxImages = images.slice();
+    lightboxIndex  = index || 0;
+    updateLightboxImage();
+    imageLightbox.classList.add("visible");
+  }
+  function updateLightboxImage() {
+    if (!lightboxImg || !lightboxImages.length) return;
+    lightboxImg.src = lightboxImages[lightboxIndex];
+  }
+  if (imageLightbox) {
+    imageLightbox.addEventListener("click", () => {
+      imageLightbox.classList.remove("visible");
+    });
+  }
+  if (lightboxPrev) {
+    lightboxPrev.addEventListener("click", e => {
+      e.stopPropagation();
+      if (!lightboxImages.length) return;
+      lightboxIndex = (lightboxIndex - 1 + lightboxImages.length) % lightboxImages.length;
+      updateLightboxImage();
+    });
+  }
+  if (lightboxNext) {
+    lightboxNext.addEventListener("click", e => {
+      e.stopPropagation();
+      if (!lightboxImages.length) return;
+      lightboxIndex = (lightboxIndex + 1) % lightboxImages.length;
+      updateLightboxImage();
+    });
+  }
+
+  // ================== PROMO ==================
+  if (promoBanner) {
+    promoBanner.addEventListener("click", () => {
+      showScreen("promo");
+    });
+  }
+
+  document.addEventListener("click", e => {
+    const plan = e.target.closest(".promo-plan");
+    if (!plan) return;
+    showToast("E’lon yuqoriga ko‘tarildi!", "TOP bo‘limida ko‘rinadi");
+  });
+
+  // ================== CHAT ==================
+  function renderChat() {
+    if (!chatMessagesEl) return;
+    chatMessagesEl.innerHTML = "";
+    chatHistory.forEach(msg => {
+      const div = document.createElement("div");
+      div.className = "chat-message " + (msg.from === "me" ? "me" : "other");
+      div.textContent = msg.text;
+      chatMessagesEl.appendChild(div);
+    });
+    chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+  }
+
+  function addChatMessage(from, text) {
+    chatHistory.push({
+      from,
+      text,
+      ts: Date.now()
+    });
+    renderChat();
+  }
+
+  function openChatForAd(ad) {
+    if (!chatHistory.length) {
+      addChatMessage("seller", "Assalomu alaykum! Savollaringiz bo‘lsa, yozing 🙂");
+    }
+    showScreen("chat");
+  }
+
+  if (chatSendBtn && chatInput) {
+    chatSendBtn.addEventListener("click", () => {
+      const text = (chatInput.value || "").trim();
+      if (!text) return;
+      addChatMessage("me", text);
+      chatInput.value = "";
+      setTimeout(() => {
+        addChatMessage("seller", "Xabaringizni oldim, tez orada javob beraman ✅");
+      }, 800);
+    });
+    chatInput.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        chatSendBtn.click();
+      }
+    });
+  }
+
+  const settingsAccountBtn   = document.getElementById("settingsAccount");
+  const settingsFavoritesBtn = document.getElementById("settingsFavorites");
+  const settingsHistoryBtn   = document.getElementById("settingsHistory");
+  const settingsProfileBtn   = document.getElementById("settingsProfile");
+  const settingsAboutBtn     = document.getElementById("settingsAbout");
+  const settingsAdminRow  = document.getElementById("settingsAdminRow");
+
+  if (settingsAccountBtn) {
+    settingsAccountBtn.addEventListener("click", () => {
+      showScreen("profile"); // можно позже сделать отдельный экран
+    });
+  }
+
+  if (settingsFavoritesBtn) {
+    settingsFavoritesBtn.addEventListener("click", () => {
+      showScreen("favorites");
+    });
+  }
+
+  if (settingsHistoryBtn) {
+    settingsHistoryBtn.addEventListener("click", () => {
+      showScreen("history");
+    });
+  }
+
+  if (settingsProfileBtn) {
+    settingsProfileBtn.addEventListener("click", () => {
+      showScreen("profile");
+    });
+  }
+
+  if (settingsAboutBtn) {
+    settingsAboutBtn.addEventListener("click", () => {
+      alert("MarketHub — mini ilova test rejimida. 😊");
+    });
+  }
+    
+  // ================== ADMIN PANEL ==================
+  function updateAdminPanel() {
+    if (!adminTotalAdsEl || !adminNewTodayEl || !adminLastAdsEl) return;
+    adminTotalAdsEl.textContent = allAds.length;
+
+    const now = new Date();
+    const todayStr = now.toISOString().slice(0, 10);
+    const newToday = allAds.filter(ad => (ad.created_at || "").startsWith(todayStr)).length;
+    adminNewTodayEl.textContent = newToday;
+
+    adminLastAdsEl.innerHTML = "";
+    const sorted = [...allAds].sort((a,b)=> {
+      const da = a.created_at ? new Date(a.created_at).getTime() : 0;
+      const db = b.created_at ? new Date(b.created_at).getTime() : 0;
+      return db - da;
+    }).slice(0, 10);
+
+    sorted.forEach(ad => {
+      const row = document.createElement("div");
+      row.className = "admin-list-item";
+      row.textContent = `${ad.title || "E’lon"} · ${ad.city || ""}`;
+      row.addEventListener("click", () => openAdDetails(ad));
+      adminLastAdsEl.appendChild(row);
+    });
+  }
+
+    // ================== SETTINGS: SEVIMLILAR, TARIX, PULLIK XIZMATLAR ==================
+if (settingsFavoritesRow) {
+  settingsFavoritesRow.addEventListener("click", () => {
+    showScreen("favorites");
+  });
+}
+
+if (settingsHistoryRow) {
+  settingsHistoryRow.addEventListener("click", () => {
+    showScreen("history");
+  });
+}
+
+if (settingsPaidRow) {
+  settingsPaidRow.addEventListener("click", () => {
+    showScreen("promo");   // ochiladi "E’lonni ilgari surish" ekrani
+  });
+}
+
+if (settingsBusinessRow) {
+  settingsBusinessRow.addEventListener("click", () => {
+    showScreen("promo");   // vaqtinchalik ham shu yerga
+  });
+}
+
+    if (settingsBusinessRow) {
+  settingsBusinessRow.addEventListener("click", () => {
+    showScreen("business");
+  });
+}
+
+if (settingsMyShopRow) {
+  settingsMyShopRow.addEventListener("click", () => {
+    if (userHasShop()) {
+      // уже есть магазин → сразу открываем его
+      showScreen("myShop");
+    } else {
+      // первый раз → показываем “Zalvo biznes uchun”
+      showScreen("business");
+    }
+  });
+}
+
+    if (settingsAdminRow) {
+  settingsAdminRow.addEventListener("click", () => {
+    showScreen("admin");   // ochiladi admin panel ekrani
+  });
+}
+
+    // ✅ SETTINGS: MENING E’LONLARIM
+if (settingsMyAdsRow) {
+  settingsMyAdsRow.addEventListener("click", () => {
+    showScreen("myAds");
+  });
+}
+
+    function applySavedProfilePhoto() {
+  if (!profileAvatar) return;
+  try {
+    const url = localStorage.getItem(PROFILE_PHOTO_KEY);
+    if (url) {
+      profileAvatar.style.backgroundImage = `url('${url}')`;
+      profileAvatar.style.backgroundSize = "cover";
+      profileAvatar.style.backgroundPosition = "center";
+      profileAvatar.textContent = "";
+    }
+  } catch (e) {
+    console.warn("Profile photo load error:", e);
+  }
+}
+
+    function userHasShop() {
+  try {
+    return localStorage.getItem("zalvoHasShop") === "1";
+  } catch {
+    return false;
+  }
+}
+
+function setUserHasShop() {
+  try {
+    localStorage.setItem("zalvoHasShop", "1");
+  } catch {}
+}
+
+function renderMyShopAds() {
+  if (!myShopAdsList) return;
+  myShopAdsList.innerHTML = "";
+
+  const myPhone = DEFAULT_PHONE.replace(/\s+/g, "");
+  const myTg    = DEFAULT_TELEGRAM.replace(/^@/, "").toLowerCase();
+
+  const myAds = allAds.filter(ad => {
+    const adPhone = (ad.phone || "").replace(/\s+/g, "");
+    const adTg    = (ad.telegram || "").replace(/^@/, "").toLowerCase();
+    return (adPhone && adPhone === myPhone) || (adTg && adTg === myTg);
+  });
+
+  if (!myAds.length) {
+    myShopAdsList.innerHTML = "<div class='ad-meta'>Hozircha do‘koningizda e’lonlar yo‘q</div>";
+    return;
+  }
+
+  const q = (shopAdsSearchInput?.value || "").toLowerCase().trim();
+
+  let result = myAds.filter(ad => {
+    if (shopAdsFilterState.onlyWithPhoto) {
+      if (!ad.images || !Array.isArray(ad.images) || !ad.images.length) return false;
+    }
+
+    const p = Number(ad.price || 0);
+    const min = Number(shopAdsFilterState.minPrice || 0);
+    const max = Number(shopAdsFilterState.maxPrice || 0);
+
+    if (shopAdsFilterState.minPrice && isFinite(min) && p < min) return false;
+    if (shopAdsFilterState.maxPrice && isFinite(max) && p > max) return false;
+
+    if (q) {
+      const text = ((ad.title || "") + " " + (ad.description || "")).toLowerCase();
+      if (!text.includes(q)) return false;
+    }
+
+    return true;
+  });
+
+  result.sort((a,b) => {
+    const pa = Number(a.price || 0);
+    const pb = Number(b.price || 0);
+    const da = a.created_at ? new Date(a.created_at).getTime() : 0;
+    const db = b.created_at ? new Date(b.created_at).getTime() : 0;
+
+    if (shopAdsFilterState.sort === "cheap") return pa - pb;
+    if (shopAdsFilterState.sort === "expensive") return pb - pa;
+    return db - da; // new
+  });
+
+  if (!result.length) {
+    myShopAdsList.innerHTML = "<div class='ad-meta'>Mos e’lon topilmadi</div>";
+    return;
+  }
+
+  result.forEach(ad => myShopAdsList.appendChild(createAdCard(ad)));
+}
+    
+    // ================== SETTINGS: RASMINI O‘ZGARTIRISH ==================
+if (settingsChangePhoto && profilePhotoInput) {
+  // открыть выбор файла
+  settingsChangePhoto.addEventListener("click", () => {
+    profilePhotoInput.click();
+  });
+
+  // когда пользователь выбрал фото
+  profilePhotoInput.addEventListener("change", () => {
+    const file = profilePhotoInput.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = e => {
+      const url = e.target.result;
+
+      if (profileAvatar) {
+        profileAvatar.style.backgroundImage = `url('${url}')`;
+        profileAvatar.style.backgroundSize = "cover";
+        profileAvatar.style.backgroundPosition = "center";
+        profileAvatar.textContent = "";
+      }
+
+      try {
+        localStorage.setItem(PROFILE_PHOTO_KEY, url);
+      } catch (err) {
+        console.warn("Profile photo save error:", err);
+      }
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
+    if (businessBackBtn) {
+  businessBackBtn.addEventListener("click", () => {
+    showScreen("profile");
+  });
+}
+
+    // Кнопка "Orqaga" на бизнес-экране
+if (businessBackBtn) {
+  businessBackBtn.addEventListener("click", () => {
+    showScreen("profile");
+  });
+}
+
+// Кнопка "Do‘konni bepul ochish"
+if (businessOpenShopBtn) {
+  businessOpenShopBtn.addEventListener("click", () => {
+    // здесь потом будет полноценное оформление магазина
+    setUserHasShop();      // запоминаем, что у пользователя уже есть магазин
+    showScreen("myShop");  // сразу открываем страницу магазина
+  });
+}
+    
+    // ================== SETTINGS: TILNI TANLASH ==================
+if (settingsLangRow) {
+  settingsLangRow.addEventListener("click", () => {
+    showScreen("language");
+  });
+}
+
+// Nima bo‘ladi til bosilganda?
+if (languageUz) {
+  languageUz.addEventListener("click", () => {
+    localStorage.setItem("zalvoLang", "uz");
+    alert("Til o‘rnatildi: O‘zbek tili");
+    showScreen("profile");
+  });
+}
+
+if (languageRu) {
+  languageRu.addEventListener("click", () => {
+    localStorage.setItem("zalvoLang", "ru");
+    alert("Язык установлен: Русский");
+    showScreen("profile");
+  });
+}
+
+       // ===== STORE BOTTOM SHEET OPEN/CLOSE =====
+if (storeMoreBtn && storeSheet) {
+  storeMoreBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    storeSheet.classList.add("active");
+  });
+
+  // закрыть по клику на фон
+  storeSheet.addEventListener("click", (e) => {
+    if (e.target === storeSheet) {
+      storeSheet.classList.remove("active");
+    }
+  });
+
+  // чтобы клик внутри панели не закрывал
+  const sheetInner = storeSheet.querySelector(".store-sheet");
+  if (sheetInner) {
+    sheetInner.addEventListener("click", (e) => e.stopPropagation());
+  }
+}
+
+  // ================== СТАРТ ==================
+applySavedProfilePhoto();
+showScreen("home");
+loadAds();
   </script>
 </body>
 </html>
