@@ -2132,6 +2132,170 @@
 .store-btn-primary span{
   pointer-events: none;
 }
+
+    /* ================== SHOPS UI ================== */
+.shops-search-row{
+  display:flex;
+  gap:8px;
+  align-items:stretch;
+  margin-top:6px;
+  margin-bottom:6px;
+}
+.shops-search{
+  flex:1;
+}
+.shops-search-input{
+  width:100%;
+  padding:10px 12px;
+  border-radius:999px;
+  border:1px solid rgba(148,163,184,0.6);
+  font-size:14px;
+  padding-left:32px;
+  background:#ffffff
+    url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 5a6 6 0 014.472 9.972l3.278 3.278a1 1 0 01-1.414 1.414l-3.278-3.278A6 6 0 1111 5zm0 2a4 4 0 100 8 4 4 0 000-8z' fill='%2394a3b8'/%3E%3C/svg%3E")
+    no-repeat 10px center;
+  background-size:16px;
+}
+.shops-filter-btn{
+  width:44px;
+  border-radius:14px;
+  border:1px solid rgba(148,163,184,0.6);
+  background:#ffffff;
+  color:#1d4ed8;
+  cursor:pointer;
+}
+
+.top-shops-row{
+  display:flex;
+  gap:10px;
+  overflow-x:auto;
+  padding-bottom:4px;
+}
+.shop-mini{
+  min-width:180px;
+  background:#ffffff;
+  border-radius:18px;
+  padding:10px;
+  box-shadow:0 3px 10px rgba(15,23,42,0.06);
+  border:1px solid transparent;
+  cursor:pointer;
+}
+.shop-mini:hover{ background:#eff6ff; border-color:rgba(37,99,235,0.25); }
+.shop-mini-head{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+.shop-mini-avatar{
+  width:46px;
+  height:46px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#eff6ff,#dbeafe);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+  color:#1d4ed8;
+}
+.shop-mini-title{
+  font-weight:700;
+  font-size:14px;
+}
+.shop-mini-sub{
+  font-size:12px;
+  color:#64748b;
+  margin-top:1px;
+}
+.shop-mini-badges{
+  display:flex;
+  gap:6px;
+  margin-top:8px;
+  flex-wrap:wrap;
+}
+.shop-badge{
+  font-size:11px;
+  padding:3px 8px;
+  border-radius:999px;
+  background:#f1f5f9;
+  color:#0f172a;
+}
+.shop-badge.verified{ background:#dcfce7; color:#16a34a; }
+
+.shops-list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  margin-bottom:10px;
+}
+.shop-card{
+  display:flex;
+  gap:10px;
+  background:#ffffff;
+  border-radius:18px;
+  padding:10px;
+  box-shadow:0 3px 10px rgba(15,23,42,0.06);
+  cursor:pointer;
+}
+.shop-card-avatar{
+  width:56px;
+  height:56px;
+  border-radius:16px;
+  background:linear-gradient(135deg,#eff6ff,#dbeafe);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+  color:#1d4ed8;
+  flex-shrink:0;
+}
+.shop-card-main{ flex:1; min-width:0; }
+.shop-card-title{
+  font-size:14px;
+  font-weight:700;
+}
+.shop-card-meta{
+  font-size:12px;
+  color:#64748b;
+  margin-top:2px;
+}
+.shop-card-stats{
+  display:flex;
+  gap:10px;
+  margin-top:6px;
+  font-size:12px;
+  color:#64748b;
+}
+.shop-stat{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+}
+.shop-actions{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  justify-content:center;
+}
+.shop-open-btn{
+  border:none;
+  border-radius:999px;
+  padding:9px 12px;
+  font-size:13px;
+  font-weight:700;
+  background:#1d4ed8;
+  color:#ffffff;
+  cursor:pointer;
+}
+.shop-msg-btn{
+  border:none;
+  border-radius:999px;
+  padding:9px 12px;
+  font-size:13px;
+  font-weight:700;
+  background:#f3f4f6;
+  color:#111827;
+  cursor:pointer;
+}
     
   @media (max-width: 480px) {
     body {
@@ -2607,13 +2771,88 @@
       </section>
 
             <!-- ================= SHOPS (DO'KONLAR) ================= -->
-      <section id="screen-shops" class="screen">
-        <div class="screen-title">Do‘konlar</div>
-        <div class="hint">
-          Bu bo‘limda keyinchalik rasmiy do‘konlar va brendlar ro‘yxati paydo bo‘ladi.
-        </div>
-      </section>
+<section id="screen-shops" class="screen">
+  <div class="screen-title">Do‘konlar</div>
 
+  <!-- Search + filter -->
+  <div class="shops-search-row">
+    <div class="shops-search">
+      <input id="shopsSearchInput" class="shops-search-input" type="text" placeholder="Do‘kon qidirish..." />
+    </div>
+    <button id="shopsFilterBtn" class="shops-filter-btn" type="button">⚙️</button>
+  </div>
+
+  <!-- Category chips -->
+  <div id="shopsCategoryRow" class="chip-row" style="margin-top:6px;">
+    <div class="chip chip-filled" data-shopcat="all">Hammasi</div>
+    <div class="chip" data-shopcat="Elektronika">Elektronika</div>
+    <div class="chip" data-shopcat="Avto">Avto</div>
+    <div class="chip" data-shopcat="Uy-rozg‘or">Uy-rozg‘or</div>
+    <div class="chip" data-shopcat="Xizmatlar">Xizmatlar</div>
+    <div class="chip" data-shopcat="Kiyim">Kiyim</div>
+  </div>
+
+  <!-- Top shops -->
+  <div class="section-title" style="margin-top:10px;">Top do‘konlar</div>
+  <div id="topShopsRow" class="top-shops-row"></div>
+
+  <!-- All shops list -->
+  <div class="section-title" style="margin-top:12px;">Barcha do‘konlar</div>
+  <div id="shopsList" class="shops-list"></div>
+
+  <div id="shopsEmpty" class="ad-meta" style="display:none; margin-top:10px;">
+    Do‘konlar topilmadi
+  </div>
+</section>
+
+<!-- ===== Shops filter sheet ===== -->
+<div class="store-sheet-backdrop" id="shopsFilterSheet">
+  <div class="store-sheet">
+    <div class="store-sheet-handle"></div>
+
+    <div style="font-weight:700; font-size:16px; margin-bottom:10px;">Do‘konlar filtri</div>
+
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <div>
+        <div style="font-size:13px; color:#6b7280; margin-bottom:6px;">Viloyat</div>
+        <select id="shopsFilterCity" class="form-select">
+          <option value="all">Hammasi</option>
+          <option value="Toshkent shahri">Toshkent shahri</option>
+          <option value="Toshkent viloyati">Toshkent viloyati</option>
+          <option value="Andijon">Andijon</option>
+          <option value="Buxoro">Buxoro</option>
+          <option value="Farg‘ona">Farg‘ona</option>
+          <option value="Jizzax">Jizzax</option>
+          <option value="Xorazm">Xorazm</option>
+          <option value="Namangan">Namangan</option>
+          <option value="Navoiy">Navoiy</option>
+          <option value="Qashqadaryo">Qashqadaryo</option>
+          <option value="Samarqand">Samarqand</option>
+          <option value="Sirdaryo">Sirdaryo</option>
+          <option value="Surxondaryo">Surxondaryo</option>
+          <option value="Qoraqalpog‘iston">Qoraqalpog‘iston</option>
+        </select>
+      </div>
+
+      <div>
+        <div style="font-size:13px; color:#6b7280; margin-bottom:6px;">Saralash</div>
+        <select id="shopsSort" class="form-select">
+          <option value="popular">Mashhur</option>
+          <option value="new">Yangi</option>
+          <option value="rating">Reyting</option>
+        </select>
+      </div>
+
+      <button id="shopsOnlyVerified" class="chip" type="button">Faqat tasdiqlangan</button>
+
+      <div style="display:flex; gap:10px; margin-top:6px;">
+        <button id="shopsApply" class="primary-btn" type="button" style="margin:0;">Qo‘llash</button>
+        <button id="shopsReset" class="outline-btn" type="button" style="margin:0;">Tozalash</button>
+      </div>
+    </div>
+  </div>
+</div>
+      
       <!-- ================= ZALVO BIZNES UCHUN ================= -->
 <section id="screen-business" class="screen">
   <div class="business-header">
@@ -4535,6 +4774,221 @@ if (storeMoreBtn && storeSheet) {
   if (sheetInner) {
     sheetInner.addEventListener("click", (e) => e.stopPropagation());
   }
+}
+
+    // ================== SHOPS DATA + RENDER ==================
+const shopsSearchInput = document.getElementById("shopsSearchInput");
+const shopsListEl      = document.getElementById("shopsList");
+const shopsEmptyEl     = document.getElementById("shopsEmpty");
+const shopsCategoryRow = document.getElementById("shopsCategoryRow");
+const topShopsRow      = document.getElementById("topShopsRow");
+
+// sheet
+const shopsFilterBtn   = document.getElementById("shopsFilterBtn");
+const shopsFilterSheet = document.getElementById("shopsFilterSheet");
+const shopsFilterCity  = document.getElementById("shopsFilterCity");
+const shopsSort        = document.getElementById("shopsSort");
+const shopsOnlyVerifiedBtn = document.getElementById("shopsOnlyVerified");
+const shopsApplyBtn    = document.getElementById("shopsApply");
+const shopsResetBtn    = document.getElementById("shopsReset");
+
+// demo shops (пока нет backend — делаем красиво и “живое”)
+const shopsData = [
+  { id:"s1", name:"Zalvo Phone Shop", city:"Toshkent shahri", category:"Elektronika", subs:451, rating:4.9, reviews:451, ads:12, verified:true,  last:"yaqinda" },
+  { id:"s2", name:"AvtoParts Pro",    city:"Toshkent viloyati", category:"Avto", subs:210, rating:4.7, reviews:88,  ads:34, verified:true,  last:"bugun" },
+  { id:"s3", name:"Usta Xizmat",      city:"Samarqand", category:"Xizmatlar", subs:98, rating:4.8, reviews:22, ads:9, verified:false, last:"kecha" },
+  { id:"s4", name:"Home Market",      city:"Farg‘ona", category:"Uy-rozg‘or", subs:133, rating:4.6, reviews:41, ads:18, verified:false, last:"yaqinda" },
+  { id:"s5", name:"Style Kiyim",      city:"Andijon", category:"Kiyim", subs:76, rating:4.5, reviews:19, ads:7, verified:true, last:"yaqinda" },
+];
+
+const shopsFilterState = {
+  category: "all",
+  city: "all",
+  sort: "popular",
+  onlyVerified: false,
+};
+
+function openShopsFilterSheet(){
+  if (!shopsFilterSheet) return;
+  shopsFilterSheet.classList.add("active");
+}
+function closeShopsFilterSheet(){
+  if (!shopsFilterSheet) return;
+  shopsFilterSheet.classList.remove("active");
+}
+function syncShopsFilterUI(){
+  if (shopsFilterCity) shopsFilterCity.value = shopsFilterState.city;
+  if (shopsSort) shopsSort.value = shopsFilterState.sort;
+  if (shopsOnlyVerifiedBtn) {
+    shopsOnlyVerifiedBtn.classList.toggle("chip-filled", shopsFilterState.onlyVerified);
+  }
+}
+
+function getInitials(name){
+  const s = String(name||"").trim();
+  if (!s) return "Z";
+  const parts = s.split(/\s+/);
+  const a = parts[0]?.[0] || "Z";
+  const b = parts[1]?.[0] || "";
+  return (a + b).toUpperCase();
+}
+
+function shopMiniCard(shop){
+  const div = document.createElement("div");
+  div.className = "shop-mini";
+  div.innerHTML = `
+    <div class="shop-mini-head">
+      <div class="shop-mini-avatar">${getInitials(shop.name)}</div>
+      <div style="min-width:0;">
+        <div class="shop-mini-title">${shop.name}</div>
+        <div class="shop-mini-sub">📍 ${shop.city} · ⭐ ${shop.rating}</div>
+      </div>
+    </div>
+    <div class="shop-mini-badges">
+      <div class="shop-badge">${shop.category}</div>
+      <div class="shop-badge">🧾 ${shop.ads} e’lon</div>
+      ${shop.verified ? `<div class="shop-badge verified">✅ Tasdiqlangan</div>` : ``}
+    </div>
+  `;
+  div.addEventListener("click", () => {
+    // Пока все магазины ведут на твою красивую страницу магазина (myShop)
+    showScreen("myShop");
+  });
+  return div;
+}
+
+function shopCard(shop){
+  const div = document.createElement("div");
+  div.className = "shop-card";
+  div.innerHTML = `
+    <div class="shop-card-avatar">${getInitials(shop.name)}</div>
+    <div class="shop-card-main">
+      <div class="shop-card-title">${shop.name} ${shop.verified ? `<span style="color:#16a34a; font-weight:800;">✓</span>` : ""}</div>
+      <div class="shop-card-meta">📍 ${shop.city} · ${shop.category} · 🟢 ${shop.last}</div>
+      <div class="shop-card-stats">
+        <span class="shop-stat">⭐ ${shop.rating}</span>
+        <span class="shop-stat">💬 ${shop.reviews}</span>
+        <span class="shop-stat">🧾 ${shop.ads}</span>
+        <span class="shop-stat">👥 ${shop.subs}</span>
+      </div>
+    </div>
+    <div class="shop-actions">
+      <button class="shop-open-btn" type="button">Ochish</button>
+      <button class="shop-msg-btn" type="button">Yozish</button>
+    </div>
+  `;
+
+  div.querySelector(".shop-open-btn")?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    showScreen("myShop");
+  });
+  div.querySelector(".shop-msg-btn")?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    showScreen("chat");
+  });
+  div.addEventListener("click", () => showScreen("myShop"));
+  return div;
+}
+
+function renderShops(){
+  if (!shopsListEl || !topShopsRow) return;
+
+  const q = (shopsSearchInput?.value || "").toLowerCase().trim();
+
+  let result = shopsData.filter(s => {
+    if (shopsFilterState.category !== "all" && s.category !== shopsFilterState.category) return false;
+    if (shopsFilterState.city !== "all" && s.city !== shopsFilterState.city) return false;
+    if (shopsFilterState.onlyVerified && !s.verified) return false;
+
+    if (q) {
+      const text = `${s.name} ${s.city} ${s.category}`.toLowerCase();
+      if (!text.includes(q)) return false;
+    }
+    return true;
+  });
+
+  // sort
+  result.sort((a,b) => {
+    if (shopsFilterState.sort === "rating") return (b.rating||0) - (a.rating||0);
+    if (shopsFilterState.sort === "new") return (b.ads||0) - (a.ads||0); // временно
+    // popular default
+    return (b.subs||0) - (a.subs||0);
+  });
+
+  // top shops: первые 6 по популярности (subs)
+  const top = [...shopsData].sort((a,b)=>(b.subs||0)-(a.subs||0)).slice(0,6);
+  topShopsRow.innerHTML = "";
+  top.forEach(s => topShopsRow.appendChild(shopMiniCard(s)));
+
+  shopsListEl.innerHTML = "";
+  if (!result.length) {
+    if (shopsEmptyEl) shopsEmptyEl.style.display = "block";
+    return;
+  }
+  if (shopsEmptyEl) shopsEmptyEl.style.display = "none";
+
+  result.forEach(s => shopsListEl.appendChild(shopCard(s)));
+}
+
+// events
+if (shopsSearchInput) shopsSearchInput.addEventListener("input", renderShops);
+
+if (shopsCategoryRow) {
+  shopsCategoryRow.addEventListener("click", (e) => {
+    const chip = e.target.closest(".chip");
+    if (!chip) return;
+    shopsCategoryRow.querySelectorAll(".chip").forEach(c => c.classList.remove("chip-filled"));
+    chip.classList.add("chip-filled");
+    shopsFilterState.category = chip.getAttribute("data-shopcat") || "all";
+    renderShops();
+  });
+}
+
+if (shopsFilterBtn) {
+  shopsFilterBtn.addEventListener("click", () => {
+    syncShopsFilterUI();
+    openShopsFilterSheet();
+  });
+}
+if (shopsFilterSheet) {
+  shopsFilterSheet.addEventListener("click", (e) => {
+    if (e.target === shopsFilterSheet) closeShopsFilterSheet();
+  });
+  const inner = shopsFilterSheet.querySelector(".store-sheet");
+  if (inner) inner.addEventListener("click", (e) => e.stopPropagation());
+}
+if (shopsOnlyVerifiedBtn) {
+  shopsOnlyVerifiedBtn.addEventListener("click", () => {
+    shopsFilterState.onlyVerified = !shopsFilterState.onlyVerified;
+    syncShopsFilterUI();
+  });
+}
+if (shopsApplyBtn) {
+  shopsApplyBtn.addEventListener("click", () => {
+    shopsFilterState.city = shopsFilterCity?.value || "all";
+    shopsFilterState.sort = shopsSort?.value || "popular";
+    closeShopsFilterSheet();
+    renderShops();
+  });
+}
+if (shopsResetBtn) {
+  shopsResetBtn.addEventListener("click", () => {
+    shopsFilterState.city = "all";
+    shopsFilterState.sort = "popular";
+    shopsFilterState.onlyVerified = false;
+    shopsFilterState.category = "all";
+    if (shopsSearchInput) shopsSearchInput.value = "";
+
+    // reset chips
+    if (shopsCategoryRow) {
+      shopsCategoryRow.querySelectorAll(".chip").forEach(c => c.classList.remove("chip-filled"));
+      shopsCategoryRow.querySelector(`.chip[data-shopcat="all"]`)?.classList.add("chip-filled");
+    }
+
+    syncShopsFilterUI();
+    closeShopsFilterSheet();
+    renderShops();
+  });
 }
 
   // ================== СТАРТ ==================
