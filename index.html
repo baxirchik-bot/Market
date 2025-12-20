@@ -2317,6 +2317,15 @@ body.sheet-open .bottom-nav {
 .store-sheet {
   padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px));
 }
+
+    /* ✅ Bottom-sheet всегда СВЕРХУ всего */
+.store-sheet-backdrop { z-index: 99999 !important; }
+.store-sheet         { z-index: 100000 !important; }
+
+/* ✅ 100% выключаем нижнее меню, когда открыт sheet */
+body.sheet-open .bottom-nav {
+  display: none !important;
+}
     
   @media (max-width: 480px) {
     body {
