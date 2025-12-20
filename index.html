@@ -5089,8 +5089,8 @@ function shopMiniCard(shop){
       ${shop.verified ? `<div class="shop-badge verified">✅ Tasdiqlangan</div>` : ``}
     </div>
   `;
+
   div.addEventListener("click", () => openShop(shop));
-  });
   return div;
 }
 
@@ -5116,16 +5116,16 @@ function shopCard(shop){
   `;
 
   div.querySelector(".shop-open-btn")?.addEventListener("click", (e) => {
-  e.stopPropagation();
-  openShop(shop);
-});
-div.addEventListener("click", () => openShop(shop));
+    e.stopPropagation();
+    openShop(shop);
   });
+
   div.querySelector(".shop-msg-btn")?.addEventListener("click", (e) => {
     e.stopPropagation();
     showScreen("chat");
   });
-  div.addEventListener("click", () => showScreen("myShop"));
+
+  div.addEventListener("click", () => openShop(shop));
   return div;
 }
 
