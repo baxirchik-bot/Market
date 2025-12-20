@@ -4799,13 +4799,6 @@ if (storeMoreBtn && storeSheet) {
   }
 }
 
-  // чтобы клик внутри панели не закрывал
-  const sheetInner = storeSheet.querySelector(".store-sheet");
-  if (sheetInner) {
-    sheetInner.addEventListener("click", (e) => e.stopPropagation());
-  }
-}
-
     // ================== SHOPS DATA + RENDER ==================
 const shopsSearchInput = document.getElementById("shopsSearchInput");
 const shopsListEl      = document.getElementById("shopsList");
@@ -4838,15 +4831,15 @@ const shopsFilterState = {
   onlyVerified: false,
 };
 
-function openShopAdsFilterSheet() {
-  if (!shopAdsFilterSheet) return;
-  shopAdsFilterSheet.classList.add("active");
+function openShopsFilterSheet() {
+  if (!shopsFilterSheet) return;
+  shopsFilterSheet.classList.add("active");
   document.body.classList.add("sheet-open");
 }
 
-function closeShopAdsFilterSheet() {
-  if (!shopAdsFilterSheet) return;
-  shopAdsFilterSheet.classList.remove("active");
+function closeShopsFilterSheet() {
+  if (!shopsFilterSheet) return;
+  shopsFilterSheet.classList.remove("active");
   document.body.classList.remove("sheet-open");
 }
     
