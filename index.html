@@ -2326,6 +2326,19 @@ body.sheet-open .bottom-nav {
 body.sheet-open .bottom-nav {
   display: none !important;
 }
+
+    .shop-view-avatar{
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(135deg,#eff6ff,#dbeafe);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+  color:#1d4ed8;
+  font-size: 30px;
+}
     
   @media (max-width: 480px) {
     body {
@@ -2882,6 +2895,77 @@ body.sheet-open .bottom-nav {
     </div>
   </div>
 </div>
+
+      <!-- ================= SHOP VIEW (ANY SHOP) ================= -->
+<section id="screen-shop-view" class="screen">
+  <div class="store-page">
+
+    <div class="store-cover">
+      <img id="shopViewCover" src="iphone14-pro.jpg" alt="Cover">
+      <div class="store-avatar">
+        <div id="shopViewAvatar" class="shop-view-avatar">Z</div>
+      </div>
+    </div>
+
+    <div class="store-card store-profile">
+      <div id="shopViewName" class="store-name">Do‘kon</div>
+      <div id="shopViewSubs" class="store-subs">0 obunachi</div>
+
+      <div class="store-rating">
+        <span id="shopViewStars" class="store-rating-stars">★★★★★</span>
+        <span id="shopViewRating" class="store-rating-count">0.0 (0 baho)</span>
+      </div>
+
+      <div class="store-actions">
+        <button class="store-btn store-btn-primary" id="shopViewSubscribeBtn" type="button">
+          <span class="icon-pill icon-pill-bell">🔔</span>
+          <span>Obuna bo‘lish</span>
+        </button>
+
+        <button class="store-btn store-btn-icon" id="shopViewMsgBtn" type="button" aria-label="Yozish">✉️</button>
+        <button class="store-btn store-btn-icon" id="shopViewMoreBtn" type="button" aria-label="Ko‘proq">…</button>
+      </div>
+    </div>
+
+    <div class="store-card">
+      <div class="store-section-title">Kontaktlar</div>
+      <div class="store-contacts-list">
+        <div class="store-contact-row">
+          <span class="store-contact-icon phone">📞</span>
+          <a id="shopViewPhone" href="#" style="display:none;">Telefon</a>
+          <span id="shopViewPhoneText" style="display:none;">Telefon yo‘q</span>
+        </div>
+
+        <div class="store-contact-row">
+          <span class="store-contact-icon tg">✈️</span>
+          <a id="shopViewTg" href="#" target="_blank">@shop</a>
+        </div>
+
+        <div class="store-contact-row">
+          <span class="store-contact-icon loc">📍</span>
+          <span id="shopViewCity">Shahar</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="store-card">
+      <div class="store-ads-header">
+        <div class="store-ads-title">E‘lonlar</div>
+      </div>
+
+      <div class="store-search-row">
+        <div class="store-search-input">
+          <span>🔍</span>
+          <input id="shopViewAdsSearchInput" type="text" placeholder="E‘lonlar ichidan qidirish">
+        </div>
+        <button class="store-filter-btn" id="shopViewAdsFilterBtn">≡</button>
+      </div>
+
+      <div id="shopViewAdsList" class="ad-list"></div>
+    </div>
+
+  </div>
+</section>
       
       <!-- ================= ZALVO BIZNES UCHUN ================= -->
 <section id="screen-business" class="screen">
@@ -3275,6 +3359,25 @@ body.sheet-open .bottom-nav {
   });
 }
 
+const screenShopView = document.getElementById("screen-shop-view");
+
+const shopViewName   = document.getElementById("shopViewName");
+const shopViewSubs   = document.getElementById("shopViewSubs");
+const shopViewRating = document.getElementById("shopViewRating");
+const shopViewStars  = document.getElementById("shopViewStars");
+const shopViewCity   = document.getElementById("shopViewCity");
+const shopViewTg     = document.getElementById("shopViewTg");
+const shopViewPhone  = document.getElementById("shopViewPhone");
+const shopViewPhoneText = document.getElementById("shopViewPhoneText");
+const shopViewAvatar = document.getElementById("shopViewAvatar");
+
+const shopViewMsgBtn = document.getElementById("shopViewMsgBtn");
+const shopViewMoreBtn = document.getElementById("shopViewMoreBtn");
+
+const shopViewAdsList = document.getElementById("shopViewAdsList");
+const shopViewAdsSearchInput = document.getElementById("shopViewAdsSearchInput");
+const shopViewAdsFilterBtn = document.getElementById("shopViewAdsFilterBtn");
+    
     // ===== Shop Ads Filter DOM =====
 const shopAdsFilterBtn   = document.getElementById("shopAdsFilterBtn");
 const shopAdsFilterSheet = document.getElementById("shopAdsFilterSheet");
@@ -3872,6 +3975,7 @@ function setCaretByDigits(el, digitsPos) {
   myAds: screenMyAds,
   business: screenBusiness,  // экран “Zalvo biznes uchun”
   myShop: screenMyShop,       // экран “Mening do‘konim”
+  shopView: screenShopView,  
 };
 
   function showScreen(name, opts = {}) {
@@ -3914,8 +4018,106 @@ function setCaretByDigits(el, digitsPos) {
   if (name === "myAds")     renderMyAds();
   if (name === "myShop")    renderMyShopAds();
   if (name === "shops")     renderShops();
+  if (name === "shopView")  renderShopView();
 
   updateBackButtonVisibility();
+}
+
+    let currentShop = null;
+
+// ⭐ звёзды 0..5
+function starsText(rating){
+  const r = Math.max(0, Math.min(5, Number(rating||0)));
+  const full = Math.round(r);
+  return "★★★★★".slice(0, full) + "☆☆☆☆☆".slice(0, 5-full);
+}
+
+// объявления магазина = по telegram/phone владельца
+function getShopAds(shop){
+  if (!shop) return [];
+  const ownerTg = String(shop.ownerTelegram||"").replace(/^@/,"").toLowerCase();
+  const ownerPhone = String(shop.ownerPhone||"").replace(/\s+/g,"");
+
+  return allAds.filter(ad => {
+    const adTg = String(ad.telegram||"").replace(/^@/,"").toLowerCase();
+    const adPhone = String(ad.phone||"").replace(/\s+/g,"");
+
+    if (ownerTg && adTg && adTg === ownerTg) return true;
+    if (ownerPhone && adPhone && adPhone === ownerPhone) return true;
+    return false;
+  });
+}
+
+function openShop(shop){
+  currentShop = shop;
+  showScreen("shopView");
+}
+
+function renderShopView(){
+  if (!currentShop) return;
+
+  if (shopViewName) shopViewName.textContent = currentShop.name || "Do‘kon";
+  if (shopViewSubs) shopViewSubs.textContent = `${currentShop.subs || 0} obunachi`;
+
+  if (shopViewStars) shopViewStars.textContent = starsText(currentShop.rating);
+  if (shopViewRating) shopViewRating.textContent = `${currentShop.rating || 0} (${currentShop.reviews || 0} baho)`;
+
+  if (shopViewCity) shopViewCity.textContent = currentShop.city || "Shahar";
+
+  const tg = String(currentShop.ownerTelegram || "").replace(/^@/,"");
+  if (shopViewTg) {
+    shopViewTg.textContent = "@" + (tg || "shop");
+    shopViewTg.href = tg ? ("https://t.me/" + tg) : "#";
+  }
+
+  const phone = String(currentShop.ownerPhone || "").trim();
+  if (shopViewPhone && shopViewPhoneText) {
+    if (phone) {
+      shopViewPhone.style.display = "inline";
+      shopViewPhoneText.style.display = "none";
+      shopViewPhone.textContent = phone;
+      shopViewPhone.href = "tel:" + phone.replace(/\s+/g,"");
+    } else {
+      shopViewPhone.style.display = "none";
+      shopViewPhoneText.style.display = "inline";
+      shopViewPhoneText.textContent = "Telefon yo‘q";
+    }
+  }
+
+  // аватар = инициалы
+  if (shopViewAvatar) shopViewAvatar.textContent = getInitials(currentShop.name);
+
+  renderShopViewAds();
+}
+
+function renderShopViewAds(){
+  if (!shopViewAdsList) return;
+  shopViewAdsList.innerHTML = "";
+
+  const q = (shopViewAdsSearchInput?.value || "").toLowerCase().trim();
+  const ads = getShopAds(currentShop);
+
+  let result = ads;
+  if (q) {
+    result = ads.filter(a => ((a.title||"") + " " + (a.description||"")).toLowerCase().includes(q));
+  }
+
+  if (!result.length) {
+    shopViewAdsList.innerHTML = "<div class='ad-meta'>Bu do‘konda e’lonlar yo‘q</div>";
+    return;
+  }
+
+  result.forEach(ad => shopViewAdsList.appendChild(createAdCard(ad)));
+}
+
+// кнопка “Yozish” в магазине
+if (shopViewMsgBtn) {
+  shopViewMsgBtn.addEventListener("click", () => showScreen("chat"));
+}
+
+// поиск по объявлениям магазина
+if (shopViewAdsSearchInput) {
+  shopViewAdsSearchInput.addEventListener("input", renderShopViewAds);
 }
     
   // bottom nav
@@ -4827,11 +5029,11 @@ const shopsResetBtn    = document.getElementById("shopsReset");
 
 // demo shops (пока нет backend — делаем красиво и “живое”)
 const shopsData = [
-  { id:"s1", name:"Zalvo Phone Shop", city:"Toshkent shahri", category:"Elektronika", subs:451, rating:4.9, reviews:451, ads:12, verified:true,  last:"yaqinda" },
-  { id:"s2", name:"AvtoParts Pro",    city:"Toshkent viloyati", category:"Avto", subs:210, rating:4.7, reviews:88,  ads:34, verified:true,  last:"bugun" },
-  { id:"s3", name:"Usta Xizmat",      city:"Samarqand", category:"Xizmatlar", subs:98, rating:4.8, reviews:22, ads:9, verified:false, last:"kecha" },
-  { id:"s4", name:"Home Market",      city:"Farg‘ona", category:"Uy-rozg‘or", subs:133, rating:4.6, reviews:41, ads:18, verified:false, last:"yaqinda" },
-  { id:"s5", name:"Style Kiyim",      city:"Andijon", category:"Kiyim", subs:76, rating:4.5, reviews:19, ads:7, verified:true, last:"yaqinda" },
+  { id:"s1", name:"Zalvo Phone Shop", city:"Toshkent shahri", category:"Elektronika", subs:451, rating:4.9, reviews:451, ads:12, verified:true, last:"yaqinda", ownerTelegram:"gulzor_shop", ownerPhone:"+998991234567" },
+  { id:"s2", name:"AvtoParts Pro",    city:"Toshkent viloyati", category:"Avto",        subs:210, rating:4.7, reviews:88,  ads:34, verified:true, last:"bugun",  ownerTelegram:"avtoparts_pro" },
+  { id:"s3", name:"Usta Xizmat",      city:"Samarqand",         category:"Xizmatlar",   subs:98,  rating:4.8, reviews:22,  ads:9,  verified:false,last:"kecha",  ownerTelegram:"usta_xizmat" },
+  { id:"s4", name:"Home Market",      city:"Farg‘ona",          category:"Uy-rozg‘or",  subs:133, rating:4.6, reviews:41,  ads:18, verified:false,last:"yaqinda",ownerTelegram:"home_market" },
+  { id:"s5", name:"Style Kiyim",      city:"Andijon",           category:"Kiyim",       subs:76,  rating:4.5, reviews:19,  ads:7,  verified:true, last:"yaqinda",ownerTelegram:"style_kiyim" },
 ];
 
 const shopsFilterState = {
@@ -4887,9 +5089,7 @@ function shopMiniCard(shop){
       ${shop.verified ? `<div class="shop-badge verified">✅ Tasdiqlangan</div>` : ``}
     </div>
   `;
-  div.addEventListener("click", () => {
-    // Пока все магазины ведут на твою красивую страницу магазина (myShop)
-    showScreen("myShop");
+  div.addEventListener("click", () => openShop(shop));
   });
   return div;
 }
@@ -4916,8 +5116,10 @@ function shopCard(shop){
   `;
 
   div.querySelector(".shop-open-btn")?.addEventListener("click", (e) => {
-    e.stopPropagation();
-    showScreen("myShop");
+  e.stopPropagation();
+  openShop(shop);
+});
+div.addEventListener("click", () => openShop(shop));
   });
   div.querySelector(".shop-msg-btn")?.addEventListener("click", (e) => {
     e.stopPropagation();
