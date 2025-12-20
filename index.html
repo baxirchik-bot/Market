@@ -2296,6 +2296,27 @@
   color:#111827;
   cursor:pointer;
 }
+
+    /* ✅ Когда открыт любой bottom-sheet — прячем нижнее меню */
+body.sheet-open .bottom-nav {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(18px);
+  transition: all 0.18s ease-out;
+}
+
+/* ✅ Bottom-sheet всегда поверх нижнего меню */
+.store-sheet-backdrop {
+  z-index: 3000 !important;
+}
+.store-sheet {
+  z-index: 3001 !important;
+}
+
+/* ✅ Чуть больше отступ снизу, чтобы контент не упирался */
+.store-sheet {
+  padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+}
     
   @media (max-width: 480px) {
     body {
@@ -4760,14 +4781,23 @@ if (storeMoreBtn && storeSheet) {
   storeMoreBtn.addEventListener("click", (e) => {
     e.preventDefault();
     storeSheet.classList.add("active");
+    document.body.classList.add("sheet-open");
   });
 
   // закрыть по клику на фон
   storeSheet.addEventListener("click", (e) => {
     if (e.target === storeSheet) {
       storeSheet.classList.remove("active");
+      document.body.classList.remove("sheet-open");
     }
   });
+
+  // чтобы клик внутри панели не закрывал
+  const sheetInner = storeSheet.querySelector(".store-sheet");
+  if (sheetInner) {
+    sheetInner.addEventListener("click", (e) => e.stopPropagation());
+  }
+}
 
   // чтобы клик внутри панели не закрывал
   const sheetInner = storeSheet.querySelector(".store-sheet");
@@ -4808,14 +4838,18 @@ const shopsFilterState = {
   onlyVerified: false,
 };
 
-function openShopsFilterSheet(){
-  if (!shopsFilterSheet) return;
-  shopsFilterSheet.classList.add("active");
+function openShopAdsFilterSheet() {
+  if (!shopAdsFilterSheet) return;
+  shopAdsFilterSheet.classList.add("active");
+  document.body.classList.add("sheet-open");
 }
-function closeShopsFilterSheet(){
-  if (!shopsFilterSheet) return;
-  shopsFilterSheet.classList.remove("active");
+
+function closeShopAdsFilterSheet() {
+  if (!shopAdsFilterSheet) return;
+  shopAdsFilterSheet.classList.remove("active");
+  document.body.classList.remove("sheet-open");
 }
+    
 function syncShopsFilterUI(){
   if (shopsFilterCity) shopsFilterCity.value = shopsFilterState.city;
   if (shopsSort) shopsSort.value = shopsFilterState.sort;
