@@ -5310,6 +5310,17 @@ function shopCard(shop){
   div.addEventListener("click", () => openShop(shop));
   return div;
 }
+    function shopMiniCard(shop){
+  const div = document.createElement("div");
+  div.className = "top-shop-card";
+  div.innerHTML = `
+    <div class="top-shop-avatar">${getInitials(shop.name)}</div>
+    <div class="top-shop-name">${shop.name}</div>
+    <div class="top-shop-meta">⭐ ${shop.rating} · 👥 ${shop.subs}</div>
+  `;
+  div.addEventListener("click", () => openShop(shop));
+  return div;
+}
     
 function renderShops(){
   if (!shopsListEl || !topShopsRow) return;
@@ -5345,7 +5356,7 @@ function renderShops(){
     .slice(0,6);
 
   topShopsRow.innerHTML = "";
-  top.forEach(s => topShopsRow.appendChild(shopMiniCard(s)));
+  top.forEach(s => topShopsRow.appendChild(shopCard(s)));
 
   shopsListEl.innerHTML = "";
   if (!result.length) {
@@ -5410,6 +5421,7 @@ if (shopsResetBtn) {
 (async () => {
   await ensureShopsLoaded();
   renderShops();
+  if (shopsListEl) shopsListEl.innerHTML = "";
 })();
     
     // reset chips
