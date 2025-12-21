@@ -5331,12 +5331,14 @@ function renderShops(){
       return true;
     });
 
+  // sort
   result.sort((a,b) => {
     if (shopsFilterState.sort === "rating") return (b.rating||0) - (a.rating||0);
-    if (shopsFilterState.sort === "new") return (b.ads||0) - (a.ads||0);
-    return (b.subs||0) - (a.subs||0);
+    if (shopsFilterState.sort === "new") return (b.ads||0) - (a.ads||0); // временно
+    return (b.subs||0) - (a.subs||0); // popular
   });
 
+  // top shops
   const top = [...shopsData]
     .filter(s => !blocked.has(s.id))
     .sort((a,b)=>(b.subs||0)-(a.subs||0))
