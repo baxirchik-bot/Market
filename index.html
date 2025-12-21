@@ -2413,6 +2413,67 @@ body.sheet-open .bottom-nav {
 .shop-action-btn.block:hover {
   background: #fee2e2;
 }
+
+    /* iOS-like Action Sheet */
+.sheet-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.35);
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 12px;
+  z-index: 9999;
+}
+.sheet-overlay.active{ display:flex; }
+
+.sheet-overlay .store-sheet{
+  width: 100%;
+  max-width: 480px;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+
+.sheet-handle{ display:none; }
+
+.sheet-title{
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 14px 16px;
+  font-weight: 800;
+  font-size: 18px;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.sheet-action{
+  width: 100%;
+  border: 0;
+  border-radius: 16px;
+  background: #ffffff;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 700;
+  text-align: left;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.sheet-action.danger{
+  color: #dc2626;
+}
+
+.sheet-cancel{
+  width: 100%;
+  border: 0;
+  border-radius: 16px;
+  background: #ffffff;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+}
     
   @media (max-width: 480px) {
     body {
@@ -5282,34 +5343,41 @@ function getInitials(name){
   return (a + b).toUpperCase();
 }
 
-function shopCard(shop){
+function shopCard(shop, withActions = true){
   const div = document.createElement("div");
   div.className = "shop-card";
+
   div.innerHTML = `
     <div class="shop-card-avatar">${getInitials(shop.name)}</div>
     <div class="shop-card-main">
-      <div class="shop-card-title">${shop.name} ${shop.verified ? `<span style="color:#16a34a; font-weight:800;">✓</span>` : ""}</div>
+      <div class="shop-card-title">
+        ${shop.name}
+        ${shop.verified ? `<span style="color:#16a34a;font-weight:800;">✓</span>` : ""}
+      </div>
       <div class="shop-card-meta">📍 ${shop.city} · ${shop.category}</div>
       <div class="shop-card-stats">
-        <span class="shop-stat">⭐ ${shop.rating}</span>
-        <span class="shop-stat">💬 ${shop.reviews}</span>
-        <span class="shop-stat">🧾 ${shop.ads}</span>
-        <span class="shop-stat">👥 ${shop.subs}</span>
+        <span>⭐ ${shop.rating}</span>
+        <span>💬 ${shop.reviews}</span>
+        <span>🧾 ${shop.ads}</span>
+        <span>👥 ${shop.subs}</span>
       </div>
     </div>
 
-    <button class="shop-more-btn" type="button" aria-label="Ko‘proq">⋯</button>
+    ${withActions ? `<button class="shop-more-btn" type="button">⋯</button>` : ``}
   `;
 
-  // ❗ чтобы карточка не открывалась при нажатии на ⋯
-  div.querySelector(".shop-more-btn")?.addEventListener("click", (e) => {
-    e.stopPropagation();
-    openShopActionsSheet(shop);
-  });
+  if (withActions) {
+    div.querySelector(".shop-more-btn")
+      .addEventListener("click", (e) => {
+        e.stopPropagation();
+        openShopActionsSheet(shop);
+      });
+  }
 
   div.addEventListener("click", () => openShop(shop));
   return div;
 }
+    
     function shopMiniCard(shop){
   const div = document.createElement("div");
   div.className = "top-shop-card";
@@ -5356,7 +5424,7 @@ function renderShops(){
     .slice(0,6);
 
   topShopsRow.innerHTML = "";
-  top.forEach(s => topShopsRow.appendChild(shopCard(s)));
+  top.forEach(s => topShopsRow.appendChild(shopCard(s, false)));
 
   shopsListEl.innerHTML = "";
   if (!result.length) {
