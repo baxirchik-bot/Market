@@ -2339,6 +2339,78 @@ body.sheet-open .bottom-nav {
   color:#1d4ed8;
   font-size: 30px;
 }
+
+    /* ====== SHOPS / SHOP VIEW UPGRADE PACK ====== */
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.shop-skeleton{
+  border-radius:16px;padding:12px;background:#fff;
+  border:1px solid rgba(15,23,42,.06); margin-bottom:10px;
+}
+.shop-skeleton .sk-row{
+  height:12px;border-radius:8px;margin:8px 0;
+  background:linear-gradient(90deg,#eef2ff 25%,#e5e7eb 37%,#eef2ff 63%);
+  background-size:800px 100%; animation:shimmer 1.2s infinite linear;
+}
+.shop-skeleton .sk-row.w60{width:60%}
+.shop-skeleton .sk-row.w40{width:40%}
+.shop-skeleton .sk-row.w80{width:80%}
+
+.shop-mini,.shop-card{transition:transform .12s ease, box-shadow .12s ease}
+.shop-mini:active,.shop-card:active{transform:scale(.99)}
+
+.shop-badge.verified{
+  background:rgba(22,163,74,.12);
+  border:1px solid rgba(22,163,74,.25);
+  color:#166534;font-weight:800;
+}
+
+.shopview-hero{
+  border-radius:18px;padding:14px;
+  background:linear-gradient(135deg,#eef2ff,#f8fafc);
+  border:1px solid rgba(15,23,42,.06);
+  margin-bottom:12px;
+}
+.shopview-hero-top{display:flex;gap:12px;align-items:center}
+.shopview-avatar{
+  width:54px;height:54px;border-radius:16px;
+  display:grid;place-items:center;font-weight:900;
+  background:#111827;color:#fff;flex:0 0 auto;
+}
+.shopview-meta{min-width:0;flex:1 1 auto}
+.shopview-name{
+  font-weight:900;font-size:16px;line-height:1.2;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.shopview-sub{margin-top:4px;color:rgba(15,23,42,.7);font-size:12px}
+
+.shopview-actions{display:flex;gap:8px;margin-top:10px}
+.btn-pill{
+  border:0;padding:10px 12px;border-radius:14px;
+  font-weight:900;cursor:pointer;background:#111827;color:#fff;flex:1;
+}
+.btn-pill.secondary{
+  background:#eef2ff;color:#111827;border:1px solid rgba(15,23,42,.08);
+}
+
+.shopview-tabs{
+  display:flex;gap:8px;padding:4px;border-radius:14px;
+  background:rgba(15,23,42,.05);margin:10px 0 12px;
+}
+.shopview-tab{
+  flex:1;border:0;padding:10px 12px;border-radius:12px;
+  font-weight:900;background:transparent;color:rgba(15,23,42,.7);
+}
+.shopview-tab.active{
+  background:#fff;color:#111827;
+  box-shadow:0 6px 18px rgba(15,23,42,.08);
+}
+
+.shopview-section{display:none}
+.shopview-section.active{display:block}
     
   @media (max-width: 480px) {
     body {
@@ -2896,72 +2968,63 @@ body.sheet-open .bottom-nav {
   </div>
 </div>
 
-      <!-- ================= SHOP VIEW (ANY SHOP) ================= -->
+    <!-- ================= SHOP VIEW (ANY SHOP) ================= -->
 <section id="screen-shop-view" class="screen">
   <div class="store-page">
 
-    <div class="store-cover">
-      <img id="shopViewCover" src="iphone14-pro.jpg" alt="Cover">
-      <div class="store-avatar">
-        <div id="shopViewAvatar" class="shop-view-avatar">Z</div>
+    <!-- ===== SHOP VIEW HERO + TABS ===== -->
+    <div class="shopview-hero">
+      <div class="shopview-hero-top">
+        <div class="shopview-avatar" id="shopViewAvatar">Z</div>
+
+        <div class="shopview-meta">
+          <div class="shopview-name" id="shopViewName">Do‘kon</div>
+          <div class="shopview-sub">
+            <span id="shopViewSubs">0 obunachi</span> ·
+            <span id="shopViewStars">★★★★★</span>
+            <span id="shopViewRating">0 (0 baho)</span> ·
+            <span id="shopViewCity">Shahar</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="shopview-actions">
+        <button class="btn-pill" id="shopViewFollowBtn" type="button">Obuna bo‘lish</button>
+        <button class="btn-pill secondary" id="shopViewMsgBtn" type="button">Yozish</button>
+      </div>
+
+      <div class="shopview-tabs">
+        <button class="shopview-tab active" id="shopTabAds" type="button">E’lonlar</button>
+        <button class="shopview-tab" id="shopTabInfo" type="button">Ma’lumot</button>
       </div>
     </div>
 
-    <div class="store-card store-profile">
-      <div id="shopViewName" class="store-name">Do‘kon</div>
-      <div id="shopViewSubs" class="store-subs">0 obunachi</div>
+    <!-- ===== TAB: ADS ===== -->
+    <div class="shopview-section active" id="shopSectionAds">
 
-      <div class="store-rating">
-        <span id="shopViewStars" class="store-rating-stars">★★★★★</span>
-        <span id="shopViewRating" class="store-rating-count">0.0 (0 baho)</span>
-      </div>
-
-      <div class="store-actions">
-        <button class="store-btn store-btn-primary" id="shopViewSubscribeBtn" type="button">
-          <span class="icon-pill icon-pill-bell">🔔</span>
-          <span>Obuna bo‘lish</span>
-        </button>
-
-        <button class="store-btn store-btn-icon" id="shopViewMsgBtn" type="button" aria-label="Yozish">✉️</button>
-        <button class="store-btn store-btn-icon" id="shopViewMoreBtn" type="button" aria-label="Ko‘proq">…</button>
-      </div>
-    </div>
-
-    <div class="store-card">
-      <div class="store-section-title">Kontaktlar</div>
-      <div class="store-contacts-list">
-        <div class="store-contact-row">
-          <span class="store-contact-icon phone">📞</span>
-          <a id="shopViewPhone" href="#" style="display:none;">Telefon</a>
-          <span id="shopViewPhoneText" style="display:none;">Telefon yo‘q</span>
-        </div>
-
-        <div class="store-contact-row">
-          <span class="store-contact-icon tg">✈️</span>
-          <a id="shopViewTg" href="#" target="_blank">@shop</a>
-        </div>
-
-        <div class="store-contact-row">
-          <span class="store-contact-icon loc">📍</span>
-          <span id="shopViewCity">Shahar</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="store-card">
-      <div class="store-ads-header">
-        <div class="store-ads-title">E‘lonlar</div>
-      </div>
-
+      <!-- Поиск + фильтр (оставляем твои IDs) -->
       <div class="store-search-row">
         <div class="store-search-input">
           <span>🔍</span>
           <input id="shopViewAdsSearchInput" type="text" placeholder="E‘lonlar ichidan qidirish">
         </div>
-        <button class="store-filter-btn" id="shopViewAdsFilterBtn">≡</button>
+        <button class="store-filter-btn" id="shopViewAdsFilterBtn" type="button">≡</button>
       </div>
 
+      <!-- Список объявлений магазина -->
       <div id="shopViewAdsList" class="ad-list"></div>
+    </div>
+
+    <!-- ===== TAB: INFO ===== -->
+    <div class="shopview-section" id="shopSectionInfo">
+      <div class="ad-meta" style="padding:10px 2px;">
+        <div style="font-weight:900; margin-bottom:6px;">Kontakt</div>
+        <div>Telegram: <a id="shopViewTg" href="#" target="_blank">@shop</a></div>
+        <div style="margin-top:6px;">
+          Telefon: <a id="shopViewPhone" href="#" style="display:none;">+998...</a>
+          <span id="shopViewPhoneText" style="display:inline;">Telefon yo‘q</span>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -3390,6 +3453,23 @@ const shopAdsOnlyPhotoBtn= document.getElementById("shopAdsOnlyPhoto");
 const shopAdsApplyBtn    = document.getElementById("shopAdsApply");
 const shopAdsResetBtn    = document.getElementById("shopAdsReset");
 
+    // ===== SHOP VIEW TABS =====
+const shopTabAds = document.getElementById("shopTabAds");
+const shopTabInfo = document.getElementById("shopTabInfo");
+const shopSectionAds = document.getElementById("shopSectionAds");
+const shopSectionInfo = document.getElementById("shopSectionInfo");
+
+function setShopTab(tab) {
+  const isAds = tab === "ads";
+  shopTabAds?.classList.toggle("active", isAds);
+  shopTabInfo?.classList.toggle("active", !isAds);
+  shopSectionAds?.classList.toggle("active", isAds);
+  shopSectionInfo?.classList.toggle("active", !isAds);
+}
+
+if (shopTabAds) shopTabAds.addEventListener("click", () => setShopTab("ads"));
+if (shopTabInfo) shopTabInfo.addEventListener("click", () => setShopTab("info"));
+    
 // local state для фильтров магазина
 const shopAdsFilterState = {
   sort: "new",
@@ -4019,7 +4099,7 @@ function setCaretByDigits(el, digitsPos) {
   if (name === "myShop")    renderMyShopAds();
   if (name === "shopView")  renderShopView();
   if (name === "shops") {
-  ensureShopsLoaded().then(renderShops);
+  ensureShopsLoaded().then(() => renderShops());
 }
     
   updateBackButtonVisibility();
@@ -4083,6 +4163,8 @@ function renderShopView(){
       shopViewPhone.style.display = "none";
       shopViewPhoneText.style.display = "inline";
       shopViewPhoneText.textContent = "Telefon yo‘q";
+      setShopTab("ads");
+      syncFollowBtn();
     }
   }
 
@@ -5045,6 +5127,72 @@ const shopsFilterState = {
   onlyVerified: false,
 };
 
+    /* ====== SHOPS PACK: skeleton + safe loader + tabs + follow ====== */
+
+// Skeleton
+function renderShopsSkeleton(count = 6) {
+  if (!shopsListEl) return;
+  shopsListEl.innerHTML = Array.from({ length: count }).map(() => `
+    <div class="shop-skeleton">
+      <div class="sk-row w60"></div>
+      <div class="sk-row w40"></div>
+      <div class="sk-row w80"></div>
+    </div>
+  `).join("");
+}
+
+// loader (server-ready)
+async function ensureShopsLoaded() {
+  if (shopsLoadedOnce) return;
+  shopsLoadedOnce = true;
+
+  // skeleton only if empty
+  if (shopsListEl && (!shopsListEl.children || shopsListEl.children.length === 0)) {
+    renderShopsSkeleton(6);
+  }
+
+  // future: fetch shops from server here
+  // const res = await fetch("/api/shops");
+  // shopsData = await res.json();
+  return;
+}
+
+// Tabs in shop view
+const shopTabAds = document.getElementById("shopTabAds");
+const shopTabInfo = document.getElementById("shopTabInfo");
+const shopSectionAds = document.getElementById("shopSectionAds");
+const shopSectionInfo = document.getElementById("shopSectionInfo");
+
+function setShopTab(tab) {
+  if (shopTabAds) shopTabAds.classList.toggle("active", tab === "ads");
+  if (shopTabInfo) shopTabInfo.classList.toggle("active", tab === "info");
+  if (shopSectionAds) shopSectionAds.classList.toggle("active", tab === "ads");
+  if (shopSectionInfo) shopSectionInfo.classList.toggle("active", tab === "info");
+}
+
+if (shopTabAds) shopTabAds.addEventListener("click", () => setShopTab("ads"));
+if (shopTabInfo) shopTabInfo.addEventListener("click", () => setShopTab("info"));
+
+// Follow button (local for now)
+const shopViewFollowBtn = document.getElementById("shopViewFollowBtn");
+function followKey(shopId){ return `zalvo_shop_follow_${shopId}`; }
+
+function syncFollowBtn() {
+  if (!shopViewFollowBtn || !currentShop) return;
+  const followed = localStorage.getItem(followKey(currentShop.id)) === "1";
+  shopViewFollowBtn.textContent = followed ? "Obuna bo‘ldingiz ✅" : "Obuna bo‘lish";
+}
+
+if (shopViewFollowBtn) {
+  shopViewFollowBtn.addEventListener("click", () => {
+    if (!currentShop) return;
+    const key = followKey(currentShop.id);
+    const followed = localStorage.getItem(key) === "1";
+    localStorage.setItem(key, followed ? "0" : "1");
+    syncFollowBtn();
+  });
+}
+    
     // ===== SHOPS: future-proof loader (server-ready) =====
 let shopsLoadedOnce = false;
 
