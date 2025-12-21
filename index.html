@@ -2346,6 +2346,34 @@ body.sheet-open .bottom-nav {
 .shop-status {
   display: none !important;
 }
+
+    .shop-actions-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-left: 8px;
+}
+
+.shop-action-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: none;
+  background: #f1f5f9;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shop-action-btn:hover {
+  background: #e2e8f0;
+}
+
+.shop-action-btn.block:hover {
+  background: #fee2e2;
+}
     
   @media (max-width: 480px) {
     body {
@@ -5141,8 +5169,30 @@ function shopCard(shop){
         <span class="shop-stat">👥 ${shop.subs}</span>
       </div>
     </div>
+    <div class="shop-actions-vertical">
+  <button class="shop-action-btn fav" title="Sevimlilarga qo‘shish">⭐</button>
+  <button class="shop-action-btn share" title="Ulashish">🔗</button>
+  <button class="shop-action-btn block" title="Bloklash">🚫</button>
+</div>
   `;
 
+  div.querySelector(".shop-action-btn.fav")?.addEventListener("click", (e) => {
+  e.stopPropagation();
+  alert("Do‘kon sevimlilarga qo‘shildi ⭐");
+});
+
+div.querySelector(".shop-action-btn.share")?.addEventListener("click", (e) => {
+  e.stopPropagation();
+  alert("Ulashish (keyin ishlaymiz) 🔗");
+});
+
+div.querySelector(".shop-action-btn.block")?.addEventListener("click", (e) => {
+  e.stopPropagation();
+  if (confirm("Bu do‘konni bloklaysizmi?")) {
+    alert("Do‘kon bloklandi 🚫");
+  }
+});
+  
   div.querySelector(".shop-open-btn")?.addEventListener("click", (e) => {
     e.stopPropagation();
     openShop(shop);
