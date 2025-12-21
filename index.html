@@ -5243,6 +5243,12 @@ if (shopsResetBtn) {
     shopsFilterState.category = "all";
     if (shopsSearchInput) shopsSearchInput.value = "";
 
+    // ✅ 1) первая загрузка магазинов (на будущее под сервер)
+(async () => {
+  await ensureShopsLoaded();
+  renderShops();
+})();
+    
     // reset chips
     if (shopsCategoryRow) {
       shopsCategoryRow.querySelectorAll(".chip").forEach(c => c.classList.remove("chip-filled"));
