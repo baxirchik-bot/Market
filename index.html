@@ -2348,11 +2348,11 @@ body.sheet-open .bottom-nav {
 }
 
     .shop-card{
-  position: relative;         /* важно для absolute */
-  padding-right: 62px;        /* место под иконки справа */
+  position: relative;     /* ✅ обязательно */
+  overflow: hidden;       /* ✅ чтобы ничего не вылезало */
+  padding-right: 70px;    /* ✅ место под колонку иконок */
 }
 
-/* колонка иконок — плавающая */
 .shop-actions-vertical{
   position: absolute;
   top: 14px;
@@ -2360,14 +2360,17 @@ body.sheet-open .bottom-nav {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin: 0;
 }
 
-/* кнопки чуть компактнее */
 .shop-action-btn{
-  width: 36px;
-  height: 36px;
-  border-radius: 12px;
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  border: 0;
+  background: rgba(0,0,0,0.06);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
 }
 
 .shop-action-btn:hover {
@@ -5160,11 +5163,16 @@ function shopMiniCard(shop){
 function shopCard(shop){
   const div = document.createElement("div");
   div.className = "shop-card";
+
   div.innerHTML = `
     <div class="shop-card-avatar">${getInitials(shop.name)}</div>
+
     <div class="shop-card-main">
-      <div class="shop-card-title">${shop.name} ${shop.verified ? `<span style="color:#16a34a; font-weight:800;">✓</span>` : ""}</div>
-      <div class="shop-card-meta">📍 ${shop.city} · ${shop.category} </div>
+      <div class="shop-card-title">
+        ${shop.name} ${shop.verified ? `<span style="color:#16a34a; font-weight:800;">✓</span>` : ""}
+      </div>
+      <div class="shop-card-meta">📍 ${shop.city} · ${shop.category}</div>
+
       <div class="shop-card-stats">
         <span class="shop-stat">⭐ ${shop.rating}</span>
         <span class="shop-stat">💬 ${shop.reviews}</span>
@@ -5172,44 +5180,32 @@ function shopCard(shop){
         <span class="shop-stat">👥 ${shop.subs}</span>
       </div>
     </div>
+
+    <!-- ✅ ИКОНКИ ВНУТРИ КАРТОЧКИ -->
     <div class="shop-actions-vertical">
-  <button class="shop-action-btn fav" title="Sevimlilarga qo‘shish">⭐</button>
-  <button class="shop-action-btn share" title="Ulashish">🔗</button>
-  <button class="shop-action-btn block" title="Bloklash">🚫</button>
-</div>
+      <button class="shop-action-btn fav" type="button" title="Izbran">
+        ⭐
+      </button>
+      <button class="shop-action-btn share" type="button" title="Ulashish">
+        🔗
+      </button>
+      <button class="shop-action-btn block" type="button" title="Bloklash">
+        ⛔
+      </button>
+    </div>
   `;
 
-  div.querySelector(".shop-action-btn.fav")?.addEventListener("click", (e) => {
-  e.stopPropagation();
-  alert("Do‘kon sevimlilarga qo‘shildi ⭐");
-});
+  // клики по иконкам не открывают магазин
+  div.querySelector(".fav")?.addEventListener("click", (e) => { e.stopPropagation(); /* TODO избранное */ });
+  div.querySelector(".share")?.addEventListener("click", (e) => { e.stopPropagation(); /* TODO share */ });
+  div.querySelector(".block")?.addEventListener("click", (e) => { e.stopPropagation(); /* TODO block */ });
 
-div.querySelector(".shop-action-btn.share")?.addEventListener("click", (e) => {
-  e.stopPropagation();
-  alert("Ulashish (keyin ishlaymiz) 🔗");
-});
-
-div.querySelector(".shop-action-btn.block")?.addEventListener("click", (e) => {
-  e.stopPropagation();
-  if (confirm("Bu do‘konni bloklaysizmi?")) {
-    alert("Do‘kon bloklandi 🚫");
-  }
-});
-  
-  div.querySelector(".shop-open-btn")?.addEventListener("click", (e) => {
-    e.stopPropagation();
-    openShop(shop);
-  });
-
-  div.querySelector(".shop-msg-btn")?.addEventListener("click", (e) => {
-    e.stopPropagation();
-    showScreen("chat");
-  });
-
+  // клик по карточке открывает магазин
   div.addEventListener("click", () => openShop(shop));
+
   return div;
 }
-
+    
 function renderShops(){
   if (!shopsListEl || !topShopsRow) return;
 
