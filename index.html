@@ -4017,9 +4017,11 @@ function setCaretByDigits(el, digitsPos) {
   if (name === "home")      resetFeedRender();
   if (name === "myAds")     renderMyAds();
   if (name === "myShop")    renderMyShopAds();
-  if (name === "shops")     renderShops();
   if (name === "shopView")  renderShopView();
-
+  if (name === "shops") {
+  ensureShopsLoaded().then(renderShops);
+}
+    
   updateBackButtonVisibility();
 }
 
@@ -5043,6 +5045,29 @@ const shopsFilterState = {
   onlyVerified: false,
 };
 
+    // ===== SHOPS: future-proof loader (server-ready) =====
+let shopsLoadedOnce = false;
+
+// Сейчас данные локальные (shopsData уже есть), но мы делаем структуру как под сервер.
+async function ensureShopsLoaded() {
+  // Если потом подключишь сервер — тут будет fetch()
+  if (shopsLoadedOnce) return;
+
+  shopsLoadedOnce = true;
+
+  // Показать loading только если список пустой
+  if (shopsListEl && (!shopsListEl.children || shopsListEl.children.length === 0)) {
+    shopsListEl.innerHTML = "<div class='ad-meta'>Yuklanmoqda...</div>";
+  }
+
+  // ✅ Когда появится backend — заменишь этот блок на fetch:
+  // const res = await fetch("/api/shops");
+  // shopsData = await res.json();
+
+  // Сейчас просто имитируем “готово”
+  return;
+}
+    
 function openShopsFilterSheet() {
   if (!shopsFilterSheet) return;
   shopsFilterSheet.classList.add("active");
