@@ -2340,39 +2340,72 @@ body.sheet-open .bottom-nav {
   font-size: 30px;
 }
 
-    .shop-online,
-.online,
-.online-badge,
-.shop-status {
-  display: none !important;
-}
-
-    .shop-card{
-  position: relative;     /* ✅ обязательно */
-  overflow: hidden;       /* ✅ чтобы ничего не вылезало */
-  padding-right: 70px;    /* ✅ место под колонку иконок */
-}
-
-.shop-actions-vertical{
+    /* кнопка ⋯ внутри карточки */
+.shop-card{ position: relative; }
+.shop-more-btn{
   position: absolute;
-  top: 14px;
   right: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  border: 0;
+  background: rgba(0,0,0,.06);
+  font-size: 22px;
+  line-height: 1;
 }
 
-.shop-action-btn{
-  width: 40px;
-  height: 40px;
+/* overlay sheet */
+.sheet-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.25);
+  display: none;
+  z-index: 9999;
+}
+.sheet-overlay.active{ display: block; }
+.sheet-overlay .store-sheet{
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  border-radius: 18px;
+  background: #fff;
+  padding: 12px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.25);
+}
+.sheet-handle{
+  width: 44px; height: 5px; border-radius: 999px;
+  background: rgba(0,0,0,.12);
+  margin: 6px auto 10px;
+}
+.sheet-title{
+  font-weight: 900;
+  padding: 6px 8px 10px;
+}
+.sheet-action{
+  width: 100%;
+  padding: 12px 12px;
   border-radius: 14px;
   border: 0;
-  background: rgba(0,0,0,0.06);
-  display: grid;
-  place-items: center;
-  cursor: pointer;
+  background: rgba(0,0,0,.06);
+  text-align: left;
+  font-weight: 800;
+  margin-bottom: 8px;
 }
-
+.sheet-action.danger{
+  background: rgba(239,68,68,.12);
+}
+.sheet-cancel{
+  width: 100%;
+  padding: 12px 12px;
+  border-radius: 14px;
+  border: 0;
+  background: rgba(0,0,0,.04);
+  font-weight: 900;
+}
+    
 .shop-action-btn:hover {
   background: #e2e8f0;
 }
@@ -3263,6 +3296,20 @@ body.sheet-open .bottom-nav {
       </div>
 
     </div>
+  </div>
+</div>
+
+    <div id="shopActionsSheet" class="sheet-overlay">
+  <div class="store-sheet">
+    <div class="sheet-handle"></div>
+
+    <div class="sheet-title" id="shopActionsTitle">Do‘kon</div>
+
+    <button class="sheet-action" id="shopActionFav">⭐ Izbranlarga qo‘shish</button>
+    <button class="sheet-action" id="shopActionShare">🔗 Ulashish</button>
+    <button class="sheet-action danger" id="shopActionBlock">⛔ Bloklash</button>
+
+    <button class="sheet-cancel" id="shopActionCancel">Bekor qilish</button>
   </div>
 </div>
     
@@ -5138,23 +5185,30 @@ function getInitials(name){
   return (a + b).toUpperCase();
 }
 
-function shopMiniCard(shop){
+function shopCard(shop){
   const div = document.createElement("div");
-  div.className = "shop-mini";
+  div.className = "shop-card";
   div.innerHTML = `
-    <div class="shop-mini-head">
-      <div class="shop-mini-avatar">${getInitials(shop.name)}</div>
-      <div style="min-width:0;">
-        <div class="shop-mini-title">${shop.name}</div>
-        <div class="shop-mini-sub">📍 ${shop.city} · ⭐ ${shop.rating}</div>
+    <div class="shop-card-avatar">${getInitials(shop.name)}</div>
+    <div class="shop-card-main">
+      <div class="shop-card-title">${shop.name} ${shop.verified ? `<span style="color:#16a34a; font-weight:800;">✓</span>` : ""}</div>
+      <div class="shop-card-meta">📍 ${shop.city} · ${shop.category}</div>
+      <div class="shop-card-stats">
+        <span class="shop-stat">⭐ ${shop.rating}</span>
+        <span class="shop-stat">💬 ${shop.reviews}</span>
+        <span class="shop-stat">🧾 ${shop.ads}</span>
+        <span class="shop-stat">👥 ${shop.subs}</span>
       </div>
     </div>
-    <div class="shop-mini-badges">
-      <div class="shop-badge">${shop.category}</div>
-      <div class="shop-badge">🧾 ${shop.ads} e’lon</div>
-      ${shop.verified ? `<div class="shop-badge verified">✅ Tasdiqlangan</div>` : ``}
-    </div>
+
+    <button class="shop-more-btn" type="button" aria-label="Ko‘proq">⋯</button>
   `;
+
+  // ❗ чтобы карточка не открывалась при нажатии на ⋯
+  div.querySelector(".shop-more-btn")?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    openShopActionsSheet(shop);
+  });
 
   div.addEventListener("click", () => openShop(shop));
   return div;
