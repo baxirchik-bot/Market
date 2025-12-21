@@ -2356,7 +2356,7 @@ body.sheet-open .bottom-nav {
   line-height: 1;
 }
 
-    /* iOS-like Action Sheet (FINAL) */
+    /* iOS-like Action Sheet (grouped) */
 .sheet-overlay{
   position: fixed;
   inset: 0;
@@ -2369,48 +2369,52 @@ body.sheet-open .bottom-nav {
 }
 .sheet-overlay.active{ display:flex; }
 
-/* контейнер, чтобы можно было использовать твой .store-sheet как “панель” */
 .sheet-overlay .store-sheet{
   width: 100%;
   max-width: 480px;
   background: transparent;
   box-shadow: none;
   padding: 0;
-  position: static;
 }
 
-/* Заголовок */
+/* Title */
 .sheet-title{
   background: #ffffff;
   border-radius: 16px;
   padding: 14px 16px;
-  font-weight: 800;
-  font-size: 18px;
+  font-weight: 900;
+  font-size: 22px;
   margin-bottom: 10px;
-  text-align: left;
 }
 
-/* Кнопки */
+/* Group card */
+.sheet-group{
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+/* Actions inside group */
 .sheet-action{
   width: 100%;
   border: 0;
-  border-radius: 16px;
+  border-radius: 0;          /* ключ! */
   background: #ffffff;
   padding: 16px;
   font-size: 16px;
   font-weight: 700;
   text-align: left;
-  margin-bottom: 10px;
   cursor: pointer;
+  margin: 0;                 /* ключ! */
+  border-bottom: 1px solid #eef2f7;
 }
-.sheet-action:active{
-  transform: scale(0.99);
-  background: #f3f4f6;
-}
+.sheet-action:last-child{ border-bottom: 0; }
 
-.sheet-action.danger{ color: #dc2626; }
+.sheet-action:active{ background:#f3f4f6; }
+.sheet-action.danger{ color:#dc2626; }
 
-/* Cancel */
+/* Cancel separate */
 .sheet-cancel{
   width: 100%;
   border: 0;
@@ -2418,17 +2422,11 @@ body.sheet-open .bottom-nav {
   background: #ffffff;
   padding: 16px;
   font-size: 16px;
-  font-weight: 800;
+  font-weight: 900;
   cursor: pointer;
   margin-bottom: calc(env(safe-area-inset-bottom, 0px));
 }
-.sheet-cancel:active{
-  transform: scale(0.99);
-  background: #f3f4f6;
-}
-
-/* ручку скрываем (iOS стиль) */
-.sheet-handle{ display:none; }
+.sheet-cancel:active{ background:#f3f4f6; }
     
   @media (max-width: 480px) {
     body {
