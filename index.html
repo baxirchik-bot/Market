@@ -5133,6 +5133,103 @@ const shopsFilterState = {
   onlyVerified: false,
 };
 
+    // ===== Shop actions sheet =====
+const shopActionsSheet = document.getElementById("shopActionsSheet");
+const shopActionsTitle = document.getElementById("shopActionsTitle");
+const shopActionFav    = document.getElementById("shopActionFav");
+const shopActionShare  = document.getElementById("shopActionShare");
+const shopActionBlock  = document.getElementById("shopActionBlock");
+const shopActionCancel = document.getElementById("shopActionCancel");
+
+let actionShop = null;
+
+function favShopKey(id){ return `zalvo_shop_fav_${id}`; }
+function blockedKey(){ return `zalvo_shop_blocked`; }
+
+function getBlockedSet(){
+  try { return new Set(JSON.parse(localStorage.getItem(blockedKey())||"[]")); }
+  catch { return new Set(); }
+}
+function saveBlockedSet(set){
+  try { localStorage.setItem(blockedKey(), JSON.stringify(Array.from(set))); } catch {}
+}
+
+function openShopActionsSheet(shop){
+  actionShop = shop;
+  if (shopActionsTitle) shopActionsTitle.textContent = shop?.name || "Do‘kon";
+
+  // обновим текст избранного
+  const isFav = localStorage.getItem(favShopKey(shop.id)) === "1";
+  if (shopActionFav) shopActionFav.textContent = isFav ? "⭐ Izbranda ✅" : "⭐ Izbranlarga qo‘shish";
+
+  if (shopActionsSheet){
+    shopActionsSheet.classList.add("active");
+    document.body.classList.add("sheet-open");
+  }
+}
+
+function closeShopActionsSheet(){
+  if (shopActionsSheet){
+    shopActionsSheet.classList.remove("active");
+    document.body.classList.remove("sheet-open");
+  }
+  actionShop = null;
+}
+
+// закрытие по фону
+if (shopActionsSheet){
+  shopActionsSheet.addEventListener("click", (e) => {
+    if (e.target === shopActionsSheet) closeShopActionsSheet();
+  });
+  shopActionsSheet.querySelector(".store-sheet")?.addEventListener("click", e => e.stopPropagation());
+}
+if (shopActionCancel) shopActionCancel.addEventListener("click", closeShopActionsSheet);
+
+// ⭐ избранное
+if (shopActionFav){
+  shopActionFav.addEventListener("click", () => {
+    if (!actionShop) return;
+    const key = favShopKey(actionShop.id);
+    const now = localStorage.getItem(key) === "1";
+    localStorage.setItem(key, now ? "0" : "1");
+    closeShopActionsSheet();
+  });
+}
+
+// 🔗 поделиться
+if (shopActionShare){
+  shopActionShare.addEventListener("click", async () => {
+    if (!actionShop) return;
+
+    const text = `${actionShop.name} — ${actionShop.city} · ${actionShop.category}`;
+    const url = window.location.href;
+
+    try{
+      if (navigator.share){
+        await navigator.share({ title: actionShop.name, text, url });
+      } else if (navigator.clipboard?.writeText){
+        await navigator.clipboard.writeText(`${text}\n${url}`);
+        alert("Nusxa olindi ✅");
+      } else {
+        alert(text);
+      }
+    } catch {}
+    closeShopActionsSheet();
+  });
+}
+
+// ⛔ блок
+if (shopActionBlock){
+  shopActionBlock.addEventListener("click", () => {
+    if (!actionShop) return;
+    const set = getBlockedSet();
+    set.add(actionShop.id);
+    saveBlockedSet(set);
+    closeShopActionsSheet();
+    renderShops(); // перерисуем список
+  });
+}
+    
     // ===== SHOPS: future-proof loader (server-ready) =====
 let shopsLoadedOnce = false;
 
@@ -5265,6 +5362,11 @@ function renderShops(){
 
   const q = (shopsSearchInput?.value || "").toLowerCase().trim();
 
+  const blocked = getBlockedSet();
+let result = shopsData.filter(s => !blocked.has(s.id)).filter(s => {
+  ...
+});
+  
   let result = shopsData.filter(s => {
     if (shopsFilterState.category !== "all" && s.category !== shopsFilterState.category) return false;
     if (shopsFilterState.city !== "all" && s.city !== shopsFilterState.city) return false;
