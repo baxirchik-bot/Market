@@ -5310,85 +5310,38 @@ function shopCard(shop){
   div.addEventListener("click", () => openShop(shop));
   return div;
 }
-
-function shopCard(shop){
-  const div = document.createElement("div");
-  div.className = "shop-card";
-
-  div.innerHTML = `
-    <div class="shop-card-avatar">${getInitials(shop.name)}</div>
-
-    <div class="shop-card-main">
-      <div class="shop-card-title">
-        ${shop.name} ${shop.verified ? `<span style="color:#16a34a; font-weight:800;">✓</span>` : ""}
-      </div>
-      <div class="shop-card-meta">📍 ${shop.city} · ${shop.category}</div>
-
-      <div class="shop-card-stats">
-        <span class="shop-stat">⭐ ${shop.rating}</span>
-        <span class="shop-stat">💬 ${shop.reviews}</span>
-        <span class="shop-stat">🧾 ${shop.ads}</span>
-        <span class="shop-stat">👥 ${shop.subs}</span>
-      </div>
-    </div>
-
-    <!-- ✅ ИКОНКИ ВНУТРИ КАРТОЧКИ -->
-    <div class="shop-actions-vertical">
-      <button class="shop-action-btn fav" type="button" title="Izbran">
-        ⭐
-      </button>
-      <button class="shop-action-btn share" type="button" title="Ulashish">
-        🔗
-      </button>
-      <button class="shop-action-btn block" type="button" title="Bloklash">
-        ⛔
-      </button>
-    </div>
-  `;
-
-  // клики по иконкам не открывают магазин
-  div.querySelector(".fav")?.addEventListener("click", (e) => { e.stopPropagation(); /* TODO избранное */ });
-  div.querySelector(".share")?.addEventListener("click", (e) => { e.stopPropagation(); /* TODO share */ });
-  div.querySelector(".block")?.addEventListener("click", (e) => { e.stopPropagation(); /* TODO block */ });
-
-  // клик по карточке открывает магазин
-  div.addEventListener("click", () => openShop(shop));
-
-  return div;
-}
     
 function renderShops(){
   if (!shopsListEl || !topShopsRow) return;
 
   const q = (shopsSearchInput?.value || "").toLowerCase().trim();
-
   const blocked = getBlockedSet();
-let result = shopsData.filter(s => !blocked.has(s.id)).filter(s => {
-  ...
-});
-  
-  let result = shopsData.filter(s => {
-    if (shopsFilterState.category !== "all" && s.category !== shopsFilterState.category) return false;
-    if (shopsFilterState.city !== "all" && s.city !== shopsFilterState.city) return false;
-    if (shopsFilterState.onlyVerified && !s.verified) return false;
 
-    if (q) {
-      const text = `${s.name} ${s.city} ${s.category}`.toLowerCase();
-      if (!text.includes(q)) return false;
-    }
-    return true;
-  });
+  let result = shopsData
+    .filter(s => !blocked.has(s.id))
+    .filter(s => {
+      if (shopsFilterState.category !== "all" && s.category !== shopsFilterState.category) return false;
+      if (shopsFilterState.city !== "all" && s.city !== shopsFilterState.city) return false;
+      if (shopsFilterState.onlyVerified && !s.verified) return false;
 
-  // sort
+      if (q) {
+        const text = `${s.name} ${s.city} ${s.category}`.toLowerCase();
+        if (!text.includes(q)) return false;
+      }
+      return true;
+    });
+
   result.sort((a,b) => {
     if (shopsFilterState.sort === "rating") return (b.rating||0) - (a.rating||0);
-    if (shopsFilterState.sort === "new") return (b.ads||0) - (a.ads||0); // временно
-    // popular default
+    if (shopsFilterState.sort === "new") return (b.ads||0) - (a.ads||0);
     return (b.subs||0) - (a.subs||0);
   });
 
-  // top shops: первые 6 по популярности (subs)
-  const top = [...shopsData].sort((a,b)=>(b.subs||0)-(a.subs||0)).slice(0,6);
+  const top = [...shopsData]
+    .filter(s => !blocked.has(s.id))
+    .sort((a,b)=>(b.subs||0)-(a.subs||0))
+    .slice(0,6);
+
   topShopsRow.innerHTML = "";
   top.forEach(s => topShopsRow.appendChild(shopMiniCard(s)));
 
