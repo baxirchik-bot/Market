@@ -4138,13 +4138,13 @@ function openShop(shop){
 function renderShopView(){
   if (!currentShop) return;
 
-  if (shopViewName) shopViewName.textContent = currentShop.name || "Do‘kon";
-  if (shopViewSubs) shopViewSubs.textContent = `${currentShop.subs || 0} obunachi`;
+  if (shopViewName)   shopViewName.textContent = currentShop.name || "Do‘kon";
+  if (shopViewSubs)   shopViewSubs.textContent = `${currentShop.subs || 0} obunachi`;
 
-  if (shopViewStars) shopViewStars.textContent = starsText(currentShop.rating);
+  if (shopViewStars)  shopViewStars.textContent = starsText(currentShop.rating);
   if (shopViewRating) shopViewRating.textContent = `${currentShop.rating || 0} (${currentShop.reviews || 0} baho)`;
 
-  if (shopViewCity) shopViewCity.textContent = currentShop.city || "Shahar";
+  if (shopViewCity)   shopViewCity.textContent = currentShop.city || "Shahar";
 
   const tg = String(currentShop.ownerTelegram || "").replace(/^@/,"");
   if (shopViewTg) {
@@ -4163,17 +4163,17 @@ function renderShopView(){
       shopViewPhone.style.display = "none";
       shopViewPhoneText.style.display = "inline";
       shopViewPhoneText.textContent = "Telefon yo‘q";
-      setShopTab("ads");
-      syncFollowBtn();
     }
   }
 
-  // аватар = инициалы
   if (shopViewAvatar) shopViewAvatar.textContent = getInitials(currentShop.name);
 
+  // ✅ эти строки должны быть ВСЕГДА, не внутри if(phone)
+  setShopTab("ads");
+  syncFollowBtn();
   renderShopViewAds();
 }
-
+    
 function renderShopViewAds(){
   if (!shopViewAdsList) return;
   shopViewAdsList.innerHTML = "";
@@ -5127,7 +5127,7 @@ const shopsFilterState = {
   onlyVerified: false,
 };
 
-    /* ====== SHOPS PACK: skeleton + safe loader + tabs + follow ====== */
+    // ===== SHOPS: skeleton + safe loader + follow =====
 
 // Skeleton
 function renderShopsSkeleton(count = 6) {
@@ -5142,6 +5142,8 @@ function renderShopsSkeleton(count = 6) {
 }
 
 // loader (server-ready)
+let shopsLoadedOnce = false;
+
 async function ensureShopsLoaded() {
   if (shopsLoadedOnce) return;
   shopsLoadedOnce = true;
@@ -5154,24 +5156,9 @@ async function ensureShopsLoaded() {
   // future: fetch shops from server here
   // const res = await fetch("/api/shops");
   // shopsData = await res.json();
+
   return;
 }
-
-// Tabs in shop view
-const shopTabAds = document.getElementById("shopTabAds");
-const shopTabInfo = document.getElementById("shopTabInfo");
-const shopSectionAds = document.getElementById("shopSectionAds");
-const shopSectionInfo = document.getElementById("shopSectionInfo");
-
-function setShopTab(tab) {
-  if (shopTabAds) shopTabAds.classList.toggle("active", tab === "ads");
-  if (shopTabInfo) shopTabInfo.classList.toggle("active", tab === "info");
-  if (shopSectionAds) shopSectionAds.classList.toggle("active", tab === "ads");
-  if (shopSectionInfo) shopSectionInfo.classList.toggle("active", tab === "info");
-}
-
-if (shopTabAds) shopTabAds.addEventListener("click", () => setShopTab("ads"));
-if (shopTabInfo) shopTabInfo.addEventListener("click", () => setShopTab("info"));
 
 // Follow button (local for now)
 const shopViewFollowBtn = document.getElementById("shopViewFollowBtn");
@@ -5191,29 +5178,6 @@ if (shopViewFollowBtn) {
     localStorage.setItem(key, followed ? "0" : "1");
     syncFollowBtn();
   });
-}
-    
-    // ===== SHOPS: future-proof loader (server-ready) =====
-let shopsLoadedOnce = false;
-
-// Сейчас данные локальные (shopsData уже есть), но мы делаем структуру как под сервер.
-async function ensureShopsLoaded() {
-  // Если потом подключишь сервер — тут будет fetch()
-  if (shopsLoadedOnce) return;
-
-  shopsLoadedOnce = true;
-
-  // Показать loading только если список пустой
-  if (shopsListEl && (!shopsListEl.children || shopsListEl.children.length === 0)) {
-    shopsListEl.innerHTML = "<div class='ad-meta'>Yuklanmoqda...</div>";
-  }
-
-  // ✅ Когда появится backend — заменишь этот блок на fetch:
-  // const res = await fetch("/api/shops");
-  // shopsData = await res.json();
-
-  // Сейчас просто имитируем “готово”
-  return;
 }
     
 function openShopsFilterSheet() {
