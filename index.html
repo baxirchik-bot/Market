@@ -2356,65 +2356,7 @@ body.sheet-open .bottom-nav {
   line-height: 1;
 }
 
-/* overlay sheet */
-.sheet-overlay{
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.25);
-  display: none;
-  z-index: 9999;
-}
-.sheet-overlay.active{ display: block; }
-.sheet-overlay .store-sheet{
-  position: absolute;
-  left: 12px;
-  right: 12px;
-  bottom: 12px;
-  border-radius: 18px;
-  background: #fff;
-  padding: 12px;
-  box-shadow: 0 20px 60px rgba(0,0,0,.25);
-}
-.sheet-handle{
-  width: 44px; height: 5px; border-radius: 999px;
-  background: rgba(0,0,0,.12);
-  margin: 6px auto 10px;
-}
-.sheet-title{
-  font-weight: 900;
-  padding: 6px 8px 10px;
-}
-.sheet-action{
-  width: 100%;
-  padding: 12px 12px;
-  border-radius: 14px;
-  border: 0;
-  background: rgba(0,0,0,.06);
-  text-align: left;
-  font-weight: 800;
-  margin-bottom: 8px;
-}
-.sheet-action.danger{
-  background: rgba(239,68,68,.12);
-}
-.sheet-cancel{
-  width: 100%;
-  padding: 12px 12px;
-  border-radius: 14px;
-  border: 0;
-  background: rgba(0,0,0,.04);
-  font-weight: 900;
-}
-    
-.shop-action-btn:hover {
-  background: #e2e8f0;
-}
-
-.shop-action-btn.block:hover {
-  background: #fee2e2;
-}
-
-    /* iOS-like Action Sheet */
+    /* iOS-like Action Sheet (FINAL) */
 .sheet-overlay{
   position: fixed;
   inset: 0;
@@ -2423,20 +2365,21 @@ body.sheet-open .bottom-nav {
   align-items: flex-end;
   justify-content: center;
   padding: 12px;
-  z-index: 9999;
+  z-index: 99999;
 }
 .sheet-overlay.active{ display:flex; }
 
+/* контейнер, чтобы можно было использовать твой .store-sheet как “панель” */
 .sheet-overlay .store-sheet{
   width: 100%;
   max-width: 480px;
   background: transparent;
   box-shadow: none;
   padding: 0;
+  position: static;
 }
 
-.sheet-handle{ display:none; }
-
+/* Заголовок */
 .sheet-title{
   background: #ffffff;
   border-radius: 16px;
@@ -2447,6 +2390,7 @@ body.sheet-open .bottom-nav {
   text-align: left;
 }
 
+/* Кнопки */
 .sheet-action{
   width: 100%;
   border: 0;
@@ -2459,11 +2403,14 @@ body.sheet-open .bottom-nav {
   margin-bottom: 10px;
   cursor: pointer;
 }
-
-.sheet-action.danger{
-  color: #dc2626;
+.sheet-action:active{
+  transform: scale(0.99);
+  background: #f3f4f6;
 }
 
+.sheet-action.danger{ color: #dc2626; }
+
+/* Cancel */
 .sheet-cancel{
   width: 100%;
   border: 0;
@@ -2473,7 +2420,15 @@ body.sheet-open .bottom-nav {
   font-size: 16px;
   font-weight: 800;
   cursor: pointer;
+  margin-bottom: calc(env(safe-area-inset-bottom, 0px));
 }
+.sheet-cancel:active{
+  transform: scale(0.99);
+  background: #f3f4f6;
+}
+
+/* ручку скрываем (iOS стиль) */
+.sheet-handle{ display:none; }
     
   @media (max-width: 480px) {
     body {
