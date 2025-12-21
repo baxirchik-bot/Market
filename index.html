@@ -2347,24 +2347,27 @@ body.sheet-open .bottom-nav {
   display: none !important;
 }
 
-    .shop-actions-vertical {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-left: 8px;
+    .shop-card{
+  position: relative;         /* важно для absolute */
+  padding-right: 62px;        /* место под иконки справа */
 }
 
-.shop-action-btn {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  border: none;
-  background: #f1f5f9;
-  font-size: 16px;
-  cursor: pointer;
+/* колонка иконок — плавающая */
+.shop-actions-vertical{
+  position: absolute;
+  top: 14px;
+  right: 14px;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+}
+
+/* кнопки чуть компактнее */
+.shop-action-btn{
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
 }
 
 .shop-action-btn:hover {
