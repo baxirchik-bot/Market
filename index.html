@@ -2356,7 +2356,7 @@ body.sheet-open .bottom-nav {
   line-height: 1;
 }
 
-    /* iOS-like Action Sheet (grouped) */
+    /* ===== FINAL iOS ACTION SHEET (override) ===== */
 .sheet-overlay{
   position: fixed;
   inset: 0;
@@ -2365,64 +2365,57 @@ body.sheet-open .bottom-nav {
   align-items: flex-end;
   justify-content: center;
   padding: 12px;
-  z-index: 99999;
+  z-index: 100000;
 }
 .sheet-overlay.active{ display:flex; }
 
+/* контейнер sheet */
 .sheet-overlay .store-sheet{
   width: 100%;
   max-width: 480px;
-  background: transparent;
-  box-shadow: none;
-  padding: 0;
+  background: transparent !important;
+  padding: 0 !important;
+  box-shadow: none !important;
 }
 
-/* Title */
+/* заголовок (теперь всегда в белой карточке) */
 .sheet-title{
-  padding: 12px 16px;   /* было больше */
-  font-size: 20px;      /* было 22 */
-  font-weight: 900;
-  margin-bottom: 10px;
-}
-
-/* Group card */
-.sheet-group{
+  display: block;
   background: #ffffff;
-  border-radius: 16px;
-  overflow: hidden;
+  border-radius: 18px;
+  padding: 14px 16px;
+  font-weight: 900;
+  font-size: 20px;
   margin-bottom: 10px;
 }
 
-/* Actions inside group */
+/* кнопки */
 .sheet-action{
   width: 100%;
   border: 0;
-  border-radius: 0;          /* ключ! */
+  border-radius: 18px;
   background: #ffffff;
-  padding: 14px 16px;   /* было 16 */
-  font-size: 15px;      /* было 16 */
-  font-weight: 700;
+  padding: 14px 16px;
+  font-size: 15px;
+  font-weight: 800;
   text-align: left;
+  margin-bottom: 10px;
   cursor: pointer;
-  margin: 0;                 /* ключ! */
-  border-bottom: 1px solid #eef2f7;
 }
-.sheet-action:last-child{ border-bottom: 0; }
-
-.sheet-action.danger:active{ background: rgba(220,38,38,0.08); }
+.sheet-action:active{ background:#f3f4f6; }
 .sheet-action.danger{ color:#dc2626; }
+.sheet-action.danger:active{ background: rgba(220,38,38,.08); }
 
-/* Cancel separate */
+/* cancel отдельно */
 .sheet-cancel{
   width: 100%;
   border: 0;
-  border-radius: 16px;
+  border-radius: 18px;
   background: #ffffff;
-  padding: 16px;
-  font-size: 16px;
+  padding: 14px 16px;
+  font-size: 15px;
   font-weight: 900;
   cursor: pointer;
-  margin-bottom: calc(env(safe-area-inset-bottom, 0px));
 }
 .sheet-cancel:active{ background:#f3f4f6; }
     
