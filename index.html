@@ -2441,6 +2441,119 @@ body.sheet-open .bottom-nav {
 
 /* Прячем нижнее меню когда открыт sheet */
 body.sheet-open .bottom-nav{ display:none !important; }
+
+    /* ===== TOP SHOPS (Instagram-style) ===== */
+.top-shops-row{
+  display:flex;
+  gap:12px;
+  overflow-x:auto;
+  padding: 6px 2px 2px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+.top-shops-row::-webkit-scrollbar{ display:none; }
+
+.top-shop-ig{
+  min-width: 210px;
+  max-width: 210px;
+  background:#fff;
+  border-radius:18px;
+  box-shadow: 0 2px 14px rgba(15,23,42,.08);
+  padding: 12px;
+  scroll-snap-align: start;
+}
+
+.top-shop-ig-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:8px;
+}
+
+.top-shop-ig-left{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+}
+
+.top-shop-ig-avatar{
+  width:44px;
+  height:44px;
+  border-radius:999px;
+  background:#eef2ff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  color:#0f172a;
+  flex:0 0 auto;
+}
+
+.top-shop-ig-name{
+  font-weight:900;
+  font-size:14px;
+  color:#0f172a;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  line-height:1.2;
+}
+
+.top-shop-ig-verified{
+  color:#16a34a;
+  font-weight:900;
+  margin-left:6px;
+}
+
+.top-shop-ig-sub{
+  font-size:12px;
+  color:#64748b;
+  margin-top:2px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.top-shop-ig-more{
+  border:0;
+  background:transparent;
+  font-size:20px;
+  line-height:1;
+  cursor:pointer;
+  color:#0f172a;
+  padding:6px 8px;
+  border-radius:12px;
+}
+.top-shop-ig-more:active{ background:#f1f5f9; transform:scale(.98); }
+
+.top-shop-ig-stats{
+  display:flex;
+  gap:10px;
+  font-size:12px;
+  color:#0f172a;
+  margin: 8px 0 10px;
+  font-weight:700;
+}
+.top-shop-ig-stats span{ color:#0f172a; opacity:.9; }
+
+.top-shop-ig-subscribe{
+  width:100%;
+  border:0;
+  border-radius:14px;
+  padding: 10px 12px;
+  font-weight:900;
+  font-size:14px;
+  cursor:pointer;
+  background:#2563eb;
+  color:#fff;
+}
+.top-shop-ig-subscribe.subscribed{
+  background:#e2e8f0;
+  color:#0f172a;
+}
+.top-shop-ig-subscribe:active{ transform:scale(.99); }
     
   @media (max-width: 480px) {
     body {
@@ -5231,6 +5344,77 @@ if (languageRu) {
     return (a + b).toUpperCase();
   }
 
+    function subKey(id){ return `zalvo_shop_sub_${id}`; }
+
+function isSubscribed(shopId){
+  try { return localStorage.getItem(subKey(shopId)) === "1"; }
+  catch { return false; }
+}
+
+function toggleSubscribe(shopId){
+  try{
+    const now = localStorage.getItem(subKey(shopId)) === "1";
+    localStorage.setItem(subKey(shopId), now ? "0" : "1");
+    return !now;
+  } catch {
+    return false;
+  }
+}
+
+function topShopCardIG(shop){
+  const div = document.createElement("div");
+  div.className = "top-shop-ig";
+
+  const subscribed = isSubscribed(shop.id);
+
+  div.innerHTML = `
+    <div class="top-shop-ig-head">
+      <div class="top-shop-ig-left">
+        <div class="top-shop-ig-avatar">${getInitials(shop.name)}</div>
+        <div style="min-width:0;">
+          <div class="top-shop-ig-name">
+            ${shop.name}
+            <span class="top-shop-ig-verified">✓</span>
+          </div>
+          <div class="top-shop-ig-sub">📍 ${shop.city} · ${shop.category}</div>
+        </div>
+      </div>
+      <button class="top-shop-ig-more" type="button" aria-label="Menu">⋯</button>
+    </div>
+
+    <div class="top-shop-ig-stats">
+      <span>⭐ ${shop.rating || 0}</span>
+      <span>👥 ${shop.subs || 0}</span>
+      <span>🧾 ${shop.ads || 0}</span>
+    </div>
+
+    <button class="top-shop-ig-subscribe ${subscribed ? "subscribed":""}" type="button">
+      ${subscribed ? "Obuna ✅" : "Obuna bo‘lish"}
+    </button>
+  `;
+
+  // tap card -> open shop
+  div.addEventListener("click", () => openShop(shop));
+
+  // subscribe (no navigation)
+  const subBtn = div.querySelector(".top-shop-ig-subscribe");
+  subBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const on = toggleSubscribe(shop.id);
+    subBtn.classList.toggle("subscribed", on);
+    subBtn.textContent = on ? "Obuna ✅" : "Obuna bo‘lish";
+  });
+
+  // menu ⋯ (same sheet as shop list)
+  const moreBtn = div.querySelector(".top-shop-ig-more");
+  moreBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    openShopSheet(shop); // ✅ используем твой sheet (shopSheetBackdrop)
+  });
+
+  return div;
+}
+    
   // ===== Shops ACTION SHEET (тот что #shopSheetBackdrop) =====
   let sheetShop = null;
 
@@ -5384,25 +5568,16 @@ if (languageRu) {
       return (b.subs||0) - (a.subs||0); // popular
     });
 
-    // top shops
-    const top = [...shopsData]
-      .filter(s => !blocked.has(s.id))
-      .sort((a,b)=>(b.subs||0)-(a.subs||0))
-      .slice(0,6);
+   // top shops (✅ только verified)
+const top = [...shopsData]
+  .filter(s => !blocked.has(s.id))
+  .filter(s => s.verified)                 // ✅ только ✓
+  .sort((a,b)=>(b.subs||0)-(a.subs||0))    // популярные
+  .slice(0, 8);
 
-    topShopsRow.innerHTML = "";
-    top.forEach(s => topShopsRow.appendChild(shopCard(s, false)));
-
-    shopsListEl.innerHTML = "";
-    if (!result.length) {
-      if (shopsEmptyEl) shopsEmptyEl.style.display = "block";
-      return;
-    }
-    if (shopsEmptyEl) shopsEmptyEl.style.display = "none";
-
-    result.forEach(s => shopsListEl.appendChild(shopCard(s)));
-  }
-
+topShopsRow.innerHTML = "";
+top.forEach(s => topShopsRow.appendChild(topShopCardIG(s)));
+    
   // events
   if (shopsSearchInput) shopsSearchInput.addEventListener("input", renderShops);
 
