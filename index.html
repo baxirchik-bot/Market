@@ -2379,11 +2379,9 @@ body.sheet-open .bottom-nav {
 
 /* Title */
 .sheet-title{
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 14px 16px;
+  padding: 12px 16px;   /* было больше */
+  font-size: 20px;      /* было 22 */
   font-weight: 900;
-  font-size: 22px;
   margin-bottom: 10px;
 }
 
@@ -2401,8 +2399,8 @@ body.sheet-open .bottom-nav {
   border: 0;
   border-radius: 0;          /* ключ! */
   background: #ffffff;
-  padding: 16px;
-  font-size: 16px;
+  padding: 14px 16px;   /* было 16 */
+  font-size: 15px;      /* было 16 */
   font-weight: 700;
   text-align: left;
   cursor: pointer;
@@ -2411,7 +2409,7 @@ body.sheet-open .bottom-nav {
 }
 .sheet-action:last-child{ border-bottom: 0; }
 
-.sheet-action:active{ background:#f3f4f6; }
+.sheet-action.danger:active{ background: rgba(220,38,38,0.08); }
 .sheet-action.danger{ color:#dc2626; }
 
 /* Cancel separate */
