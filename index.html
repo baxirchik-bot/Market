@@ -2442,72 +2442,61 @@ body.sheet-open .bottom-nav {
 /* Прячем нижнее меню когда открыт sheet */
 body.sheet-open .bottom-nav{ display:none !important; }
 
-    /* ===== TOP SHOPS (Instagram-style) ===== */
+    /* ===== TOP DO'KONLAR (Instagram-like recommendations) ===== */
 .top-shops-row{
   display:flex;
   gap:12px;
   overflow-x:auto;
-  padding: 6px 2px 2px;
+  padding: 8px 2px 12px;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
 }
 .top-shops-row::-webkit-scrollbar{ display:none; }
 
-.top-shop-ig{
-  min-width: 210px;
-  max-width: 210px;
+.ig-shop-card{
+  flex: 0 0 240px;
   background:#fff;
   border-radius:18px;
-  box-shadow: 0 2px 14px rgba(15,23,42,.08);
-  padding: 12px;
+  padding:14px;
+  box-shadow: 0 10px 26px rgba(15,23,42,.08);
   scroll-snap-align: start;
 }
 
-.top-shop-ig-head{
+.ig-shop-head{
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:10px;
-  margin-bottom:8px;
 }
 
-.top-shop-ig-left{
+.ig-shop-user{
   display:flex;
   align-items:center;
   gap:10px;
   min-width:0;
 }
 
-.top-shop-ig-avatar{
-  width:44px;
-  height:44px;
+.ig-shop-avatar{
+  width:48px;
+  height:48px;
   border-radius:999px;
   background:#eef2ff;
   display:flex;
   align-items:center;
   justify-content:center;
   font-weight:900;
-  color:#0f172a;
+  color:#1e40af;
   flex:0 0 auto;
 }
 
-.top-shop-ig-name{
+.ig-shop-name{
   font-weight:900;
-  font-size:14px;
-  color:#0f172a;
+  font-size:15px;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
-  line-height:1.2;
 }
-
-.top-shop-ig-verified{
-  color:#16a34a;
-  font-weight:900;
-  margin-left:6px;
-}
-
-.top-shop-ig-sub{
+.ig-shop-meta{
   font-size:12px;
   color:#64748b;
   margin-top:2px;
@@ -2516,44 +2505,43 @@ body.sheet-open .bottom-nav{ display:none !important; }
   text-overflow:ellipsis;
 }
 
-.top-shop-ig-more{
-  border:0;
-  background:transparent;
-  font-size:20px;
-  line-height:1;
-  cursor:pointer;
-  color:#0f172a;
-  padding:6px 8px;
+.ig-shop-menu{
+  width:38px;
+  height:38px;
   border-radius:12px;
-}
-.top-shop-ig-more:active{ background:#f1f5f9; transform:scale(.98); }
-
-.top-shop-ig-stats{
+  border:0;
+  background:#f1f5f9;
+  font-size:22px;
+  line-height:0;
   display:flex;
-  gap:10px;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+}
+
+.ig-shop-stats{
+  display:flex;
+  gap:12px;
+  margin-top:10px;
   font-size:12px;
   color:#0f172a;
-  margin: 8px 0 10px;
-  font-weight:700;
 }
-.top-shop-ig-stats span{ color:#0f172a; opacity:.9; }
 
-.top-shop-ig-subscribe{
+.ig-shop-follow{
+  margin-top:12px;
   width:100%;
   border:0;
   border-radius:14px;
-  padding: 10px 12px;
+  padding:10px 12px;
   font-weight:900;
-  font-size:14px;
-  cursor:pointer;
   background:#2563eb;
   color:#fff;
+  cursor:pointer;
 }
-.top-shop-ig-subscribe.subscribed{
+.ig-shop-follow.subbed{
   background:#e2e8f0;
   color:#0f172a;
 }
-.top-shop-ig-subscribe:active{ transform:scale(.99); }
     
   @media (max-width: 480px) {
     body {
@@ -5365,50 +5353,51 @@ function toggleSubscribe(shopId){
 /* ===== Instagram-style TOP card ===== */
 function topShopCardIG(shop){
   const div = document.createElement("div");
-  div.className = "top-shop-ig";
+  div.className = "ig-shop-card";
+
+  const verified = shop.verified
+    ? `<span style="color:#16a34a;font-weight:900;"> ✓</span>`
+    : "";
 
   const subscribed = isSubscribed(shop.id);
 
   div.innerHTML = `
-    <div class="top-shop-ig-head">
-      <div class="top-shop-ig-left">
-        <div class="top-shop-ig-avatar">${getInitials(shop.name)}</div>
+    <div class="ig-shop-head">
+      <div class="ig-shop-user">
+        <div class="ig-shop-avatar">${getInitials(shop.name)}</div>
         <div style="min-width:0;">
-          <div class="top-shop-ig-name">
-            ${shop.name}
-            <span class="top-shop-ig-verified">✓</span>
-          </div>
-          <div class="top-shop-ig-sub">📍 ${shop.city} · ${shop.category}</div>
+          <div class="ig-shop-name">${shop.name}${verified}</div>
+          <div class="ig-shop-meta">📍 ${shop.city} · ${shop.category}</div>
         </div>
       </div>
-      <button class="top-shop-ig-more" type="button" aria-label="Menu">⋯</button>
+      <button class="ig-shop-menu" type="button" aria-label="Menu">⋯</button>
     </div>
 
-    <div class="top-shop-ig-stats">
+    <div class="ig-shop-stats">
       <span>⭐ ${shop.rating || 0}</span>
       <span>👥 ${shop.subs || 0}</span>
       <span>🧾 ${shop.ads || 0}</span>
     </div>
 
-    <button class="top-shop-ig-subscribe ${subscribed ? "subscribed":""}" type="button">
-      ${subscribed ? "Obuna ✅" : "Obuna bo‘lish"}
+    <button class="ig-shop-follow ${subscribed ? "subbed":""}" type="button">
+      ${subscribed ? "Obuna bo‘lindi" : "Obuna bo‘lish"}
     </button>
   `;
 
-  // tap card -> open shop
+  // карточка -> открыть магазин
   div.addEventListener("click", () => openShop(shop));
 
-  // subscribe (no navigation)
-  const subBtn = div.querySelector(".top-shop-ig-subscribe");
-  subBtn.addEventListener("click", (e) => {
+  // подписка
+  const followBtn = div.querySelector(".ig-shop-follow");
+  followBtn.addEventListener("click", (e) => {
     e.stopPropagation();
     const on = toggleSubscribe(shop.id);
-    subBtn.classList.toggle("subscribed", on);
-    subBtn.textContent = on ? "Obuna ✅" : "Obuna bo‘lish";
+    followBtn.classList.toggle("subbed", on);
+    followBtn.textContent = on ? "Obuna bo‘lindi" : "Obuna bo‘lish";
   });
 
-  // menu ⋯ (same sheet)
-  const moreBtn = div.querySelector(".top-shop-ig-more");
+  // меню ⋯ -> открыть sheet
+  const moreBtn = div.querySelector(".ig-shop-menu");
   moreBtn.addEventListener("click", (e) => {
     e.stopPropagation();
     openShopSheet(shop);
@@ -5571,7 +5560,7 @@ function renderShops(){
     return (b.subs||0) - (a.subs||0); // popular
   });
 
-  // TOP (✅ только verified)
+  // TOP (✅ только verified) — Instagram-like
   const top = [...shopsData]
     .filter(s => !blocked.has(s.id))
     .filter(s => s.verified)
