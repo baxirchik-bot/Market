@@ -2546,6 +2546,20 @@ body.sheet-open .bottom-nav{ display:none !important; }
   background:#e2e8f0;
   color:#0f172a;
 }
+
+    /* ===== Smart Header Hide/Show ===== */
+.app-header{
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  transition: transform .22s ease, box-shadow .22s ease;
+  will-change: transform;
+}
+
+.app-header.header-hidden{
+  transform: translateY(-110%);
+  box-shadow: none;
+}
     
   @media (max-width: 480px) {
     body {
@@ -3787,6 +3801,49 @@ function ensureGlobalBackButton() {
   });
 }
 
+    // ===== Hide header on scroll down, show on scroll up =====
+const appHeader = document.querySelector(".app-header");
+let lastScrollTop = 0;
+let headerLocked = false;
+
+function setHeaderHidden(hidden){
+  if (!appHeader) return;
+  appHeader.classList.toggle("header-hidden", !!hidden);
+}
+
+if (screensContainer) {
+  screensContainer.addEventListener("scroll", () => {
+    if (!appHeader) return;
+
+    // На некоторых экранах можно не прятать (если хочешь)
+    // например: if (currentScreen === "filters" || currentScreen === "chat") return;
+
+    const st = screensContainer.scrollTop;
+
+    // если в самом верху — всегда показываем
+    if (st <= 5) {
+      setHeaderHidden(false);
+      lastScrollTop = st;
+      return;
+    }
+
+    const delta = st - lastScrollTop;
+
+    // маленькие дрожания пальца игнорируем
+    if (Math.abs(delta) < 6) return;
+
+    if (delta > 0) {
+      // вниз — прячем
+      setHeaderHidden(true);
+    } else {
+      // вверх — показываем
+      setHeaderHidden(false);
+    }
+
+    lastScrollTop = st;
+  }, { passive: true });
+}
+    
 function updateBackButtonVisibility() {
   if (!backBtnEl) return;
   backBtnEl.style.display = navStack.length ? "inline-flex" : "none";
