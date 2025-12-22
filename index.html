@@ -5258,93 +5258,94 @@ if (languageRu) {
     }
   }
 
-  // ================== SHOPS DATA + RENDER ==================
-  const shopsSearchInput = document.getElementById("shopsSearchInput");
-  const shopsListEl      = document.getElementById("shopsList");
-  const shopsEmptyEl     = document.getElementById("shopsEmpty");
-  const shopsCategoryRow = document.getElementById("shopsCategoryRow");
-  const topShopsRow      = document.getElementById("topShopsRow");
+ // ================== SHOPS DATA + RENDER ==================
+const shopsSearchInput = document.getElementById("shopsSearchInput");
+const shopsListEl      = document.getElementById("shopsList");
+const shopsEmptyEl     = document.getElementById("shopsEmpty");
+const shopsCategoryRow = document.getElementById("shopsCategoryRow");
+const topShopsRow      = document.getElementById("topShopsRow");
 
-  // sheet (filters)
-  const shopsFilterBtn   = document.getElementById("shopsFilterBtn");
-  const shopsFilterSheet = document.getElementById("shopsFilterSheet");
-  const shopsFilterCity  = document.getElementById("shopsFilterCity");
-  const shopsSort        = document.getElementById("shopsSort");
-  const shopsOnlyVerifiedBtn = document.getElementById("shopsOnlyVerified");
-  const shopsApplyBtn    = document.getElementById("shopsApply");
-  const shopsResetBtn    = document.getElementById("shopsReset");
+// sheet (filters)
+const shopsFilterBtn   = document.getElementById("shopsFilterBtn");
+const shopsFilterSheet = document.getElementById("shopsFilterSheet");
+const shopsFilterCity  = document.getElementById("shopsFilterCity");
+const shopsSort        = document.getElementById("shopsSort");
+const shopsOnlyVerifiedBtn = document.getElementById("shopsOnlyVerified");
+const shopsApplyBtn    = document.getElementById("shopsApply");
+const shopsResetBtn    = document.getElementById("shopsReset");
 
-  // demo shops (пока нет backend)
-  const shopsData = [
-    { id:"s1", name:"Zalvo Phone Shop", city:"Toshkent shahri", category:"Elektronika", subs:451, rating:4.9, reviews:451, ads:12, verified:true,  last:"yaqinda", ownerTelegram:"gulzor_shop",     ownerPhone:"+998991234567" },
-    { id:"s2", name:"AvtoParts Pro",    city:"Toshkent viloyati", category:"Avto",      subs:210, rating:4.7, reviews:88,  ads:34, verified:true,  last:"bugun",  ownerTelegram:"avtoparts_pro" },
-    { id:"s3", name:"Usta Xizmat",      city:"Samarqand",         category:"Xizmatlar", subs:98,  rating:4.8, reviews:22,  ads:9,  verified:false, last:"kecha",  ownerTelegram:"usta_xizmat" },
-    { id:"s4", name:"Home Market",      city:"Farg‘ona",          category:"Uy-rozg‘or",subs:133, rating:4.6, reviews:41,  ads:18, verified:false, last:"yaqinda",ownerTelegram:"home_market" },
-    { id:"s5", name:"Style Kiyim",      city:"Andijon",           category:"Kiyim",     subs:76,  rating:4.5, reviews:19,  ads:7,  verified:true,  last:"yaqinda",ownerTelegram:"style_kiyim" },
-  ];
+// demo shops (пока нет backend)
+const shopsData = [
+  { id:"s1", name:"Zalvo Phone Shop", city:"Toshkent shahri",   category:"Elektronika", subs:451, rating:4.9, reviews:451, ads:12, verified:true,  last:"yaqinda", ownerTelegram:"gulzor_shop",     ownerPhone:"+998991234567" },
+  { id:"s2", name:"AvtoParts Pro",    city:"Toshkent viloyati", category:"Avto",        subs:210, rating:4.7, reviews:88,  ads:34, verified:true,  last:"bugun",  ownerTelegram:"avtoparts_pro" },
+  { id:"s3", name:"Usta Xizmat",      city:"Samarqand",         category:"Xizmatlar",   subs:98,  rating:4.8, reviews:22,  ads:9,  verified:false, last:"kecha",  ownerTelegram:"usta_xizmat" },
+  { id:"s4", name:"Home Market",      city:"Farg‘ona",          category:"Uy-rozg‘or",  subs:133, rating:4.6, reviews:41,  ads:18, verified:false, last:"yaqinda",ownerTelegram:"home_market" },
+  { id:"s5", name:"Style Kiyim",      city:"Andijon",           category:"Kiyim",       subs:76,  rating:4.5, reviews:19,  ads:7,  verified:true,  last:"yaqinda",ownerTelegram:"style_kiyim" },
+];
 
-  const shopsFilterState = {
-    category: "all",
-    city: "all",
-    sort: "popular",
-    onlyVerified: false,
-  };
+const shopsFilterState = {
+  category: "all",
+  city: "all",
+  sort: "popular",
+  onlyVerified: false,
+};
 
-  function blockedKey(){ return "zalvo_shop_blocked"; }
+function blockedKey(){ return "zalvo_shop_blocked"; }
 
-  function getBlockedSet(){
-    try { return new Set(JSON.parse(localStorage.getItem(blockedKey()) || "[]")); }
-    catch { return new Set(); }
-  }
-  function saveBlockedSet(set){
-    try { localStorage.setItem(blockedKey(), JSON.stringify(Array.from(set))); } catch {}
-  }
+function getBlockedSet(){
+  try { return new Set(JSON.parse(localStorage.getItem(blockedKey()) || "[]")); }
+  catch { return new Set(); }
+}
+function saveBlockedSet(set){
+  try { localStorage.setItem(blockedKey(), JSON.stringify(Array.from(set))); } catch {}
+}
 
-  // ===== SHOPS: future-proof loader (server-ready) =====
-  let shopsLoadedOnce = false;
+// ===== SHOPS: future-proof loader (server-ready) =====
+let shopsLoadedOnce = false;
 
-  async function ensureShopsLoaded() {
-    if (shopsLoadedOnce) return;
-    shopsLoadedOnce = true;
+async function ensureShopsLoaded() {
+  if (shopsLoadedOnce) return;
+  shopsLoadedOnce = true;
 
-    if (shopsListEl && (!shopsListEl.children || shopsListEl.children.length === 0)) {
-      shopsListEl.innerHTML = "<div class='ad-meta'>Yuklanmoqda...</div>";
-    }
-
-    // Потом тут будет fetch("/api/shops")
-    return;
+  if (shopsListEl && (!shopsListEl.children || shopsListEl.children.length === 0)) {
+    shopsListEl.innerHTML = "<div class='ad-meta'>Yuklanmoqda...</div>";
   }
 
-  function openShopsFilterSheet() {
-    if (!shopsFilterSheet) return;
-    shopsFilterSheet.classList.add("active");
-    document.body.classList.add("sheet-open");
-  }
+  // Потом тут будет fetch("/api/shops")
+  return;
+}
 
-  function closeShopsFilterSheet() {
-    if (!shopsFilterSheet) return;
-    shopsFilterSheet.classList.remove("active");
-    document.body.classList.remove("sheet-open");
-  }
+function openShopsFilterSheet() {
+  if (!shopsFilterSheet) return;
+  shopsFilterSheet.classList.add("active");
+  document.body.classList.add("sheet-open");
+}
 
-  function syncShopsFilterUI(){
-    if (shopsFilterCity) shopsFilterCity.value = shopsFilterState.city;
-    if (shopsSort) shopsSort.value = shopsFilterState.sort;
-    if (shopsOnlyVerifiedBtn) {
-      shopsOnlyVerifiedBtn.classList.toggle("chip-filled", shopsFilterState.onlyVerified);
-    }
-  }
+function closeShopsFilterSheet() {
+  if (!shopsFilterSheet) return;
+  shopsFilterSheet.classList.remove("active");
+  document.body.classList.remove("sheet-open");
+}
 
-  function getInitials(name){
-    const s = String(name||"").trim();
-    if (!s) return "Z";
-    const parts = s.split(/\s+/);
-    const a = parts[0]?.[0] || "Z";
-    const b = parts[1]?.[0] || "";
-    return (a + b).toUpperCase();
+function syncShopsFilterUI(){
+  if (shopsFilterCity) shopsFilterCity.value = shopsFilterState.city;
+  if (shopsSort) shopsSort.value = shopsFilterState.sort;
+  if (shopsOnlyVerifiedBtn) {
+    shopsOnlyVerifiedBtn.classList.toggle("chip-filled", shopsFilterState.onlyVerified);
   }
+}
 
-    function subKey(id){ return `zalvo_shop_sub_${id}`; }
+function getInitials(name){
+  const s = String(name||"").trim();
+  if (!s) return "Z";
+  const parts = s.split(/\s+/);
+  const a = parts[0]?.[0] || "Z";
+  const b = parts[1]?.[0] || "";
+  return (a + b).toUpperCase();
+}
+
+/* ===== Subscribe state for TOP cards ===== */
+function subKey(id){ return `zalvo_shop_sub_${id}`; }
 
 function isSubscribed(shopId){
   try { return localStorage.getItem(subKey(shopId)) === "1"; }
@@ -5361,6 +5362,7 @@ function toggleSubscribe(shopId){
   }
 }
 
+/* ===== Instagram-style TOP card ===== */
 function topShopCardIG(shop){
   const div = document.createElement("div");
   div.className = "top-shop-ig";
@@ -5405,250 +5407,271 @@ function topShopCardIG(shop){
     subBtn.textContent = on ? "Obuna ✅" : "Obuna bo‘lish";
   });
 
-  // menu ⋯ (same sheet as shop list)
+  // menu ⋯ (same sheet)
   const moreBtn = div.querySelector(".top-shop-ig-more");
   moreBtn.addEventListener("click", (e) => {
     e.stopPropagation();
-    openShopSheet(shop); // ✅ используем твой sheet (shopSheetBackdrop)
+    openShopSheet(shop);
   });
 
   return div;
 }
-    
-  // ===== Shops ACTION SHEET (тот что #shopSheetBackdrop) =====
-  let sheetShop = null;
 
-  const shopSheetBackdrop = document.getElementById("shopSheetBackdrop");
-  const shopSheetTitle    = document.getElementById("shopSheetTitle");
-  const shopSheetFav      = document.getElementById("shopSheetFav");
-  const shopSheetShare    = document.getElementById("shopSheetShare");
-  const shopSheetBlock    = document.getElementById("shopSheetBlock");
+/* ===== Shops ACTION SHEET (#shopSheetBackdrop) ===== */
+let sheetShop = null;
 
-  function favShopKey(id){ return `zalvo_shop_fav_${id}`; }
+const shopSheetBackdrop = document.getElementById("shopSheetBackdrop");
+const shopSheetTitle    = document.getElementById("shopSheetTitle");
+const shopSheetFav      = document.getElementById("shopSheetFav");
+const shopSheetShare    = document.getElementById("shopSheetShare");
+const shopSheetBlock    = document.getElementById("shopSheetBlock");
 
-  function openShopSheet(shop){
-    sheetShop = shop;
+function favShopKey(id){ return `zalvo_shop_fav_${id}`; }
 
-    if (shopSheetTitle) shopSheetTitle.textContent = shop?.name || "Do‘kon";
-    if (shopSheetBackdrop) {
-      shopSheetBackdrop.classList.add("active");
-      document.body.classList.add("sheet-open");
-    }
+function openShopSheet(shop){
+  sheetShop = shop;
 
-    // обновляем текст избранного
-    if (shopSheetFav && sheetShop) {
-      const isFav = localStorage.getItem(favShopKey(sheetShop.id)) === "1";
-      shopSheetFav.innerHTML = `
-        <span class="store-sheet-icon share">⭐</span>
-        ${isFav ? "Izbranda ✅" : "Izbranlarga qo‘shish"}
-      `;
-    }
+  if (shopSheetTitle) shopSheetTitle.textContent = shop?.name || "Do‘kon";
+  if (shopSheetBackdrop) {
+    shopSheetBackdrop.classList.add("active");
+    document.body.classList.add("sheet-open");
   }
 
-  function closeShopSheet(){
-    if (shopSheetBackdrop) shopSheetBackdrop.classList.remove("active");
-    document.body.classList.remove("sheet-open");
-    sheetShop = null;
-  }
-
-  // bind actions ONCE (и всегда работают на текущий sheetShop)
-  if (shopSheetFav && !shopSheetFav.dataset.bound) {
-    shopSheetFav.dataset.bound = "1";
-    shopSheetFav.addEventListener("click", () => {
-      if (!sheetShop) return;
-      const key = favShopKey(sheetShop.id);
-      const now = localStorage.getItem(key) === "1";
-      localStorage.setItem(key, now ? "0" : "1");
-      closeShopSheet();
-    });
-  }
-
-  if (shopSheetShare && !shopSheetShare.dataset.bound) {
-    shopSheetShare.dataset.bound = "1";
-    shopSheetShare.addEventListener("click", async () => {
-      if (!sheetShop) return;
-
-      const text = `${sheetShop.name} — ${sheetShop.city} · ${sheetShop.category}`;
-      const url = window.location.href;
-
-      try{
-        if (navigator.share){
-          await navigator.share({ title: sheetShop.name, text, url });
-        } else if (navigator.clipboard?.writeText){
-          await navigator.clipboard.writeText(`${text}\n${url}`);
-          alert("Nusxa olindi ✅");
-        } else {
-          alert(text);
-        }
-      } catch {}
-      closeShopSheet();
-    });
-  }
-
-  if (shopSheetBlock && !shopSheetBlock.dataset.bound) {
-    shopSheetBlock.dataset.bound = "1";
-    shopSheetBlock.addEventListener("click", () => {
-      if (!sheetShop) return;
-      const set = getBlockedSet();
-      set.add(sheetShop.id);
-      saveBlockedSet(set);
-      closeShopSheet();
-      renderShops();
-    });
-  }
-
-  // закрытие по клику на фон (если у тебя onclick="closeShopSheet(event)" — не мешает)
-  if (shopSheetBackdrop && !shopSheetBackdrop.dataset.bound) {
-    shopSheetBackdrop.dataset.bound = "1";
-    shopSheetBackdrop.addEventListener("click", (e) => {
-      if (e.target === shopSheetBackdrop) closeShopSheet();
-    });
-    shopSheetBackdrop.querySelector(".store-sheet")?.addEventListener("click", e => e.stopPropagation());
-  }
-
-  function shopCard(shop, withActions = true){
-    const div = document.createElement("div");
-    div.className = "shop-card";
-
-    div.innerHTML = `
-      <div class="shop-card-avatar">${getInitials(shop.name)}</div>
-      <div class="shop-card-main">
-        <div class="shop-card-title">
-          ${shop.name}
-          ${shop.verified ? `<span style="color:#16a34a;font-weight:800;">✓</span>` : ""}
-        </div>
-        <div class="shop-card-meta">📍 ${shop.city} · ${shop.category}</div>
-        <div class="shop-card-stats">
-          <span>⭐ ${shop.rating}</span>
-          <span>💬 ${shop.reviews}</span>
-          <span>🧾 ${shop.ads}</span>
-          <span>👥 ${shop.subs}</span>
-        </div>
-      </div>
-
-      ${withActions ? `<button class="shop-more-btn" type="button">⋯</button>` : ``}
+  // обновляем текст избранного
+  if (shopSheetFav && sheetShop) {
+    const isFav = localStorage.getItem(favShopKey(sheetShop.id)) === "1";
+    shopSheetFav.innerHTML = `
+      <span class="store-sheet-icon share">⭐</span>
+      ${isFav ? "Izbranda ✅" : "Izbranlarga qo‘shish"}
     `;
+  }
+}
 
-    if (withActions) {
-      div.querySelector(".shop-more-btn")
-        .addEventListener("click", (e) => {
-          e.stopPropagation();
-          openShopSheet(shop);
-        });
+function closeShopSheet(){
+  if (shopSheetBackdrop) shopSheetBackdrop.classList.remove("active");
+  document.body.classList.remove("sheet-open");
+  sheetShop = null;
+}
+
+// bind actions ONCE
+if (shopSheetFav && !shopSheetFav.dataset.bound) {
+  shopSheetFav.dataset.bound = "1";
+  shopSheetFav.addEventListener("click", () => {
+    if (!sheetShop) return;
+    const key = favShopKey(sheetShop.id);
+    const now = localStorage.getItem(key) === "1";
+    localStorage.setItem(key, now ? "0" : "1");
+    closeShopSheet();
+  });
+}
+
+if (shopSheetShare && !shopSheetShare.dataset.bound) {
+  shopSheetShare.dataset.bound = "1";
+  shopSheetShare.addEventListener("click", async () => {
+    if (!sheetShop) return;
+
+    const text = `${sheetShop.name} — ${sheetShop.city} · ${sheetShop.category}`;
+    const url = window.location.href;
+
+    try{
+      if (navigator.share){
+        await navigator.share({ title: sheetShop.name, text, url });
+      } else if (navigator.clipboard?.writeText){
+        await navigator.clipboard.writeText(`${text}\n${url}`);
+        alert("Nusxa olindi ✅");
+      } else {
+        alert(text);
+      }
+    } catch {}
+    closeShopSheet();
+  });
+}
+
+if (shopSheetBlock && !shopSheetBlock.dataset.bound) {
+  shopSheetBlock.dataset.bound = "1";
+  shopSheetBlock.addEventListener("click", () => {
+    if (!sheetShop) return;
+    const set = getBlockedSet();
+    set.add(sheetShop.id);
+    saveBlockedSet(set);
+    closeShopSheet();
+    renderShops();
+  });
+}
+
+// close on backdrop click
+if (shopSheetBackdrop && !shopSheetBackdrop.dataset.bound) {
+  shopSheetBackdrop.dataset.bound = "1";
+  shopSheetBackdrop.addEventListener("click", (e) => {
+    if (e.target === shopSheetBackdrop) closeShopSheet();
+  });
+  shopSheetBackdrop.querySelector(".store-sheet")?.addEventListener("click", e => e.stopPropagation());
+}
+
+/* ===== Shop list card (Barcha do‘konlar) ===== */
+function shopCard(shop, withActions = true){
+  const div = document.createElement("div");
+  div.className = "shop-card";
+
+  div.innerHTML = `
+    <div class="shop-card-avatar">${getInitials(shop.name)}</div>
+    <div class="shop-card-main">
+      <div class="shop-card-title">
+        ${shop.name}
+        ${shop.verified ? `<span style="color:#16a34a;font-weight:800;">✓</span>` : ""}
+      </div>
+      <div class="shop-card-meta">📍 ${shop.city} · ${shop.category}</div>
+      <div class="shop-card-stats">
+        <span>⭐ ${shop.rating}</span>
+        <span>💬 ${shop.reviews}</span>
+        <span>🧾 ${shop.ads}</span>
+        <span>👥 ${shop.subs}</span>
+      </div>
+    </div>
+
+    ${withActions ? `<button class="shop-more-btn" type="button">⋯</button>` : ``}
+  `;
+
+  if (withActions) {
+    div.querySelector(".shop-more-btn").addEventListener("click", (e) => {
+      e.stopPropagation();
+      openShopSheet(shop);
+    });
+  }
+
+  div.addEventListener("click", () => openShop(shop));
+  return div;
+}
+
+/* ===== RENDER SHOPS ===== */
+function renderShops(){
+  if (!shopsListEl || !topShopsRow) return;
+
+  const q = (shopsSearchInput?.value || "").toLowerCase().trim();
+  const blocked = getBlockedSet();
+
+  let result = shopsData
+    .filter(s => !blocked.has(s.id))
+    .filter(s => {
+      if (shopsFilterState.category !== "all" && s.category !== shopsFilterState.category) return false;
+      if (shopsFilterState.city !== "all" && s.city !== shopsFilterState.city) return false;
+      if (shopsFilterState.onlyVerified && !s.verified) return false;
+
+      if (q) {
+        const text = `${s.name} ${s.city} ${s.category}`.toLowerCase();
+        if (!text.includes(q)) return false;
+      }
+      return true;
+    });
+
+  // sort
+  result.sort((a,b) => {
+    if (shopsFilterState.sort === "rating") return (b.rating||0) - (a.rating||0);
+    if (shopsFilterState.sort === "new")    return (b.ads||0) - (a.ads||0); // временно
+    return (b.subs||0) - (a.subs||0); // popular
+  });
+
+  // TOP (✅ только verified)
+  const top = [...shopsData]
+    .filter(s => !blocked.has(s.id))
+    .filter(s => s.verified)
+    .sort((a,b)=>(b.subs||0)-(a.subs||0))
+    .slice(0, 8);
+
+  topShopsRow.innerHTML = "";
+  top.forEach(s => topShopsRow.appendChild(topShopCardIG(s)));
+
+  // LIST
+  shopsListEl.innerHTML = "";
+  if (!result.length) {
+    if (shopsEmptyEl) shopsEmptyEl.style.display = "block";
+    return;
+  }
+  if (shopsEmptyEl) shopsEmptyEl.style.display = "none";
+
+  result.forEach(s => shopsListEl.appendChild(shopCard(s)));
+}
+
+/* ===== EVENTS (ВАЖНО: снаружи renderShops) ===== */
+if (shopsSearchInput && !shopsSearchInput.dataset.bound) {
+  shopsSearchInput.dataset.bound = "1";
+  shopsSearchInput.addEventListener("input", renderShops);
+}
+
+if (shopsCategoryRow && !shopsCategoryRow.dataset.bound) {
+  shopsCategoryRow.dataset.bound = "1";
+  shopsCategoryRow.addEventListener("click", (e) => {
+    const chip = e.target.closest(".chip");
+    if (!chip) return;
+    shopsCategoryRow.querySelectorAll(".chip").forEach(c => c.classList.remove("chip-filled"));
+    chip.classList.add("chip-filled");
+    shopsFilterState.category = chip.getAttribute("data-shopcat") || "all";
+    renderShops();
+  });
+}
+
+if (shopsFilterBtn && !shopsFilterBtn.dataset.bound) {
+  shopsFilterBtn.dataset.bound = "1";
+  shopsFilterBtn.addEventListener("click", () => {
+    syncShopsFilterUI();
+    openShopsFilterSheet();
+  });
+}
+
+if (shopsFilterSheet && !shopsFilterSheet.dataset.bound) {
+  shopsFilterSheet.dataset.bound = "1";
+  shopsFilterSheet.addEventListener("click", (e) => {
+    if (e.target === shopsFilterSheet) closeShopsFilterSheet();
+  });
+  const inner = shopsFilterSheet.querySelector(".store-sheet");
+  if (inner) inner.addEventListener("click", (e) => e.stopPropagation());
+}
+
+if (shopsOnlyVerifiedBtn && !shopsOnlyVerifiedBtn.dataset.bound) {
+  shopsOnlyVerifiedBtn.dataset.bound = "1";
+  shopsOnlyVerifiedBtn.addEventListener("click", () => {
+    shopsFilterState.onlyVerified = !shopsFilterState.onlyVerified;
+    syncShopsFilterUI();
+  });
+}
+
+if (shopsApplyBtn && !shopsApplyBtn.dataset.bound) {
+  shopsApplyBtn.dataset.bound = "1";
+  shopsApplyBtn.addEventListener("click", () => {
+    shopsFilterState.city = shopsFilterCity?.value || "all";
+    shopsFilterState.sort = shopsSort?.value || "popular";
+    closeShopsFilterSheet();
+    renderShops();
+  });
+}
+
+if (shopsResetBtn && !shopsResetBtn.dataset.bound) {
+  shopsResetBtn.dataset.bound = "1";
+  shopsResetBtn.addEventListener("click", async () => {
+    shopsFilterState.city = "all";
+    shopsFilterState.sort = "popular";
+    shopsFilterState.onlyVerified = false;
+    shopsFilterState.category = "all";
+    if (shopsSearchInput) shopsSearchInput.value = "";
+
+    // reset chips
+    if (shopsCategoryRow) {
+      shopsCategoryRow.querySelectorAll(".chip").forEach(c => c.classList.remove("chip-filled"));
+      shopsCategoryRow.querySelector(`.chip[data-shopcat="all"]`)?.classList.add("chip-filled");
     }
 
-    div.addEventListener("click", () => openShop(shop)); // openShop у тебя выше уже есть
-    return div;
-  }
+    syncShopsFilterUI();
+    closeShopsFilterSheet();
 
-  function renderShops(){
-    if (!shopsListEl || !topShopsRow) return;
+    await ensureShopsLoaded();
+    renderShops();
+  });
+}
 
-    const q = (shopsSearchInput?.value || "").toLowerCase().trim();
-    const blocked = getBlockedSet();
-
-    let result = shopsData
-      .filter(s => !blocked.has(s.id))
-      .filter(s => {
-        if (shopsFilterState.category !== "all" && s.category !== shopsFilterState.category) return false;
-        if (shopsFilterState.city !== "all" && s.city !== shopsFilterState.city) return false;
-        if (shopsFilterState.onlyVerified && !s.verified) return false;
-
-        if (q) {
-          const text = `${s.name} ${s.city} ${s.category}`.toLowerCase();
-          if (!text.includes(q)) return false;
-        }
-        return true;
-      });
-
-    // sort
-    result.sort((a,b) => {
-      if (shopsFilterState.sort === "rating") return (b.rating||0) - (a.rating||0);
-      if (shopsFilterState.sort === "new")    return (b.ads||0) - (a.ads||0); // временно
-      return (b.subs||0) - (a.subs||0); // popular
-    });
-
-   // top shops (✅ только verified)
-const top = [...shopsData]
-  .filter(s => !blocked.has(s.id))
-  .filter(s => s.verified)                 // ✅ только ✓
-  .sort((a,b)=>(b.subs||0)-(a.subs||0))    // популярные
-  .slice(0, 8);
-
-topShopsRow.innerHTML = "";
-top.forEach(s => topShopsRow.appendChild(topShopCardIG(s)));
-    
-  // events
-  if (shopsSearchInput) shopsSearchInput.addEventListener("input", renderShops);
-
-  if (shopsCategoryRow) {
-    shopsCategoryRow.addEventListener("click", (e) => {
-      const chip = e.target.closest(".chip");
-      if (!chip) return;
-      shopsCategoryRow.querySelectorAll(".chip").forEach(c => c.classList.remove("chip-filled"));
-      chip.classList.add("chip-filled");
-      shopsFilterState.category = chip.getAttribute("data-shopcat") || "all";
-      renderShops();
-    });
-  }
-
-  if (shopsFilterBtn) {
-    shopsFilterBtn.addEventListener("click", () => {
-      syncShopsFilterUI();
-      openShopsFilterSheet();
-    });
-  }
-
-  if (shopsFilterSheet) {
-    shopsFilterSheet.addEventListener("click", (e) => {
-      if (e.target === shopsFilterSheet) closeShopsFilterSheet();
-    });
-    const inner = shopsFilterSheet.querySelector(".store-sheet");
-    if (inner) inner.addEventListener("click", (e) => e.stopPropagation());
-  }
-
-  if (shopsOnlyVerifiedBtn) {
-    shopsOnlyVerifiedBtn.addEventListener("click", () => {
-      shopsFilterState.onlyVerified = !shopsFilterState.onlyVerified;
-      syncShopsFilterUI();
-    });
-  }
-
-  if (shopsApplyBtn) {
-    shopsApplyBtn.addEventListener("click", () => {
-      shopsFilterState.city = shopsFilterCity?.value || "all";
-      shopsFilterState.sort = shopsSort?.value || "popular";
-      closeShopsFilterSheet();
-      renderShops();
-    });
-  }
-
-  if (shopsResetBtn) {
-    shopsResetBtn.addEventListener("click", async () => {
-      shopsFilterState.city = "all";
-      shopsFilterState.sort = "popular";
-      shopsFilterState.onlyVerified = false;
-      shopsFilterState.category = "all";
-      if (shopsSearchInput) shopsSearchInput.value = "";
-
-      // reset chips
-      if (shopsCategoryRow) {
-        shopsCategoryRow.querySelectorAll(".chip").forEach(c => c.classList.remove("chip-filled"));
-        shopsCategoryRow.querySelector(`.chip[data-shopcat="all"]`)?.classList.add("chip-filled");
-      }
-
-      syncShopsFilterUI();
-      closeShopsFilterSheet();
-
-      await ensureShopsLoaded();
-      renderShops();
-    });
-  }
-
-  // ================== СТАРТ ==================
-  applySavedProfilePhoto();
-  showScreen("home");
-  loadAds();
+// ================== СТАРТ ==================
+applySavedProfilePhoto();
+showScreen("home");
+loadAds();
 </script>
 </body>
 </html>
