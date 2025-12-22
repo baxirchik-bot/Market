@@ -5177,41 +5177,6 @@ const shopsFilterState = {
   onlyVerified: false,
 };
 
-    // ===== Shop actions sheet =====
-const shopActionsSheet = document.getElementById("shopActionsSheet");
-const shopActionsTitle = document.getElementById("shopActionsTitle");
-const shopActionFav    = document.getElementById("shopActionFav");
-const shopActionShare  = document.getElementById("shopActionShare");
-const shopActionBlock  = document.getElementById("shopActionBlock");
-const shopActionCancel = document.getElementById("shopActionCancel");
-
-let actionShop = null;
-
-function favShopKey(id){ return `zalvo_shop_fav_${id}`; }
-function blockedKey(){ return `zalvo_shop_blocked`; }
-
-function getBlockedSet(){
-  try { return new Set(JSON.parse(localStorage.getItem(blockedKey())||"[]")); }
-  catch { return new Set(); }
-}
-function saveBlockedSet(set){
-  try { localStorage.setItem(blockedKey(), JSON.stringify(Array.from(set))); } catch {}
-}
-
-function openShopActionsSheet(shop){
-  actionShop = shop;
-  if (shopActionsTitle) shopActionsTitle.textContent = shop?.name || "Do‘kon";
-
-  // обновим текст избранного
-  const isFav = localStorage.getItem(favShopKey(shop.id)) === "1";
-  if (shopActionFav) shopActionFav.textContent = isFav ? "⭐ Izbranda ✅" : "⭐ Izbranlarga qo‘shish";
-
-  if (shopActionsSheet){
-    shopActionsSheet.classList.add("active");
-    document.body.classList.add("sheet-open");
-  }
-}
-
 function closeShopActionsSheet(){
   if (shopActionsSheet){
     shopActionsSheet.classList.remove("active");
@@ -5353,7 +5318,7 @@ function shopCard(shop, withActions = true){
     div.querySelector(".shop-more-btn")
       .addEventListener("click", (e) => {
         e.stopPropagation();
-        openShopActionsSheet(shop);
+        openShopSheet(shop);
       });
   }
 
@@ -5373,17 +5338,74 @@ function shopCard(shop, withActions = true){
   return div;
 }
 
-    function openShopSheet(shopName){
-  document.getElementById('shopSheetTitle').textContent = shopName;
+    let sheetShop = null;
 
-  document.getElementById('shopSheetBackdrop').classList.add('active');
-  document.body.classList.add('sheet-open');
+function openShopSheet(shop){
+  sheetShop = shop;
+
+  const titleEl = document.getElementById("shopSheetTitle");
+  const backdrop = document.getElementById("shopSheetBackdrop");
+
+  if (titleEl) titleEl.textContent = shop?.name || "Do‘kon";
+  if (backdrop) {
+    backdrop.classList.add("active");
+    document.body.classList.add("sheet-open");
+  }
+
+  const favBtn   = document.getElementById("shopSheetFav");
+  const shareBtn = document.getElementById("shopSheetShare");
+  const blockBtn = document.getElementById("shopSheetBlock");
+
+  if (favBtn && !favBtn.dataset.bound) {
+    favBtn.dataset.bound = "1";
+    favBtn.addEventListener("click", () => {
+      if (!sheetShop) return;
+      const key = `zalvo_shop_fav_${sheetShop.id}`;
+      const now = localStorage.getItem(key) === "1";
+      localStorage.setItem(key, now ? "0" : "1");
+      closeShopSheet();
+    });
+  }
+
+  if (shareBtn && !shareBtn.dataset.bound) {
+    shareBtn.dataset.bound = "1";
+    shareBtn.addEventListener("click", async () => {
+      if (!sheetShop) return;
+      const text = `${sheetShop.name} — ${sheetShop.city} · ${sheetShop.category}`;
+      const url = window.location.href;
+
+      try{
+        if (navigator.share){
+          await navigator.share({ title: sheetShop.name, text, url });
+        } else if (navigator.clipboard?.writeText){
+          await navigator.clipboard.writeText(`${text}\n${url}`);
+          alert("Nusxa olindi ✅");
+        } else {
+          alert(text);
+        }
+      } catch {}
+      closeShopSheet();
+    });
+  }
+
+  if (blockBtn && !blockBtn.dataset.bound) {
+    blockBtn.dataset.bound = "1";
+    blockBtn.addEventListener("click", () => {
+      if (!sheetShop) return;
+      const set = getBlockedSet();
+      set.add(sheetShop.id);
+      saveBlockedSet(set);
+      closeShopSheet();
+      renderShops();
+    });
+  }
 }
 
-function closeShopSheet(e){
-  // если клик по фону — закрываем
-  document.getElementById('shopSheetBackdrop').classList.remove('active');
-  document.body.classList.remove('sheet-open');
+function closeShopSheet(){
+  const backdrop = document.getElementById("shopSheetBackdrop");
+  if (backdrop) backdrop.classList.remove("active");
+  document.body.classList.remove("sheet-open");
+  sheetShop = null;
 }
     
 function renderShops(){
