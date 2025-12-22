@@ -5393,6 +5393,21 @@ function getInitials(name){
   return (a + b).toUpperCase();
 }
 
+    function calcShopScore(shop){
+  let score = 0;
+
+  score += (shop.subs || 0) * 3;
+  score += (shop.rating || 0) * 50;
+  score += (shop.ads || 0) * 10;
+
+  // активность
+  if (shop.last === "bugun")   score += 100;
+  if (shop.last === "yaqinda") score += 50;
+  if (shop.last === "kecha")   score += 20;
+
+  return score;
+}
+    
 /* ===== Subscribe state for TOP cards ===== */
 function subKey(id){ return `zalvo_shop_sub_${id}`; }
 
@@ -5615,10 +5630,11 @@ function renderShops(){
 
   // TOP (✅ только verified) — Instagram-like
   const top = [...shopsData]
-    .filter(s => !blocked.has(s.id))
-    .filter(s => s.verified)
-    .sort((a,b)=>(b.subs||0)-(a.subs||0))
-    .slice(0, 8);
+  .filter(s => !blocked.has(s.id))
+  .filter(s => s.verified)
+  .map(s => ({ ...s, _score: calcShopScore(s) }))
+  .sort((a,b) => b._score - a._score)
+  .slice(0, 8);
 
   topShopsRow.innerHTML = "";
   top.forEach(s => topShopsRow.appendChild(topShopCardIG(s)));
