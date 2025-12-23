@@ -3470,9 +3470,28 @@ body.sheet-open .bottom-nav{ display:none !important; }
       </button>
     </div>
 
+    <div id="shopSheetReport" class="store-sheet-row danger">
+  <span class="store-sheet-icon danger">⚠️</span>
+  Shikoyat qilish
+</div>
+    
     <button class="outline-btn" style="margin-top:12px" onclick="closeShopSheet()">
       Bekor qilish
     </button>
+  </div>
+</div>
+
+    <div id="reportSheetBackdrop" class="sheet-backdrop">
+  <div class="store-sheet">
+    <div class="store-sheet-title">Shikoyat qilish</div>
+
+    <div class="store-sheet-row report-option" data-reason="fake">Soxta do‘kon</div>
+    <div class="store-sheet-row report-option" data-reason="rules">Qoidabuzarlik</div>
+    <div class="store-sheet-row report-option" data-reason="scam">Firibgarlik</div>
+    <div class="store-sheet-row report-option" data-reason="wrong">Noto‘g‘ri ma’lumot</div>
+    <div class="store-sheet-row report-option" data-reason="other">Boshqa</div>
+
+    <div class="store-sheet-row cancel">Bekor qilish</div>
   </div>
 </div>
     
@@ -5590,6 +5609,60 @@ body.sheet-open .bottom-nav{ display:none !important; }
     });
   }
 
+    // ===== REPORT SHOP (COMPLAINT) =====
+const shopSheetReport   = document.getElementById("shopSheetReport");
+const reportBackdrop    = document.getElementById("reportSheetBackdrop");
+const reportOptions     = document.querySelectorAll(".report-option");
+
+function openReportSheet(){
+  if (!reportBackdrop) return;
+  reportBackdrop.classList.add("active");
+  document.body.classList.add("sheet-open");
+}
+
+function closeReportSheet(){
+  if (!reportBackdrop) return;
+  reportBackdrop.classList.remove("active");
+  document.body.classList.remove("sheet-open");
+}
+
+// открыть sheet жалобы
+if (shopSheetReport) {
+  shopSheetReport.addEventListener("click", () => {
+    closeShopSheet();     // закрываем ⋯
+    openReportSheet();    // открываем жалобу
+  });
+}
+
+// выбрать причину
+reportOptions.forEach(opt => {
+  opt.addEventListener("click", () => {
+    if (!sheetShop) return;
+
+    const reason = opt.dataset.reason;
+
+    const complaints = JSON.parse(localStorage.getItem("zalvo_shop_reports") || "[]");
+    complaints.push({
+      shopId: sheetShop.id,
+      shopName: sheetShop.name,
+      reason,
+      ts: Date.now()
+    });
+
+    localStorage.setItem("zalvo_shop_reports", JSON.stringify(complaints));
+
+    closeReportSheet();
+    showToast("Shikoyat yuborildi", "Adminlar tekshiradi ⚠️");
+  });
+});
+
+// закрытие по фону
+if (reportBackdrop) {
+  reportBackdrop.addEventListener("click", (e) => {
+    if (e.target === reportBackdrop) closeReportSheet();
+  });
+}
+    
   // ================== START ==================
   applySavedProfilePhoto();
   showScreen("home");
