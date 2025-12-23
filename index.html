@@ -3543,2193 +3543,239 @@ body.sheet-open .bottom-nav{ display:none !important; }
   </div>
 
   <script>
-  // ================== НАСТРОЙКИ / КОНСТАНТЫ ==================
-  const ADS_API_URL    = "https://baxir.pythonanywhere.com/ads";
-  const ADD_AD_API_URL = "https://baxir.pythonanywhere.com/api/add_ad";
+/* =========================================================
+   SHOP VIEW — ACTIONS, SEARCH, FILTER (FIXED)
+   ========================================================= */
 
-  const DEFAULT_PHONE    = "+998901234567";
-  const DEFAULT_TELEGRAM = "Baxir1987";
-
-  const EXCHANGE_RATE = 12500; // 1 USD = X so'm
-
-  // ImgBB
-  const IMGBB_API_KEY     = "d6a3eac7b36101df3effee3f7d0c7493";
-  const IMGBB_UPLOAD_URL  = "https://api.imgbb.com/1/upload";
-
-  // Infinite scroll
-  const FEED_CHUNK_SIZE = 10;
-
-  // localStorage keys
-  const FAVORITES_KEY = "mh_favorites";
-  const HISTORY_KEY   = "mh_history";
-  const PROFILE_PHOTO_KEY = "zalvo_profile_photo";
-
-  // ================== DOM-ЭЛЕМЕНТЫ ==================
-  const screensContainer = document.querySelector(".screens");
-
-  // Screens
-  const screenHome        = document.getElementById("screen-home");
-  const screenFavorites   = document.getElementById("screen-favorites");
-  const screenFilters     = document.getElementById("screen-filters");
-  const screenAdDetails   = document.getElementById("screen-ad-details");
-  const screenProfile     = document.getElementById("screen-profile");
-  const screenPromo       = document.getElementById("screen-promo");
-  const screenChat        = document.getElementById("screen-chat");
-  const screenHistory     = document.getElementById("screen-history");
-  const screenAdmin       = document.getElementById("screen-admin");
-  const screenNewAd1      = document.getElementById("screen-new-ad-step1");
-  const screenNewAd2      = document.getElementById("screen-new-ad-step2");
-  const screenNewAd3      = document.getElementById("screen-new-ad-step3");
-  const screenNewAdSuccess= document.getElementById("screen-new-ad-success");
-  const screenShops      = document.getElementById("screen-shops");
-  const screenSettings   = document.getElementById("screen-settings");
-  const settingsLangRow = document.getElementById("settingsLangRow");
-  const screenLanguage    = document.getElementById("screen-language");
-  const languageUz      = document.getElementById("languageUz");
-  const languageRu      = document.getElementById("languageRu");
-  const screenMyAds      = document.getElementById("screen-my-ads");
-  const myAdsList        = document.getElementById("myAdsList");
-  const settingsMyAdsRow = document.getElementById("settingsMyAdsRow");
-  const profileAvatar       = document.getElementById("profileAvatar");
-  const profilePhotoInput   = document.getElementById("profilePhotoInput");
-  const settingsChangePhoto = document.getElementById("settingsChangePhoto");
-  const screenMyShop     = document.getElementById("screen-my-shop");
-  const myShopAdsList    = document.getElementById("myShopAdsList");
-  const settingsMyShopRow = document.getElementById("settingsMyShopRow");
-  const screenBusiness   = document.getElementById("screen-business");
-  const businessBackBtn = document.getElementById("businessBack");
-  const businessOpenShopBtn  = document.getElementById("businessOpenShopBtn");
-  const storeMoreBtn = document.getElementById("storeMoreBtn");
-  const storeSheet   = document.getElementById("storeSheet");
-  const storeMsgBtn = document.getElementById("storeMsgBtn");
-  const filterCategoryRow = document.getElementById("filterCategoryRow");
-
-    if (storeMsgBtn) {
-  storeMsgBtn.addEventListener("click", () => {
-    showScreen("chat");
-  });
-}
-
-const screenShopView = document.getElementById("screen-shop-view");
-
-const shopViewName   = document.getElementById("shopViewName");
-const shopViewSubs   = document.getElementById("shopViewSubs");
-const shopViewRating = document.getElementById("shopViewRating");
-const shopViewStars  = document.getElementById("shopViewStars");
-const shopViewCity   = document.getElementById("shopViewCity");
-const shopViewTg     = document.getElementById("shopViewTg");
-const shopViewPhone  = document.getElementById("shopViewPhone");
-const shopViewPhoneText = document.getElementById("shopViewPhoneText");
-const shopViewAvatar = document.getElementById("shopViewAvatar");
-
-const shopViewMsgBtn = document.getElementById("shopViewMsgBtn");
+/* ---------- ELEMENTS ---------- */
 const shopViewMoreBtn = document.getElementById("shopViewMoreBtn");
-
-const shopViewAdsList = document.getElementById("shopViewAdsList");
 const shopViewAdsSearchInput = document.getElementById("shopViewAdsSearchInput");
 const shopViewAdsFilterBtn = document.getElementById("shopViewAdsFilterBtn");
-    
-    // ===== Shop Ads Filter DOM =====
-const shopAdsFilterBtn   = document.getElementById("shopAdsFilterBtn");
+const shopViewAdsList = document.getElementById("shopViewAdsList");
 const shopAdsFilterSheet = document.getElementById("shopAdsFilterSheet");
 
-const shopAdsSearchInput = document.getElementById("shopAdsSearchInput");
-const shopAdsSort        = document.getElementById("shopAdsSort");
-const shopAdsMinPrice    = document.getElementById("shopAdsMinPrice");
-const shopAdsMaxPrice    = document.getElementById("shopAdsMaxPrice");
-const shopAdsOnlyPhotoBtn= document.getElementById("shopAdsOnlyPhoto");
-const shopAdsApplyBtn    = document.getElementById("shopAdsApply");
-const shopAdsResetBtn    = document.getElementById("shopAdsReset");
+/* action sheet */
+const shopSheetBackdrop = document.getElementById("shopSheetBackdrop");
+const shopSheetTitle = document.getElementById("shopSheetTitle");
+const shopSheetFav = document.getElementById("shopSheetFav");
+const shopSheetShare = document.getElementById("shopSheetShare");
+const shopSheetBlock = document.getElementById("shopSheetBlock");
 
-// local state для фильтров магазина
+/* filter inputs */
+const shopAdsSort = document.getElementById("shopAdsSort");
+const shopAdsMinPrice = document.getElementById("shopAdsMinPrice");
+const shopAdsMaxPrice = document.getElementById("shopAdsMaxPrice");
+const shopAdsOnlyPhoto = document.getElementById("shopAdsOnlyPhoto");
+const shopAdsApply = document.getElementById("shopAdsApply");
+const shopAdsReset = document.getElementById("shopAdsReset");
+
+/* ---------- STATE ---------- */
+let currentShop = null;
+let shopAds = []; // объявления текущего магазина
+
 const shopAdsFilterState = {
+  search: "",
   sort: "new",
-  minPrice: "",
-  maxPrice: "",
-  onlyWithPhoto: false,
-};
-    
-  // Settings rows (profil ekrani)
-const settingsFavoritesRow = document.getElementById("settingsFavoritesRow");
-const settingsHistoryRow   = document.getElementById("settingsHistoryRow");
-const settingsPaidRow      = document.getElementById("settingsPaidRow");
-const settingsBusinessRow  = document.getElementById("settingsBusinessRow");
-const settingsShopRow  = document.getElementById("settingsMyShopRow");
-    
-  // Lists
-  const feedList          = document.getElementById("feedList");
-  const favoritesList     = document.getElementById("favoritesList");
-  const historyListEl     = document.getElementById("historyList");
-  const adminLastAdsEl    = document.getElementById("adminLastAds");
-
-  // Admin stats
-  const adminTotalAdsEl   = document.getElementById("adminTotalAds");
-  const adminNewTodayEl   = document.getElementById("adminNewToday");
-
-  // Search / filters
-  const searchInput       = document.querySelector(".search-input");
-  const openFiltersBtn    = document.getElementById("openFiltersBtn");
-  const homeCategoryGrid  = document.getElementById("homeCategoryGrid");
-
-  const filterTypeRow     = document.getElementById("filterTypeRow");
-  const filterCitySelect  = document.getElementById("filterCity");
-  const filterCurrencyRow = document.getElementById("filterCurrencyRow");
-  const filterPhotoChip   = document.getElementById("filterPhotoChip");
-  const filterSortSelect  = document.getElementById("filterSort");
-  const filtersApplyBtn   = document.getElementById("filtersApplyBtn");
-  const filtersResetBtn   = document.getElementById("filtersResetBtn");
-  const filtersBackBtn    = document.getElementById("filtersBack");
-
-  // New ad
-  const btnOpenNewAd      = document.getElementById("btnOpenNewAd");
-  const backFromNewAd1    = document.getElementById("backFromNewAd1");
-  const backFromNewAd2    = document.getElementById("backFromNewAd2");
-  const backFromNewAd3    = document.getElementById("backFromNewAd3");
-  const btnNewAdStep1Next = document.getElementById("btnNewAdStep1Next");
-  const btnNewAdStep2Next = document.getElementById("btnNewAdStep2Next");
-  const btnPublishAd      = document.getElementById("btnPublishAd");
-  const btnGoHome         = document.getElementById("btnGoHome");
-
-  const inputCity         = document.getElementById("inputCity");
-  const inputTitle        = document.getElementById("inputTitle");
-  const inputPrice        = document.getElementById("inputPrice");
-  const inputDescription  = document.getElementById("inputDescription");
-  const btnUploadPhotos   = document.getElementById("btnUploadPhotos");
-  const inputPhotos       = document.getElementById("inputPhotos");
-  const photosPreview     = document.getElementById("photosPreview");
-  const summaryTitle      = document.getElementById("summaryTitle");
-  const summaryCityType   = document.getElementById("summaryCityType");
-  const summaryPrice      = document.getElementById("summaryPrice");
-  const summaryDescription= document.getElementById("summaryDescription");
-  const summaryPhotosInfo = document.getElementById("summaryPhotosInfo");
-  const inputCategory     = document.getElementById("inputCategory");
-
-    if (inputPrice) {
-  inputPrice.addEventListener("input", () => {
-    const el = inputPrice;
-
-    // позиция курсора в "цифрах" (сколько цифр слева от курсора)
-    const caret = el.selectionStart || 0;
-    const leftPart = el.value.slice(0, caret);
-    const digitsPos = leftPart.replace(/\D/g, "").length;
-
-    // форматируем
-    const formatted = formatInputNumberSpaces(el.value);
-    el.value = formatted;
-
-    // возвращаем курсор туда же по количеству цифр
-    setCaretByDigits(el, digitsPos);
-  });
-}
-    
-  // Ad details
-  const detailMainImage   = document.getElementById("detailMainImage");
-  const detailThumbs      = document.getElementById("detailThumbs");
-  const detailTitle       = document.getElementById("detailTitle");
-  const detailPrice       = document.getElementById("detailPrice");
-  const detailMeta        = document.getElementById("detailMeta");
-  const detailDescription = document.getElementById("detailDescription");
-  const detailBackBtn     = document.getElementById("detailBackBtn");
-  const similarList       = document.getElementById("similarList");
-  const favoriteBtn       = document.getElementById("favoriteBtn");
-  const shareBtn          = document.getElementById("shareBtn");
-  const sellerCard        = document.getElementById("sellerCard");
-  const callSellerBtn     = document.getElementById("callSellerBtn");
-  const msgSellerBtn      = document.getElementById("msgSellerBtn");
-
-  // Lightbox
-  const imageLightbox     = document.getElementById("imageLightbox");
-  const lightboxImg       = document.getElementById("lightboxImg");
-  const lightboxPrev      = document.getElementById("lightboxPrev");
-  const lightboxNext      = document.getElementById("lightboxNext");
-
-  // Toast
-  const toastEl           = document.getElementById("toast");
-
-  // Promo
-  const promoBanner       = document.getElementById("promoBanner");
-
-  // Chat
-  const chatMessagesEl    = document.getElementById("chatMessages");
-  const chatInput         = document.getElementById("chatInput");
-  const chatSendBtn       = document.getElementById("chatSendBtn");
-
-  // Bottom nav
-  const navButtons        = document.querySelectorAll(".nav-btn");
-
-  // ================== ГЛОБАЛЬНОЕ СОСТОЯНИЕ ==================
-  let allAds        = [];
-  let filteredAds   = [];
-  let favoritesSet  = loadFavoritesFromStorage();
-  let historyArray  = loadHistoryFromStorage();
-  let currentAd     = null;
-  let currentScreen = "home";
-
-    // ===== GLOBAL BACK NAV (one button for all screens) =====
-const navStack = [];  // стек экранов: куда возвращаться
-let backBtnEl = null;
-
-function ensureGlobalBackButton() {
-  const headerLeft = document.querySelector(".app-header-left");
-  if (!headerLeft) return;
-
-  if (backBtnEl) return;
-
-  backBtnEl = document.createElement("button");
-  backBtnEl.className = "ios-back-btn";
-  backBtnEl.type = "button";
-  backBtnEl.innerHTML = `
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M15.5 5.5a1 1 0 0 1 0 1.4L10.4 12l5.1 5.1a1 1 0 1 1-1.4 1.4l-5.8-5.8a1 1 0 0 1 0-1.4l5.8-5.8a1 1 0 0 1 1.4 0z"/>
-    </svg>
-  `;
-
-  // вставляем ПЕРЕД логотипом
-  headerLeft.prepend(backBtnEl);
-
-  backBtnEl.addEventListener("click", () => {
-    if (!navStack.length) return;
-
-    // анимация как iOS
-    if (screensContainer) {
-      screensContainer.classList.add("ios-back-anim");
-      setTimeout(() => screensContainer.classList.remove("ios-back-anim"), 230);
-    }
-
-    const prev = navStack.pop();
-    showScreen(prev, { push: false }); // важно: НЕ пушим обратно
-  });
-}
-
-    // ===== Hide header on scroll down, show on scroll up =====
-const appHeader = document.querySelector(".app-header");
-let lastScrollTop = 0;
-let headerLocked = false;
-
-function setHeaderHidden(hidden){
-  if (!appHeader) return;
-  appHeader.classList.toggle("header-hidden", !!hidden);
-}
-
-if (screensContainer) {
-  screensContainer.addEventListener("scroll", () => {
-    if (!appHeader) return;
-
-    // На некоторых экранах можно не прятать (если хочешь)
-    // например: if (currentScreen === "filters" || currentScreen === "chat") return;
-
-    const st = screensContainer.scrollTop;
-
-    // если в самом верху — всегда показываем
-    if (st <= 5) {
-      setHeaderHidden(false);
-      lastScrollTop = st;
-      return;
-    }
-
-    const delta = st - lastScrollTop;
-
-    // маленькие дрожания пальца игнорируем
-    if (Math.abs(delta) < 6) return;
-
-    if (delta > 0) {
-      // вниз — прячем
-      setHeaderHidden(true);
-    } else {
-      // вверх — показываем
-      setHeaderHidden(false);
-    }
-
-    lastScrollTop = st;
-  }, { passive: true });
-}
-    
-function updateBackButtonVisibility() {
-  if (!backBtnEl) return;
-  backBtnEl.style.display = navStack.length ? "inline-flex" : "none";
-}
-
-  // lightbox
-  let lightboxImages = [];
-  let lightboxIndex  = 0;
-
-  // infinite scroll
-  let feedRenderedCount = 0;
-
-  // new ad draft
-  let newAdDraft = {
-    city: "Toshkent",
-    category: "Transport",
-    title: "",
-    price: "",
-    description: "",
-    photos: []
-  };
-
-  // chat
-  let chatHistory = [];
-
-  // filters
-  const filterState = {
-    type: "all",
-    city: "all",
-    currency: "sum",
-    onlyWithPhoto: false,
-    sort: "default",
-    category: "all"
-  };
-
-    function openShopAdsFilterSheet() {
-  if (!shopAdsFilterSheet) return;
-  shopAdsFilterSheet.classList.add("active");
-}
-
-function closeShopAdsFilterSheet() {
-  if (!shopAdsFilterSheet) return;
-  shopAdsFilterSheet.classList.remove("active");
-}
-
-function syncShopAdsFilterUI() {
-  if (shopAdsSort) shopAdsSort.value = shopAdsFilterState.sort;
-  if (shopAdsMinPrice) shopAdsMinPrice.value = shopAdsFilterState.minPrice;
-  if (shopAdsMaxPrice) shopAdsMaxPrice.value = shopAdsFilterState.maxPrice;
-
-  if (shopAdsOnlyPhotoBtn) {
-    shopAdsOnlyPhotoBtn.classList.toggle("chip-filled", shopAdsFilterState.onlyWithPhoto);
-  }
-}
-
-if (shopAdsFilterBtn) {
-  shopAdsFilterBtn.addEventListener("click", () => {
-    syncShopAdsFilterUI();
-    openShopAdsFilterSheet();
-  });
-}
-
-if (shopAdsFilterSheet) {
-  // закрытие по клику на фон
-  shopAdsFilterSheet.addEventListener("click", (e) => {
-    if (e.target === shopAdsFilterSheet) closeShopAdsFilterSheet();
-  });
-
-  // чтобы клики внутри панели не закрывали
-  const inner = shopAdsFilterSheet.querySelector(".store-sheet");
-  if (inner) inner.addEventListener("click", (e) => e.stopPropagation());
-}
-
-if (shopAdsOnlyPhotoBtn) {
-  shopAdsOnlyPhotoBtn.addEventListener("click", () => {
-    shopAdsFilterState.onlyWithPhoto = !shopAdsFilterState.onlyWithPhoto;
-    syncShopAdsFilterUI();
-  });
-}
-
-if (shopAdsApplyBtn) {
-  shopAdsApplyBtn.addEventListener("click", () => {
-    shopAdsFilterState.sort = (shopAdsSort?.value || "new");
-    shopAdsFilterState.minPrice = (shopAdsMinPrice?.value || "").trim();
-    shopAdsFilterState.maxPrice = (shopAdsMaxPrice?.value || "").trim();
-
-    closeShopAdsFilterSheet();
-    renderMyShopAds(); // перерисуем товары в магазине
-  });
-}
-
-if (shopAdsResetBtn) {
-  shopAdsResetBtn.addEventListener("click", () => {
-    shopAdsFilterState.sort = "new";
-    shopAdsFilterState.minPrice = "";
-    shopAdsFilterState.maxPrice = "";
-    shopAdsFilterState.onlyWithPhoto = false;
-
-    if (shopAdsSearchInput) shopAdsSearchInput.value = "";
-
-    syncShopAdsFilterUI();
-    renderMyShopAds();
-    closeShopAdsFilterSheet();
-  });
-}
-
-// поиск по объявлениям магазина
-if (shopAdsSearchInput) {
-  shopAdsSearchInput.addEventListener("input", () => {
-    renderMyShopAds();
-  });
-}
-    
-  // ================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==================
-  function formatNumberWithSpaces(num) {
-    const s = String(num);
-    return s.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-  }
-
-    // ✅ ЕДИНЫЙ источник категории (поддерживает старые объявления с type)
-function getAdCategory(ad) {
-  return String(ad?.category || ad?.type || "Boshqa").trim();
-}
-    
-    function formatInputNumberSpaces(value) {
-  const digits = String(value || "").replace(/\D/g, "");
-  return digits.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-}
-
-// сохраняем курсор так, чтобы он не прыгал при вставке пробелов
-function setCaretByDigits(el, digitsPos) {
-  const str = el.value;
-  let digitsSeen = 0;
-
-  for (let i = 0; i <= str.length; i++) {
-    if (i === str.length) {
-      el.setSelectionRange(i, i);
-      return;
-    }
-    if (/\d/.test(str[i])) digitsSeen++;
-    if (digitsSeen >= digitsPos) {
-      el.setSelectionRange(i + 1, i + 1);
-      return;
-    }
-  }
-}
-    
-  function formatPrice(price) {
-    if (price === null || price === undefined || price === "") {
-      return "Narx kelishiladi";
-    }
-    const p = Number(price || 0);
-    if (!isFinite(p) || p <= 0) return "Narx kelishiladi";
-
-    if (filterState.currency === "usd") {
-      const usd = p / EXCHANGE_RATE;
-      const rounded = Math.round(usd * 100) / 100;
-      return formatNumberWithSpaces(rounded) + " USD";
-    }
-    return formatNumberWithSpaces(p) + " so‘m";
-  }
-
-  function formatDateShort(iso) {
-    if (!iso) return "";
-    try {
-      const d = new Date(iso);
-      const dd = String(d.getDate()).padStart(2, "0");
-      const mm = String(d.getMonth() + 1).padStart(2, "0");
-      return `${dd}.${mm}`;
-    } catch (e) {
-      return "";
-    }
-  }
-
-  // favorites
-  function loadFavoritesFromStorage() {
-    try {
-      const raw = localStorage.getItem(FAVORITES_KEY);
-      if (!raw) return new Set();
-      const arr = JSON.parse(raw);
-      if (!Array.isArray(arr)) return new Set();
-      return new Set(arr);
-    } catch {
-      return new Set();
-    }
-  }
-  function saveFavoritesToStorage() {
-    try {
-      localStorage.setItem(FAVORITES_KEY, JSON.stringify(Array.from(favoritesSet)));
-    } catch {}
-  }
-
-  // history
-  function loadHistoryFromStorage() {
-    try {
-      const raw = localStorage.getItem(HISTORY_KEY);
-      if (!raw) return [];
-      const arr = JSON.parse(raw);
-      if (!Array.isArray(arr)) return [];
-      return arr;
-    } catch {
-      return [];
-    }
-  }
-  function saveHistoryToStorage() {
-    try {
-      localStorage.setItem(HISTORY_KEY, JSON.stringify(historyArray));
-    } catch {}
-  }
-
-  // toast
-  let toastTimeout = null;
-  function showToast(mainText = "E’lon yuqoriga ko‘tarildi!", subText = "Endi odamlarga ko‘proq ko‘rinadi") {
-    if (!toastEl) return;
-    const mainEl = toastEl.querySelector(".toast-text-main");
-    const subEl  = toastEl.querySelector(".toast-text-sub");
-    if (mainEl) mainEl.textContent = mainText;
-    if (subEl)  subEl.textContent  = subText;
-
-    toastEl.classList.add("show");
-    if (toastTimeout) clearTimeout(toastTimeout);
-    toastTimeout = setTimeout(() => {
-      toastEl.classList.remove("show");
-    }, 3000);
-  }
-
-  // ================== СОЗДАНИЕ КАРТОЧЕК ==================
-  function createAdCard(ad) {
-    const card = document.createElement("div");
-    card.className = "ad-card";
-
-    const title  = ad.title || "E’lon";
-    const city   = ad.city || "Shahar";
-    const category = getAdCategory(ad);
-    const price  = formatPrice(ad.price);
-    const date   = formatDateShort(ad.created_at);
-    const image  = ad.images && ad.images.length ? ad.images[0] : null;
-
-    card.innerHTML = `
-      <div class="ad-image" style="${image ? `background-image:url('${image}');` : ""}"></div>
-      <div class="ad-content">
-        <div class="ad-title">${title}</div>
-        <div class="ad-meta">📍 ${city} · ${category}${date ? " · " + date : ""}</div>
-        <div class="ad-price">${price}</div>
-      </div>
-    `;
-
-    card.addEventListener("click", () => openAdDetails(ad));
-    return card;
-  }
-
-  function createHistoryCard(item) {
-    const ad = allAds.find(a => a.id === item.id);
-    if (!ad) return null;
-    return createAdCard(ad);
-  }
-
-  // ================== РЕНДЕР ЛЕНТЫ + INFINITE SCROLL ==================
-  function applyAllFilters() {
-    if (!allAds.length) {
-      filteredAds = [];
-      return;
-    }
-    const q = (searchInput?.value || "").toLowerCase().trim();
-
-    filteredAds = allAds.filter(ad => {
-      // if (filterState.type !== "all" && ad.type !== filterState.type) return false;
-
-      if (filterState.category !== "all") {
-  if (getAdCategory(ad) !== filterState.category) return false;
-}
-
-      if (filterState.city !== "all") {
-        if ((ad.city || "").trim() !== filterState.city) return false;
-      }
-
-      if (filterState.onlyWithPhoto) {
-        if (!ad.images || !Array.isArray(ad.images) || !ad.images.length) return false;
-      }
-
-      if (q) {
-        const text = (ad.title || "") + " " + (ad.description || "");
-        if (!text.toLowerCase().includes(q)) return false;
-      }
-
-      return true;
-    });
-
-    filteredAds.sort((a, b) => {
-      const pa = Number(a.price || 0);
-      const pb = Number(b.price || 0);
-      const da = a.created_at ? new Date(a.created_at).getTime() : 0;
-      const db = b.created_at ? new Date(b.created_at).getTime() : 0;
-
-      switch (filterState.sort) {
-        case "cheap":      return pa - pb;
-        case "expensive":  return pb - pa;
-        case "date":
-        case "default":
-        default:           return db - da;
-      }
-    });
-  }
-
-  function resetFeedRender() {
-    if (!feedList) return;
-    feedList.innerHTML = "";
-    feedRenderedCount = 0;
-    appendMoreToFeed();
-  }
-
-  function appendMoreToFeed() {
-    if (!feedList) return;
-    const start = feedRenderedCount;
-    const end   = Math.min(filteredAds.length, start + FEED_CHUNK_SIZE);
-    if (start >= end) {
-      if (!filteredAds.length && !feedRenderedCount) {
-        feedList.innerHTML = "<div class='ad-meta'>E’lonlar topilmadi</div>";
-      }
-      return;
-    }
-
-    for (let i = start; i < end; i++) {
-      const ad = filteredAds[i];
-      feedList.appendChild(createAdCard(ad));
-    }
-    feedRenderedCount = end;
-  }
-
-  function renderFavorites() {
-    if (!favoritesList) return;
-    favoritesList.innerHTML = "";
-    const ids = Array.from(favoritesSet);
-    if (!ids.length) {
-      favoritesList.innerHTML = "<div class='ad-meta'>Sevimlilar hozircha bo‘sh</div>";
-      return;
-    }
-    const favAds = allAds.filter(ad => ids.includes(ad.id));
-    if (!favAds.length) {
-      favoritesList.innerHTML = "<div class='ad-meta'>Sevimlilar hozircha bo‘sh</div>";
-      return;
-    }
-    favAds.forEach(ad => favoritesList.appendChild(createAdCard(ad)));
-  }
-
-  function renderHistory() {
-    if (!historyListEl) return;
-    historyListEl.innerHTML = "";
-    if (!historyArray.length) {
-      historyListEl.innerHTML = "<div class='ad-meta'>Tarix bo‘sh</div>";
-      return;
-    }
-    const sorted = [...historyArray].sort((a,b)=>b.ts - a.ts);
-    sorted.forEach(item => {
-      const card = createHistoryCard(item);
-      if (card) historyListEl.appendChild(card);
-    });
-  }
-
-    function renderMyAds() {
-  if (!myAdsList) return;
-  myAdsList.innerHTML = "";
-
-  // Фильтруем по твоему телефону / телеграму
-  const myPhone = DEFAULT_PHONE.replace(/\s+/g, "");
-  const myTg    = DEFAULT_TELEGRAM.replace(/^@/, "").toLowerCase();
-
-  const myAds = allAds.filter(ad => {
-    const adPhone = (ad.phone || "").replace(/\s+/g, "");
-    const adTg    = (ad.telegram || "").replace(/^@/, "").toLowerCase();
-
-    return (adPhone && adPhone === myPhone) || (adTg && adTg === myTg);
-  });
-
-  if (!myAds.length) {
-    myAdsList.innerHTML = "<div class='ad-meta'>Hozircha sizning e’lonlaringiz yo‘q</div>";
-    return;
-  }
-
-  myAds.forEach(ad => {
-    myAdsList.appendChild(createAdCard(ad));
-  });
-}
-    
-  // ================== ЗАГРУЗКА E’LONLAR ==================
-  async function loadAds() {
-    try {
-      const res = await fetch(ADS_API_URL);
-      if (!res.ok) throw new Error("Bad response");
-      const data = await res.json();
-      if (!Array.isArray(data)) throw new Error("Not array");
-
-      allAds = data;
-      applyAllFilters();
-      resetFeedRender();
-      renderFavorites();
-      updateAdminPanel();
-    } catch (e) {
-      console.error("Error loadAds:", e);
-      if (feedList) {
-        feedList.innerHTML = "<div class='ad-meta'>E’lonlarni yuklashda xatolik</div>";
-      }
-    }
-  }
-
-  // ================== ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ ==================
-    const screens = {
-  home: screenHome,
-  favorites: screenFavorites,
-  filters: screenFilters,
-  adDetails: screenAdDetails,
-  profile: screenProfile,
-  promo: screenPromo,
-  chat: screenChat,
-  history: screenHistory,
-  admin: screenAdmin,
-  newAd1: screenNewAd1,
-  newAd2: screenNewAd2,
-  newAd3: screenNewAd3,
-  newAdSuccess: screenNewAdSuccess,
-  shops: screenShops,
-  language: screenLanguage,
-  myAds: screenMyAds,
-  business: screenBusiness,  // экран “Zalvo biznes uchun”
-  myShop: screenMyShop,       // экран “Mening do‘konim”
-  shopView: screenShopView,  
+  minPrice: null,
+  maxPrice: null,
+  onlyPhoto: false
 };
 
-  function showScreen(name, opts = {}) {
-  ensureGlobalBackButton();
+/* =========================================================
+   ACTION SHEET (⋯)
+   ========================================================= */
 
-  const push = opts.push !== false;          // по умолчанию пушим
-  const resetStack = opts.resetStack === true;
+function openShopSheet(shop){
+  currentShop = shop || currentShop;
 
-  if (resetStack) navStack.length = 0;
-
-  if (push && currentScreen && currentScreen !== name) {
-    navStack.push(currentScreen);
+  if (shopSheetTitle && currentShop) {
+    shopSheetTitle.textContent = currentShop.name || "Do‘kon";
   }
 
-  currentScreen = name;
-
-  Object.values(screens).forEach(el => {
-    if (!el) return;
-    el.classList.remove("active");
-    el.style.display = "none";
-  });
-
-  const target = screens[name];
-  if (target) {
-    target.classList.add("active");
-    target.style.display = "block";
-  }
-
-  navButtons.forEach(btn => {
-    const s = btn.getAttribute("data-screen");
-    btn.classList.toggle("active", s === name);
-  });
-
-  if (screensContainer) screensContainer.scrollTop = 0;
-
-  if (name === "favorites") renderFavorites();
-  if (name === "history")   renderHistory();
-  if (name === "filters")   syncFiltersUIFromState();
-  if (name === "home")      resetFeedRender();
-  if (name === "myAds")     renderMyAds();
-  if (name === "myShop")    renderMyShopAds();
-  if (name === "shopView")  renderShopView();
-  if (name === "shops") {
-  ensureShopsLoaded().then(renderShops);
-}
-    
-  updateBackButtonVisibility();
-}
-
-    let currentShop = null;
-
-// ⭐ звёзды 0..5
-function starsText(rating){
-  const r = Math.max(0, Math.min(5, Number(rating||0)));
-  const full = Math.round(r);
-  return "★★★★★".slice(0, full) + "☆☆☆☆☆".slice(0, 5-full);
-}
-
-// объявления магазина = по telegram/phone владельца
-function getShopAds(shop){
-  if (!shop) return [];
-  const ownerTg = String(shop.ownerTelegram||"").replace(/^@/,"").toLowerCase();
-  const ownerPhone = String(shop.ownerPhone||"").replace(/\s+/g,"");
-
-  return allAds.filter(ad => {
-    const adTg = String(ad.telegram||"").replace(/^@/,"").toLowerCase();
-    const adPhone = String(ad.phone||"").replace(/\s+/g,"");
-
-    if (ownerTg && adTg && adTg === ownerTg) return true;
-    if (ownerPhone && adPhone && adPhone === ownerPhone) return true;
-    return false;
-  });
-}
-
-function openShop(shop){
-  currentShop = shop;
-  showScreen("shopView");
-}
-
-function renderShopView(){
-  if (!currentShop) return;
-
-  if (shopViewName) shopViewName.textContent = currentShop.name || "Do‘kon";
-  if (shopViewSubs) shopViewSubs.textContent = `${currentShop.subs || 0} obunachi`;
-
-  if (shopViewStars) shopViewStars.textContent = starsText(currentShop.rating);
-  if (shopViewRating) shopViewRating.textContent = `${currentShop.rating || 0} (${currentShop.reviews || 0} baho)`;
-
-  if (shopViewCity) shopViewCity.textContent = currentShop.city || "Shahar";
-
-  const tg = String(currentShop.ownerTelegram || "").replace(/^@/,"");
-  if (shopViewTg) {
-    shopViewTg.textContent = "@" + (tg || "shop");
-    shopViewTg.href = tg ? ("https://t.me/" + tg) : "#";
-  }
-
-  const phone = String(currentShop.ownerPhone || "").trim();
-  if (shopViewPhone && shopViewPhoneText) {
-    if (phone) {
-      shopViewPhone.style.display = "inline";
-      shopViewPhoneText.style.display = "none";
-      shopViewPhone.textContent = phone;
-      shopViewPhone.href = "tel:" + phone.replace(/\s+/g,"");
-    } else {
-      shopViewPhone.style.display = "none";
-      shopViewPhoneText.style.display = "inline";
-      shopViewPhoneText.textContent = "Telefon yo‘q";
-    }
-  }
-
-  // аватар = инициалы
-  if (shopViewAvatar) shopViewAvatar.textContent = getInitials(currentShop.name);
-
-  renderShopViewAds();
-}
-
-function renderShopViewAds(){
-  if (!shopViewAdsList) return;
-  shopViewAdsList.innerHTML = "";
-
-  const q = (shopViewAdsSearchInput?.value || "").toLowerCase().trim();
-  const ads = getShopAds(currentShop);
-
-  let result = ads;
-  if (q) {
-    result = ads.filter(a => ((a.title||"") + " " + (a.description||"")).toLowerCase().includes(q));
-  }
-
-  if (!result.length) {
-    shopViewAdsList.innerHTML = "<div class='ad-meta'>Bu do‘konda e’lonlar yo‘q</div>";
-    return;
-  }
-
-  result.forEach(ad => shopViewAdsList.appendChild(createAdCard(ad)));
-}
-
-// кнопка “Yozish” в магазине
-if (shopViewMsgBtn) {
-  shopViewMsgBtn.addEventListener("click", () => showScreen("chat"));
-}
-
-// поиск по объявлениям магазина
-if (shopViewAdsSearchInput) {
-  shopViewAdsSearchInput.addEventListener("input", renderShopViewAds);
-}
-    
-  // bottom nav
-  navButtons.forEach(btn => {
-    const handleNavTap = () => {
-      const target = btn.getAttribute("data-screen");
-      if (!target) return;
-      showScreen(target, { push: false, resetStack: true });
-    };
-    btn.addEventListener("click", handleNavTap);
-  });
-
-  // infinite scroll on home
-  if (screensContainer) {
-    screensContainer.addEventListener("scroll", () => {
-      if (currentScreen !== "home") return;
-      const nearBottom =
-        screensContainer.scrollTop + screensContainer.clientHeight >=
-        screensContainer.scrollHeight - 80;
-      if (nearBottom) appendMoreToFeed();
-    });
-  }
-
-  // ================== ПОИСК ==================
-  if (searchInput) {
-    searchInput.addEventListener("input", () => {
-      applyAllFilters();
-      resetFeedRender();
-    });
-  }
-
-  // ================== ФИЛЬТРЫ ==================
-  function syncFiltersUIFromState() {
-  if (filterTypeRow) {
-    filterTypeRow.querySelectorAll(".chip").forEach(ch => {
-      const t = ch.getAttribute("data-type") || "all";
-      ch.classList.toggle("chip-filled", t === filterState.type);
-    });
-  }
-
-  if (filterCitySelect) {
-    filterCitySelect.value = filterState.city === "all" ? "all" : filterState.city;
-  }
-
-  if (filterCurrencyRow) {
-    filterCurrencyRow.querySelectorAll(".chip").forEach(ch => {
-      const c = ch.getAttribute("data-currency") || "sum";
-      ch.classList.toggle("chip-filled", c === filterState.currency);
-    });
-  }
-
-  if (filterPhotoChip) {
-    filterPhotoChip.classList.toggle("chip-filled", filterState.onlyWithPhoto);
-  }
-
-  if (filterSortSelect) {
-    filterSortSelect.value = filterState.sort;
-  }
-
-  // ✅ ВОТ ЭТО главное: обновляем chips категории
-  if (filterCategoryRow) {
-    filterCategoryRow.querySelectorAll(".chip").forEach(ch => {
-      const c = ch.getAttribute("data-category") || "all";
-      ch.classList.toggle("chip-filled", c === filterState.category);
-    });
-  }
-}
-
-  function readFiltersFromUI() {
-    if (filterTypeRow) {
-      const active = filterTypeRow.querySelector(".chip-filled");
-      filterState.type = active ? active.getAttribute("data-type") || "all" : "all";
-    }
-
-    if (filterCategoryRow) {
-  const active = filterCategoryRow.querySelector(".chip-filled");
-  filterState.category = active ? active.getAttribute("data-category") || "all" : "all";
-}
-    
-    if (filterCitySelect) {
-      const v = filterCitySelect.value;
-      filterState.city = v === "all" ? "all" : v;
-    }
-    if (filterCurrencyRow) {
-      const active = filterCurrencyRow.querySelector(".chip-filled");
-      filterState.currency = active ? active.getAttribute("data-currency") || "sum" : "sum";
-    }
-    if (filterPhotoChip) {
-      filterState.onlyWithPhoto = filterPhotoChip.classList.contains("chip-filled");
-    }
-    if (filterSortSelect) {
-      filterState.sort = filterSortSelect.value || "default";
-    }
-  }
-
-  if (filterTypeRow) {
-    filterTypeRow.addEventListener("click", e => {
-      const chip = e.target.closest(".chip");
-      if (!chip) return;
-      filterTypeRow.querySelectorAll(".chip").forEach(c => c.classList.remove("chip-filled"));
-      chip.classList.add("chip-filled");
-    });
-  }
-
-    if (filterCategoryRow) {
-  filterCategoryRow.addEventListener("click", e => {
-    const chip = e.target.closest(".chip");
-    if (!chip) return;
-    filterCategoryRow.querySelectorAll(".chip").forEach(c => c.classList.remove("chip-filled"));
-    chip.classList.add("chip-filled");
-  });
-}
-    
-  if (filterCurrencyRow) {
-    filterCurrencyRow.addEventListener("click", e => {
-      const chip = e.target.closest(".chip");
-      if (!chip) return;
-      filterCurrencyRow.querySelectorAll(".chip").forEach(c => c.classList.remove("chip-filled"));
-      chip.classList.add("chip-filled");
-    });
-  }
-  if (filterPhotoChip) {
-    filterPhotoChip.addEventListener("click", () => {
-      filterPhotoChip.classList.toggle("chip-filled");
-    });
-  }
-
-  if (openFiltersBtn) {
-    openFiltersBtn.addEventListener("click", () => {
-      showScreen("filters");
-    });
-  }
-  if (filtersApplyBtn) {
-    filtersApplyBtn.addEventListener("click", () => {
-      readFiltersFromUI();
-      applyAllFilters();
-      resetFeedRender();
-      showScreen("home");
-    });
-  }
-  if (filtersResetBtn) {
-    filtersResetBtn.addEventListener("click", () => {
-      filterState.type         = "all";
-      filterState.city         = "all";
-      filterState.currency     = "sum";
-      filterState.onlyWithPhoto= false;
-      filterState.sort         = "default";
-      filterState.category     = "all";
-      syncFiltersUIFromState();
-      applyAllFilters();
-      resetFeedRender();
-    });
-  }
-    
-  if (filtersBackBtn) {
-    filtersBackBtn.addEventListener("click", () => showScreen("home"));
-  }
-
-  // ================== ПОПУЛЯРНЫЕ КАТЕГОРИИ ==================
-  if (homeCategoryGrid) {
-    const cards = homeCategoryGrid.querySelectorAll(".category-card");
-    let activeCategory = null;
-
-    cards.forEach(card => {
-      const type = card.getAttribute("data-category");
-      card.addEventListener("click", () => {
-        if (activeCategory === type) {
-          activeCategory = null;
-          filterState.category = "all";
-          cards.forEach(c => c.classList.remove("active"));
-        } else {
-          activeCategory = type;
-          filterState.category = type;
-          cards.forEach(c => c.classList.remove("active"));
-          card.classList.add("active");
-        }
-        applyAllFilters();
-        resetFeedRender();
-      });
-    });
-  }
-
-  // ================== НОВОЕ ОБЪЯВЛЕНИЕ ==================
-  if (btnOpenNewAd) {
-    btnOpenNewAd.addEventListener("click", () => showScreen("newAd1"));
-  }
-  if (backFromNewAd1) {
-    backFromNewAd1.addEventListener("click", () => showScreen("home"));
-  }
-  if (backFromNewAd2) {
-    backFromNewAd2.addEventListener("click", () => showScreen("newAd1"));
-  }
-  if (backFromNewAd3) {
-    backFromNewAd3.addEventListener("click", () => showScreen("newAd2"));
-  }
-  if (btnGoHome) {
-    btnGoHome.addEventListener("click", () => showScreen("home"));
-  }
-
-  if (btnNewAdStep1Next) {
-    btnNewAdStep1Next.addEventListener("click", () => {
-      const title = (inputTitle.value || "").trim();
-      const price = (inputPrice.value || "").trim();
-      const desc  = (inputDescription.value || "").trim();
-
-      if (!title) return alert("Sarlavha kiriting");
-      if (!price) return alert("Narx kiriting");
-
-      newAdDraft.city        = inputCity.value;
-      newAdDraft.category    = inputCategory ? inputCategory.value : "Boshqa";
-      newAdDraft.title       = title;
-      newAdDraft.price       = price.replace(/\s+/g, "");
-      newAdDraft.description = desc || "Tavsif berilmagan";
-
-      showScreen("newAd2");
-    });
-  }
-
-  if (btnUploadPhotos && inputPhotos) {
-    btnUploadPhotos.addEventListener("click", () => inputPhotos.click());
-
-    inputPhotos.addEventListener("change", async () => {
-      const files = Array.from(inputPhotos.files || []);
-      photosPreview.innerHTML = "";
-      newAdDraft.photos = [];
-
-      if (!files.length) return;
-
-      const max = 8;
-      const selected = files.slice(0, max);
-
-      for (const file of selected) {
-        const reader = new FileReader();
-        reader.onload = e => {
-          const div = document.createElement("div");
-          div.className = "photo-thumb";
-          const img = document.createElement("img");
-          img.src = e.target.result;
-          div.appendChild(img);
-          photosPreview.appendChild(div);
-        };
-        reader.readAsDataURL(file);
-
-        try {
-          const url = await uploadToImgbb(file);
-          newAdDraft.photos.push(url);
-        } catch (e) {
-          console.error("ImgBB error:", e);
-        }
-      }
-    });
-  }
-
-  async function uploadToImgbb(file) {
-    const formData = new FormData();
-    formData.append("key", IMGBB_API_KEY);
-    formData.append("image", file);
-
-    const res = await fetch(IMGBB_UPLOAD_URL, {
-      method: "POST",
-      body: formData
-    });
-    if (!res.ok) throw new Error("upload_failed");
-    const json = await res.json();
-    if (!json.success || !json.data || !json.data.url) {
-      throw new Error("bad_response");
-    }
-    return json.data.url;
-  }
-
-  if (btnNewAdStep2Next) {
-    btnNewAdStep2Next.addEventListener("click", () => {
-      fillSummary();
-      showScreen("newAd3");
-    });
-  }
-
-  function fillSummary() {
-    if (summaryTitle)       summaryTitle.textContent       = newAdDraft.title;
-    if (summaryCityType) summaryCityType.textContent = `${newAdDraft.city} · ${newAdDraft.category}`;
-    if (summaryPrice)       summaryPrice.textContent       = formatPrice(newAdDraft.price);
-    if (summaryDescription) summaryDescription.textContent = newAdDraft.description;
-    if (summaryPhotosInfo)  summaryPhotosInfo.textContent  =
-      "Rasmlar: " + (newAdDraft.photos.length || 0) + " ta";
-  }
-
-  if (btnPublishAd) {
-    btnPublishAd.addEventListener("click", async () => {
-      btnPublishAd.disabled = true;
-      btnPublishAd.textContent = "Yuklanmoqda...";
-
-      try {
-        const payload = {
-  city: newAdDraft.city,
-
-  // ✅ отправляем оба поля — чтобы backend точно сохранил категорию
-  category: newAdDraft.category,
-  type: newAdDraft.category,
-
-  title: newAdDraft.title,
-  price: String(newAdDraft.price).replace(/\s+/g, ""),
-  description: newAdDraft.description,
-  images: newAdDraft.photos,
-  phone: DEFAULT_PHONE,
-  telegram: DEFAULT_TELEGRAM
-};
-
-        const res = await fetch(ADD_AD_API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-        if (!res.ok) throw new Error("Bad response");
-
-        inputTitle.value = "";
-        inputPrice.value = "";
-        inputDescription.value = "";
-        photosPreview.innerHTML = "";
-        if (inputPhotos) inputPhotos.value = "";
-
-        newAdDraft = {
-          city: "Toshkent",
-          category: "Transport",
-          title: "",
-          price: "",
-          description: "",
-          photos: []
-        };
-
-        showScreen("newAdSuccess");
-        loadAds();
-      } catch (e) {
-        console.error("publish error:", e);
-        alert("Xatolik, keyinroq urinib ko‘ring.");
-      } finally {
-        btnPublishAd.disabled = false;
-        btnPublishAd.textContent = "E’lonni joylash";
-      }
-    });
-  }
-
-  // ================== ОТКРЫТИЕ ДЕТАЛЕЙ ОБЪЯВЛЕНИЯ ==================
-  function openAdDetails(ad) {
-    currentAd = ad;
-
-    if (ad.id != null) {
-      const without = historyArray.filter(x => x.id !== ad.id);
-      without.unshift({id: ad.id, ts: Date.now()});
-      historyArray = without.slice(0, 50);
-      saveHistoryToStorage();
-    }
-
-    if (detailTitle)       detailTitle.textContent       = ad.title || "";
-    if (detailPrice)       detailPrice.textContent       = formatPrice(ad.price);
-    if (detailMeta) detailMeta.textContent = `${ad.city || ""} · ${getAdCategory(ad)}`;
-    if (detailDescription) detailDescription.textContent = ad.description || "";
-
-    const images = Array.isArray(ad.images) ? ad.images : [];
-
-    if (detailMainImage) {
-      detailMainImage.innerHTML = "";
-      detailMainImage.style.display = "flex";
-      detailMainImage.style.overflowX = "auto";
-      detailMainImage.style.scrollSnapType = "x mandatory";
-
-      if (images.length) {
-        images.forEach((url, idx) => {
-          const slide = document.createElement("div");
-          slide.className = "detail-main-slide";
-          slide.style.backgroundImage = `url('${url}')`;
-          slide.addEventListener("click", () => openLightbox(images, idx));
-          detailMainImage.appendChild(slide);
-        });
-      } else {
-        const slide = document.createElement("div");
-        slide.className = "detail-main-slide";
-        slide.style.background = "#e5e7eb";
-        detailMainImage.appendChild(slide);
-      }
-      detailMainImage.scrollLeft = 0;
-    }
-
-    if (detailThumbs) {
-      detailThumbs.innerHTML = "";
-      images.forEach((url, idx) => {
-        const div = document.createElement("div");
-        div.className = "detail-thumb";
-        div.style.backgroundImage = `url('${url}')`;
-        div.addEventListener("click", () => {
-          if (!detailMainImage) return;
-          detailMainImage.scrollTo({
-            left: idx * detailMainImage.clientWidth,
-            behavior: "smooth"
-          });
-        });
-        detailThumbs.appendChild(div);
-      });
-    }
-
-    const phone    = ad.phone    || DEFAULT_PHONE;
-    const telegram = ad.telegram || DEFAULT_TELEGRAM;
-
-    if (callSellerBtn) {
-      if (phone) {
-        const clean = String(phone).replace(/\s+/g, "");
-        callSellerBtn.href = "tel:" + clean;
-        callSellerBtn.style.display = "flex";
-      } else {
-        callSellerBtn.style.display = "none";
-      }
-    }
-    if (msgSellerBtn) {
-      if (telegram) {
-        const uname = String(telegram).replace(/^@/, "");
-        msgSellerBtn.href = "https://t.me/" + uname;
-        msgSellerBtn.style.display = "flex";
-        msgSellerBtn.onclick = e => {
-          e.preventDefault();
-          openChatForAd(ad);
-        };
-      } else {
-        msgSellerBtn.style.display = "none";
-      }
-    }
-
-    if (favoriteBtn) {
-      const isFav = ad.id != null && favoritesSet.has(ad.id);
-      favoriteBtn.textContent = isFav ? "♥" : "♡";
-      favoriteBtn.onclick = () => {
-        if (ad.id == null) return;
-        if (favoritesSet.has(ad.id)) {
-          favoritesSet.delete(ad.id);
-          favoriteBtn.textContent = "♡";
-        } else {
-          favoritesSet.add(ad.id);
-          favoriteBtn.textContent = "♥";
-        }
-        saveFavoritesToStorage();
-        renderFavorites();
-      };
-    }
-
-    if (shareBtn) {
-      shareBtn.onclick = () => {
-        const shareData = {
-          title: ad.title || "E’lon",
-          text: ad.title || "E’lon",
-          url: window.location.href
-        };
-        if (navigator.share) {
-          navigator.share(shareData).catch(()=>{});
-        } else if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(shareData.url)
-            .then(()=>alert("Havola nusxa olindi"));
-        } else {
-          alert("Linkni manzillar satridan nusxa oling");
-        }
-      };
-    }
-
-    if (similarList) {
-      similarList.innerHTML = "";
-      const adCat = getAdCategory(ad);
-      const sameType = allAds.filter(x => x.id !== ad.id && getAdCategory(x) === adCat);
-      const base = sameType.length ? sameType : allAds.filter(x => x.id !== ad.id);
-      base.slice(0, 3).forEach(item => {
-        const wrap = document.createElement("div");
-        wrap.className = "similar-card";
-        const img = item.images && item.images[0];
-        wrap.innerHTML = `
-          <div class="similar-image" style="${img ? `background-image:url('${img}');` : ""}"></div>
-          <div>
-            <div class="similar-content-title">${item.title || ""}</div>
-            <div class="similar-content-meta">${item.city || ""}</div>
-            <div class="similar-content-price">${formatPrice(item.price)}</div>
-          </div>
-        `;
-        wrap.addEventListener("click", () => openAdDetails(item));
-        similarList.appendChild(wrap);
-      });
-    }
-
-    showScreen("adDetails");
-  }
-
-  if (detailBackBtn) {
-    detailBackBtn.addEventListener("click", () => showScreen("home"));
-  }
-
-  // ================== LIGHTBOX ==================
-  function openLightbox(images, index) {
-    if (!imageLightbox || !lightboxImg) return;
-    lightboxImages = images.slice();
-    lightboxIndex  = index || 0;
-    updateLightboxImage();
-    imageLightbox.classList.add("visible");
-  }
-  function updateLightboxImage() {
-    if (!lightboxImg || !lightboxImages.length) return;
-    lightboxImg.src = lightboxImages[lightboxIndex];
-  }
-  if (imageLightbox) {
-    imageLightbox.addEventListener("click", () => {
-      imageLightbox.classList.remove("visible");
-    });
-  }
-  if (lightboxPrev) {
-    lightboxPrev.addEventListener("click", e => {
-      e.stopPropagation();
-      if (!lightboxImages.length) return;
-      lightboxIndex = (lightboxIndex - 1 + lightboxImages.length) % lightboxImages.length;
-      updateLightboxImage();
-    });
-  }
-  if (lightboxNext) {
-    lightboxNext.addEventListener("click", e => {
-      e.stopPropagation();
-      if (!lightboxImages.length) return;
-      lightboxIndex = (lightboxIndex + 1) % lightboxImages.length;
-      updateLightboxImage();
-    });
-  }
-
-  // ================== PROMO ==================
-  if (promoBanner) {
-    promoBanner.addEventListener("click", () => {
-      showScreen("promo");
-    });
-  }
-
-  document.addEventListener("click", e => {
-    const plan = e.target.closest(".promo-plan");
-    if (!plan) return;
-    showToast("E’lon yuqoriga ko‘tarildi!", "TOP bo‘limida ko‘rinadi");
-  });
-
-  // ================== CHAT ==================
-  function renderChat() {
-    if (!chatMessagesEl) return;
-    chatMessagesEl.innerHTML = "";
-    chatHistory.forEach(msg => {
-      const div = document.createElement("div");
-      div.className = "chat-message " + (msg.from === "me" ? "me" : "other");
-      div.textContent = msg.text;
-      chatMessagesEl.appendChild(div);
-    });
-    chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
-  }
-
-  function addChatMessage(from, text) {
-    chatHistory.push({
-      from,
-      text,
-      ts: Date.now()
-    });
-    renderChat();
-  }
-
-  function openChatForAd(ad) {
-    if (!chatHistory.length) {
-      addChatMessage("seller", "Assalomu alaykum! Savollaringiz bo‘lsa, yozing 🙂");
-    }
-    showScreen("chat");
-  }
-
-  if (chatSendBtn && chatInput) {
-    chatSendBtn.addEventListener("click", () => {
-      const text = (chatInput.value || "").trim();
-      if (!text) return;
-      addChatMessage("me", text);
-      chatInput.value = "";
-      setTimeout(() => {
-        addChatMessage("seller", "Xabaringizni oldim, tez orada javob beraman ✅");
-      }, 800);
-    });
-    chatInput.addEventListener("keydown", e => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        chatSendBtn.click();
-      }
-    });
-  }
-
-  const settingsAccountBtn   = document.getElementById("settingsAccount");
-  const settingsFavoritesBtn = document.getElementById("settingsFavorites");
-  const settingsHistoryBtn   = document.getElementById("settingsHistory");
-  const settingsProfileBtn   = document.getElementById("settingsProfile");
-  const settingsAboutBtn     = document.getElementById("settingsAbout");
-  const settingsAdminRow  = document.getElementById("settingsAdminRow");
-
-  if (settingsAccountBtn) {
-    settingsAccountBtn.addEventListener("click", () => {
-      showScreen("profile"); // можно позже сделать отдельный экран
-    });
-  }
-
-  if (settingsFavoritesBtn) {
-    settingsFavoritesBtn.addEventListener("click", () => {
-      showScreen("favorites");
-    });
-  }
-
-  if (settingsHistoryBtn) {
-    settingsHistoryBtn.addEventListener("click", () => {
-      showScreen("history");
-    });
-  }
-
-  if (settingsProfileBtn) {
-    settingsProfileBtn.addEventListener("click", () => {
-      showScreen("profile");
-    });
-  }
-
-  if (settingsAboutBtn) {
-    settingsAboutBtn.addEventListener("click", () => {
-      alert("MarketHub — mini ilova test rejimida. 😊");
-    });
-  }
-    
-  // ================== ADMIN PANEL ==================
-  function updateAdminPanel() {
-    if (!adminTotalAdsEl || !adminNewTodayEl || !adminLastAdsEl) return;
-    adminTotalAdsEl.textContent = allAds.length;
-
-    const now = new Date();
-    const todayStr = now.toISOString().slice(0, 10);
-    const newToday = allAds.filter(ad => (ad.created_at || "").startsWith(todayStr)).length;
-    adminNewTodayEl.textContent = newToday;
-
-    adminLastAdsEl.innerHTML = "";
-    const sorted = [...allAds].sort((a,b)=> {
-      const da = a.created_at ? new Date(a.created_at).getTime() : 0;
-      const db = b.created_at ? new Date(b.created_at).getTime() : 0;
-      return db - da;
-    }).slice(0, 10);
-
-    sorted.forEach(ad => {
-      const row = document.createElement("div");
-      row.className = "admin-list-item";
-      row.textContent = `${ad.title || "E’lon"} · ${ad.city || ""}`;
-      row.addEventListener("click", () => openAdDetails(ad));
-      adminLastAdsEl.appendChild(row);
-    });
-  }
-
-    // ================== SETTINGS: SEVIMLILAR, TARIX, PULLIK XIZMATLAR ==================
-if (settingsFavoritesRow) {
-  settingsFavoritesRow.addEventListener("click", () => {
-    showScreen("favorites");
-  });
-}
-
-if (settingsHistoryRow) {
-  settingsHistoryRow.addEventListener("click", () => {
-    showScreen("history");
-  });
-}
-
-if (settingsPaidRow) {
-  settingsPaidRow.addEventListener("click", () => {
-    showScreen("promo");   // ochiladi "E’lonni ilgari surish" ekrani
-  });
-}
-
-if (settingsBusinessRow) {
-  settingsBusinessRow.addEventListener("click", () => {
-    showScreen("promo");   // vaqtinchalik ham shu yerga
-  });
-}
-
-    if (settingsBusinessRow) {
-  settingsBusinessRow.addEventListener("click", () => {
-    showScreen("business");
-  });
-}
-
-if (settingsMyShopRow) {
-  settingsMyShopRow.addEventListener("click", () => {
-    if (userHasShop()) {
-      // уже есть магазин → сразу открываем его
-      showScreen("myShop");
-    } else {
-      // первый раз → показываем “Zalvo biznes uchun”
-      showScreen("business");
-    }
-  });
-}
-
-    if (settingsAdminRow) {
-  settingsAdminRow.addEventListener("click", () => {
-    showScreen("admin");   // ochiladi admin panel ekrani
-  });
-}
-
-    // ✅ SETTINGS: MENING E’LONLARIM
-if (settingsMyAdsRow) {
-  settingsMyAdsRow.addEventListener("click", () => {
-    showScreen("myAds");
-  });
-}
-
-    function applySavedProfilePhoto() {
-  if (!profileAvatar) return;
-  try {
-    const url = localStorage.getItem(PROFILE_PHOTO_KEY);
-    if (url) {
-      profileAvatar.style.backgroundImage = `url('${url}')`;
-      profileAvatar.style.backgroundSize = "cover";
-      profileAvatar.style.backgroundPosition = "center";
-      profileAvatar.textContent = "";
-    }
-  } catch (e) {
-    console.warn("Profile photo load error:", e);
-  }
-}
-
-    function userHasShop() {
-  try {
-    return localStorage.getItem("zalvoHasShop") === "1";
-  } catch {
-    return false;
-  }
-}
-
-function setUserHasShop() {
-  try {
-    localStorage.setItem("zalvoHasShop", "1");
-  } catch {}
-}
-
-function renderMyShopAds() {
-  if (!myShopAdsList) return;
-  myShopAdsList.innerHTML = "";
-
-  const myPhone = DEFAULT_PHONE.replace(/\s+/g, "");
-  const myTg    = DEFAULT_TELEGRAM.replace(/^@/, "").toLowerCase();
-
-  const myAds = allAds.filter(ad => {
-    const adPhone = (ad.phone || "").replace(/\s+/g, "");
-    const adTg    = (ad.telegram || "").replace(/^@/, "").toLowerCase();
-    return (adPhone && adPhone === myPhone) || (adTg && adTg === myTg);
-  });
-
-  if (!myAds.length) {
-    myShopAdsList.innerHTML = "<div class='ad-meta'>Hozircha do‘koningizda e’lonlar yo‘q</div>";
-    return;
-  }
-
-  const q = (shopAdsSearchInput?.value || "").toLowerCase().trim();
-
-  let result = myAds.filter(ad => {
-    if (shopAdsFilterState.onlyWithPhoto) {
-      if (!ad.images || !Array.isArray(ad.images) || !ad.images.length) return false;
-    }
-
-    const p = Number(ad.price || 0);
-    const min = Number(shopAdsFilterState.minPrice || 0);
-    const max = Number(shopAdsFilterState.maxPrice || 0);
-
-    if (shopAdsFilterState.minPrice && isFinite(min) && p < min) return false;
-    if (shopAdsFilterState.maxPrice && isFinite(max) && p > max) return false;
-
-    if (q) {
-      const text = ((ad.title || "") + " " + (ad.description || "")).toLowerCase();
-      if (!text.includes(q)) return false;
-    }
-
-    return true;
-  });
-
-  result.sort((a,b) => {
-    const pa = Number(a.price || 0);
-    const pb = Number(b.price || 0);
-    const da = a.created_at ? new Date(a.created_at).getTime() : 0;
-    const db = b.created_at ? new Date(b.created_at).getTime() : 0;
-
-    if (shopAdsFilterState.sort === "cheap") return pa - pb;
-    if (shopAdsFilterState.sort === "expensive") return pb - pa;
-    return db - da; // new
-  });
-
-  if (!result.length) {
-    myShopAdsList.innerHTML = "<div class='ad-meta'>Mos e’lon topilmadi</div>";
-    return;
-  }
-
-  result.forEach(ad => myShopAdsList.appendChild(createAdCard(ad)));
-}
-    
-    // ================== SETTINGS: RASMINI O‘ZGARTIRISH ==================
-if (settingsChangePhoto && profilePhotoInput) {
-  // открыть выбор файла
-  settingsChangePhoto.addEventListener("click", () => {
-    profilePhotoInput.click();
-  });
-
-  // когда пользователь выбрал фото
-  profilePhotoInput.addEventListener("change", () => {
-    const file = profilePhotoInput.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = e => {
-      const url = e.target.result;
-
-      if (profileAvatar) {
-        profileAvatar.style.backgroundImage = `url('${url}')`;
-        profileAvatar.style.backgroundSize = "cover";
-        profileAvatar.style.backgroundPosition = "center";
-        profileAvatar.textContent = "";
-      }
-
-      try {
-        localStorage.setItem(PROFILE_PHOTO_KEY, url);
-      } catch (err) {
-        console.warn("Profile photo save error:", err);
-      }
-    };
-
-    reader.readAsDataURL(file);
-  });
-}
-
-    if (businessBackBtn) {
-  businessBackBtn.addEventListener("click", () => {
-    showScreen("profile");
-  });
-}
-
-    // Кнопка "Orqaga" на бизнес-экране
-if (businessBackBtn) {
-  businessBackBtn.addEventListener("click", () => {
-    showScreen("profile");
-  });
-}
-
-// Кнопка "Do‘konni bepul ochish"
-if (businessOpenShopBtn) {
-  businessOpenShopBtn.addEventListener("click", () => {
-    // здесь потом будет полноценное оформление магазина
-    setUserHasShop();      // запоминаем, что у пользователя уже есть магазин
-    showScreen("myShop");  // сразу открываем страницу магазина
-  });
-}
-    
-    // ================== SETTINGS: TILNI TANLASH ==================
-if (settingsLangRow) {
-  settingsLangRow.addEventListener("click", () => {
-    showScreen("language");
-  });
-}
-
-// Nima bo‘ladi til bosilganda?
-if (languageUz) {
-  languageUz.addEventListener("click", () => {
-    localStorage.setItem("zalvoLang", "uz");
-    alert("Til o‘rnatildi: O‘zbek tili");
-    showScreen("profile");
-  });
-}
-
-if (languageRu) {
-  languageRu.addEventListener("click", () => {
-    localStorage.setItem("zalvoLang", "ru");
-    alert("Язык установлен: Русский");
-    showScreen("profile");
-  });
-}
-
-  // ===== STORE BOTTOM SHEET OPEN/CLOSE =====
-  if (storeMoreBtn && storeSheet) {
-    storeMoreBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      storeSheet.classList.add("active");
-      document.body.classList.add("sheet-open");
-    });
-
-    // закрыть по клику на фон
-    storeSheet.addEventListener("click", (e) => {
-      if (e.target === storeSheet) {
-        storeSheet.classList.remove("active");
-        document.body.classList.remove("sheet-open");
-      }
-    });
-
-    // чтобы клик внутри панели не закрывал
-    const sheetInner = storeSheet.querySelector(".store-sheet");
-    if (sheetInner) {
-      sheetInner.addEventListener("click", (e) => e.stopPropagation());
-    }
-  }
-
- // ================== SHOPS DATA + RENDER ==================
-const shopsSearchInput = document.getElementById("shopsSearchInput");
-const shopsListEl      = document.getElementById("shopsList");
-const shopsEmptyEl     = document.getElementById("shopsEmpty");
-const shopsCategoryRow = document.getElementById("shopsCategoryRow");
-const topShopsRow      = document.getElementById("topShopsRow");
-
-// sheet (filters)
-const shopsFilterBtn   = document.getElementById("shopsFilterBtn");
-const shopsFilterSheet = document.getElementById("shopsFilterSheet");
-const shopsFilterCity  = document.getElementById("shopsFilterCity");
-const shopsSort        = document.getElementById("shopsSort");
-const shopsOnlyVerifiedBtn = document.getElementById("shopsOnlyVerified");
-const shopsApplyBtn    = document.getElementById("shopsApply");
-const shopsResetBtn    = document.getElementById("shopsReset");
-
-// demo shops (пока нет backend)
-const shopsData = [
-  { id:"s1", name:"Zalvo Phone Shop", city:"Toshkent shahri",   category:"Elektronika", subs:451, rating:4.9, reviews:451, ads:12, verified:true,  last:"yaqinda", ownerTelegram:"gulzor_shop",     ownerPhone:"+998991234567" },
-  { id:"s2", name:"AvtoParts Pro",    city:"Toshkent viloyati", category:"Avto",        subs:210, rating:4.7, reviews:88,  ads:34, verified:true,  last:"bugun",  ownerTelegram:"avtoparts_pro" },
-  { id:"s3", name:"Usta Xizmat",      city:"Samarqand",         category:"Xizmatlar",   subs:98,  rating:4.8, reviews:22,  ads:9,  verified:false, last:"kecha",  ownerTelegram:"usta_xizmat" },
-  { id:"s4", name:"Home Market",      city:"Farg‘ona",          category:"Uy-rozg‘or",  subs:133, rating:4.6, reviews:41,  ads:18, verified:false, last:"yaqinda",ownerTelegram:"home_market" },
-  { id:"s5", name:"Style Kiyim",      city:"Andijon",           category:"Kiyim",       subs:76,  rating:4.5, reviews:19,  ads:7,  verified:true,  last:"yaqinda",ownerTelegram:"style_kiyim" },
-];
-
-const shopsFilterState = {
-  category: "all",
-  city: "all",
-  sort: "popular",
-  onlyVerified: false,
-};
-
-function blockedKey(){ return "zalvo_shop_blocked"; }
-
-function getBlockedSet(){
-  try { return new Set(JSON.parse(localStorage.getItem(blockedKey()) || "[]")); }
-  catch { return new Set(); }
-}
-function saveBlockedSet(set){
-  try { localStorage.setItem(blockedKey(), JSON.stringify(Array.from(set))); } catch {}
-}
-
-// ===== SHOPS: future-proof loader (server-ready) =====
-let shopsLoadedOnce = false;
-
-async function ensureShopsLoaded() {
-  if (shopsLoadedOnce) return;
-  shopsLoadedOnce = true;
-
-  if (shopsListEl && (!shopsListEl.children || shopsListEl.children.length === 0)) {
-    shopsListEl.innerHTML = "<div class='ad-meta'>Yuklanmoqda...</div>";
-  }
-
-  // Потом тут будет fetch("/api/shops")
-  return;
-}
-
-function openShopsFilterSheet() {
-  if (!shopsFilterSheet) return;
-  shopsFilterSheet.classList.add("active");
+  shopSheetBackdrop.classList.add("active");
   document.body.classList.add("sheet-open");
 }
 
-function closeShopsFilterSheet() {
-  if (!shopsFilterSheet) return;
-  shopsFilterSheet.classList.remove("active");
-  document.body.classList.remove("sheet-open");
-}
-
-function syncShopsFilterUI(){
-  if (shopsFilterCity) shopsFilterCity.value = shopsFilterState.city;
-  if (shopsSort) shopsSort.value = shopsFilterState.sort;
-  if (shopsOnlyVerifiedBtn) {
-    shopsOnlyVerifiedBtn.classList.toggle("chip-filled", shopsFilterState.onlyVerified);
-  }
-}
-
-function getInitials(name){
-  const s = String(name||"").trim();
-  if (!s) return "Z";
-  const parts = s.split(/\s+/);
-  const a = parts[0]?.[0] || "Z";
-  const b = parts[1]?.[0] || "";
-  return (a + b).toUpperCase();
-}
-
-    function calcShopScore(shop){
-  let score = 0;
-
-  score += (shop.subs || 0) * 3;
-  score += (shop.rating || 0) * 50;
-  score += (shop.ads || 0) * 10;
-
-  // активность
-  if (shop.last === "bugun")   score += 100;
-  if (shop.last === "yaqinda") score += 50;
-  if (shop.last === "kecha")   score += 20;
-
-  return score;
-}
-    
-/* ===== Subscribe state for TOP cards ===== */
-function subKey(id){ return `zalvo_shop_sub_${id}`; }
-
-function isSubscribed(shopId){
-  try { return localStorage.getItem(subKey(shopId)) === "1"; }
-  catch { return false; }
-}
-
-function toggleSubscribe(shopId){
-  try{
-    const now = localStorage.getItem(subKey(shopId)) === "1";
-    localStorage.setItem(subKey(shopId), now ? "0" : "1");
-    return !now;
-  } catch {
-    return false;
-  }
-}
-
-/* ===== Instagram-style TOP card ===== */
-function topShopCardIG(shop){
-  const div = document.createElement("div");
-  div.className = "top-shop-ig";
-
-  const subscribed = isSubscribed(shop.id);
-
-  div.innerHTML = `
-    <button class="top-shop-ig-menu" type="button" aria-label="Menu">⋯</button>
-
-    <div class="top-shop-ig-center">
-      <div class="top-shop-ig-avatar">${getInitials(shop.name)}</div>
-
-      <div class="top-shop-ig-name">
-        ${shop.name}${shop.verified ? " ✓" : ""}
-      </div>
-
-      <div class="top-shop-ig-meta">📍 ${shop.city}</div>
-      <div class="top-shop-ig-meta2">${shop.category} · ⭐ ${shop.rating || 0} · 👥 ${shop.subs || 0}</div>
-
-      <button class="top-shop-ig-btn ${subscribed ? "subscribed":""}" type="button">
-        ${subscribed ? "Obuna ✅" : "Obuna bo‘lish"}
-      </button>
-    </div>
-  `;
-
-  // tap on card -> open shop
-  div.addEventListener("click", () => openShop(shop));
-
-  // subscribe (no navigation)
-  const subBtn = div.querySelector(".top-shop-ig-btn");
-  subBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    const on = toggleSubscribe(shop.id);
-    subBtn.classList.toggle("subscribed", on);
-    subBtn.textContent = on ? "Obuna ✅" : "Obuna bo‘lish";
-  });
-
-  // menu ⋯ (open sheet)
-  const menuBtn = div.querySelector(".top-shop-ig-menu");
-  menuBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    openShopSheet(shop);
-  });
-
-  return div;
-}
-
-/* ===== Shops ACTION SHEET (#shopSheetBackdrop) ===== */
-let sheetShop = null;
-
-const shopSheetBackdrop = document.getElementById("shopSheetBackdrop");
-const shopSheetTitle    = document.getElementById("shopSheetTitle");
-const shopSheetFav      = document.getElementById("shopSheetFav");
-const shopSheetShare    = document.getElementById("shopSheetShare");
-const shopSheetBlock    = document.getElementById("shopSheetBlock");
-
-function favShopKey(id){ return `zalvo_shop_fav_${id}`; }
-
-function openShopSheet(shop){
-  sheetShop = shop;
-
-  if (shopSheetTitle) shopSheetTitle.textContent = shop?.name || "Do‘kon";
-  if (shopSheetBackdrop) {
-    shopSheetBackdrop.classList.add("active");
-    document.body.classList.add("sheet-open");
-  }
-
-  // обновляем текст избранного
-  if (shopSheetFav && sheetShop) {
-    const isFav = localStorage.getItem(favShopKey(sheetShop.id)) === "1";
-    shopSheetFav.innerHTML = `
-      <span class="store-sheet-icon share">⭐</span>
-      ${isFav ? "Izbranda ✅" : "Izbranlarga qo‘shish"}
-    `;
-  }
-}
-
 function closeShopSheet(){
-  if (shopSheetBackdrop) shopSheetBackdrop.classList.remove("active");
+  shopSheetBackdrop.classList.remove("active");
   document.body.classList.remove("sheet-open");
-  sheetShop = null;
+  currentShop = null;
 }
 
-// bind actions ONCE
-if (shopSheetFav && !shopSheetFav.dataset.bound) {
-  shopSheetFav.dataset.bound = "1";
+/* open */
+if (shopViewMoreBtn) {
+  shopViewMoreBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    openShopSheet();
+  });
+}
+
+/* close on backdrop */
+if (shopSheetBackdrop) {
+  shopSheetBackdrop.addEventListener("click", (e) => {
+    if (e.target === shopSheetBackdrop) closeShopSheet();
+  });
+
+  shopSheetBackdrop
+    .querySelector(".store-sheet")
+    ?.addEventListener("click", e => e.stopPropagation());
+}
+
+/* actions */
+if (shopSheetFav) {
   shopSheetFav.addEventListener("click", () => {
-    if (!sheetShop) return;
-    const key = favShopKey(sheetShop.id);
-    const now = localStorage.getItem(key) === "1";
-    localStorage.setItem(key, now ? "0" : "1");
     closeShopSheet();
   });
 }
 
-if (shopSheetShare && !shopSheetShare.dataset.bound) {
-  shopSheetShare.dataset.bound = "1";
+if (shopSheetShare) {
   shopSheetShare.addEventListener("click", async () => {
-    if (!sheetShop) return;
-
-    const text = `${sheetShop.name} — ${sheetShop.city} · ${sheetShop.category}`;
-    const url = window.location.href;
-
-    try{
-      if (navigator.share){
-        await navigator.share({ title: sheetShop.name, text, url });
-      } else if (navigator.clipboard?.writeText){
-        await navigator.clipboard.writeText(`${text}\n${url}`);
-        alert("Nusxa olindi ✅");
-      } else {
-        alert(text);
-      }
+    try {
+      await navigator.share({
+        title: currentShop?.name || "Zalvo",
+        text: "Zalvo do‘koni",
+        url: window.location.href
+      });
     } catch {}
     closeShopSheet();
   });
 }
 
-if (shopSheetBlock && !shopSheetBlock.dataset.bound) {
-  shopSheetBlock.dataset.bound = "1";
+if (shopSheetBlock) {
   shopSheetBlock.addEventListener("click", () => {
-    if (!sheetShop) return;
-    const set = getBlockedSet();
-    set.add(sheetShop.id);
-    saveBlockedSet(set);
     closeShopSheet();
-    renderShops();
   });
 }
 
-// close on backdrop click
-if (shopSheetBackdrop && !shopSheetBackdrop.dataset.bound) {
-  shopSheetBackdrop.dataset.bound = "1";
-  shopSheetBackdrop.addEventListener("click", (e) => {
-    if (e.target === shopSheetBackdrop) closeShopSheet();
-  });
-  shopSheetBackdrop.querySelector(".store-sheet")?.addEventListener("click", e => e.stopPropagation());
-}
+/* =========================================================
+   SHOP ADS — SEARCH + FILTER
+   ========================================================= */
 
-/* ===== Shop list card (Barcha do‘konlar) ===== */
-function shopCard(shop, withActions = true){
-  const div = document.createElement("div");
-  div.className = "shop-card";
+function renderShopAds(){
+  if (!shopViewAdsList) return;
 
-  div.innerHTML = `
-    <div class="shop-card-avatar">${getInitials(shop.name)}</div>
-    <div class="shop-card-main">
-      <div class="shop-card-title">
-        ${shop.name}
-        ${shop.verified ? `<span style="color:#16a34a;font-weight:800;">✓</span>` : ""}
-      </div>
-      <div class="shop-card-meta">📍 ${shop.city} · ${shop.category}</div>
-      <div class="shop-card-stats">
-        <span>⭐ ${shop.rating}</span>
-        <span>💬 ${shop.reviews}</span>
-        <span>🧾 ${shop.ads}</span>
-        <span>👥 ${shop.subs}</span>
-      </div>
-    </div>
+  let result = [...shopAds];
 
-    ${withActions ? `<button class="shop-more-btn" type="button">⋯</button>` : ``}
-  `;
-
-  if (withActions) {
-    div.querySelector(".shop-more-btn").addEventListener("click", (e) => {
-      e.stopPropagation();
-      openShopSheet(shop);
-    });
+  /* search */
+  if (shopAdsFilterState.search) {
+    const q = shopAdsFilterState.search.toLowerCase();
+    result = result.filter(ad =>
+      ad.title.toLowerCase().includes(q)
+    );
   }
 
-  div.addEventListener("click", () => openShop(shop));
-  return div;
-}
+  /* only photo */
+  if (shopAdsFilterState.onlyPhoto) {
+    result = result.filter(ad => ad.photos && ad.photos.length);
+  }
 
-/* ===== RENDER SHOPS ===== */
-function renderShops(){
-  if (!shopsListEl || !topShopsRow) return;
+  /* price */
+  if (shopAdsFilterState.minPrice !== null) {
+    result = result.filter(ad => ad.price >= shopAdsFilterState.minPrice);
+  }
 
-  const q = (shopsSearchInput?.value || "").toLowerCase().trim();
-  const blocked = getBlockedSet();
+  if (shopAdsFilterState.maxPrice !== null) {
+    result = result.filter(ad => ad.price <= shopAdsFilterState.maxPrice);
+  }
 
-  let result = shopsData
-    .filter(s => !blocked.has(s.id))
-    .filter(s => {
-      if (shopsFilterState.category !== "all" && s.category !== shopsFilterState.category) return false;
-      if (shopsFilterState.city !== "all" && s.city !== shopsFilterState.city) return false;
-      if (shopsFilterState.onlyVerified && !s.verified) return false;
+  /* sort */
+  if (shopAdsFilterState.sort === "cheap") {
+    result.sort((a,b) => a.price - b.price);
+  } else if (shopAdsFilterState.sort === "expensive") {
+    result.sort((a,b) => b.price - a.price);
+  }
 
-      if (q) {
-        const text = `${s.name} ${s.city} ${s.category}`.toLowerCase();
-        if (!text.includes(q)) return false;
-      }
-      return true;
-    });
+  shopViewAdsList.innerHTML = "";
 
-  // sort
-  result.sort((a,b) => {
-    if (shopsFilterState.sort === "rating") return (b.rating||0) - (a.rating||0);
-    if (shopsFilterState.sort === "new")    return (b.ads||0) - (a.ads||0); // временно
-    return (b.subs||0) - (a.subs||0); // popular
-  });
-
-  // TOP (✅ только verified) — Instagram-like
-  const top = [...shopsData]
-  .filter(s => !blocked.has(s.id))
-  .filter(s => s.verified)
-  .map(s => ({ ...s, _score: calcShopScore(s) }))
-  .sort((a,b) => b._score - a._score)
-  .slice(0, 8);
-
-  topShopsRow.innerHTML = "";
-  top.forEach(s => topShopsRow.appendChild(topShopCardIG(s)));
-
-  // LIST
-  shopsListEl.innerHTML = "";
   if (!result.length) {
-    if (shopsEmptyEl) shopsEmptyEl.style.display = "block";
+    shopViewAdsList.innerHTML =
+      "<div class='ad-meta'>E’lonlar topilmadi</div>";
     return;
   }
-  if (shopsEmptyEl) shopsEmptyEl.style.display = "none";
 
-  result.forEach(s => shopsListEl.appendChild(shopCard(s)));
-}
-
-/* ===== EVENTS (ВАЖНО: снаружи renderShops) ===== */
-if (shopsSearchInput && !shopsSearchInput.dataset.bound) {
-  shopsSearchInput.dataset.bound = "1";
-  shopsSearchInput.addEventListener("input", renderShops);
-}
-
-if (shopsCategoryRow && !shopsCategoryRow.dataset.bound) {
-  shopsCategoryRow.dataset.bound = "1";
-  shopsCategoryRow.addEventListener("click", (e) => {
-    const chip = e.target.closest(".chip");
-    if (!chip) return;
-    shopsCategoryRow.querySelectorAll(".chip").forEach(c => c.classList.remove("chip-filled"));
-    chip.classList.add("chip-filled");
-    shopsFilterState.category = chip.getAttribute("data-shopcat") || "all";
-    renderShops();
+  result.forEach(ad => {
+    const div = document.createElement("div");
+    div.className = "ad-card";
+    div.innerHTML = `
+      <div class="ad-title">${ad.title}</div>
+      <div class="ad-price">${ad.price.toLocaleString()} so‘m</div>
+    `;
+    shopViewAdsList.appendChild(div);
   });
 }
 
-if (shopsFilterBtn && !shopsFilterBtn.dataset.bound) {
-  shopsFilterBtn.dataset.bound = "1";
-  shopsFilterBtn.addEventListener("click", () => {
-    syncShopsFilterUI();
-    openShopsFilterSheet();
+/* SEARCH */
+if (shopViewAdsSearchInput) {
+  shopViewAdsSearchInput.addEventListener("input", (e) => {
+    shopAdsFilterState.search = e.target.value.trim();
+    renderShopAds();
   });
 }
 
-if (shopsFilterSheet && !shopsFilterSheet.dataset.bound) {
-  shopsFilterSheet.dataset.bound = "1";
-  shopsFilterSheet.addEventListener("click", (e) => {
-    if (e.target === shopsFilterSheet) closeShopsFilterSheet();
-  });
-  const inner = shopsFilterSheet.querySelector(".store-sheet");
-  if (inner) inner.addEventListener("click", (e) => e.stopPropagation());
-}
-
-if (shopsOnlyVerifiedBtn && !shopsOnlyVerifiedBtn.dataset.bound) {
-  shopsOnlyVerifiedBtn.dataset.bound = "1";
-  shopsOnlyVerifiedBtn.addEventListener("click", () => {
-    shopsFilterState.onlyVerified = !shopsFilterState.onlyVerified;
-    syncShopsFilterUI();
+/* FILTER OPEN */
+if (shopViewAdsFilterBtn && shopAdsFilterSheet) {
+  shopViewAdsFilterBtn.addEventListener("click", () => {
+    shopAdsFilterSheet.classList.add("active");
+    document.body.classList.add("sheet-open");
   });
 }
 
-if (shopsApplyBtn && !shopsApplyBtn.dataset.bound) {
-  shopsApplyBtn.dataset.bound = "1";
-  shopsApplyBtn.addEventListener("click", () => {
-    shopsFilterState.city = shopsFilterCity?.value || "all";
-    shopsFilterState.sort = shopsSort?.value || "popular";
-    closeShopsFilterSheet();
-    renderShops();
+/* FILTER APPLY */
+if (shopAdsApply) {
+  shopAdsApply.addEventListener("click", () => {
+    shopAdsFilterState.sort = shopAdsSort.value;
+    shopAdsFilterState.minPrice = shopAdsMinPrice.value
+      ? Number(shopAdsMinPrice.value)
+      : null;
+    shopAdsFilterState.maxPrice = shopAdsMaxPrice.value
+      ? Number(shopAdsMaxPrice.value)
+      : null;
+    shopAdsFilterState.onlyPhoto =
+      shopAdsOnlyPhoto.classList.contains("chip-filled");
+
+    shopAdsFilterSheet.classList.remove("active");
+    document.body.classList.remove("sheet-open");
+
+    renderShopAds();
   });
 }
 
-if (shopsResetBtn && !shopsResetBtn.dataset.bound) {
-  shopsResetBtn.dataset.bound = "1";
-  shopsResetBtn.addEventListener("click", async () => {
-    shopsFilterState.city = "all";
-    shopsFilterState.sort = "popular";
-    shopsFilterState.onlyVerified = false;
-    shopsFilterState.category = "all";
-    if (shopsSearchInput) shopsSearchInput.value = "";
+/* FILTER RESET */
+if (shopAdsReset) {
+  shopAdsReset.addEventListener("click", () => {
+    shopAdsFilterState.search = "";
+    shopAdsFilterState.sort = "new";
+    shopAdsFilterState.minPrice = null;
+    shopAdsFilterState.maxPrice = null;
+    shopAdsFilterState.onlyPhoto = false;
 
-    // reset chips
-    if (shopsCategoryRow) {
-      shopsCategoryRow.querySelectorAll(".chip").forEach(c => c.classList.remove("chip-filled"));
-      shopsCategoryRow.querySelector(`.chip[data-shopcat="all"]`)?.classList.add("chip-filled");
-    }
+    shopViewAdsSearchInput.value = "";
+    shopAdsMinPrice.value = "";
+    shopAdsMaxPrice.value = "";
+    shopAdsOnlyPhoto.classList.remove("chip-filled");
 
-    syncShopsFilterUI();
-    closeShopsFilterSheet();
-
-    await ensureShopsLoaded();
-    renderShops();
+    renderShopAds();
   });
 }
 
-// ================== СТАРТ ==================
-applySavedProfilePhoto();
-showScreen("home");
-loadAds();
+/* toggle photo chip */
+if (shopAdsOnlyPhoto) {
+  shopAdsOnlyPhoto.addEventListener("click", () => {
+    shopAdsOnlyPhoto.classList.toggle("chip-filled");
+  });
+}
+
+/* =========================================================
+   DEMO DATA (потом заменишь сервером)
+   ========================================================= */
+
+shopAds = [
+  { title: "iPhone 14 Pro 256GB", price: 13500000, photos:[1] },
+  { title: "Samsung S23 Ultra", price: 11200000, photos:[1] },
+  { title: "Redmi Note 12", price: 3200000, photos:[] }
+];
+
+renderShopAds();
 </script>
 </body>
 </html>
