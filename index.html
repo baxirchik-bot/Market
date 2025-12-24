@@ -5238,6 +5238,17 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
+    // ✅ Close button for SHOP sheet ("Bekor qilish")
+const shopSheetCancelBtn = document.getElementById("shopSheetCancelBtn");
+if (shopSheetCancelBtn && !shopSheetCancelBtn.dataset.bound) {
+  shopSheetCancelBtn.dataset.bound = "1";
+  shopSheetCancelBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    closeShopSheet();
+  });
+}
+    
     if (shopSheetBackdrop && !shopSheetBackdrop.dataset.bound) {
       shopSheetBackdrop.dataset.bound = "1";
       shopSheetBackdrop.addEventListener("click", (e) => {
