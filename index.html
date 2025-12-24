@@ -5166,21 +5166,6 @@ body.sheet-open .bottom-nav{ display:none !important; }
     showScreen("profile");
   });
 
-    // ===== MY SHOP ⋯ uses SAME sheet as everywhere =====
-const storeMoreBtn = document.getElementById("storeMoreBtn");
-
-// выбери какой магазин считать "моим" (у тебя это Zalvo Phone Shop)
-const myShop = shopsData?.find(s => s.id === "s1") || shopsData?.[0] || null;
-
-if (storeMoreBtn && !storeMoreBtn.dataset.bound) {
-  storeMoreBtn.dataset.bound = "1";
-  storeMoreBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (myShop) openShopSheet(myShop);   // <-- один и тот же sheet
-  });
-}
-
   // ================== SHOPS DATA + RENDER ==================
   const shopsSearchInput = document.getElementById("shopsSearchInput");
   const shopsListEl      = document.getElementById("shopsList");
@@ -5205,6 +5190,21 @@ if (storeMoreBtn && !storeMoreBtn.dataset.bound) {
     { id:"s4", name:"Home Market",      city:"Farg‘ona",          category:"Uy-rozg‘or",  subs:133, rating:4.6, reviews:41,  ads:18, verified:false, last:"yaqinda",ownerTelegram:"home_market" },
     { id:"s5", name:"Style Kiyim",      city:"Andijon",           category:"Kiyim",       subs:76,  rating:4.5, reviews:19,  ads:7,  verified:true,  last:"yaqinda",ownerTelegram:"style_kiyim" },
   ];
+
+    // ===== MY SHOP ⋯ uses SAME sheet as everywhere =====
+const storeMoreBtn = document.getElementById("storeMoreBtn");
+
+// выбери какой магазин считать "моим" (у тебя это Zalvo Phone Shop)
+const myShop = shopsData?.find(s => s.id === "s1") || shopsData?.[0] || null;
+
+if (storeMoreBtn && !storeMoreBtn.dataset.bound) {
+  storeMoreBtn.dataset.bound = "1";
+  storeMoreBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (myShop) openShopSheet(myShop);   // <-- один и тот же sheet
+  });
+}
 
   const shopsFilterState = {
     category: "all",
@@ -5610,11 +5610,9 @@ function closeReportSheet(){
 // открыть sheet жалобы
 if (shopSheetReport) {
   shopSheetReport.addEventListener("click", () => {
-    // закрываем ⋯ только визуально, НЕ трогаем sheetShop
-    if (shopSheetBackdrop) {
-      shopSheetBackdrop.classList.remove("active");
-    }
-    openReportSheet(); // sheetShop остаётся, жалоба сохранится корректно
+    reportShop = sheetShop; // ✅ ВОТ ЭТО ОБЯЗАТЕЛЬНО
+    if (shopSheetBackdrop) shopSheetBackdrop.classList.remove("active");
+    openReportSheet();
   });
 }
 
