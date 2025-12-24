@@ -3447,51 +3447,57 @@ body.sheet-open .bottom-nav{ display:none !important; }
 </div>
 
     <!-- Shops Action Sheet (iOS style) -->
-<div class="store-sheet-backdrop" id="shopSheetBackdrop" onclick="closeShopSheet(event)">
-  <div class="store-sheet" role="dialog" aria-modal="true" onclick="event.stopPropagation()">
+<div class="store-sheet-backdrop" id="shopSheetBackdrop">
+  <div class="store-sheet" role="dialog" aria-modal="true">
     <div class="store-sheet-handle"></div>
 
     <div class="shop-sheet-title" id="shopSheetTitle">Shop</div>
 
     <div class="store-sheet-list">
-      <button class="store-sheet-item" id="shopSheetFav">
+      <button class="store-sheet-item" id="shopSheetFav" type="button">
         <span class="store-sheet-icon share">⭐</span>
         Izbranlarga qo‘shish
       </button>
 
-      <button class="store-sheet-item" id="shopSheetShare">
+      <button class="store-sheet-item" id="shopSheetShare" type="button">
         <span class="store-sheet-icon share">🔗</span>
         Ulashish
       </button>
 
-      <button class="store-sheet-item danger" id="shopSheetBlock">
+      <button class="store-sheet-item danger" id="shopSheetBlock" type="button">
         <span class="store-sheet-icon report">⛔</span>
         Bloklash
       </button>
+
+      <!-- ✅ FIX: теперь жалоба — такая же кнопка, как остальные -->
+      <button class="store-sheet-item" id="shopSheetReport" type="button">
+        <span class="store-sheet-icon report">⚠️</span>
+        Shikoyat qilish
+      </button>
     </div>
 
-    <div id="shopSheetReport" class="store-sheet-row danger">
-  <span class="store-sheet-icon danger">⚠️</span>
-  Shikoyat qilish
-</div>
-    
-    <button class="outline-btn" style="margin-top:12px" onclick="closeShopSheet()">
+    <button class="outline-btn" style="margin-top:12px" id="shopSheetCancel" type="button">
       Bekor qilish
     </button>
   </div>
 </div>
 
-    <div id="reportSheetBackdrop" class="sheet-backdrop">
-  <div class="store-sheet">
+<!-- Report Sheet -->
+<div id="reportSheetBackdrop" class="store-sheet-backdrop">
+  <div class="store-sheet" role="dialog" aria-modal="true">
+    <div class="store-sheet-handle"></div>
+
     <div class="store-sheet-title">Shikoyat qilish</div>
 
-    <div class="store-sheet-row report-option" data-reason="fake">Soxta do‘kon</div>
-    <div class="store-sheet-row report-option" data-reason="rules">Qoidabuzarlik</div>
-    <div class="store-sheet-row report-option" data-reason="scam">Firibgarlik</div>
-    <div class="store-sheet-row report-option" data-reason="wrong">Noto‘g‘ri ma’lumot</div>
-    <div class="store-sheet-row report-option" data-reason="other">Boshqa</div>
+    <button class="store-sheet-item report-option" data-reason="fake" type="button">Soxta do‘kon</button>
+    <button class="store-sheet-item report-option" data-reason="rules" type="button">Qoidabuzarlik</button>
+    <button class="store-sheet-item report-option" data-reason="scam" type="button">Firibgarlik</button>
+    <button class="store-sheet-item report-option" data-reason="wrong" type="button">Noto‘g‘ri ma’lumot</button>
+    <button class="store-sheet-item report-option" data-reason="other" type="button">Boshqa</button>
 
-    <div class="store-sheet-row cancel">Bekor qilish</div>
+    <button class="outline-btn" style="margin-top:12px" id="reportCancelBtn" type="button">
+      Bekor qilish
+    </button>
   </div>
 </div>
     
@@ -5610,9 +5616,12 @@ body.sheet-open .bottom-nav{ display:none !important; }
   }
 
     // ===== REPORT SHOP (COMPLAINT) =====
-const shopSheetReport   = document.getElementById("shopSheetReport");
-const reportBackdrop    = document.getElementById("reportSheetBackdrop");
-const reportOptions     = document.querySelectorAll(".report-option");
+const shopSheetReport = document.getElementById("shopSheetReport");
+const reportBackdrop  = document.getElementById("reportSheetBackdrop");
+const reportOptions   = document.querySelectorAll(".report-option");
+
+// ✅ сохраняем магазин отдельно, чтобы не потерять после closeShopSheet()
+let reportShop = null;
 
 function openReportSheet(){
   if (!reportBackdrop) return;
@@ -5627,39 +5636,68 @@ function closeReportSheet(){
 }
 
 // открыть sheet жалобы
-if (shopSheetReport) {
+if (shopSheetReport && !shopSheetReport.dataset.bound) {
+  shopSheetReport.dataset.bound = "1";
   shopSheetReport.addEventListener("click", () => {
-    closeShopSheet();     // закрываем ⋯
-    openReportSheet();    // открываем жалобу
+    if (!sheetShop) return;
+    reportShop = sheetShop;      // ✅ запомнили магазин
+
+    closeShopSheet();            // закрываем ⋯ (тут sheetShop станет null — не страшно)
+    openReportSheet();           // открываем жалобу
   });
 }
 
 // выбрать причину
 reportOptions.forEach(opt => {
-  opt.addEventListener("click", () => {
-    if (!sheetShop) return;
+  if (opt.dataset.bound) return;
+  opt.dataset.bound = "1";
 
-    const reason = opt.dataset.reason;
+  opt.addEventListener("click", () => {
+    if (!reportShop) return;
+
+    const reason = opt.dataset.reason || "other";
 
     const complaints = JSON.parse(localStorage.getItem("zalvo_shop_reports") || "[]");
     complaints.push({
-      shopId: sheetShop.id,
-      shopName: sheetShop.name,
+      shopId: reportShop.id,
+      shopName: reportShop.name,
       reason,
       ts: Date.now()
     });
-
     localStorage.setItem("zalvo_shop_reports", JSON.stringify(complaints));
 
     closeReportSheet();
-    showToast("Shikoyat yuborildi", "Adminlar tekshiradi ⚠️");
+    reportShop = null;
+
+    if (typeof showToast === "function") {
+      showToast("Shikoyat yuborildi", "Adminlar tekshiradi ⚠️");
+    } else {
+      alert("Shikoyat yuborildi ✅");
+    }
   });
 });
 
 // закрытие по фону
-if (reportBackdrop) {
+if (reportBackdrop && !reportBackdrop.dataset.bound) {
+  reportBackdrop.dataset.bound = "1";
+
   reportBackdrop.addEventListener("click", (e) => {
-    if (e.target === reportBackdrop) closeReportSheet();
+    if (e.target === reportBackdrop) {
+      closeReportSheet();
+      reportShop = null;
+    }
+  });
+
+  reportBackdrop.querySelector(".store-sheet")?.addEventListener("click", e => e.stopPropagation());
+}
+
+// ✅ закрытие кнопкой "Bekor qilish" (если ты добавил id="reportCancelBtn" в HTML)
+const reportCancelBtn = document.getElementById("reportCancelBtn");
+if (reportCancelBtn && !reportCancelBtn.dataset.bound) {
+  reportCancelBtn.dataset.bound = "1";
+  reportCancelBtn.addEventListener("click", () => {
+    closeReportSheet();
+    reportShop = null;
   });
 }
     
