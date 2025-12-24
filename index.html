@@ -3495,9 +3495,7 @@ body.sheet-open .bottom-nav{ display:none !important; }
     <button class="store-sheet-item report-option" data-reason="wrong" type="button">Noto‘g‘ri ma’lumot</button>
     <button class="store-sheet-item report-option" data-reason="other" type="button">Boshqa</button>
 
-    <button class="outline-btn" style="margin-top:12px" id="reportCancelBtn" type="button">
-      Bekor qilish
-    </button>
+    <button id="reportCancelBtn" type="button" class="sheet-cancel-btn">Bekor qilish</button>
   </div>
 </div>
     
@@ -5453,13 +5451,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const reportCancelBtn = document.getElementById("reportCancelBtn");
-    if (reportCancelBtn && !reportCancelBtn.dataset.bound) {
-      reportCancelBtn.dataset.bound = "1";
-      reportCancelBtn.addEventListener("click", () => {
-        closeReportSheet();
-        reportShop = null;
-      });
-    }
+
+if (reportCancelBtn && !reportCancelBtn.dataset.bound) {
+  reportCancelBtn.dataset.bound = "1";
+
+  // на iOS иногда click глючит — добавляем pointerup тоже
+  const handler = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    closeReportSheet();
+    reportShop = null;
+  };
+
+  reportCancelBtn.addEventListener("click", handler);
+  reportCancelBtn.addEventListener("pointerup", handler);
+}
 
     // ================== START ==================
     applySavedProfilePhoto();
