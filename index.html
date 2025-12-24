@@ -4274,7 +4274,12 @@ document.addEventListener("DOMContentLoaded", () => {
       if (name === "myAds")     renderMyAds();
       if (name === "myShop")    renderMyShopAds();
       if (name === "shopView")  renderShopView();
-      if (name === "shops")     ensureShopsLoaded().then(renderShops);
+      if (name === "shops") {
+      ensureShopsLoaded().then(() => {
+      renderShopCategoryChips();   // ✅ генерируем категории
+      renderShops();               // ✅ рисуем магазины
+  });
+}
 
       updateBackButtonVisibility();
     }
@@ -5049,6 +5054,34 @@ document.addEventListener("DOMContentLoaded", () => {
       { id:"s5", name:"Style Kiyim",      city:"Andijon",           category:"Kiyim",       subs:76,  rating:4.5, reviews:19,  ads:7,  verified:true,  last:"yaqinda",ownerTelegram:"style_kiyim" },
     ];
 
+    function renderShopCategoryChips(){
+  if (!shopsCategoryRow) return;
+
+  const unique = Array.from(new Set((shopsData || [])
+    .map(s => String(s.category || "").trim())
+    .filter(Boolean)
+  ));
+
+  // порядок “красивый” (сначала популярные)
+  const order = [
+    "Elektronika","Avto","Uy-rozg‘or","Xizmatlar","Kiyim",
+    "Oziq-ovqat","Bolalar","Qurilish","Go‘zallik","Sport","Kitoblar"
+  ];
+
+  unique.sort((a,b)=> {
+    const ia = order.indexOf(a);
+    const ib = order.indexOf(b);
+    return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
+  });
+
+  shopsCategoryRow.innerHTML = `
+    <button class="chip ${shopsFilterState.category === "all" ? "chip-filled":""}" data-shopcat="all">Hammasi</button>
+    ${unique.map(c => `
+      <button class="chip ${shopsFilterState.category === c ? "chip-filled":""}" data-shopcat="${c}">${c}</button>
+    `).join("")}
+  `;
+}
+    
     // ✅ MY SHOP ⋯ открывает ОБЩИЙ shopSheetBackdrop
     const myShop = shopsData.find(s => s.id === "s1") || shopsData[0] || null;
 
@@ -5418,10 +5451,7 @@ if (shopSheetCancelBtn && !shopSheetCancelBtn.dataset.bound) {
         shopsFilterState.category = "all";
         if (shopsSearchInput) shopsSearchInput.value = "";
 
-        if (shopsCategoryRow) {
-          shopsCategoryRow.querySelectorAll(".chip").forEach(c => c.classList.remove("chip-filled"));
-          shopsCategoryRow.querySelector(`.chip[data-shopcat="all"]`)?.classList.add("chip-filled");
-        }
+        renderShopCategoryChips(); // ✅ пересоберёт и подсветит правильно
 
         syncShopsFilterUI();
         closeShopsFilterSheet();
