@@ -2565,7 +2565,7 @@ body.sheet-open .bottom-nav{ display:none !important; }
 #reportSheetBackdrop .store-sheet { pointer-events: auto; }
 #reportCancelBtn { pointer-events: auto; position: relative; z-index: 5; }
 
-    /* Cancel button in shop action sheet */
+    /* Universal cancel button (iOS style) */
 .store-sheet-cancel {
   width: 100%;
   margin-top: 12px;
@@ -2574,12 +2574,11 @@ body.sheet-open .bottom-nav{ display:none !important; }
   font-weight: 600;
   border-radius: 14px;
   border: none;
-  background: #f1f5f9; /* светло-серый как iOS */
+  background: #f1f5f9;
   color: #0f172a;
   cursor: pointer;
 }
 
-/* нажатие */
 .store-sheet-cancel:active {
   transform: scale(0.98);
   background: #e5e7eb;
