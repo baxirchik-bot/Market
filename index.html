@@ -2627,7 +2627,58 @@ body.sheet-open .bottom-nav{ display:none !important; }
   50%  { transform: scale(1.03); }
   100% { transform: scale(1); }
 }
-    
+
+    /* Основная кнопка подписки в профиле магазина */
+.shop-subscribe-btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-height: 44px;        /* iOS стандарт */
+  padding: 0 18px;
+
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 600;
+
+  background: #eef2ff;    /* светлый фон */
+  color: #4f46e5;
+
+  border: none;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  transition:
+    transform .12s ease,
+    box-shadow .12s ease,
+    background .12s ease,
+    color .12s ease;
+}
+
+/* Активное нажатие */
+.shop-subscribe-btn:active{
+  transform: scale(0.96);
+}
+
+/* Состояние подписан */
+.shop-subscribe-btn.subscribed{
+  background: #4f46e5;
+  color: #fff;
+}
+
+/* Пульс при клике */
+.shop-subscribe-btn.pulse{
+  animation: subPulse 260ms ease-out;
+}
+
+@keyframes subPulse{
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
   @media (max-width: 480px) {
     body {
       align-items: stretch;
