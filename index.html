@@ -3501,30 +3501,6 @@ body.sheet-open .bottom-nav{ display:none !important; }
   </div>
 </div>
     
-        <!-- BOTTOM SHEET MENYUSI (Do‘kon uchun) -->
-    <div class="store-sheet-backdrop" id="storeSheet">
-      <div class="store-sheet">
-        <div class="store-sheet-handle"></div>
-
-        <div class="store-sheet-list">
-          <div class="store-sheet-item">
-            <div class="store-sheet-icon block">🚫</div>
-            <span>Bloklash</span>
-          </div>
-
-          <div class="store-sheet-item">
-            <div class="store-sheet-icon share">↗️</div>
-            <span>Ulashish</span>
-          </div>
-
-          <div class="store-sheet-item">
-            <div class="store-sheet-icon report">⚠️</div>
-            <span>Shikoyat qilish</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    
     <!-- BOTTOM NAV -->
     <nav class="bottom-nav">
   <div class="bottom-nav-inner">
@@ -5190,24 +5166,20 @@ body.sheet-open .bottom-nav{ display:none !important; }
     showScreen("profile");
   });
 
-  // ===== STORE BOTTOM SHEET OPEN/CLOSE =====
-  if (storeMoreBtn && storeSheet) {
-    storeMoreBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      storeSheet.classList.add("active");
-      document.body.classList.add("sheet-open");
-    });
+    // ===== MY SHOP ⋯ uses SAME sheet as everywhere =====
+const storeMoreBtn = document.getElementById("storeMoreBtn");
 
-    storeSheet.addEventListener("click", (e) => {
-      if (e.target === storeSheet) {
-        storeSheet.classList.remove("active");
-        document.body.classList.remove("sheet-open");
-      }
-    });
+// выбери какой магазин считать "моим" (у тебя это Zalvo Phone Shop)
+const myShop = shopsData?.find(s => s.id === "s1") || shopsData?.[0] || null;
 
-    const sheetInner = storeSheet.querySelector(".store-sheet");
-    if (sheetInner) sheetInner.addEventListener("click", (e) => e.stopPropagation());
-  }
+if (storeMoreBtn && !storeMoreBtn.dataset.bound) {
+  storeMoreBtn.dataset.bound = "1";
+  storeMoreBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (myShop) openShopSheet(myShop);   // <-- один и тот же sheet
+  });
+}
 
   // ================== SHOPS DATA + RENDER ==================
   const shopsSearchInput = document.getElementById("shopsSearchInput");
@@ -5636,14 +5608,13 @@ function closeReportSheet(){
 }
 
 // открыть sheet жалобы
-if (shopSheetReport && !shopSheetReport.dataset.bound) {
-  shopSheetReport.dataset.bound = "1";
+if (shopSheetReport) {
   shopSheetReport.addEventListener("click", () => {
-    if (!sheetShop) return;
-    reportShop = sheetShop;      // ✅ запомнили магазин
-
-    closeShopSheet();            // закрываем ⋯ (тут sheetShop станет null — не страшно)
-    openReportSheet();           // открываем жалобу
+    // закрываем ⋯ только визуально, НЕ трогаем sheetShop
+    if (shopSheetBackdrop) {
+      shopSheetBackdrop.classList.remove("active");
+    }
+    openReportSheet(); // sheetShop остаётся, жалоба сохранится корректно
   });
 }
 
