@@ -2583,6 +2583,28 @@ body.sheet-open .bottom-nav{ display:none !important; }
   transform: scale(0.98);
   background: #e5e7eb;
 }
+
+    /* Категории магазинов — горизонтальный скролл в 1 строку */
+#shopsCategoryRow{
+  display: flex;
+  flex-wrap: nowrap;          /* ✅ не переносить */
+  gap: 10px;
+  overflow-x: auto;           /* ✅ горизонтальный скролл */
+  overflow-y: hidden;
+  white-space: nowrap;
+  padding: 6px 2px 10px;
+  -webkit-overflow-scrolling: touch;  /* iOS плавно */
+  scrollbar-width: none;      /* Firefox скрыть скроллбар */
+}
+
+#shopsCategoryRow::-webkit-scrollbar{
+  display: none;              /* Chrome/Safari скрыть скроллбар */
+}
+
+/* Чтобы каждая chip не сжималась */
+#shopsCategoryRow .chip{
+  flex: 0 0 auto;
+}
     
   @media (max-width: 480px) {
     body {
