@@ -2605,6 +2605,28 @@ body.sheet-open .bottom-nav{ display:none !important; }
 #shopsCategoryRow .chip{
   flex: 0 0 auto;
 }
+
+    .shop-subscribe-btn{
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform .12s ease, filter .12s ease, opacity .12s ease;
+}
+
+.shop-subscribe-btn:active{
+  transform: scale(0.98);
+  filter: brightness(0.98);
+}
+
+.shop-subscribe-btn.pulse{
+  animation: subPulse 260ms ease-out;
+}
+
+@keyframes subPulse{
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}
     
   @media (max-width: 480px) {
     body {
@@ -3183,10 +3205,9 @@ body.sheet-open .bottom-nav{ display:none !important; }
       </div>
 
       <div class="store-actions">
-        <button class="store-btn store-btn-primary" id="shopViewSubscribeBtn" type="button">
-          <span class="icon-pill icon-pill-bell">🔔</span>
-          <span>Obuna bo‘lish</span>
-        </button>
+        <button id="shopViewSubBtn" class="shop-subscribe-btn" type="button">
+  🔔 Obuna bo‘lish
+</button>
 
         <button class="store-btn store-btn-icon" id="shopViewMsgBtn" type="button" aria-label="Yozish">✉️</button>
         <button class="store-btn store-btn-icon" id="shopViewMoreBtn" type="button" aria-label="Ko‘proq">…</button>
@@ -3681,6 +3702,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const shopViewMsgBtn = document.getElementById("shopViewMsgBtn");
     const shopViewMoreBtn = document.getElementById("shopViewMoreBtn");
+    const shopViewSubBtn = document.getElementById("shopViewSubBtn");
 
     const shopViewAdsList = document.getElementById("shopViewAdsList");
     const shopViewAdsSearchInput = document.getElementById("shopViewAdsSearchInput");
@@ -4368,6 +4390,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (shopViewAvatar) shopViewAvatar.textContent = getInitials(currentShop.name);
 
       renderShopViewAds();
+      updateShopViewSubscribeBtn();
     }
 
     function renderShopViewAds(){
@@ -5232,6 +5255,44 @@ document.addEventListener("DOMContentLoaded", () => {
       return div;
     }
 
+    function updateShopViewSubscribeBtn(){
+  if (!shopViewSubBtn || !currentShop) return;
+
+  const subscribed = isSubscribed(currentShop.id);
+  shopViewSubBtn.textContent = subscribed ? "Obuna ✅" : "🔔 Obuna bo‘lish";
+  shopViewSubBtn.classList.toggle("subscribed", subscribed);
+}
+
+if (shopViewSubBtn && !shopViewSubBtn.dataset.bound) {
+  shopViewSubBtn.dataset.bound = "1";
+
+  shopViewSubBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!currentShop) return;
+
+    const on = toggleSubscribe(currentShop.id);
+
+    // анимация “пульс”
+    shopViewSubBtn.classList.remove("pulse");
+    void shopViewSubBtn.offsetWidth; // перезапуск анимации
+    shopViewSubBtn.classList.add("pulse");
+
+    // (опционально) меняем счётчик подписчиков на экране
+    if (shopViewSubs) {
+      let n = Number(currentShop.subs || 0);
+      n = on ? (n + 1) : Math.max(0, n - 1);
+      currentShop.subs = n;
+      shopViewSubs.textContent = `${n} obunachi`;
+    }
+
+    updateShopViewSubscribeBtn();
+
+    // чтобы список “Top do‘konlar” тоже обновлялся визуально
+    renderShops();
+  });
+}
+    
     // ===== Shops ACTION SHEET =====
     let sheetShop = null;
 
