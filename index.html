@@ -2736,6 +2736,48 @@ body.sheet-open .bottom-nav{ display:none !important; }
   background: #e2e8f0;
 }
 
+    /* =========================
+   TOP SHOPS – SUBSCRIBE BTN
+   ========================= */
+
+.top-shop-ig-btn {
+  width: 100%;
+  height: 44px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  border: none;
+}
+
+/* обычное состояние */
+.top-shop-ig-btn {
+  background: #eef2ff;      /* светлый */
+  color: #4f46e5;           /* фиолетовый текст */
+}
+
+/* при наведении / тапе */
+.top-shop-ig-btn:active {
+  transform: scale(0.97);
+}
+
+/* когда подписан */
+.top-shop-ig-btn.subscribed {
+  background: #4f46e5;      /* как в карточке магазина */
+  color: #ffffff;
+}
+
+/* иконка */
+.top-shop-ig-btn::before {
+  content: "🔔";
+  font-size: 14px;
+}
+
   @media (max-width: 480px) {
     body {
       align-items: stretch;
