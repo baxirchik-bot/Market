@@ -5488,17 +5488,14 @@ function bindSubscribe(btn, getShop, opts = {}) {
 
       div.addEventListener("click", () => openShop(shop));
 
-      setSubscribeUI(subBtn, shop.id, { mode:"short" });
-      
-      const subBtn = div.querySelector(".top-shop-ig-btn");
+const subBtn = div.querySelector(".top-shop-ig-btn");
+setSubscribeUI(subBtn, shop.id, { mode:"short" });
+
 bindSubscribe(subBtn, () => shop, {
   mode: "short",
-  onAfter: () => {
-    // обновим и сам список, чтобы карточки перерисовались корректно
-    renderShops();
-  }
+  onAfter: () => renderShops()
 });
-
+      
       const menuBtn = div.querySelector(".top-shop-ig-menu");
       menuBtn.addEventListener("click", (e) => {
         e.stopPropagation();
@@ -5514,8 +5511,6 @@ bindSubscribe(shopViewSubBtn, () => currentShop, {
   subsEl: shopViewSubs,
   onAfter: () => renderShops() // чтобы Top/список обновлялись
 });
-
-    const on = toggleSubscribe(currentShop.id);
 
     // анимация “пульс”
     shopViewSubBtn.classList.remove("pulse");
