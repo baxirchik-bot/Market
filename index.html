@@ -4505,16 +4505,20 @@ document.addEventListener("DOMContentLoaded", () => {
       if (name === "filters")   syncFiltersUIFromState();
       if (name === "home")      resetFeedRender();
       if (name === "myAds")     renderMyAds();
-      if (name === "myShop")    renderMyShopAds();
-      if (name === "shopView")  renderShopView();
-      if (name === "myShop") {
-  renderMyShopAds();
-  if (myShop?.id) setSubscribeUI(storeSubscribeBtn, myShop.id, { mode:"short" });
+      if (name === "myShop") {  renderMyShopAds();
+      if (myShop?.id) setSubscribeUI(storeSubscribeBtn, myShop.id, { mode:"short" });
 }
 
-      updateBackButtonVisibility();
-    }
+if (name === "shopView")  renderShopView();
 
+if (name === "shops") {
+  renderShopCategoryChips(); // чтобы "Hammasi" + категории появились
+  syncShopsFilterUI();       // чтобы фильтры были синхронизированы
+  ensureShopsLoaded();       // чтобы не было пустоты "Yuklanmoqda..."
+  renderShops();             // ✅ ВОТ ЭТО главное: сразу рисуем магазины
+}
+
+updateBackButtonVisibility();
     // ===== Shop View =====
     let currentShop = null;
 
