@@ -4505,8 +4505,10 @@ document.addEventListener("DOMContentLoaded", () => {
       if (name === "filters")   syncFiltersUIFromState();
       if (name === "home")      resetFeedRender();
       if (name === "myAds")     renderMyAds();
-      if (name === "myShop") {  renderMyShopAds();
-      if (myShop?.id) setSubscribeUI(storeSubscribeBtn, myShop.id, { mode:"short" });
+
+if (name === "myShop") {
+  renderMyShopAds();
+  if (myShop?.id) setSubscribeUI(storeSubscribeBtn, myShop.id, { mode:"short" });
 }
 
 if (name === "shopView")  renderShopView();
@@ -4519,6 +4521,7 @@ if (name === "shops") {
 }
 
 updateBackButtonVisibility();
+      
     // ===== Shop View =====
     let currentShop = null;
 
