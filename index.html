@@ -5512,26 +5512,6 @@ bindSubscribe(shopViewSubBtn, () => currentShop, {
   onAfter: () => renderShops() // чтобы Top/список обновлялись
 });
 
-    // анимация “пульс”
-    shopViewSubBtn.classList.remove("pulse");
-    void shopViewSubBtn.offsetWidth; // перезапуск анимации
-    shopViewSubBtn.classList.add("pulse");
-
-    // (опционально) меняем счётчик подписчиков на экране
-    if (shopViewSubs) {
-      let n = Number(currentShop.subs || 0);
-      n = on ? (n + 1) : Math.max(0, n - 1);
-      currentShop.subs = n;
-      shopViewSubs.textContent = `${n} obunachi`;
-    }
-
-    updateShopViewSubscribeBtn();
-
-    // чтобы список “Top do‘konlar” тоже обновлялся визуально
-    renderShops();
-  });
-}
-    
     // ===== Shops ACTION SHEET =====
     let sheetShop = null;
 
