@@ -2776,6 +2776,33 @@ body.sheet-open .bottom-nav{ display:none !important; }
   font-size: 14px;
 }
 
+    /* подписка — общий стиль */
+.shop-subscribe-btn,
+.top-shop-ig-btn,
+.store-btn.store-btn-primary{
+  background:#4f46e5;
+  color:#fff;
+  border:none;
+}
+
+/* состояние subscribed — тот же цвет */
+.shop-subscribe-btn.subscribed,
+.top-shop-ig-btn.subscribed,
+.store-btn.store-btn-primary.subscribed{
+  background:#4f46e5;
+  color:#fff;
+}
+
+/* анимация */
+.pulse{
+  animation:pulseAnim .22s ease-out;
+}
+@keyframes pulseAnim{
+  0%{ transform:scale(1); }
+  50%{ transform:scale(0.97); }
+  100%{ transform:scale(1); }
+}
+    
   @media (max-width: 480px) {
     body {
       align-items: stretch;
@@ -3826,6 +3853,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const storeMoreBtn      = document.getElementById("storeMoreBtn");
     const storeSheet        = document.getElementById("storeSheet"); // оставил, если где-то используешь
     const storeMsgBtn       = document.getElementById("storeMsgBtn");
+    const storeSubscribeBtn = document.getElementById("storeSubscribeBtn");
 
     const filterCategoryRow = document.getElementById("filterCategoryRow");
 
@@ -4466,11 +4494,9 @@ document.addEventListener("DOMContentLoaded", () => {
       if (name === "myAds")     renderMyAds();
       if (name === "myShop")    renderMyShopAds();
       if (name === "shopView")  renderShopView();
-      if (name === "shops") {
-      ensureShopsLoaded().then(() => {
-      renderShopCategoryChips();   // ✅ генерируем категории
-      renderShops();               // ✅ рисуем магазины
-  });
+      if (name === "myShop") {
+  renderMyShopAds();
+  if (myShop?.id) setSubscribeUI(storeSubscribeBtn, myShop.id, { mode:"short" });
 }
 
       updateBackButtonVisibility();
@@ -4538,7 +4564,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (shopViewAvatar) shopViewAvatar.textContent = getInitials(currentShop.name);
 
       renderShopViewAds();
-      updateShopViewSubscribeBtn();
+      setSubscribeUI(shopViewSubBtn, currentShop.id, { mode: "default" });
     }
 
     function renderShopViewAds(){
@@ -5292,6 +5318,15 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
+    // ✅ My Shop subscribe bind
+const myShopSubsEl = document.querySelector("#screen-my-shop .store-subs");
+
+bindSubscribe(storeSubscribeBtn, () => myShop, {
+  mode: "short",
+  subsEl: myShopSubsEl,
+  onAfter: () => renderShops()
+});
+
     const shopsFilterState = {
       category: "all",
       city: "all",
@@ -5366,6 +5401,73 @@ document.addEventListener("DOMContentLoaded", () => {
       } catch { return false; }
     }
 
+    // ================== ✅ COMMON SUBSCRIBE (ONE LOGIC) ==================
+function setSubscribeUI(btn, shopId, opts = {}) {
+  if (!btn || !shopId) return;
+
+  const subscribed = isSubscribed(shopId);
+
+  // текст
+  if (opts.mode === "short") {
+    btn.textContent = subscribed ? "Obuna ✅" : "Obuna bo‘lish";
+  } else {
+    // default (с колокольчиком)
+    btn.textContent = subscribed ? "Obuna ✅" : "🔔 Obuna bo‘lish";
+  }
+
+  // класс для фиолетового вида
+  btn.classList.toggle("subscribed", subscribed);
+
+  // чтобы iOS не делал серый highlight
+  btn.style.webkitTapHighlightColor = "transparent";
+
+  return subscribed;
+}
+
+function pulse(btn) {
+  if (!btn) return;
+  btn.classList.remove("pulse");
+  void btn.offsetWidth; // restart animation
+  btn.classList.add("pulse");
+}
+
+function bindSubscribe(btn, getShop, opts = {}) {
+  if (!btn || btn.dataset.subBound === "1") return;
+  btn.dataset.subBound = "1";
+
+  // начальная отрисовка
+  const shop0 = typeof getShop === "function" ? getShop() : null;
+  if (shop0?.id) setSubscribeUI(btn, shop0.id, opts);
+
+  btn.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const shop = typeof getShop === "function" ? getShop() : null;
+    if (!shop?.id) return;
+
+    const on = toggleSubscribe(shop.id);
+
+    // анимация
+    pulse(btn);
+
+    // (опционально) обновить счетчик подписчиков на экране
+    if (opts.subsEl && shop) {
+      let n = Number(shop.subs || 0);
+      n = on ? (n + 1) : Math.max(0, n - 1);
+      shop.subs = n;
+      opts.subsEl.textContent = `${n} obunachi`;
+    }
+
+    // обновить саму кнопку
+    setSubscribeUI(btn, shop.id, opts);
+
+    // обновить списки/экраны если надо
+    if (typeof opts.onAfter === "function") opts.onAfter(on, shop);
+  });
+}
+// ================== /COMMON SUBSCRIBE ==================
+
     function topShopCardIG(shop){
       const div = document.createElement("div");
       div.className = "top-shop-ig";
@@ -5386,13 +5488,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
       div.addEventListener("click", () => openShop(shop));
 
+      setSubscribeUI(subBtn, shop.id, { mode:"short" });
+      
       const subBtn = div.querySelector(".top-shop-ig-btn");
-      subBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const on = toggleSubscribe(shop.id);
-        subBtn.classList.toggle("subscribed", on);
-        subBtn.textContent = on ? "Obuna ✅" : "Obuna bo‘lish";
-      });
+bindSubscribe(subBtn, () => shop, {
+  mode: "short",
+  onAfter: () => {
+    // обновим и сам список, чтобы карточки перерисовались корректно
+    renderShops();
+  }
+});
 
       const menuBtn = div.querySelector(".top-shop-ig-menu");
       menuBtn.addEventListener("click", (e) => {
@@ -5403,21 +5508,12 @@ document.addEventListener("DOMContentLoaded", () => {
       return div;
     }
 
-    function updateShopViewSubscribeBtn(){
-  if (!shopViewSubBtn || !currentShop) return;
-
-  const subscribed = isSubscribed(currentShop.id);
-  shopViewSubBtn.textContent = subscribed ? "Obuna ✅" : "🔔 Obuna bo‘lish";
-  shopViewSubBtn.classList.toggle("subscribed", subscribed);
-}
-
-if (shopViewSubBtn && !shopViewSubBtn.dataset.bound) {
-  shopViewSubBtn.dataset.bound = "1";
-
-  shopViewSubBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!currentShop) return;
+    // ✅ Shop View subscribe bind
+bindSubscribe(shopViewSubBtn, () => currentShop, {
+  mode: "default",
+  subsEl: shopViewSubs,
+  onAfter: () => renderShops() // чтобы Top/список обновлялись
+});
 
     const on = toggleSubscribe(currentShop.id);
 
