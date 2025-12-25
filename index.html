@@ -2736,8 +2736,8 @@ body.sheet-open .bottom-nav{ display:none !important; }
   background: #e2e8f0;
 }
 
-    /* =========================
-   TOP SHOPS – SUBSCRIBE BTN
+/* =========================
+   TOP SHOPS – SUBSCRIBE BTN (FIX COLOR)
    ========================= */
 
 .top-shop-ig-btn {
@@ -2751,24 +2751,22 @@ body.sheet-open .bottom-nav{ display:none !important; }
   justify-content: center;
   gap: 8px;
   cursor: pointer;
-  transition: all 0.25s ease;
+
+  background: #4f46e5;   /* ВСЕГДА фиолетовый */
+  color: #ffffff;
+
   border: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* обычное состояние */
-.top-shop-ig-btn {
-  background: #eef2ff;      /* светлый */
-  color: #4f46e5;           /* фиолетовый текст */
-}
-
-/* при наведении / тапе */
+/* при нажатии — только анимация */
 .top-shop-ig-btn:active {
   transform: scale(0.97);
 }
 
-/* когда подписан */
+/* состояние "подписан" — БЕЗ смены цвета */
 .top-shop-ig-btn.subscribed {
-  background: #4f46e5;      /* как в карточке магазина */
+  background: #4f46e5;   /* тот же цвет */
   color: #ffffff;
 }
 
