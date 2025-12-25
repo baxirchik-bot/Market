@@ -2802,6 +2802,19 @@ body.sheet-open .bottom-nav{ display:none !important; }
   50%{ transform:scale(0.97); }
   100%{ transform:scale(1); }
 }
+
+    /* ✅ Одинаковая форма кнопки "Obuna bo‘lish" везде (полу-квадратная) */
+#storeSubscribeBtn,
+#shopViewSubBtn,
+.top-shop-ig-btn {
+  border-radius: 14px !important; /* было 999px / pill */
+}
+
+/* Если в "Mening do‘konim" кнопка тянется как капсула — фиксируем высоту/скругление визуально */
+#storeSubscribeBtn {
+  height: 44px;           /* можно 42–46 по вкусу */
+  padding: 0 16px;
+}
     
   @media (max-width: 480px) {
     body {
