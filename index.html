@@ -2990,9 +2990,8 @@ body.sheet-open .bottom-nav{ display:none !important; }
               <div id="detailMeta" class="ad-view-meta"></div>
             </div>
             <div class="ad-view-icon-row">
-              <button id="favoriteBtn" class="icon-circle-btn">♡</button>
-              <button id="shareBtn" class="icon-circle-btn">⤴️</button>
-            </div>
+  <button id="adMoreBtn" class="icon-circle-btn" type="button">…</button>
+</div>
           </div>
 
           <div class="ad-view-description-title">Tavsif</div>
@@ -3916,6 +3915,20 @@ document.addEventListener("DOMContentLoaded", () => {
       onlyWithPhoto: false,
     };
 
+        // ===== AD Action Sheet (E'lon) =====
+    const adMoreBtn        = document.getElementById("adMoreBtn");
+    const adSheetBackdrop  = document.getElementById("adSheetBackdrop");
+    const adSheetTitle     = document.getElementById("adSheetTitle");
+    const adSheetFav       = document.getElementById("adSheetFav");
+    const adSheetShare     = document.getElementById("adSheetShare");
+    const adSheetBlock     = document.getElementById("adSheetBlock");
+    const adSheetReport    = document.getElementById("adSheetReport");
+    const adSheetCancelBtn = document.getElementById("adSheetCancelBtn");
+
+    const adReportBackdrop = document.getElementById("adReportSheetBackdrop");
+    const adReportOptions  = document.querySelectorAll(".ad-report-option");
+    const adReportCancelBtn= document.getElementById("adReportCancelBtn");
+    
     // Settings rows
     const settingsFavoritesRow = document.getElementById("settingsFavoritesRow");
     const settingsHistoryRow   = document.getElementById("settingsHistoryRow");
@@ -4308,9 +4321,10 @@ document.addEventListener("DOMContentLoaded", () => {
       return card;
     }
 
-    function createHistoryCard(item) {
+      function createHistoryCard(item) {
       const ad = allAds.find(a => a.id === item.id);
       if (!ad) return null;
+      if (isAdBlocked(ad.id)) return null;
       return createAdCard(ad);
     }
 
@@ -4319,6 +4333,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const q = (searchInput?.value || "").toLowerCase().trim();
 
       filteredAds = allAds.filter(ad => {
+                // ❌ blocked ads – hide from feed
+        if (isAdBlocked(ad.id)) return false;
         if (filterState.category !== "all") {
           if (getAdCategory(ad) !== filterState.category) return false;
         }
@@ -4379,12 +4395,13 @@ document.addEventListener("DOMContentLoaded", () => {
     function renderFavorites() {
       if (!favoritesList) return;
       favoritesList.innerHTML = "";
+      removeBlockedFromFavorites();
       const ids = Array.from(favoritesSet);
       if (!ids.length) {
         favoritesList.innerHTML = "<div class='ad-meta'>Sevimlilar hozircha bo‘sh</div>";
         return;
       }
-      const favAds = allAds.filter(ad => ids.includes(ad.id));
+      const favAds = allAds.filter(ad => ids.includes(ad.id) && !isAdBlocked(ad.id));
       if (!favAds.length) {
         favoritesList.innerHTML = "<div class='ad-meta'>Sevimlilar hozircha bo‘sh</div>";
         return;
@@ -4593,6 +4610,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const ads = getShopAds(currentShop);
 
       let result = ads.filter(ad => {
+       if (isAdBlocked(ad.id)) return false;
         if (shopAdsFilterState.onlyWithPhoto) {
           if (!ad.images || !Array.isArray(ad.images) || !ad.images.length) return false;
         }
@@ -4977,41 +4995,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
 
-      if (favoriteBtn) {
-        const isFav = ad.id != null && favoritesSet.has(ad.id);
-        favoriteBtn.textContent = isFav ? "♥" : "♡";
-        favoriteBtn.onclick = () => {
-          if (ad.id == null) return;
-          if (favoritesSet.has(ad.id)) {
-            favoritesSet.delete(ad.id);
-            favoriteBtn.textContent = "♡";
-          } else {
-            favoritesSet.add(ad.id);
-            favoriteBtn.textContent = "♥";
-          }
-          saveFavoritesToStorage();
-          renderFavorites();
-        };
-      }
-
-      if (shareBtn) {
-        shareBtn.onclick = () => {
-          const shareData = { title: ad.title || "E’lon", text: ad.title || "E’lon", url: window.location.href };
-          if (navigator.share) {
-            navigator.share(shareData).catch(()=>{});
-          } else if (navigator.clipboard?.writeText) {
-            navigator.clipboard.writeText(shareData.url).then(()=>alert("Havola nusxa olindi"));
-          } else {
-            alert("Linkni manzillar satridan nusxa oling");
-          }
-        };
-      }
-
       if (similarList) {
         similarList.innerHTML = "";
         const adCat = getAdCategory(ad);
-        const sameType = allAds.filter(x => x.id !== ad.id && getAdCategory(x) === adCat);
-        const base = sameType.length ? sameType : allAds.filter(x => x.id !== ad.id);
+        const sameType = allAds.filter(x => x.id !== ad.id && !isAdBlocked(x.id) && getAdCategory(x) === adCat);
+        const base = sameType.length ? sameType : allAds.filter(x => x.id !== ad.id && !isAdBlocked(x.id));
         base.slice(0, 3).forEach(item => {
           const wrap = document.createElement("div");
           wrap.className = "similar-card";
@@ -5059,6 +5047,194 @@ document.addEventListener("DOMContentLoaded", () => {
       updateLightboxImage();
     });
 
+        // ================== AD SHEET (⋯) + BLOCK/REPORT ==================
+    let sheetAd = null;
+    let reportAd = null;
+
+    function openAdSheet(ad){
+      sheetAd = ad;
+      if (adSheetTitle) adSheetTitle.textContent = ad?.title || "E’lon";
+
+      if (adSheetFav && ad?.id != null) {
+        const isFav = favoritesSet.has(ad.id);
+        adSheetFav.innerHTML = `
+          <span class="store-sheet-icon share">⭐</span>
+          ${isFav ? "Sevimlida ✅" : "Sevimlilarga qo‘shish"}
+        `;
+      }
+
+      if (adSheetBackdrop){
+        adSheetBackdrop.classList.add("active");
+        document.body.classList.add("sheet-open");
+      }
+    }
+
+    function closeAdSheet(){
+      if (adSheetBackdrop) adSheetBackdrop.classList.remove("active");
+      document.body.classList.remove("sheet-open");
+      sheetAd = null;
+    }
+
+    function openAdReportSheet(){
+      if (!adReportBackdrop) return;
+      adReportBackdrop.classList.add("active");
+      document.body.classList.add("sheet-open");
+    }
+
+    function closeAdReportSheet(){
+      if (!adReportBackdrop) return;
+      adReportBackdrop.classList.remove("active");
+      document.body.classList.remove("sheet-open");
+      reportAd = null;
+    }
+
+    // ⋯ button in Ad Details
+    if (adMoreBtn && !adMoreBtn.dataset.bound) {
+      adMoreBtn.dataset.bound = "1";
+      adMoreBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (currentAd) openAdSheet(currentAd);
+      });
+    }
+
+    // Backdrop close
+    if (adSheetBackdrop && !adSheetBackdrop.dataset.bound) {
+      adSheetBackdrop.dataset.bound = "1";
+      adSheetBackdrop.addEventListener("click", (e) => {
+        if (e.target === adSheetBackdrop) closeAdSheet();
+      });
+      adSheetBackdrop.querySelector(".store-sheet")?.addEventListener("click", e => e.stopPropagation());
+    }
+
+    if (adSheetCancelBtn && !adSheetCancelBtn.dataset.bound) {
+      adSheetCancelBtn.dataset.bound = "1";
+      const handler = (e) => {
+        e.preventDefault(); e.stopPropagation();
+        closeAdSheet();
+      };
+      adSheetCancelBtn.addEventListener("click", handler);
+      adSheetCancelBtn.addEventListener("pointerup", handler);
+    }
+
+    // Favorite toggle
+    if (adSheetFav && !adSheetFav.dataset.bound) {
+      adSheetFav.dataset.bound = "1";
+      adSheetFav.addEventListener("click", () => {
+        if (!sheetAd || sheetAd.id == null) return;
+
+        if (favoritesSet.has(sheetAd.id)) favoritesSet.delete(sheetAd.id);
+        else favoritesSet.add(sheetAd.id);
+
+        saveFavoritesToStorage();
+        renderFavorites();
+        closeAdSheet();
+        showToast("Sevimlilar yangilandi", "✅");
+      });
+    }
+
+    // Share
+    if (adSheetShare && !adSheetShare.dataset.bound) {
+      adSheetShare.dataset.bound = "1";
+      adSheetShare.addEventListener("click", async () => {
+        if (!sheetAd) return;
+        const text = `${sheetAd.title || "E’lon"} — ${sheetAd.city || ""} · ${getAdCategory(sheetAd)}`;
+        const url = window.location.href;
+
+        try{
+          if (navigator.share){
+            await navigator.share({ title: sheetAd.title || "E’lon", text, url });
+          } else if (navigator.clipboard?.writeText){
+            await navigator.clipboard.writeText(`${text}\n${url}`);
+            alert("Nusxa olindi ✅");
+          } else {
+            alert(text);
+          }
+        } catch {}
+        closeAdSheet();
+      });
+    }
+
+    // Block ad
+    if (adSheetBlock && !adSheetBlock.dataset.bound) {
+      adSheetBlock.dataset.bound = "1";
+      adSheetBlock.addEventListener("click", () => {
+        if (!sheetAd || sheetAd.id == null) return;
+        const set = getBlockedAdsSet();
+        set.add(sheetAd.id);
+        saveBlockedAdsSet(set);
+
+        // remove from favorites if needed
+        if (favoritesSet.has(sheetAd.id)) {
+          favoritesSet.delete(sheetAd.id);
+          saveFavoritesToStorage();
+        }
+
+        closeAdSheet();
+
+        // go home + rerender everywhere
+        applyAllFilters();
+        resetFeedRender();
+        renderFavorites();
+        renderHistory();
+        if (currentScreen === "adDetails") showScreen("home");
+
+        showToast("Bloklandi", "E’lon yashirildi ⛔");
+      });
+    }
+
+    // Report
+    if (adSheetReport && !adSheetReport.dataset.bound) {
+      adSheetReport.dataset.bound = "1";
+      adSheetReport.addEventListener("click", () => {
+        reportAd = sheetAd;
+        // close ad sheet only visually
+        if (adSheetBackdrop) adSheetBackdrop.classList.remove("active");
+        openAdReportSheet();
+      });
+    }
+
+    // Report options
+    adReportOptions.forEach(opt => {
+      if (opt.dataset.bound) return;
+      opt.dataset.bound = "1";
+      opt.addEventListener("click", () => {
+        if (!reportAd || reportAd.id == null) return;
+
+        const reason = opt.dataset.reason || "other";
+        const complaints = JSON.parse(localStorage.getItem("zalvo_ad_reports") || "[]");
+        complaints.push({
+          adId: reportAd.id,
+          title: reportAd.title || "",
+          reason,
+          ts: Date.now()
+        });
+        localStorage.setItem("zalvo_ad_reports", JSON.stringify(complaints));
+
+        closeAdReportSheet();
+        showToast("Shikoyat yuborildi", "Adminlar tekshiradi ⚠️");
+      });
+    });
+
+    if (adReportBackdrop && !adReportBackdrop.dataset.bound) {
+      adReportBackdrop.dataset.bound = "1";
+      adReportBackdrop.addEventListener("click", (e) => {
+        if (e.target === adReportBackdrop) closeAdReportSheet();
+      });
+      adReportBackdrop.querySelector(".store-sheet")?.addEventListener("click", e => e.stopPropagation());
+    }
+
+    if (adReportCancelBtn && !adReportCancelBtn.dataset.bound) {
+      adReportCancelBtn.dataset.bound = "1";
+      const handler = (e) => {
+        e.preventDefault(); e.stopPropagation();
+        closeAdReportSheet();
+      };
+      adReportCancelBtn.addEventListener("click", handler);
+      adReportCancelBtn.addEventListener("pointerup", handler);
+    }
+    // ================== /AD SHEET ==================
+    
     // promo
     if (promoBanner) promoBanner.addEventListener("click", () => showScreen("promo"));
     document.addEventListener("click", e => {
@@ -5176,6 +5352,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const q = (shopAdsSearchInput?.value || "").toLowerCase().trim();
 
       let result = myAds.filter(ad => {
+      if (isAdBlocked(ad.id)) return false;
         if (shopAdsFilterState.onlyWithPhoto) {
           if (!ad.images || !Array.isArray(ad.images) || !ad.images.length) return false;
         }
@@ -5361,6 +5538,28 @@ bindSubscribe(storeSubscribeBtn, () => myShop, {
       try { localStorage.setItem(blockedKey(), JSON.stringify(Array.from(set))); } catch {}
     }
 
+        // ===== BLOCKED ADS =====
+    function blockedAdsKey(){ return "zalvo_ad_blocked"; }
+    function getBlockedAdsSet(){
+      try { return new Set(JSON.parse(localStorage.getItem(blockedAdsKey()) || "[]")); }
+      catch { return new Set(); }
+    }
+    function saveBlockedAdsSet(set){
+      try { localStorage.setItem(blockedAdsKey(), JSON.stringify(Array.from(set))); } catch {}
+    }
+    function isAdBlocked(adId){
+      if (adId == null) return false;
+      return getBlockedAdsSet().has(adId);
+    }
+    function removeBlockedFromFavorites(){
+      const blocked = getBlockedAdsSet();
+      let changed = false;
+      favoritesSet.forEach(id => {
+        if (blocked.has(id)) { favoritesSet.delete(id); changed = true; }
+      });
+      if (changed) saveFavoritesToStorage();
+    }
+    
     let shopsLoadedOnce = false;
     async function ensureShopsLoaded() {
       if (shopsLoadedOnce) return;
@@ -5858,6 +6057,56 @@ if (reportCancelBtn && !reportCancelBtn.dataset.bound) {
   reportCancelBtn.addEventListener("pointerup", handler);
 }
 
+    <!-- ================= AD ACTION SHEET (E'lonlar uchun) ================= -->
+<div class="store-sheet-backdrop" id="adSheetBackdrop">
+  <div class="store-sheet" role="dialog" aria-modal="true">
+    <div class="store-sheet-handle"></div>
+
+    <div class="shop-sheet-title" id="adSheetTitle">E’lon</div>
+
+    <div class="store-sheet-list">
+      <button class="store-sheet-item" id="adSheetFav" type="button">
+        <span class="store-sheet-icon share">⭐</span>
+        Sevimlilarga qo‘shish
+      </button>
+
+      <button class="store-sheet-item" id="adSheetShare" type="button">
+        <span class="store-sheet-icon share">🔗</span>
+        Ulashish
+      </button>
+
+      <button class="store-sheet-item danger" id="adSheetBlock" type="button">
+        <span class="store-sheet-icon report">⛔</span>
+        Bloklash
+      </button>
+
+      <button class="store-sheet-item" id="adSheetReport" type="button">
+        <span class="store-sheet-icon report">⚠️</span>
+        Shikoyat qilish
+      </button>
+    </div>
+
+    <button id="adSheetCancelBtn" type="button" class="store-sheet-cancel">Bekor qilish</button>
+  </div>
+</div>
+
+<!-- ================= AD REPORT SHEET ================= -->
+<div id="adReportSheetBackdrop" class="store-sheet-backdrop">
+  <div class="store-sheet" role="dialog" aria-modal="true">
+    <div class="store-sheet-handle"></div>
+
+    <div class="store-sheet-title">Shikoyat qilish</div>
+
+    <button class="store-sheet-item ad-report-option" data-reason="fake" type="button">Soxta e’lon</button>
+    <button class="store-sheet-item ad-report-option" data-reason="rules" type="button">Qoidabuzarlik</button>
+    <button class="store-sheet-item ad-report-option" data-reason="scam" type="button">Firibgarlik</button>
+    <button class="store-sheet-item ad-report-option" data-reason="wrong" type="button">Noto‘g‘ri ma’lumot</button>
+    <button class="store-sheet-item ad-report-option" data-reason="other" type="button">Boshqa</button>
+
+    <button id="adReportCancelBtn" class="store-sheet-cancel" type="button">Bekor qilish</button>
+  </div>
+</div>
+    
     // ================== START ==================
     applySavedProfilePhoto();
     showScreen("home");
