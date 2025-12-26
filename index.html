@@ -5256,6 +5256,18 @@ function toggleShopFav(shopId){
       });
     }
 
+    if (adMoreBtn && !adMoreBtn.dataset.pressBound) {
+  adMoreBtn.dataset.pressBound = "1";
+
+  const on = () => adMoreBtn.classList.add("is-pressed");
+  const off = () => adMoreBtn.classList.remove("is-pressed");
+
+  adMoreBtn.addEventListener("pointerdown", on);
+  adMoreBtn.addEventListener("pointerup", off);
+  adMoreBtn.addEventListener("pointercancel", off);
+  adMoreBtn.addEventListener("mouseleave", off);
+}
+    
     // Backdrop close
     if (adSheetBackdrop && !adSheetBackdrop.dataset.bound) {
       adSheetBackdrop.dataset.bound = "1";
