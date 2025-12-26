@@ -2874,6 +2874,48 @@ body.sheet-open .bottom-nav{ display:none !important; }
   background: #ede9fe;
   color: #7c3aed;
 }
+
+    /* ===== iOS-style circle icon button (⋯) ===== */
+.icon-circle-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+
+  background: #f1f5f9;
+  color: #475569;
+
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+
+  transition:
+    background 0.15s ease,
+    transform 0.12s ease,
+    box-shadow 0.15s ease;
+
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* hover (desktop) */
+.icon-circle-btn:hover {
+  background: #e5e7eb;
+}
+
+/* pressed (REAL iOS tap) */
+.icon-circle-btn.is-pressed {
+  background: #ede9fe;   /* фиолетовый Zalvo */
+  color: #7c3aed;
+  transform: scale(0.92);
+  box-shadow: 0 0 0 rgba(0,0,0,0);
+}
     
   @media (max-width: 480px) {
     body {
@@ -5259,13 +5301,13 @@ function toggleShopFav(shopId){
     if (adMoreBtn && !adMoreBtn.dataset.pressBound) {
   adMoreBtn.dataset.pressBound = "1";
 
-  const on = () => adMoreBtn.classList.add("is-pressed");
-  const off = () => adMoreBtn.classList.remove("is-pressed");
+  const pressOn  = () => adMoreBtn.classList.add("is-pressed");
+  const pressOff = () => adMoreBtn.classList.remove("is-pressed");
 
-  adMoreBtn.addEventListener("pointerdown", on);
-  adMoreBtn.addEventListener("pointerup", off);
-  adMoreBtn.addEventListener("pointercancel", off);
-  adMoreBtn.addEventListener("mouseleave", off);
+  adMoreBtn.addEventListener("pointerdown", pressOn);
+  adMoreBtn.addEventListener("pointerup", pressOff);
+  adMoreBtn.addEventListener("pointercancel", pressOff);
+  adMoreBtn.addEventListener("mouseleave", pressOff);
 }
     
     // Backdrop close
