@@ -2916,6 +2916,12 @@ body.sheet-open .bottom-nav{ display:none !important; }
   transform: scale(0.92);
   box-shadow: 0 0 0 rgba(0,0,0,0);
 }
+
+    .ad-view-seller-card {
+  position: relative;
+  z-index: 5;
+  cursor: pointer;
+}
     
   @media (max-width: 480px) {
     body {
@@ -5217,6 +5223,39 @@ function toggleShopFav(shopId){
         });
       }
 
+      // ===== bind seller card click =====
+const sellerCard = document.getElementById("sellerCard");
+
+if (sellerCard && !sellerCard.dataset.bound) {
+  sellerCard.dataset.bound = "1";
+
+  sellerCard.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const tg = String(ad.telegram || "")
+      .replace(/^@/, "")
+      .toLowerCase()
+      .trim();
+
+    const phone = String(ad.phone || "")
+      .replace(/\s+/g, "")
+      .trim();
+
+    const shop = (shopsData || []).find(s => {
+      const stg = String(s.ownerTelegram || "").replace(/^@/, "").toLowerCase().trim();
+      const sph = String(s.ownerPhone || "").replace(/\s+/g, "").trim();
+      return (tg && stg && tg === stg) || (phone && sph && phone === sph);
+    });
+
+    if (shop) {
+      openShop(shop);
+    } else {
+      showToast("Do‘kon topilmadi", "Sotuvchi hali do‘kon ochmagan");
+    }
+  });
+}
+      
       showScreen("adDetails");
     }
 
