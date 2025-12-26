@@ -3068,7 +3068,7 @@ body.sheet-open .bottom-nav{ display:none !important; }
 
     <button id="settingsFavoritesRow" class="settings-row">
       <div class="settings-icon">⭐</div>
-      <div class="settings-title">Sevimlilar</div>
+      <div class="settings-title">Izbranlar</div>
       <div class="settings-arrow">›</div>
     </button>
 
@@ -3764,7 +3764,7 @@ body.sheet-open .bottom-nav{ display:none !important; }
     <div class="store-sheet-list">
       <button class="store-sheet-item" id="adSheetFav" type="button">
         <span class="store-sheet-icon share">⭐</span>
-        Sevimlilarga qo‘shish
+        Izbranlarga qo‘shish
       </button>
 
       <button class="store-sheet-item" id="adSheetShare" type="button">
@@ -3869,6 +3869,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const FAVORITES_KEY = "mh_favorites";
     const HISTORY_KEY   = "mh_history";
     const PROFILE_PHOTO_KEY = "zalvo_profile_photo";
+    const SHOP_FAVORITES_KEY = "zalvo_shop_favorites";
 
     // ================== DOM-ЭЛЕМЕНТЫ ==================
     const screensContainer = document.querySelector(".screens");
@@ -4322,6 +4323,32 @@ document.addEventListener("DOMContentLoaded", () => {
       try { localStorage.setItem(FAVORITES_KEY, JSON.stringify(Array.from(favoritesSet))); } catch {}
     }
 
+    function loadShopFavoritesFromStorage(){
+  try{
+    const raw = localStorage.getItem(SHOP_FAVORITES_KEY);
+    if (!raw) return new Set();
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? new Set(arr) : new Set();
+  } catch { return new Set(); }
+}
+
+function saveShopFavoritesToStorage(set){
+  try{
+    localStorage.setItem(SHOP_FAVORITES_KEY, JSON.stringify(Array.from(set)));
+  } catch {}
+}
+
+function isShopFav(shopId){
+  return loadShopFavoritesFromStorage().has(shopId);
+}
+
+function toggleShopFav(shopId){
+  const set = loadShopFavoritesFromStorage();
+  const on = set.has(shopId) ? (set.delete(shopId), false) : (set.add(shopId), true);
+  saveShopFavoritesToStorage(set);
+  return on;
+}
+    
     function loadHistoryFromStorage() {
       try {
         const raw = localStorage.getItem(HISTORY_KEY);
@@ -4443,21 +4470,45 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function renderFavorites() {
-      if (!favoritesList) return;
-      favoritesList.innerHTML = "";
-      removeBlockedFromFavorites();
-      const ids = Array.from(favoritesSet);
-      if (!ids.length) {
-        favoritesList.innerHTML = "<div class='ad-meta'>Sevimlilar hozircha bo‘sh</div>";
-        return;
-      }
-      const favAds = allAds.filter(ad => ids.includes(ad.id) && !isAdBlocked(ad.id));
-      if (!favAds.length) {
-        favoritesList.innerHTML = "<div class='ad-meta'>Sevimlilar hozircha bo‘sh</div>";
-        return;
-      }
-      favAds.forEach(ad => favoritesList.appendChild(createAdCard(ad)));
-    }
+  if (!favoritesList) return;
+  favoritesList.innerHTML = "";
+
+  // --- ADS ---
+  removeBlockedFromFavorites();
+  const adIds = Array.from(favoritesSet);
+  const favAds = allAds.filter(ad => adIds.includes(ad.id) && !isAdBlocked(ad.id));
+
+  // --- SHOPS ---
+  const shopFavSet = loadShopFavoritesFromStorage();
+  const favShops = (shopsData || []).filter(s => shopFavSet.has(s.id) && !getBlockedSet().has(s.id));
+
+  if (!favAds.length && !favShops.length) {
+    favoritesList.innerHTML = "<div class='ad-meta'>Izbranlar hozircha bo‘sh</div>";
+    return;
+  }
+
+  // 1) магазины сверху
+  if (favShops.length) {
+    const h = document.createElement("div");
+    h.className = "section-title";
+    h.textContent = "Do‘konlar";
+    favoritesList.appendChild(h);
+
+    favShops.forEach(shop => {
+      favoritesList.appendChild(shopCard(shop)); // кликается и открывает shopView
+    });
+  }
+
+  // 2) объявления ниже
+  if (favAds.length) {
+    const h2 = document.createElement("div");
+    h2.className = "section-title";
+    h2.textContent = "E’lonlar";
+    favoritesList.appendChild(h2);
+
+    favAds.forEach(ad => favoritesList.appendChild(createAdCard(ad)));
+  }
+}
 
     function renderHistory() {
       if (!historyListEl) return;
@@ -5109,7 +5160,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const isFav = favoritesSet.has(ad.id);
         adSheetFav.innerHTML = `
           <span class="store-sheet-icon share">⭐</span>
-          ${isFav ? "Sevimlida ✅" : "Sevimlilarga qo‘shish"}
+          ${isFav ? "Izbranlarda ✅" : "Izbranlarga qo‘shish"}
         `;
       }
 
@@ -5800,11 +5851,11 @@ bindSubscribe(shopViewSubBtn, () => currentShop, {
       }
 
       if (shopSheetFav && sheetShop) {
-        const isFav = localStorage.getItem(favShopKey(sheetShop.id)) === "1";
+        const isFav = isShopFav(sheetShop.id);
         shopSheetFav.innerHTML = `
-          <span class="store-sheet-icon share">⭐</span>
-          ${isFav ? "Izbranda ✅" : "Izbranlarga qo‘shish"}
-        `;
+        <span class="store-sheet-icon share">⭐</span>
+       ${isFav ? "Izbranlarda ✅" : "Izbranlarga qo‘shish"}
+      `;
       }
     }
 
@@ -5823,15 +5874,17 @@ bindSubscribe(shopViewSubBtn, () => currentShop, {
     }
 
     if (shopSheetFav && !shopSheetFav.dataset.bound) {
-      shopSheetFav.dataset.bound = "1";
-      shopSheetFav.addEventListener("click", () => {
-        if (!sheetShop) return;
-        const key = favShopKey(sheetShop.id);
-        const now = localStorage.getItem(key) === "1";
-        localStorage.setItem(key, now ? "0" : "1");
-        closeShopSheet();
-      });
-    }
+  shopSheetFav.dataset.bound = "1";
+  shopSheetFav.addEventListener("click", () => {
+    if (!sheetShop) return;
+
+    toggleShopFav(sheetShop.id);
+
+    closeShopSheet();
+    renderFavorites();   // ✅ обновить общий список
+    showToast("Izbranlar yangilandi", "✅");
+  });
+}
 
     if (shopSheetShare && !shopSheetShare.dataset.bound) {
       shopSheetShare.dataset.bound = "1";
