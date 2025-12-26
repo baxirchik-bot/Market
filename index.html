@@ -3753,6 +3753,56 @@ body.sheet-open .bottom-nav{ display:none !important; }
 </button>
   </div>
 </div>
+
+    <!-- ================= AD ACTION SHEET (E'lonlar uchun) ================= -->
+<div class="store-sheet-backdrop" id="adSheetBackdrop">
+  <div class="store-sheet" role="dialog" aria-modal="true">
+    <div class="store-sheet-handle"></div>
+
+    <div class="shop-sheet-title" id="adSheetTitle">E’lon</div>
+
+    <div class="store-sheet-list">
+      <button class="store-sheet-item" id="adSheetFav" type="button">
+        <span class="store-sheet-icon share">⭐</span>
+        Sevimlilarga qo‘shish
+      </button>
+
+      <button class="store-sheet-item" id="adSheetShare" type="button">
+        <span class="store-sheet-icon share">🔗</span>
+        Ulashish
+      </button>
+
+      <button class="store-sheet-item danger" id="adSheetBlock" type="button">
+        <span class="store-sheet-icon report">⛔</span>
+        Bloklash
+      </button>
+
+      <button class="store-sheet-item" id="adSheetReport" type="button">
+        <span class="store-sheet-icon report">⚠️</span>
+        Shikoyat qilish
+      </button>
+    </div>
+
+    <button id="adSheetCancelBtn" type="button" class="store-sheet-cancel">Bekor qilish</button>
+  </div>
+</div>
+
+<!-- ================= AD REPORT SHEET ================= -->
+<div id="adReportSheetBackdrop" class="store-sheet-backdrop">
+  <div class="store-sheet" role="dialog" aria-modal="true">
+    <div class="store-sheet-handle"></div>
+
+    <div class="store-sheet-title">Shikoyat qilish</div>
+
+    <button class="store-sheet-item ad-report-option" data-reason="fake" type="button">Soxta e’lon</button>
+    <button class="store-sheet-item ad-report-option" data-reason="rules" type="button">Qoidabuzarlik</button>
+    <button class="store-sheet-item ad-report-option" data-reason="scam" type="button">Firibgarlik</button>
+    <button class="store-sheet-item ad-report-option" data-reason="wrong" type="button">Noto‘g‘ri ma’lumot</button>
+    <button class="store-sheet-item ad-report-option" data-reason="other" type="button">Boshqa</button>
+
+    <button id="adReportCancelBtn" class="store-sheet-cancel" type="button">Bekor qilish</button>
+  </div>
+</div>
     
     <!-- BOTTOM NAV -->
     <nav class="bottom-nav">
@@ -6057,56 +6107,6 @@ if (reportCancelBtn && !reportCancelBtn.dataset.bound) {
   reportCancelBtn.addEventListener("pointerup", handler);
 }
 
-    <!-- ================= AD ACTION SHEET (E'lonlar uchun) ================= -->
-<div class="store-sheet-backdrop" id="adSheetBackdrop">
-  <div class="store-sheet" role="dialog" aria-modal="true">
-    <div class="store-sheet-handle"></div>
-
-    <div class="shop-sheet-title" id="adSheetTitle">E’lon</div>
-
-    <div class="store-sheet-list">
-      <button class="store-sheet-item" id="adSheetFav" type="button">
-        <span class="store-sheet-icon share">⭐</span>
-        Sevimlilarga qo‘shish
-      </button>
-
-      <button class="store-sheet-item" id="adSheetShare" type="button">
-        <span class="store-sheet-icon share">🔗</span>
-        Ulashish
-      </button>
-
-      <button class="store-sheet-item danger" id="adSheetBlock" type="button">
-        <span class="store-sheet-icon report">⛔</span>
-        Bloklash
-      </button>
-
-      <button class="store-sheet-item" id="adSheetReport" type="button">
-        <span class="store-sheet-icon report">⚠️</span>
-        Shikoyat qilish
-      </button>
-    </div>
-
-    <button id="adSheetCancelBtn" type="button" class="store-sheet-cancel">Bekor qilish</button>
-  </div>
-</div>
-
-<!-- ================= AD REPORT SHEET ================= -->
-<div id="adReportSheetBackdrop" class="store-sheet-backdrop">
-  <div class="store-sheet" role="dialog" aria-modal="true">
-    <div class="store-sheet-handle"></div>
-
-    <div class="store-sheet-title">Shikoyat qilish</div>
-
-    <button class="store-sheet-item ad-report-option" data-reason="fake" type="button">Soxta e’lon</button>
-    <button class="store-sheet-item ad-report-option" data-reason="rules" type="button">Qoidabuzarlik</button>
-    <button class="store-sheet-item ad-report-option" data-reason="scam" type="button">Firibgarlik</button>
-    <button class="store-sheet-item ad-report-option" data-reason="wrong" type="button">Noto‘g‘ri ma’lumot</button>
-    <button class="store-sheet-item ad-report-option" data-reason="other" type="button">Boshqa</button>
-
-    <button id="adReportCancelBtn" class="store-sheet-cancel" type="button">Bekor qilish</button>
-  </div>
-</div>
-    
     // ================== START ==================
     applySavedProfilePhoto();
     showScreen("home");
