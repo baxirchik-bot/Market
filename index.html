@@ -2815,6 +2815,55 @@ body.sheet-open .bottom-nav{ display:none !important; }
   height: 44px;           /* можно 42–46 по вкусу */
   padding: 0 16px;
 }
+
+    /* ===== Ellipsis (⋯) button ===== */
+.more-btn,
+.ad-more-btn,
+.shop-more-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: #f1f5f9; /* мягкий серо-белый */
+  color: #475569;      /* спокойный серый */
+  font-size: 20px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  transition: 
+    background 0.15s ease,
+    transform 0.1s ease,
+    box-shadow 0.15s ease;
+
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.08);
+}
+
+/* hover (desktop / web) */
+.more-btn:hover,
+.ad-more-btn:hover,
+.shop-more-btn:hover {
+  background: #e5e7eb;
+}
+
+/* active (tap on mobile) */
+  .more-btn:active,
+.ad-more-btn:active,
+.shop-more-btn:active {
+  transform: scale(0.92);
+  background: #ede9fe;
+  color: #7c3aed;
+}  
+
+/* убрать системный iOS highlight */
+.more-btn,
+.ad-more-btn,
+.shop-more-btn {
+  -webkit-tap-highlight-color: transparent;
+}
     
   @media (max-width: 480px) {
     body {
