@@ -4142,7 +4142,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const openFiltersBtn    = document.getElementById("openFiltersBtn");
     const homeCategoryGrid  = document.getElementById("homeCategoryGrid");
 
-    // ===== Mashhur bo‘limlar (toggle) =====
+    // ===== Mashhur bo‘limlar (toggle без подсказок) =====
 if (homeCategoryGrid && !homeCategoryGrid.dataset.bound) {
   homeCategoryGrid.dataset.bound = "1";
 
@@ -4153,30 +4153,19 @@ if (homeCategoryGrid && !homeCategoryGrid.dataset.bound) {
     const category = card.dataset.category;
     if (!category) return;
 
-    // ✅ если нажали ту же категорию второй раз — сброс
+    // если нажали ту же категорию второй раз — сброс
     if (filterState.category === category) {
       filterState.category = "all";
-
-      applyAllFilters();
-      resetFeedRender();
-      showScreen("home", { resetStack: true });
-
-      // если хочешь — небольшой toast
-      showToast?.("Barcha e’lonlar", "Kategoriya bekor qilindi ✅");
-      return;
+    } else {
+      filterState.category = category;
     }
-
-    // ✅ иначе — ставим категорию
-    filterState.category = category;
 
     applyAllFilters();
     resetFeedRender();
     showScreen("home", { resetStack: true });
-
-    // подсказка как раньше
-    showToast?.("Filter qo‘yildi", "Kategoriyani yana bir marta bosing — barcha e’lonlar qaytadi");
   });
 }
+    
     const filterTypeRow     = document.getElementById("filterTypeRow");
     const filterCitySelect  = document.getElementById("filterCity");
     const filterCurrencyRow = document.getElementById("filterCurrencyRow");
