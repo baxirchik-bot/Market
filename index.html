@@ -6203,6 +6203,7 @@ if (shopSheetCancelBtn && !shopSheetCancelBtn.dataset.bound) {
 
       let result = shopsData
         .filter(s => !blocked.has(s.id))
+        .filter(s => !s._virtual) // ✅ только реальные магазины в списке
         .filter(s => {
           if (shopsFilterState.category !== "all" && s.category !== shopsFilterState.category) return false;
           if (shopsFilterState.city !== "all" && s.city !== shopsFilterState.city) return false;
@@ -6222,11 +6223,12 @@ if (shopSheetCancelBtn && !shopSheetCancelBtn.dataset.bound) {
       });
 
       const top = [...shopsData]
-        .filter(s => !blocked.has(s.id))
-        .filter(s => s.verified)
-        .map(s => ({ ...s, _score: calcShopScore(s) }))
-        .sort((a,b) => b._score - a._score)
-        .slice(0, 8);
+  .filter(s => !blocked.has(s.id))
+  .filter(s => s.verified)
+  .filter(s => !s._virtual) // ✅ виртуальные НЕ в топе
+  .map(s => ({ ...s, _score: calcShopScore(s) }))
+  .sort((a,b) => b._score - a._score)
+  .slice(0, 8);
 
       topShopsRow.innerHTML = "";
       top.forEach(s => topShopsRow.appendChild(topShopCardIG(s)));
