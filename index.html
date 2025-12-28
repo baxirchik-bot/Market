@@ -4142,6 +4142,29 @@ document.addEventListener("DOMContentLoaded", () => {
     const openFiltersBtn    = document.getElementById("openFiltersBtn");
     const homeCategoryGrid  = document.getElementById("homeCategoryGrid");
 
+    // ===== Mashhur bo‘limlar (home categories) =====
+if (homeCategoryGrid && !homeCategoryGrid.dataset.bound) {
+  homeCategoryGrid.dataset.bound = "1";
+
+  homeCategoryGrid.addEventListener("click", (e) => {
+    const card = e.target.closest(".category-card");
+    if (!card) return;
+
+    const category = card.dataset.category;
+    if (!category) return;
+
+    // применяем фильтр категории
+    filterState.category = category;
+
+    // перерисовываем ленту
+    applyAllFilters();
+    resetFeedRender();
+
+    // остаёмся на home и показываем результат
+    showScreen("home", { resetStack: true });
+  });
+}
+
     const filterTypeRow     = document.getElementById("filterTypeRow");
     const filterCitySelect  = document.getElementById("filterCity");
     const filterCurrencyRow = document.getElementById("filterCurrencyRow");
