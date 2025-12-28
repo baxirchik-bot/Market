@@ -2948,6 +2948,14 @@ body.sheet-open .bottom-nav{ display:none !important; }
 .shopview-hide-for-user{
   display:none !important;
 }
+
+    .category-card {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.category-card:active {
+  transform: scale(0.97);
+}
     
   @media (max-width: 480px) {
     body {
@@ -4142,6 +4150,28 @@ document.addEventListener("DOMContentLoaded", () => {
     const filtersApplyBtn   = document.getElementById("filtersApplyBtn");
     const filtersResetBtn   = document.getElementById("filtersResetBtn");
     const filtersBackBtn    = document.getElementById("filtersBack");
+
+    // ===== Mashhur bo‘limlar (home categories) =====
+const homeCategoryGrid = document.getElementById("homeCategoryGrid");
+
+if (homeCategoryGrid && !homeCategoryGrid.dataset.bound) {
+  homeCategoryGrid.dataset.bound = "1";
+
+  homeCategoryGrid.addEventListener("click", (e) => {
+    const card = e.target.closest(".category-card");
+    if (!card) return;
+
+    const category = card.dataset.category;
+    if (!category) return;
+
+    filterState.category = category;
+
+    applyAllFilters();
+    resetFeedRender();
+
+    showScreen("home", { resetStack: true });
+  });
+}
 
     // New ad
     const btnOpenNewAd      = document.getElementById("btnOpenNewAd");
