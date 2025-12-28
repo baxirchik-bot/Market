@@ -2956,6 +2956,23 @@ body.sheet-open .bottom-nav{ display:none !important; }
 .category-card:active {
   transform: scale(0.97);
 }
+
+    .category-card {
+  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease, background .12s ease;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.category-card.active {
+  border-color: rgba(124, 58, 237, 0.55);
+  background: #f5f3ff;
+  box-shadow: 0 8px 22px rgba(124, 58, 237, 0.18);
+  transform: translateY(-1px);
+}
+
+.category-card.active .category-card-title {
+  color: #7c3aed;
+  font-weight: 800;
+}
     
   @media (max-width: 480px) {
     body {
@@ -4142,7 +4159,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const openFiltersBtn    = document.getElementById("openFiltersBtn");
     const homeCategoryGrid  = document.getElementById("homeCategoryGrid");
 
-    // ===== Mashhur bo‘limlar (toggle без подсказок) =====
+   // ===== Mashhur bo‘limlar: filter + active highlight =====
+function setActiveHomeCategory(activeCategory) {
+  if (!homeCategoryGrid) return;
+
+  homeCategoryGrid.querySelectorAll(".category-card").forEach(card => {
+    const c = card.dataset.category || "";
+    card.classList.toggle("active", c === activeCategory);
+  });
+}
+
 if (homeCategoryGrid && !homeCategoryGrid.dataset.bound) {
   homeCategoryGrid.dataset.bound = "1";
 
@@ -4153,11 +4179,13 @@ if (homeCategoryGrid && !homeCategoryGrid.dataset.bound) {
     const category = card.dataset.category;
     if (!category) return;
 
-    // если нажали ту же категорию второй раз — сброс
+    // toggle
     if (filterState.category === category) {
       filterState.category = "all";
+      setActiveHomeCategory(null); // убрать подсветку
     } else {
       filterState.category = category;
+      setActiveHomeCategory(category); // подсветить
     }
 
     applyAllFilters();
@@ -4785,7 +4813,11 @@ function toggleShopFav(shopId){
       if (name === "favorites") renderFavorites();
       if (name === "history")   renderHistory();
       if (name === "filters")   syncFiltersUIFromState();
-      if (name === "home")      resetFeedRender();
+      if (name === "home") {
+  setActiveHomeCategory(filterState.category === "all" ? null : filterState.category);
+  resetFeedRender();
+}
+      
       if (name === "myAds")     renderMyAds();
       if (name === "shopView")  renderShopView();
       if (name === "myShop") {  renderMyShopAds();
