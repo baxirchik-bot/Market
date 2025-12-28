@@ -2973,6 +2973,48 @@ body.sheet-open .bottom-nav{ display:none !important; }
   color: #7c3aed;
   font-weight: 800;
 }
+
+    /* Center "+" button in bottom nav */
+.nav-add-btn{
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  font-size: 34px;
+  font-weight: 900;
+  line-height: 56px;
+  text-align: center;
+  cursor: pointer;
+
+  background: #2563eb;      /* синий как на скрине */
+  color: #fff;
+
+  position: relative;
+  top: -18px;               /* поднимаем выше остальных */
+  box-shadow: 0 10px 22px rgba(37,99,235,.35);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nav-add-btn:active{
+  transform: scale(.96);
+}
+
+    .big-search-btn{
+  width: 100%;
+  border: none;
+  border-radius: 18px;
+  padding: 16px 18px;
+  font-size: 28px;
+  font-weight: 800;
+  background: #1d4ed8;
+  color: #fff;
+  box-shadow: 0 10px 18px rgba(29,78,216,.25);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.big-search-btn:active{
+  transform: scale(.99);
+}
     
   @media (max-width: 480px) {
     body {
@@ -3014,9 +3056,7 @@ body.sheet-open .bottom-nav{ display:none !important; }
           <button id="openFiltersBtn" class="filters-btn">⚙️ Filtr</button>
         </div>
 
-        <button id="btnOpenNewAd" class="primary-btn">
-          ➕ E'lon joylash
-        </button>
+        <button id="btnSearchFake" class="big-search-btn" type="button">Qidirish</button>
 
         <div id="promoBanner" class="promo-banner">
   <img src="zalvo-promo-banner.jpg" alt="MarketHub — biznesingiz uchun yangi mijozlar" 
@@ -3972,6 +4012,8 @@ body.sheet-open .bottom-nav{ display:none !important; }
       <span class="icon">🏪</span>
       <span>Do‘konlar</span>
     </button>
+    <!-- ✅ NEW: center + button -->
+<button id="navAddBtn" class="nav-add-btn" type="button" aria-label="E’lon joylash">+</button>
     <button type="button" class="nav-btn" data-screen="chat">
       <span class="icon">💬</span>
       <span>Chat</span>
@@ -4156,6 +4198,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Search / filters
     const searchInput       = document.querySelector(".search-input");
+    const btnSearchFake = document.getElementById("btnSearchFake");
     const openFiltersBtn    = document.getElementById("openFiltersBtn");
     const homeCategoryGrid  = document.getElementById("homeCategoryGrid");
 
@@ -4260,6 +4303,9 @@ if (homeCategoryGrid && !homeCategoryGrid.dataset.bound) {
 
     // Bottom nav
     const navButtons        = document.querySelectorAll(".nav-btn");
+    const navAddBtn = document.getElementById("navAddBtn");
+
+    
 
     // ================== ГЛОБАЛЬНОЕ СОСТОЯНИЕ ==================
     let allAds        = [];
@@ -4980,6 +5026,15 @@ hideEls.forEach(el => {
       });
     });
 
+    if (navAddBtn && !navAddBtn.dataset.bound) {
+  navAddBtn.dataset.bound = "1";
+  navAddBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    showScreen("newAd1", { push: true });
+  });
+}
+
     // infinite scroll on home
     if (screensContainer) {
       screensContainer.addEventListener("scroll", () => {
@@ -4998,6 +5053,21 @@ hideEls.forEach(el => {
         resetFeedRender();
       });
     }
+
+    if (btnSearchFake && !btnSearchFake.dataset.bound) {
+  btnSearchFake.dataset.bound = "1";
+
+  btnSearchFake.addEventListener("click", () => {
+    // 1) скрываем клавиатуру
+    if (searchInput) searchInput.blur();
+
+    // 2) на всякий: скролл чуть вверх, чтобы не было "залипания"
+    if (screensContainer) {
+      // не обязательно, но приятно на iOS
+      setTimeout(() => { screensContainer.scrollTop = 0; }, 0);
+    }
+  });
+}
 
     // ================== ФИЛЬТРЫ ==================
     function syncFiltersUIFromState() {
