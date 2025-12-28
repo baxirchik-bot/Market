@@ -2922,6 +2922,32 @@ body.sheet-open .bottom-nav{ display:none !important; }
   z-index: 5;
   cursor: pointer;
 }
+
+    .shop-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:#f1f5f9;
+  color:#334155;
+  font-weight:700;
+  font-size:12px;
+  margin-top:6px;
+}
+.shop-badge.is-user{
+  background:#ecfeff;
+  color:#0e7490;
+}
+.shop-badge.is-shop{
+  background:#ede9fe;
+  color:#6d28d9;
+}
+
+/* скрываем лишние строки для обычного пользователя */
+.shopview-hide-for-user{
+  display:none !important;
+}
     
   @media (max-width: 480px) {
     body {
@@ -3489,6 +3515,7 @@ body.sheet-open .bottom-nav{ display:none !important; }
 
     <div class="store-card store-profile">
       <div id="shopViewName" class="store-name">Do‘kon</div>
+      <div id="shopViewBadge" class="shop-badge" style="display:none;"></div>
       <div id="shopViewSubs" class="store-subs">0 obunachi</div>
 
       <div class="store-rating">
@@ -4774,12 +4801,36 @@ function toggleShopFav(shopId){
     function renderShopView(){
       if (!currentShop) return;
 
+      const isVirtualUser = !!currentShop._virtual === true; // признак "обычный продавец"
+      
       if (shopViewName) shopViewName.textContent = currentShop.name || "Do‘kon";
+
+      const badge = document.getElementById("shopViewBadge");
+if (badge) {
+  if (isVirtualUser) {
+    badge.style.display = "inline-flex";
+    badge.className = "shop-badge is-user";
+    badge.textContent = "👤 Oddiy sotuvchi (do‘kon emas)";
+  } else {
+    badge.style.display = "inline-flex";
+    badge.className = "shop-badge is-shop";
+    badge.textContent = "🏪 Do‘kon";
+  }
+}
+      
       if (shopViewSubs) shopViewSubs.textContent = `${currentShop.subs || 0} obunachi`;
 
       if (shopViewStars) shopViewStars.textContent = starsText(currentShop.rating);
       if (shopViewRating) shopViewRating.textContent = `${currentShop.rating || 0} (${currentShop.reviews || 0} baho)`;
 
+      // элементы которые скрываем для обычного пользователя
+const hideEls = [shopViewSubs, shopViewStars, shopViewRating].filter(Boolean);
+
+hideEls.forEach(el => {
+  if (isVirtualUser) el.classList.add("shopview-hide-for-user");
+  else el.classList.remove("shopview-hide-for-user");
+});
+      
       if (shopViewCity) shopViewCity.textContent = currentShop.city || "Shahar";
 
       const tg = String(currentShop.ownerTelegram || "").replace(/^@/,"");
@@ -5250,27 +5301,29 @@ if (sellerCard && !sellerCard.dataset.bound) {
     });
 
     // 2) Если не нашли — создаём виртуальный магазин продавца
-    if (!shop) {
-      const vid = "seller_" + (tg || phone || "unknown");
+  if (!shop) {
+  const vid = "seller_" + (tg || phone || "unknown");
 
-      shop = {
-        id: vid,
-        name: (tg ? `@${tg}` : (phone || "Sotuvchi")) + " do‘koni",
-        city: ad.city || "Shahar",
-        category: getAdCategory(ad) || "Boshqa",
-        subs: 0,
-        rating: 0,
-        reviews: 0,
-        ads: 0,
-        verified: false,
-        last: "yaqinda",
-        ownerTelegram: tg || "",
-        ownerPhone: phone || ""
-      };
+  shop = {
+    id: vid,
+    name: tg ? (`@${tg}`) : (phone || "Sotuvchi"),
+    city: ad.city || "Uzbekiston",
+    category: getAdCategory(ad) || "Boshqa",
+    subs: 0,
+    rating: 0,
+    reviews: 0,
+    ads: 0,
+    verified: false,
+    last: "yaqinda",
+    ownerTelegram: tg || "",
+    ownerPhone: phone || "",
+    _virtual: true
+  };
 
-      // чтобы не создавать заново каждый раз
-      shopsData.push(shop);
-    }
+  // чтобы не дублировать одинакового продавца много раз
+  const exists = (shopsData || []).some(s => String(s.id) === vid);
+  if (!exists) shopsData.push(shop);
+}
 
     // 3) Открываем страницу магазина
     openShop(shop);
