@@ -4151,28 +4151,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const filtersResetBtn   = document.getElementById("filtersResetBtn");
     const filtersBackBtn    = document.getElementById("filtersBack");
 
-    // ===== Mashhur bo‘limlar (home categories) =====
-const homeCategoryGrid = document.getElementById("homeCategoryGrid");
-
-if (homeCategoryGrid && !homeCategoryGrid.dataset.bound) {
-  homeCategoryGrid.dataset.bound = "1";
-
-  homeCategoryGrid.addEventListener("click", (e) => {
-    const card = e.target.closest(".category-card");
-    if (!card) return;
-
-    const category = card.dataset.category;
-    if (!category) return;
-
-    filterState.category = category;
-
-    applyAllFilters();
-    resetFeedRender();
-
-    showScreen("home", { resetStack: true });
-  });
-}
-
     // New ad
     const btnOpenNewAd      = document.getElementById("btnOpenNewAd");
     const backFromNewAd1    = document.getElementById("backFromNewAd1");
