@@ -3393,6 +3393,42 @@ body.sheet-open .bottom-nav{ display:none !important; }
 
   border-top: 1px solid rgba(15,23,42,.06);
 }
+
+    /* ===== CHAT FULLSCREEN FORCE ===== */
+#screen-chat.active{
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999 !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* сообщения скроллятся */
+#screen-chat.active #chatMessages{
+  flex: 1 !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+  padding: 12px 12px calc(90px + env(safe-area-inset-bottom)) !important;
+}
+
+/* поле ввода всегда внизу */
+#screen-chat.active .chat-input-wrap{
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+
+  padding: 10px 12px calc(10px + env(safe-area-inset-bottom)) !important;
+  background: rgba(241,244,255,.92) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  border-top: 1px solid rgba(15,23,42,.06) !important;
+}
     
   @media (max-width: 480px) {
     body {
