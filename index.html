@@ -3081,6 +3081,91 @@ body.sheet-open .bottom-nav{ display:none !important; }
   opacity:.75;
   margin-top:2px;
 }
+
+    .settings-sub{
+  font-size: 13px;
+  opacity: .65;
+  margin-top: 4px;
+}
+
+/* простая “sheet” как у тебя, но если классы уже есть — можно пропустить */
+.sheet-backdrop{
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.35);
+  z-index: 999;
+}
+.sheet{
+  position: fixed; left: 50%; transform: translateX(-50%);
+  bottom: 18px;
+  width: min(520px, calc(100% - 24px));
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(18px);
+  border-radius: 18px;
+  padding: 14px;
+  z-index: 1000;
+  box-shadow: 0 18px 50px rgba(15,23,42,.25);
+}
+.sheet-handle{
+  width: 48px; height: 5px;
+  border-radius: 99px;
+  background: rgba(0,0,0,.15);
+  margin: 0 auto 10px;
+}
+.sheet-title{
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  text-align: center;
+}
+.sheet-body{
+  padding: 6px 4px 12px;
+}
+.sheet-actions{
+  display: flex;
+  gap: 10px;
+}
+.btn-secondary, .btn-primary{
+  flex: 1;
+  height: 44px;
+  border-radius: 14px;
+  border: none;
+  font-weight: 700;
+}
+.btn-secondary{ background: rgba(15,23,42,.08); }
+.btn-primary{ background: #2563eb; color: #fff; }
+
+.hidden{ display:none !important; }
+
+.profile-input{
+  width: 100%;
+  height: 46px;
+  border-radius: 14px;
+  border: 1px solid rgba(15,23,42,.12);
+  padding: 0 14px;
+  font-size: 15px;
+  outline: none;
+  background: rgba(255,255,255,.9);
+}
+.profile-help{
+  margin-top: 8px;
+  font-size: 12px;
+  opacity: .65;
+  line-height: 1.35;
+}
+.profile-row{
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+}
+.profile-mini-btn{
+  height: 46px;
+  padding: 0 14px;
+  border-radius: 14px;
+  border: none;
+  background: rgba(15,23,42,.08);
+  font-weight: 700;
+}
     
   @media (max-width: 480px) {
     body {
@@ -3932,6 +4017,62 @@ body.sheet-open .bottom-nav{ display:none !important; }
         <button id="btnGoHome" class="primary-btn">Bosh sahifa</button>
       </section>
 
+      <!-- ================== PROFILIM (EDIT) ================== -->
+<section id="screen-profile-edit" class="screen">
+  <div class="screen-pad">
+    <div class="section-title">Profilim</div>
+
+    <div class="settings-card">
+      <!-- Phone -->
+      <button id="editPhoneRow" class="settings-row">
+        <div class="settings-icon">📱</div>
+        <div class="settings-title">
+          Telefon raqami
+          <div id="profilePhoneValue" class="settings-sub">—</div>
+        </div>
+        <div class="settings-arrow">›</div>
+      </button>
+
+      <!-- Email -->
+      <button id="editEmailRow" class="settings-row">
+        <div class="settings-icon">✉️</div>
+        <div class="settings-title">
+          Elektron pochta
+          <div id="profileEmailValue" class="settings-sub">—</div>
+        </div>
+        <div class="settings-arrow">›</div>
+      </button>
+
+      <!-- Password -->
+      <button id="editPasswordRow" class="settings-row">
+        <div class="settings-icon">🔒</div>
+        <div class="settings-title">
+          Parol
+          <div class="settings-sub">O‘zgartirish</div>
+        </div>
+        <div class="settings-arrow">›</div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Simple modal (reuse one) -->
+  <div id="profileEditBackdrop" class="sheet-backdrop hidden"></div>
+
+  <div id="profileEditSheet" class="sheet hidden" role="dialog" aria-modal="true">
+    <div class="sheet-handle"></div>
+    <div id="profileEditTitle" class="sheet-title">—</div>
+
+    <div id="profileEditBody" class="sheet-body">
+      <!-- dynamic -->
+    </div>
+
+    <div class="sheet-actions">
+      <button id="profileEditCancel" class="btn-secondary" type="button">Bekor qilish</button>
+      <button id="profileEditSave" class="btn-primary" type="button">Saqlash</button>
+    </div>
+  </div>
+</section>
+
       <!-- ================= TILNI TANLASH (UZ/RU) ================= -->
 <section id="screen-language" class="screen">
   <div class="screen-title">Tilni tanlash</div>
@@ -4163,6 +4304,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const HISTORY_KEY   = "mh_history";
     const PROFILE_PHOTO_KEY = "zalvo_profile_photo";
     const SHOP_FAVORITES_KEY = "zalvo_shop_favorites";
+    const PROFILE_KEY = "zalvo_profile"; // ✅ Profilim: phone/email/password (local, ready for DB)
 
     // ================== DOM-ЭЛЕМЕНТЫ ==================
     const screensContainer = document.querySelector(".screens");
@@ -4183,6 +4325,24 @@ document.addEventListener("DOMContentLoaded", () => {
     const screenNewAdSuccess= document.getElementById("screen-new-ad-success");
     const screenShops       = document.getElementById("screen-shops");
     const screenSettings    = document.getElementById("screen-settings");
+    
+    // ===== PROFILIM (edit) =====
+const screenProfileEdit = document.getElementById("screen-profile-edit");
+const settingsProfileRow = document.getElementById("settingsProfileRow");
+
+const editPhoneRow    = document.getElementById("editPhoneRow");
+const editEmailRow    = document.getElementById("editEmailRow");
+const editPasswordRow = document.getElementById("editPasswordRow");
+
+const profilePhoneValue = document.getElementById("profilePhoneValue");
+const profileEmailValue = document.getElementById("profileEmailValue");
+
+const profileEditBackdrop = document.getElementById("profileEditBackdrop");
+const profileEditSheet    = document.getElementById("profileEditSheet");
+const profileEditTitle    = document.getElementById("profileEditTitle");
+const profileEditBody     = document.getElementById("profileEditBody");
+const profileEditCancel   = document.getElementById("profileEditCancel");
+const profileEditSave     = document.getElementById("profileEditSave");
 
     const settingsLangRow   = document.getElementById("settingsLangRow");
     const screenLanguage    = document.getElementById("screen-language");
@@ -4654,6 +4814,72 @@ if (homeCategoryGrid && !homeCategoryGrid.dataset.bound) {
       } catch { return ""; }
     }
 
+    // ================== PROFILIM (localStorage, ready for DB) ==================
+function loadProfileFromStorage(){
+  try{
+    const raw = localStorage.getItem(PROFILE_KEY);
+    if (raw) return JSON.parse(raw);
+  }catch(e){}
+  return {
+    phone: "",
+    email: "",
+    emailVerified: false,
+    passwordHash: "" // demo flag, later real hash in DB
+  };
+}
+function saveProfileToStorage(profile){
+  try{ localStorage.setItem(PROFILE_KEY, JSON.stringify(profile)); } catch {}
+}
+let profileState = loadProfileFromStorage();
+
+function renderProfileEditValues(){
+  if (profilePhoneValue) profilePhoneValue.textContent = profileState.phone || "—";
+  if (profileEmailValue) {
+    const emailTxt = profileState.email || "—";
+    const badge = profileState.email
+      ? (profileState.emailVerified ? " ✅" : " (tasdiqlanmagan)")
+      : "";
+    profileEmailValue.textContent = emailTxt + badge;
+  }
+}
+
+// ----- Sheet open/close -----
+function openProfileSheet(title, html, onSave){
+  if (!profileEditSheet || !profileEditBackdrop) return;
+
+  if (profileEditTitle) profileEditTitle.textContent = title;
+  if (profileEditBody)  profileEditBody.innerHTML = html;
+
+  profileEditSheet.classList.remove("hidden");
+  profileEditBackdrop.classList.remove("hidden");
+
+  // store callback
+  if (profileEditSave) profileEditSave._onSave = onSave;
+}
+
+function closeProfileSheet(){
+  if (!profileEditSheet || !profileEditBackdrop) return;
+  profileEditSheet.classList.add("hidden");
+  profileEditBackdrop.classList.add("hidden");
+  if (profileEditSave) profileEditSave._onSave = null;
+}
+
+if (profileEditBackdrop && !profileEditBackdrop.dataset.bound) {
+  profileEditBackdrop.dataset.bound = "1";
+  profileEditBackdrop.addEventListener("click", closeProfileSheet);
+}
+if (profileEditCancel && !profileEditCancel.dataset.bound) {
+  profileEditCancel.dataset.bound = "1";
+  profileEditCancel.addEventListener("click", closeProfileSheet);
+}
+if (profileEditSave && !profileEditSave.dataset.bound) {
+  profileEditSave.dataset.bound = "1";
+  profileEditSave.addEventListener("click", () => {
+    if (typeof profileEditSave._onSave === "function") profileEditSave._onSave();
+  });
+}
+// ================== /PROFILIM ==================
+    
     function loadFavoritesFromStorage() {
       try {
         const raw = localStorage.getItem(FAVORITES_KEY);
@@ -4927,6 +5153,7 @@ function toggleShopFav(shopId){
       myShop: screenMyShop,
       shopView: screenShopView,
       blocks: screenBlocks,
+      profileEdit: screenProfileEdit,
     };
 
     function showScreen(name, opts = {}) {
@@ -4995,7 +5222,8 @@ if (bottomNav) bottomNav.classList.toggle("nav-hidden", hideNavScreens.has(name)
 
       updateBackButtonVisibility();
     }
-
+      if (name === "profileEdit") renderProfileEditValues(); 
+    
     function popPlusBtn() {
   const addBtn = document.getElementById("navAddBtn");
   if (!addBtn) return;
@@ -5894,6 +6122,111 @@ if (sellerCard && !sellerCard.dataset.bound) {
     if (settingsBusinessRow)  settingsBusinessRow.addEventListener("click", () => showScreen("business"));
     if (settingsAdminRow)     settingsAdminRow.addEventListener("click", () => showScreen("admin"));
     if (settingsMyAdsRow)     settingsMyAdsRow.addEventListener("click", () => showScreen("myAds"));
+
+    // ===== Profilim open =====
+if (settingsProfileRow && !settingsProfileRow.dataset.bound) {
+  settingsProfileRow.dataset.bound = "1";
+  settingsProfileRow.addEventListener("click", () => {
+    renderProfileEditValues();
+    showScreen("profileEdit");
+  });
+}
+
+// ===== Profilim actions =====
+if (editPhoneRow && !editPhoneRow.dataset.bound) {
+  editPhoneRow.dataset.bound = "1";
+  editPhoneRow.addEventListener("click", () => {
+    openProfileSheet(
+      "Telefon raqamini o‘zgartirish",
+      `
+        <input id="phoneInput" class="profile-input" placeholder="+998 90 123 45 67" value="${profileState.phone || ""}"/>
+        <div class="profile-help">Keyin server bo‘lsa — SMS tasdiqlash bo‘ladi.</div>
+      `,
+      () => {
+        const val = (document.getElementById("phoneInput")?.value || "").trim();
+        profileState.phone = val;
+        saveProfileToStorage(profileState);
+        renderProfileEditValues();
+        showToast("Telefon saqlandi", "✅");
+        closeProfileSheet();
+      }
+    );
+  });
+}
+
+if (editEmailRow && !editEmailRow.dataset.bound) {
+  editEmailRow.dataset.bound = "1";
+  editEmailRow.addEventListener("click", () => {
+    const verifiedText = (profileState.email && profileState.emailVerified) ? "✅ Tasdiqlangan" : "Tasdiqlash";
+
+    openProfileSheet(
+      "Elektron pochta",
+      `
+        <div class="profile-row">
+          <input id="emailInput" class="profile-input" placeholder="example@mail.com" value="${profileState.email || ""}"/>
+          <button id="verifyEmailBtn" class="profile-mini-btn" type="button">${verifiedText}</button>
+        </div>
+        <div class="profile-help">Hozircha demo. Serverda kod yuborib tasdiqlaymiz.</div>
+      `,
+      () => {
+        const val = (document.getElementById("emailInput")?.value || "").trim();
+        profileState.email = val;
+        profileState.emailVerified = false; // email changed => not verified
+        saveProfileToStorage(profileState);
+        renderProfileEditValues();
+        showToast("Email saqlandi", "✅");
+        closeProfileSheet();
+      }
+    );
+
+    // bind verify button (demo)
+    setTimeout(() => {
+      const btn = document.getElementById("verifyEmailBtn");
+      if (!btn || btn.dataset.bound) return;
+      btn.dataset.bound = "1";
+
+      btn.addEventListener("click", () => {
+        const val = (document.getElementById("emailInput")?.value || "").trim();
+        if (!val) return showToast("Avval email kiriting", "⚠️");
+
+        profileState.email = val;
+        profileState.emailVerified = true; // demo verify
+        saveProfileToStorage(profileState);
+        renderProfileEditValues();
+        showToast("Email tasdiqlandi (demo)", "✅");
+        closeProfileSheet();
+      });
+    }, 0);
+  });
+}
+
+if (editPasswordRow && !editPasswordRow.dataset.bound) {
+  editPasswordRow.dataset.bound = "1";
+  editPasswordRow.addEventListener("click", () => {
+    openProfileSheet(
+      "Parolni o‘zgartirish",
+      `
+        <input id="pass1" class="profile-input" type="password" placeholder="Yangi parol"/>
+        <div style="height:10px"></div>
+        <input id="pass2" class="profile-input" type="password" placeholder="Qayta kiriting"/>
+        <div class="profile-help">Hozircha demo. Serverda hash qilib DBga yoziladi.</div>
+      `,
+      () => {
+        const p1 = document.getElementById("pass1")?.value || "";
+        const p2 = document.getElementById("pass2")?.value || "";
+
+        if (!p1 || p1.length < 6) return showToast("Parol kamida 6 ta belgi", "⚠️");
+        if (p1 !== p2) return showToast("Parollar mos emas", "⚠️");
+
+        profileState.passwordHash = "local_demo_set";
+        saveProfileToStorage(profileState);
+
+        showToast("Parol o‘zgartirildi (demo)", "✅");
+        closeProfileSheet();
+      }
+    );
+  });
+}
 
     function applySavedProfilePhoto() {
       if (!profileAvatar) return;
