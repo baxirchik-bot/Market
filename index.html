@@ -4875,14 +4875,22 @@ function openProfileSheet(title, html, onSave){
   profileEditSheet.classList.remove("hidden");
   profileEditBackdrop.classList.remove("hidden");
 
+  // ✅ ВОТ ЭТО ДОБАВЬ
+  document.body.classList.add("sheet-open");
+
   // store callback
   if (profileEditSave) profileEditSave._onSave = onSave;
 }
 
 function closeProfileSheet(){
   if (!profileEditSheet || !profileEditBackdrop) return;
+
   profileEditSheet.classList.add("hidden");
   profileEditBackdrop.classList.add("hidden");
+
+  // ✅ И ВОТ ЭТО ДОБАВЬ
+  document.body.classList.remove("sheet-open");
+
   if (profileEditSave) profileEditSave._onSave = null;
 }
 
