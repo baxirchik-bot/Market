@@ -3035,6 +3035,20 @@ body.sheet-open .bottom-nav{ display:none !important; }
   pointer-events: none;
   transition: transform .22s ease, opacity .22s ease;
 }
+
+    /* Баннер всегда ровно по ширине блока */
+.promo-banner{
+  width: 100%;
+  overflow: hidden;
+  border-radius: 16px;   /* если у тебя закругление */
+}
+
+/* Картинка не растягивается и не съезжает */
+.promo-banner img{
+  width: 100%;
+  height: auto;
+  display: block;
+}
     
   @media (max-width: 480px) {
     body {
