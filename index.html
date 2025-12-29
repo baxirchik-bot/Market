@@ -3347,40 +3347,60 @@ body.sheet-open .bottom-nav{
 /* Когда открыт chatRoomSheetBackdrop (как и другие sheet), можно прятать нижнее меню */
 body.sheet-open .bottom-nav{ display:none !important; }
 
-    /* ===== CHAT FULLSCREEN FORCE ===== */
-#screen-chat.active{
-  position: fixed !important;
-  inset: 0 !important;
-  z-index: 9999 !important;
+    /* ===== CHAT FULLSCREEN (Telegram-like) ===== */
 
-  display: flex !important;
-  flex-direction: column !important;
-  overflow: hidden !important;
-
-  padding-bottom: env(safe-area-inset-bottom);
+/* чтобы экран чата не залезал под шапку */
+#screen-chat{
+  padding-top: var(--app-header-h, 72px);
+  padding-bottom: var(--bottom-nav-h, 88px);
+  height: 100%;
 }
 
-/* сообщения скроллятся */
-#screen-chat.active #chatMessages{
-  flex: 1 !important;
-  overflow-y: auto !important;
+/* общий контейнер чата */
+#screen-chat .chat-wrap{
+  height: calc(100vh - var(--app-header-h, 72px) - var(--bottom-nav-h, 88px));
+  display: flex;
+  flex-direction: column;
+}
+
+/* каждая “вьюха” (список / комната) занимает всю высоту */
+#screen-chat .chat-view{
+  height: 100%;
+  display: none;
+  flex-direction: column;
+  min-height: 0; /* важно для прокрутки внутри */
+}
+
+#screen-chat .chat-view.active{
+  display: flex;
+}
+
+/* верхняя панель в комнате — закрепляем */
+#screen-chat .chat-room-topbar{
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: rgba(241,244,255,.92);
+  backdrop-filter: blur(10px);
+}
+
+/* сообщения занимают всё пространство и скроллятся */
+#screen-chat .chat-messages{
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding: 12px 12px calc(90px + env(safe-area-inset-bottom)) !important;
+  padding-bottom: 12px;
 }
 
-/* поле ввода всегда внизу */
-#screen-chat.active .chat-input-wrap{
-  position: fixed !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-
-  padding: 10px 12px calc(10px + env(safe-area-inset-bottom)) !important;
-  background: rgba(241,244,255,.92) !important;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-
-  border-top: 1px solid rgba(15,23,42,.06) !important;
+/* поле ввода — всегда внизу как в Telegram */
+#screen-chat .chat-composer-wrap{
+  position: sticky;
+  bottom: 0;
+  z-index: 6;
+  background: rgba(241,244,255,.92);
+  backdrop-filter: blur(10px);
+  padding-bottom: env(safe-area-inset-bottom);
 }
     
   @media (max-width: 480px) {
@@ -4961,6 +4981,20 @@ const chatActionReport = document.getElementById("chatActionReport");
       }, { passive: true });
     }
 
+    // ===== APP INSETS (header + bottom nav heights) =====
+function setAppInsetsVars(){
+  try{
+    const hh = appHeader ? Math.round(appHeader.getBoundingClientRect().height) : 0;
+    const nh = bottomNav ? Math.round(bottomNav.getBoundingClientRect().height) : 0;
+
+    document.documentElement.style.setProperty("--app-header-h", hh + "px");
+    document.documentElement.style.setProperty("--bottom-nav-h", nh + "px");
+  } catch {}
+}
+
+setAppInsetsVars();
+window.addEventListener("resize", setAppInsetsVars);
+    
     // lightbox
     let lightboxImages = [];
     let lightboxIndex  = 0;
