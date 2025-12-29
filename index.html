@@ -3347,53 +3347,6 @@ body.sheet-open .bottom-nav{
 /* Когда открыт chatRoomSheetBackdrop (как и другие sheet), можно прятать нижнее меню */
 body.sheet-open .bottom-nav{ display:none !important; }
 
-    /* ================= CHAT FULLSCREEN ================= */
-
-/* Когда открыт ROOM (переписка) */
-#screen-chat.chat-thread-mode {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-
-  display: flex;
-  flex-direction: column;
-
-  background: #f1f4ff;
-  overflow: hidden;
-}
-
-/* Контейнер ROOM — колонка */
-#screen-chat.chat-thread-mode #chatRoomView {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-/* Сообщения — отдельный скролл */
-#screen-chat.chat-thread-mode .chat-messages {
-  flex: 1;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-
-  padding-bottom: calc(90px + env(safe-area-inset-bottom));
-}
-
-/* Обёртка поля ввода — всегда внизу */
-#screen-chat.chat-thread-mode .chat-composer-wrap {
-  position: sticky;
-  bottom: 0;
-  left: 0;
-  right: 0;
-
-  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
-  background: rgba(241,244,255,.95);
-
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-
-  border-top: 1px solid rgba(15,23,42,.06);
-}
-
     /* ===== CHAT FULLSCREEN FORCE ===== */
 #screen-chat.active{
   position: fixed !important;
