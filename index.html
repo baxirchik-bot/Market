@@ -5427,7 +5427,6 @@ function toggleShopFav(shopId){
       adDetails: screenAdDetails,
       profile: screenProfile,
       promo: screenPromo,
-      chat: screenChat,
       history: screenHistory,
       admin: screenAdmin,
       newAd1: screenNewAd1,
@@ -6455,14 +6454,23 @@ async function apiMarkRead(threadId){
 let chatCurrentThreadId = null;
 
 function chatShowThreads(){
+  // ✅ показываем экран списка чатов (меню должно быть видно)
+  showScreen("chatList", { push:false });
+
   if (chatThreadsView) chatThreadsView.classList.add("active");
   if (chatRoomView) chatRoomView.classList.remove("active");
+
   chatCurrentThreadId = null;
   renderThreads();
 }
+  
 function chatShowRoom(threadId){
+  // ✅ открываем режим переписки (меню должно скрыться)
+  showScreen("chat", { push:false });
+
   if (chatThreadsView) chatThreadsView.classList.remove("active");
   if (chatRoomView) chatRoomView.classList.add("active");
+
   chatCurrentThreadId = threadId;
 
   const t = getThreadById(threadId);
@@ -6471,7 +6479,6 @@ function chatShowRoom(threadId){
     if (chatRoomTitle) chatRoomTitle.textContent = t.peerName || "Chat";
     if (chatRoomStatus) chatRoomStatus.textContent = t.muted ? "muted" : "online";
 
-    // mark read
     t.unread = 0;
     upsertThread(t);
     apiMarkRead(threadId).catch(()=>{});
@@ -6899,16 +6906,6 @@ function bindChatUI(){
 // IMPORTANT: вызывать bindChatUI() один раз при старте
 bindChatUI();
 
-// Когда открываем screen "chat" — показываем threads по умолчанию
-// (чтобы всегда красиво стартовало)
-const _oldShowScreen = showScreen;
-showScreen = function(name, opts = {}){
-  _oldShowScreen(name, opts);
-  if (name === "chat") {
-    // если уже есть открытый диалог — оставляем, иначе список
-    if (!chatCurrentThreadId) chatShowThreads();
-  }
-};
 // ================== /CHAT (PRO) ==================
 
     const settingsAdminRow  = document.getElementById("settingsAdminRow");
