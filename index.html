@@ -3015,6 +3015,26 @@ body.sheet-open .bottom-nav{ display:none !important; }
 .big-search-btn:active{
   transform: scale(.98);
 }
+
+    /* ===== PLUS BUTTON POP ANIMATION ===== */
+.nav-add-btn{
+  transform-origin: 50% 80%;
+  animation: navAddPop .45s cubic-bezier(.2,.9,.2,1) both;
+}
+
+@keyframes navAddPop{
+  0%   { transform: translateY(8px) scale(.72); opacity: 0; }
+  60%  { transform: translateY(-2px) scale(1.05); opacity: 1; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+    /* ===== HIDE BOTTOM NAV ON NEW AD SCREENS ===== */
+.bottom-nav.nav-hidden{
+  transform: translateY(120%);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform .22s ease, opacity .22s ease;
+}
     
   @media (max-width: 480px) {
     body {
@@ -4304,9 +4324,9 @@ if (homeCategoryGrid && !homeCategoryGrid.dataset.bound) {
     // Bottom nav
     const navButtons        = document.querySelectorAll(".nav-btn");
     const navAddBtn = document.getElementById("navAddBtn");
+    const bottomNav = document.querySelector(".bottom-nav");
 
     
-
     // ================== ГЛОБАЛЬНОЕ СОСТОЯНИЕ ==================
     let allAds        = [];
     let filteredAds   = [];
@@ -4835,6 +4855,9 @@ function toggleShopFav(shopId){
         navStack.push(currentScreen);
       }
 
+      const hideNavScreens = new Set(["newAd1","newAd2","newAd3","newAdSuccess"]);
+if (bottomNav) bottomNav.classList.toggle("nav-hidden", hideNavScreens.has(name));
+      
       currentScreen = name;
 
       Object.values(screens).forEach(el => {
@@ -4848,6 +4871,8 @@ function toggleShopFav(shopId){
         target.classList.add("active");
         target.style.display = "block";
       }
+
+      if (name === "home") popPlusBtn();
 
       navButtons.forEach(btn => {
         const s = btn.getAttribute("data-screen");
@@ -4879,6 +4904,15 @@ function toggleShopFav(shopId){
       updateBackButtonVisibility();
     }
 
+    function popPlusBtn() {
+  const addBtn = document.getElementById("navAddBtn");
+  if (!addBtn) return;
+
+  // перезапуск анимации
+  addBtn.style.animation = "none";
+  void addBtn.offsetWidth;
+  addBtn.style.animation = "navAddPop .45s cubic-bezier(.2,.9,.2,1) both";
+}
       
     // ===== Shop View =====
     let currentShop = null;
