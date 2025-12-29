@@ -3188,6 +3188,164 @@ body.sheet-open .bottom-nav{
 .bottom-nav{
   transition: transform .25s ease, opacity .2s ease !important;
 }
+
+    /* ================== CHAT UI ================== */
+.chat-wrap{ width:100%; }
+
+.chat-view{ display:none; }
+.chat-view.active{ display:block; }
+
+.chat-topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 12px 14px;
+}
+.chat-topbar-title{ font-weight:900; font-size:18px; }
+.chat-topbar-btn{
+  border:none; background:#eaf1ff; font-weight:900;
+  border-radius:12px; padding:8px 10px;
+}
+
+.chat-search{ padding: 0 14px 10px; }
+.chat-search input{
+  width:100%; border:none; outline:none;
+  background:#f1f4ff; padding:12px 12px; border-radius:14px;
+  font-weight:700;
+}
+
+.chat-threads{ padding: 0 10px 16px; display:flex; flex-direction:column; gap:10px; }
+.chat-thread{
+  display:flex; gap:12px; align-items:center;
+  padding: 12px 12px;
+  background: rgba(255,255,255,0.75);
+  border-radius: 18px;
+  box-shadow: 0 10px 25px rgba(2,6,23,0.06);
+}
+.chat-thread-avatar{
+  width:46px; height:46px; border-radius:16px;
+  display:flex; align-items:center; justify-content:center;
+  background:#eaf1ff; font-weight:900;
+}
+.chat-thread-main{ flex:1; min-width:0; }
+.chat-thread-title{ font-weight:900; }
+.chat-thread-last{ opacity:.7; font-weight:700; font-size:13px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; margin-top:3px; }
+.chat-thread-meta{
+  display:flex; flex-direction:column; align-items:flex-end; gap:6px;
+  min-width:70px;
+}
+.chat-thread-time{ opacity:.6; font-size:12px; font-weight:800; }
+.chat-thread-badge{
+  background:#2563eb; color:white; font-weight:900; font-size:12px;
+  padding:4px 8px; border-radius:999px;
+}
+.chat-thread-pin{ opacity:.7; font-size:12px; font-weight:900; }
+
+.chat-empty{
+  padding: 26px 16px;
+  text-align:center;
+  opacity:.7;
+  font-weight:800;
+}
+
+/* ROOM */
+.chat-room-topbar{
+  display:flex; align-items:center; gap:10px;
+  padding: 10px 12px;
+}
+.chat-room-back{
+  border:none; background:#eaf1ff;
+  width:40px; height:36px; border-radius:12px; font-size:22px; font-weight:900;
+}
+.chat-room-more{
+  border:none; background:#eaf1ff;
+  width:44px; height:36px; border-radius:12px; font-size:22px; font-weight:900;
+}
+.chat-room-peer{ flex:1; display:flex; align-items:center; gap:10px; min-width:0; }
+.chat-room-avatar{
+  width:42px; height:42px; border-radius:16px;
+  display:flex; align-items:center; justify-content:center;
+  background:#eaf1ff; font-weight:900;
+}
+.chat-room-peerinfo{ min-width:0; }
+.chat-room-title{ font-weight:900; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+.chat-room-status{ font-size:12px; font-weight:800; opacity:.65; margin-top:2px; }
+
+.chat-messages{
+  padding: 10px 12px 90px;
+  display:flex; flex-direction:column; gap:10px;
+}
+.chat-bubble{
+  max-width: 78%;
+  padding: 10px 12px;
+  border-radius: 16px;
+  font-weight:700;
+  position:relative;
+  line-height:1.25;
+  word-wrap:break-word;
+}
+.chat-bubble.me{
+  align-self:flex-end;
+  background:#2563eb;
+  color:white;
+  border-bottom-right-radius: 6px;
+}
+.chat-bubble.other{
+  align-self:flex-start;
+  background: rgba(255,255,255,0.85);
+  border-bottom-left-radius: 6px;
+  box-shadow: 0 10px 25px rgba(2,6,23,0.05);
+}
+.chat-bubble-meta{
+  margin-top:6px;
+  font-size:11px;
+  font-weight:900;
+  opacity:.75;
+  display:flex;
+  gap:6px;
+  align-items:center;
+  justify-content:flex-end;
+}
+.chat-bubble.other .chat-bubble-meta{ justify-content:flex-start; }
+
+.chat-image{
+  width:100%;
+  border-radius: 12px;
+  margin-top: 6px;
+  display:block;
+}
+
+.chat-typing{
+  padding: 0 14px 8px;
+  font-weight:800;
+  opacity:.65;
+  font-size:12px;
+}
+
+.chat-composer{
+  position: sticky;
+  bottom: 64px; /* важно: чтобы над нижним меню */
+  padding: 10px 12px;
+  display:flex; gap:10px; align-items:center;
+  background: rgba(241,244,255,0.9);
+  backdrop-filter: blur(12px);
+  border-top-left-radius: 18px;
+  border-top-right-radius: 18px;
+}
+.chat-attach, .chat-send{
+  border:none; background:#eaf1ff;
+  width:44px; height:44px; border-radius:14px;
+  font-size:18px; font-weight:900;
+}
+.chat-input{
+  flex:1;
+  border:none; outline:none;
+  background:white;
+  padding: 12px 12px;
+  border-radius: 14px;
+  font-weight:800;
+}
+
+/* Когда открыт chatRoomSheetBackdrop (как и другие sheet), можно прятать нижнее меню */
+body.sheet-open .bottom-nav{ display:none !important; }
     
   @media (max-width: 480px) {
     body {
@@ -3668,16 +3826,87 @@ body.sheet-open .bottom-nav{
       
       <!-- ================= CHAT ================= -->
       <section id="screen-chat" class="screen">
-        <div class="chat-header">
-          <div class="chat-header-title">Sotuvchi bilan chat</div>
-        </div>
+        <!-- CHAT: Threads + Room -->
+<div class="chat-wrap">
 
-        <div id="chatMessages" class="chat-messages"></div>
+  <!-- 1) THREADS (список диалогов) -->
+  <div id="chatThreadsView" class="chat-view active">
+    <div class="chat-topbar">
+      <div class="chat-topbar-title">Chat</div>
+      <button id="chatNewDialogBtn" class="chat-topbar-btn" type="button">＋</button>
+    </div>
 
-        <div class="chat-input-row">
-          <input id="chatInput" type="text" class="chat-input" placeholder="Xabar yozish..." />
-          <button id="chatSendBtn" class="chat-send-btn">➤</button>
+    <div class="chat-search">
+      <input id="chatThreadsSearch" type="text" placeholder="Qidirish..." />
+    </div>
+
+    <div id="chatThreadsList" class="chat-threads"></div>
+
+    <div id="chatThreadsEmpty" class="chat-empty" style="display:none;">
+      Hozircha chat yo‘q
+    </div>
+  </div>
+
+  <!-- 2) ROOM (переписка) -->
+  <div id="chatRoomView" class="chat-view">
+    <div class="chat-room-topbar">
+      <button id="chatRoomBackBtn" class="chat-room-back" type="button">‹</button>
+
+      <div class="chat-room-peer">
+        <div id="chatRoomAvatar" class="chat-room-avatar">S</div>
+        <div class="chat-room-peerinfo">
+          <div id="chatRoomTitle" class="chat-room-title">Sotuvchi</div>
+          <div id="chatRoomStatus" class="chat-room-status">online</div>
         </div>
+      </div>
+
+      <button id="chatRoomMoreBtn" class="chat-room-more" type="button">⋯</button>
+    </div>
+
+    <div id="chatMessages" class="chat-messages"></div>
+
+    <div id="chatTyping" class="chat-typing" style="display:none;">Sotuvchi yozmoqda…</div>
+
+    <div class="chat-composer">
+      <input id="chatFileInput" type="file" accept="image/*" style="display:none;" />
+      <button id="chatAttachBtn" class="chat-attach" type="button">📎</button>
+
+      <input id="chatInput" class="chat-input" type="text" placeholder="Xabar yozing…" />
+
+      <button id="chatSendBtn" class="chat-send" type="button">➤</button>
+    </div>
+  </div>
+
+  <!-- 3) ROOM ACTION SHEET -->
+  <div id="chatRoomSheetBackdrop" class="store-sheet-backdrop">
+    <div class="store-sheet">
+      <div class="store-sheet-title" id="chatRoomSheetTitle">Chat</div>
+
+      <button id="chatActionPin" class="store-sheet-item" type="button">
+        <span class="store-sheet-icon share">📌</span> Pin / Unpin
+      </button>
+
+      <button id="chatActionMute" class="store-sheet-item" type="button">
+        <span class="store-sheet-icon share">🔕</span> Mute / Unmute
+      </button>
+
+      <button id="chatActionClear" class="store-sheet-item" type="button">
+        <span class="store-sheet-icon warn">🧹</span> Chatni tozalash
+      </button>
+
+      <button id="chatActionDelete" class="store-sheet-item" type="button">
+        <span class="store-sheet-icon warn">🗑️</span> Chatni o‘chirish
+      </button>
+
+      <button id="chatActionReport" class="store-sheet-item" type="button">
+        <span class="store-sheet-icon warn">⚠️</span> Shikoyat
+      </button>
+
+      <button id="chatRoomSheetCancel" class="store-sheet-cancel" type="button">Bekor qilish</button>
+    </div>
+  </div>
+
+</div>
       </section>
 
       <!-- ================= HISTORY ================= -->
@@ -4576,6 +4805,35 @@ if (homeCategoryGrid && !homeCategoryGrid.dataset.bound) {
     const chatMessagesEl    = document.getElementById("chatMessages");
     const chatInput         = document.getElementById("chatInput");
     const chatSendBtn       = document.getElementById("chatSendBtn");
+
+    // ===== Chat NEW DOM =====
+const chatThreadsView = document.getElementById("chatThreadsView");
+const chatRoomView = document.getElementById("chatRoomView");
+
+const chatThreadsList = document.getElementById("chatThreadsList");
+const chatThreadsEmpty = document.getElementById("chatThreadsEmpty");
+const chatThreadsSearch = document.getElementById("chatThreadsSearch");
+const chatNewDialogBtn = document.getElementById("chatNewDialogBtn");
+
+const chatRoomBackBtn = document.getElementById("chatRoomBackBtn");
+const chatRoomMoreBtn = document.getElementById("chatRoomMoreBtn");
+const chatRoomAvatar = document.getElementById("chatRoomAvatar");
+const chatRoomTitle = document.getElementById("chatRoomTitle");
+const chatRoomStatus = document.getElementById("chatRoomStatus");
+const chatTyping = document.getElementById("chatTyping");
+
+const chatAttachBtn = document.getElementById("chatAttachBtn");
+const chatFileInput = document.getElementById("chatFileInput");
+
+// Sheet
+const chatRoomSheetBackdrop = document.getElementById("chatRoomSheetBackdrop");
+const chatRoomSheetTitle = document.getElementById("chatRoomSheetTitle");
+const chatRoomSheetCancel = document.getElementById("chatRoomSheetCancel");
+const chatActionPin = document.getElementById("chatActionPin");
+const chatActionMute = document.getElementById("chatActionMute");
+const chatActionClear = document.getElementById("chatActionClear");
+const chatActionDelete = document.getElementById("chatActionDelete");
+const chatActionReport = document.getElementById("chatActionReport");
 
     // Bottom nav
     const navButtons        = document.querySelectorAll(".nav-btn");
@@ -6086,38 +6344,566 @@ if (sellerCard && !sellerCard.dataset.bound) {
       showToast("E’lon yuqoriga ko‘tarildi!", "TOP bo‘limida ko‘rinadi");
     });
 
-    // chat
-    function renderChat() {
-      if (!chatMessagesEl) return;
-      chatMessagesEl.innerHTML = "";
-      chatHistory.forEach(msg => {
-        const div = document.createElement("div");
-        div.className = "chat-message " + (msg.from === "me" ? "me" : "other");
-        div.textContent = msg.text;
-        chatMessagesEl.appendChild(div);
-      });
-      chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+    // ================== CHAT (PRO) + PREP FOR DB ==================
+const CHAT_STORAGE_KEY = "zalvo_chat_threads_v1";
+
+// Заглушки под будущую БД
+const CHAT_API_BASE = "https://YOUR_SERVER.com/api/chat"; // потом заменим
+const CHAT_USE_API = false; // сейчас false (локально), потом true
+
+function nowTs(){ return Date.now(); }
+function fmtTime(ts){
+  try{
+    const d = new Date(ts);
+    const hh = String(d.getHours()).padStart(2,"0");
+    const mm = String(d.getMinutes()).padStart(2,"0");
+    return `${hh}:${mm}`;
+  } catch { return ""; }
+}
+function initials(name){
+  const s = String(name||"").trim();
+  if (!s) return "Z";
+  return s[0].toUpperCase();
+}
+
+// ===== Local storage model =====
+// thread = {
+//   id, peerName, peerId, peerType: "shop"|"user",
+//   pinned, muted, unread,
+//   lastMessage, lastTs,
+//   messages: [{id, from:"me"|"other", text, ts, status:"sent"|"read", imageDataUrl?}]
+// }
+
+function loadThreads(){
+  try{
+    const raw = localStorage.getItem(CHAT_STORAGE_KEY);
+    const arr = JSON.parse(raw || "[]");
+    return Array.isArray(arr) ? arr : [];
+  } catch { return []; }
+}
+function saveThreads(arr){
+  try{ localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(arr)); } catch {}
+}
+function upsertThread(thread){
+  const threads = loadThreads();
+  const i = threads.findIndex(t => String(t.id) === String(thread.id));
+  if (i >= 0) threads[i] = thread;
+  else threads.unshift(thread);
+  saveThreads(threads);
+}
+function getThreadById(id){
+  const threads = loadThreads();
+  return threads.find(t => String(t.id) === String(id)) || null;
+}
+function deleteThread(id){
+  const threads = loadThreads().filter(t => String(t.id) !== String(id));
+  saveThreads(threads);
+}
+function clearThreadMessages(id){
+  const t = getThreadById(id);
+  if (!t) return;
+  t.messages = [];
+  t.lastMessage = "";
+  t.lastTs = nowTs();
+  t.unread = 0;
+  upsertThread(t);
+}
+
+// ===== API stubs (ready for DB) =====
+async function apiGetThreads(){
+  if (!CHAT_USE_API) return loadThreads();
+  const r = await fetch(`${CHAT_API_BASE}/threads`);
+  if (!r.ok) throw new Error("threads_failed");
+  return await r.json();
+}
+async function apiGetMessages(threadId){
+  if (!CHAT_USE_API) {
+    const t = getThreadById(threadId);
+    return t?.messages || [];
+  }
+  const r = await fetch(`${CHAT_API_BASE}/threads/${threadId}/messages`);
+  if (!r.ok) throw new Error("messages_failed");
+  return await r.json();
+}
+async function apiSendMessage(threadId, payload){
+  // payload: {text, imageBase64?}
+  if (!CHAT_USE_API) {
+    // локально “отправили”
+    return { ok:true, serverId: "local_" + nowTs() };
+  }
+  const r = await fetch(`${CHAT_API_BASE}/threads/${threadId}/send`,{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify(payload)
+  });
+  if (!r.ok) throw new Error("send_failed");
+  return await r.json();
+}
+async function apiMarkRead(threadId){
+  if (!CHAT_USE_API) return true;
+  await fetch(`${CHAT_API_BASE}/threads/${threadId}/read`, { method:"POST" });
+  return true;
+}
+
+// ===== UI state =====
+let chatCurrentThreadId = null;
+
+function chatShowThreads(){
+  if (chatThreadsView) chatThreadsView.classList.add("active");
+  if (chatRoomView) chatRoomView.classList.remove("active");
+  chatCurrentThreadId = null;
+  renderThreads();
+}
+function chatShowRoom(threadId){
+  if (chatThreadsView) chatThreadsView.classList.remove("active");
+  if (chatRoomView) chatRoomView.classList.add("active");
+  chatCurrentThreadId = threadId;
+
+  const t = getThreadById(threadId);
+  if (t){
+    if (chatRoomAvatar) chatRoomAvatar.textContent = initials(t.peerName);
+    if (chatRoomTitle) chatRoomTitle.textContent = t.peerName || "Chat";
+    if (chatRoomStatus) chatRoomStatus.textContent = t.muted ? "muted" : "online";
+
+    // mark read
+    t.unread = 0;
+    upsertThread(t);
+    apiMarkRead(threadId).catch(()=>{});
+  }
+
+  renderRoomMessages();
+  scrollChatToBottom();
+}
+
+function sortThreads(arr){
+  // pinned first, then by lastTs desc
+  return [...arr].sort((a,b)=>{
+    const ap = a.pinned ? 1 : 0;
+    const bp = b.pinned ? 1 : 0;
+    if (ap !== bp) return bp - ap;
+    return (b.lastTs||0) - (a.lastTs||0);
+  });
+}
+
+function renderThreads(){
+  if (!chatThreadsList || !chatThreadsEmpty) return;
+
+  const q = (chatThreadsSearch?.value || "").toLowerCase().trim();
+  let threads = loadThreads();
+
+  if (q){
+    threads = threads.filter(t => {
+      const text = `${t.peerName||""} ${t.lastMessage||""}`.toLowerCase();
+      return text.includes(q);
+    });
+  }
+
+  threads = sortThreads(threads);
+
+  chatThreadsList.innerHTML = "";
+  if (!threads.length){
+    chatThreadsEmpty.style.display = "block";
+    return;
+  }
+  chatThreadsEmpty.style.display = "none";
+
+  threads.forEach(t=>{
+    const row = document.createElement("div");
+    row.className = "chat-thread";
+
+    const pin = t.pinned ? `<div class="chat-thread-pin">📌</div>` : "";
+    const badge = (t.unread||0) > 0 ? `<div class="chat-thread-badge">${t.unread}</div>` : "";
+
+    row.innerHTML = `
+      <div class="chat-thread-avatar">${initials(t.peerName)}</div>
+      <div class="chat-thread-main">
+        <div class="chat-thread-title">${t.peerName || "Chat"} ${pin}</div>
+        <div class="chat-thread-last">${t.lastMessage || "—"}</div>
+      </div>
+      <div class="chat-thread-meta">
+        <div class="chat-thread-time">${t.lastTs ? fmtTime(t.lastTs) : ""}</div>
+        ${badge}
+      </div>
+    `;
+
+    row.addEventListener("click", ()=> chatShowRoom(t.id));
+    chatThreadsList.appendChild(row);
+  });
+}
+
+function renderRoomMessages(){
+  if (!chatMessagesEl || !chatCurrentThreadId) return;
+
+  const t = getThreadById(chatCurrentThreadId);
+  const msgs = t?.messages || [];
+  chatMessagesEl.innerHTML = "";
+
+  msgs.forEach(m=>{
+    const b = document.createElement("div");
+    b.className = "chat-bubble " + (m.from === "me" ? "me" : "other");
+
+    const safeText = (m.text || "").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    const imgHtml = m.imageDataUrl ? `<img class="chat-image" src="${m.imageDataUrl}" alt="image" />` : "";
+
+    const status = m.from === "me" ? (m.status === "read" ? "✓✓" : "✓") : "";
+    b.innerHTML = `
+      <div>${safeText}</div>
+      ${imgHtml}
+      <div class="chat-bubble-meta">
+        <span>${fmtTime(m.ts)}</span>
+        ${status ? `<span>${status}</span>` : ``}
+      </div>
+    `;
+    chatMessagesEl.appendChild(b);
+  });
+}
+
+function scrollChatToBottom(){
+  if (!chatMessagesEl) return;
+  chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+}
+
+function ensureDemoThreadIfEmpty(){
+  const threads = loadThreads();
+  if (threads.length) return;
+
+  const demo = {
+    id: "t_demo_1",
+    peerName: "Sotuvchi",
+    peerId: "seller_1",
+    peerType: "user",
+    pinned: false,
+    muted: false,
+    unread: 1,
+    lastMessage: "Assalomu alaykum! Savollaringiz bormi? 🙂",
+    lastTs: nowTs()-60000,
+    messages: [
+      { id:"m1", from:"other", text:"Assalomu alaykum! Savollaringiz bormi? 🙂", ts: nowTs()-60000, status:"read" }
+    ]
+  };
+  saveThreads([demo]);
+}
+
+// ===== open chat from Ad =====
+function openChatForAd(ad){
+  // создаём/находим тред по продавцу (tg/phone)
+  const tg = String(ad?.telegram||"").replace(/^@/,"").toLowerCase().trim();
+  const phone = String(ad?.phone||"").replace(/\s+/g,"").trim();
+  const peerKey = tg ? ("tg_" + tg) : phone ? ("ph_" + phone) : ("seller_unknown");
+
+  const threads = loadThreads();
+  let t = threads.find(x => x.peerId === peerKey);
+
+  if (!t){
+    const peerName = tg ? ("@" + tg) : (phone || "Sotuvchi");
+    t = {
+      id: "t_" + peerKey,
+      peerName,
+      peerId: peerKey,
+      peerType: "user",
+      pinned:false,
+      muted:false,
+      unread:0,
+      lastMessage:"",
+      lastTs: nowTs(),
+      messages:[]
+    };
+
+    // приветствие
+    t.messages.push({
+      id:"m_welcome_" + nowTs(),
+      from:"other",
+      text:"Assalomu alaykum! Xush kelibsiz 🙂",
+      ts: nowTs(),
+      status:"read"
+    });
+    t.lastMessage = "Assalomu alaykum! Xush kelibsiz 🙂";
+    t.lastTs = nowTs();
+    upsertThread(t);
+  }
+
+  // открыть экран чата и сразу комнату
+  showScreen("chat");
+  chatShowRoom(t.id);
+}
+
+// ===== send =====
+async function sendMessage(text, imageDataUrl=null){
+  if (!chatCurrentThreadId) return;
+
+  const t = getThreadById(chatCurrentThreadId);
+  if (!t) return;
+
+  const msg = {
+    id: "m_" + nowTs(),
+    from: "me",
+    text: String(text||"").trim(),
+    ts: nowTs(),
+    status: "sent",
+    imageDataUrl: imageDataUrl || null
+  };
+  if (!msg.text && !msg.imageDataUrl) return;
+
+  t.messages.push(msg);
+  t.lastMessage = msg.text ? msg.text : "📷 Rasm";
+  t.lastTs = msg.ts;
+  upsertThread(t);
+
+  renderRoomMessages();
+  renderThreads();
+  scrollChatToBottom();
+
+  // отправка на сервер (когда включим CHAT_USE_API)
+  try{
+    await apiSendMessage(t.id, { text: msg.text, imageBase64: msg.imageDataUrl || null });
+    // имитация "прочитано"
+    setTimeout(()=>{
+      const tt = getThreadById(t.id);
+      if (!tt) return;
+      const last = tt.messages[tt.messages.length-1];
+      if (last && last.from==="me") last.status = "read";
+      upsertThread(tt);
+      if (chatCurrentThreadId === t.id) renderRoomMessages();
+      renderThreads();
+    }, 700);
+  } catch(e){
+    // если сервер упал — оставляем локально, потом синкнем
+    console.warn("send failed, will sync later", e);
+  }
+
+  // имитация ответа продавца (только локально)
+  if (!CHAT_USE_API){
+    if (chatTyping){
+      chatTyping.style.display = "block";
+      setTimeout(()=> chatTyping.style.display = "none", 800);
     }
-    function addChatMessage(from, text) {
-      chatHistory.push({ from, text, ts: Date.now() });
-      renderChat();
-    }
-    function openChatForAd(ad) {
-      if (!chatHistory.length) addChatMessage("seller", "Assalomu alaykum! Savollaringiz bo‘lsa, yozing 🙂");
-      showScreen("chat");
-    }
-    if (chatSendBtn && chatInput) {
-      chatSendBtn.addEventListener("click", () => {
-        const text = (chatInput.value || "").trim();
-        if (!text) return;
-        addChatMessage("me", text);
-        chatInput.value = "";
-        setTimeout(() => addChatMessage("seller", "Xabaringizni oldim, tez orada javob beraman ✅"), 800);
-      });
-      chatInput.addEventListener("keydown", e => {
-        if (e.key === "Enter") { e.preventDefault(); chatSendBtn.click(); }
-      });
-    }
+    setTimeout(()=>{
+      const tt = getThreadById(t.id);
+      if (!tt) return;
+      const reply = {
+        id: "m_other_" + nowTs(),
+        from:"other",
+        text:"Oldim ✅ Tez orada javob beraman.",
+        ts: nowTs(),
+        status:"read"
+      };
+      tt.messages.push(reply);
+      tt.lastMessage = reply.text;
+      tt.lastTs = reply.ts;
+      // unread не увеличиваем, потому что мы в комнате
+      upsertThread(tt);
+      if (chatCurrentThreadId === tt.id) {
+        renderRoomMessages();
+        scrollChatToBottom();
+      }
+      renderThreads();
+    }, 1200);
+  }
+}
+
+// ===== Attach image =====
+function pickImage(){
+  if (!chatFileInput) return;
+  chatFileInput.value = "";
+  chatFileInput.click();
+}
+
+// ===== sheet =====
+function openChatSheet(){
+  if (!chatRoomSheetBackdrop) return;
+  chatRoomSheetBackdrop.classList.add("active");
+  document.body.classList.add("sheet-open");
+  const t = chatCurrentThreadId ? getThreadById(chatCurrentThreadId) : null;
+  if (chatRoomSheetTitle) chatRoomSheetTitle.textContent = t?.peerName || "Chat";
+}
+function closeChatSheet(){
+  if (!chatRoomSheetBackdrop) return;
+  chatRoomSheetBackdrop.classList.remove("active");
+  document.body.classList.remove("sheet-open");
+}
+
+// ===== bind events (once) =====
+function bindChatUI(){
+  ensureDemoThreadIfEmpty();
+
+  if (chatThreadsSearch && !chatThreadsSearch.dataset.bound){
+    chatThreadsSearch.dataset.bound = "1";
+    chatThreadsSearch.addEventListener("input", renderThreads);
+  }
+
+  if (chatRoomBackBtn && !chatRoomBackBtn.dataset.bound){
+    chatRoomBackBtn.dataset.bound = "1";
+    chatRoomBackBtn.addEventListener("click", ()=> chatShowThreads());
+  }
+
+  if (chatRoomMoreBtn && !chatRoomMoreBtn.dataset.bound){
+    chatRoomMoreBtn.dataset.bound = "1";
+    chatRoomMoreBtn.addEventListener("click", (e)=>{
+      e.preventDefault(); e.stopPropagation();
+      openChatSheet();
+    });
+  }
+
+  if (chatRoomSheetCancel && !chatRoomSheetCancel.dataset.bound){
+    chatRoomSheetCancel.dataset.bound = "1";
+    chatRoomSheetCancel.addEventListener("click", (e)=>{
+      e.preventDefault(); e.stopPropagation();
+      closeChatSheet();
+    });
+  }
+
+  if (chatRoomSheetBackdrop && !chatRoomSheetBackdrop.dataset.bound){
+    chatRoomSheetBackdrop.dataset.bound = "1";
+    chatRoomSheetBackdrop.addEventListener("click", (e)=>{
+      if (e.target === chatRoomSheetBackdrop) closeChatSheet();
+    });
+    chatRoomSheetBackdrop.querySelector(".store-sheet")?.addEventListener("click", e=>e.stopPropagation());
+  }
+
+  if (chatActionPin && !chatActionPin.dataset.bound){
+    chatActionPin.dataset.bound = "1";
+    chatActionPin.addEventListener("click", ()=>{
+      const t = chatCurrentThreadId ? getThreadById(chatCurrentThreadId) : null;
+      if (!t) return;
+      t.pinned = !t.pinned;
+      upsertThread(t);
+      renderThreads();
+      closeChatSheet();
+      showToast("Chat yangilandi", t.pinned ? "📌 Pinned" : "Pin olib tashlandi");
+    });
+  }
+
+  if (chatActionMute && !chatActionMute.dataset.bound){
+    chatActionMute.dataset.bound = "1";
+    chatActionMute.addEventListener("click", ()=>{
+      const t = chatCurrentThreadId ? getThreadById(chatCurrentThreadId) : null;
+      if (!t) return;
+      t.muted = !t.muted;
+      upsertThread(t);
+      if (chatRoomStatus) chatRoomStatus.textContent = t.muted ? "muted" : "online";
+      closeChatSheet();
+      showToast("Chat", t.muted ? "🔕 Muted" : "🔔 Unmuted");
+    });
+  }
+
+  if (chatActionClear && !chatActionClear.dataset.bound){
+    chatActionClear.dataset.bound = "1";
+    chatActionClear.addEventListener("click", ()=>{
+      if (!chatCurrentThreadId) return;
+      clearThreadMessages(chatCurrentThreadId);
+      renderRoomMessages();
+      renderThreads();
+      closeChatSheet();
+      showToast("Tozalandi", "Chat ichidagi xabarlar o‘chirildi");
+    });
+  }
+
+  if (chatActionDelete && !chatActionDelete.dataset.bound){
+    chatActionDelete.dataset.bound = "1";
+    chatActionDelete.addEventListener("click", ()=>{
+      if (!chatCurrentThreadId) return;
+      const id = chatCurrentThreadId;
+      deleteThread(id);
+      closeChatSheet();
+      chatShowThreads();
+      showToast("O‘chirildi", "Chat ro‘yxatdan olib tashlandi");
+    });
+  }
+
+  if (chatActionReport && !chatActionReport.dataset.bound){
+    chatActionReport.dataset.bound = "1";
+    chatActionReport.addEventListener("click", ()=>{
+      // пока просто сохраняем жалобу локально (готово под БД)
+      const t = chatCurrentThreadId ? getThreadById(chatCurrentThreadId) : null;
+      if (!t) return;
+      const reports = JSON.parse(localStorage.getItem("zalvo_chat_reports") || "[]");
+      reports.push({ threadId: t.id, peer: t.peerName, ts: nowTs() });
+      localStorage.setItem("zalvo_chat_reports", JSON.stringify(reports));
+      closeChatSheet();
+      showToast("Shikoyat yuborildi", "Adminlar tekshiradi ⚠️");
+    });
+  }
+
+  if (chatAttachBtn && !chatAttachBtn.dataset.bound){
+    chatAttachBtn.dataset.bound = "1";
+    chatAttachBtn.addEventListener("click", (e)=>{
+      e.preventDefault(); e.stopPropagation();
+      pickImage();
+    });
+  }
+
+  if (chatFileInput && !chatFileInput.dataset.bound){
+    chatFileInput.dataset.bound = "1";
+    chatFileInput.addEventListener("change", ()=>{
+      const file = chatFileInput.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e)=>{
+        const url = e.target.result; // base64 dataUrl
+        sendMessage("", url);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  if (chatSendBtn && chatInput && !chatSendBtn.dataset.bound){
+    chatSendBtn.dataset.bound = "1";
+    chatSendBtn.addEventListener("click", ()=>{
+      const text = (chatInput.value || "").trim();
+      chatInput.value = "";
+      sendMessage(text);
+    });
+
+    chatInput.addEventListener("keydown", (e)=>{
+      if (e.key === "Enter"){
+        e.preventDefault();
+        chatSendBtn.click();
+      }
+    });
+  }
+
+  if (chatNewDialogBtn && !chatNewDialogBtn.dataset.bound){
+    chatNewDialogBtn.dataset.bound = "1";
+    chatNewDialogBtn.addEventListener("click", ()=>{
+      // пока демо: создаём новый диалог
+      const id = "t_new_" + nowTs();
+      const t = {
+        id,
+        peerName: "Yangi chat",
+        peerId: "new_" + id,
+        peerType: "user",
+        pinned:false,
+        muted:false,
+        unread:0,
+        lastMessage:"Yangi chat ochildi",
+        lastTs: nowTs(),
+        messages:[{ id:"m0", from:"other", text:"Salom! 🙂", ts: nowTs(), status:"read" }]
+      };
+      upsertThread(t);
+      renderThreads();
+      chatShowRoom(id);
+    });
+  }
+
+  // первичный рендер
+  renderThreads();
+}
+
+// IMPORTANT: вызывать bindChatUI() один раз при старте
+bindChatUI();
+
+// Когда открываем screen "chat" — показываем threads по умолчанию
+// (чтобы всегда красиво стартовало)
+const _oldShowScreen = showScreen;
+showScreen = function(name, opts = {}){
+  _oldShowScreen(name, opts);
+  if (name === "chat") {
+    // если уже есть открытый диалог — оставляем, иначе список
+    if (!chatCurrentThreadId) chatShowThreads();
+  }
+};
+// ================== /CHAT (PRO) ==================
 
     const settingsAdminRow  = document.getElementById("settingsAdminRow");
 
