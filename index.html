@@ -5442,6 +5442,8 @@ function toggleShopFav(shopId){
       shopView: screenShopView,
       blocks: screenBlocks,
       profileEdit: screenProfileEdit,
+      chatList: screenChat,  // список чатов (меню видно)
+      chat: screenChat,      // переписка (меню скрыто)
     };
 
     function showScreen(name, opts = {}) {
@@ -5456,7 +5458,7 @@ function toggleShopFav(shopId){
         navStack.push(currentScreen);
       }
 
-      const hideNavScreens = new Set(["newAd1","newAd2","newAd3","newAdSuccess"]);
+      const hideNavScreens = new Set(["newAd1","newAd2","newAd3","newAdSuccess","chat"]);
 if (bottomNav) bottomNav.classList.toggle("nav-hidden", hideNavScreens.has(name));
       
       currentScreen = name;
@@ -5662,9 +5664,13 @@ hideEls.forEach(el => {
     // bottom nav
     navButtons.forEach(btn => {
       btn.addEventListener("click", () => {
-        const target = btn.getAttribute("data-screen");
-        if (!target) return;
-        showScreen(target, { push: false, resetStack: true });
+        let target = btn.getAttribute("data-screen");
+if (!target) return;
+
+// ✅ если нажали нижнюю вкладку Chat — открываем список, а не переписку
+if (target === "chat") target = "chatList";
+
+showScreen(target, { push: false, resetStack: true });
       });
     });
 
