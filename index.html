@@ -3176,6 +3176,18 @@ body.sheet-open .bottom-nav {
 .bottom-nav {
   transition: transform 0.25s ease;
 }
+
+    /* 100% прячем нижнее меню когда открыт любой sheet */
+body.sheet-open .bottom-nav{
+  transform: translateY(200%) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* плавность */
+.bottom-nav{
+  transition: transform .25s ease, opacity .2s ease !important;
+}
     
   @media (max-width: 480px) {
     body {
