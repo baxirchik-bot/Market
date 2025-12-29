@@ -3049,6 +3049,38 @@ body.sheet-open .bottom-nav{ display:none !important; }
   height: auto;
   display: block;
 }
+
+    .unblock-btn{
+  border: 1px solid #e5e7eb;
+  background:#fff;
+  border-radius: 12px;
+  padding: 8px 12px;
+  font-weight: 700;
+  color:#111827;
+  cursor:pointer;
+}
+.unblock-btn:active{
+  background:#ede9fe;
+  border-color:#c4b5fd;
+  color:#7c3aed;
+}
+
+.blocked-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin:10px 0;
+}
+.blocked-row .left{
+  flex:1;
+  min-width:0;
+}
+.blocked-row .meta{
+  font-size:13px;
+  opacity:.75;
+  margin-top:2px;
+}
     
   @media (max-width: 480px) {
     body {
@@ -3302,6 +3334,12 @@ body.sheet-open .bottom-nav{ display:none !important; }
       <div class="settings-arrow">›</div>
     </button>
 
+    <button id="settingsBlocksRow" class="settings-row">
+  <div class="settings-icon">🚫</div>
+  <div class="settings-title">Bloklar</div>
+  <div class="settings-arrow">›</div>
+</button>
+
     <button id="settingsHistoryRow" class="settings-row">
       <div class="settings-icon">🕒</div>
       <div class="settings-title">Ko‘rish tarixi</div>
@@ -3498,6 +3536,29 @@ body.sheet-open .bottom-nav{ display:none !important; }
         </div>
       </section>
 
+      <section class="screen" id="screen-blocks">
+  <div class="section-title">Bloklar</div>
+
+  <div class="chips-row" id="blocksTabs">
+    <button class="chip chip-filled" data-tab="ads">E’lonlar</button>
+    <button class="chip" data-tab="shops">Do‘konlar</button>
+  </div>
+
+  <div id="blockedAdsBox">
+    <div id="blockedAdsList"></div>
+  </div>
+
+  <div id="blockedShopsBox" style="display:none;">
+    <div id="blockedShopsList"></div>
+  </div>
+
+  <div style="padding:12px 0;">
+    <button id="unblockAllBtn" class="primary-btn" type="button">
+      Hammasini blokdan chiqarish
+    </button>
+  </div>
+</section>
+      
       <!-- ================= CHAT ================= -->
       <section id="screen-chat" class="screen">
         <div class="chat-header">
@@ -4339,6 +4400,17 @@ if (homeCategoryGrid && !homeCategoryGrid.dataset.bound) {
     const navAddBtn = document.getElementById("navAddBtn");
     const bottomNav = document.querySelector(".bottom-nav");
 
+    const screenBlocks = document.getElementById("screen-blocks");
+    const settingsBlocksRow = document.getElementById("settingsBlocksRow");
+
+    const blocksTabs = document.getElementById("blocksTabs");
+    const blockedAdsBox = document.getElementById("blockedAdsBox");
+    const blockedShopsBox = document.getElementById("blockedShopsBox");
+
+    const blockedAdsList = document.getElementById("blockedAdsList");
+    const blockedShopsList = document.getElementById("blockedShopsList");
+
+    const unblockAllBtn = document.getElementById("unblockAllBtn");
     
     // ================== ГЛОБАЛЬНОЕ СОСТОЯНИЕ ==================
     let allAds        = [];
@@ -4854,6 +4926,7 @@ function toggleShopFav(shopId){
       business: screenBusiness,
       myShop: screenMyShop,
       shopView: screenShopView,
+      blocks: screenBlocks,
     };
 
     function showScreen(name, opts = {}) {
@@ -4892,6 +4965,12 @@ if (bottomNav) bottomNav.classList.toggle("nav-hidden", hideNavScreens.has(name)
         btn.classList.toggle("active", s === name);
       });
 
+      if (settingsBlocksRow) {
+  settingsBlocksRow.addEventListener("click", () => showScreen("blocks"));
+}
+      if (name === "blocks") {
+  setBlocksTab(blocksTab || "ads");
+}
       if (screensContainer) screensContainer.scrollTop = 0;
 
       if (name === "favorites") renderFavorites();
@@ -6050,6 +6129,147 @@ bindSubscribe(storeSubscribeBtn, () => myShop, {
       try { return new Set(JSON.parse(localStorage.getItem(blockedAdsKey()) || "[]")); }
       catch { return new Set(); }
     }
+    let blocksTab = "ads"; // "ads" | "shops"
+
+function setBlocksTab(tab){
+  blocksTab = tab;
+
+  if (blocksTabs) {
+    blocksTabs.querySelectorAll(".chip").forEach(ch => {
+      ch.classList.toggle("chip-filled", ch.dataset.tab === tab);
+    });
+  }
+
+  if (blockedAdsBox) blockedAdsBox.style.display = (tab === "ads") ? "block" : "none";
+  if (blockedShopsBox) blockedShopsBox.style.display = (tab === "shops") ? "block" : "none";
+
+  renderBlocksScreen();
+}
+
+if (blocksTabs && !blocksTabs.dataset.bound) {
+  blocksTabs.dataset.bound = "1";
+  blocksTabs.addEventListener("click", (e) => {
+    const chip = e.target.closest(".chip");
+    if (!chip) return;
+    const tab = chip.dataset.tab;
+    if (!tab) return;
+    setBlocksTab(tab);
+  });
+}
+
+function renderBlockedAds(){
+  if (!blockedAdsList) return;
+  blockedAdsList.innerHTML = "";
+
+  const blocked = Array.from(getBlockedAdsSet());
+  const ads = blocked
+    .map(id => allAds.find(a => String(a.id) === String(id)))
+    .filter(Boolean);
+
+  if (!ads.length) {
+    blockedAdsList.innerHTML = "<div class='ad-meta'>Bloklangan e’lonlar yo‘q</div>";
+    return;
+  }
+
+  ads.forEach(ad => {
+    const row = document.createElement("div");
+    row.className = "blocked-row";
+
+    row.innerHTML = `
+      <div class="left">
+        <div style="font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+          ${ad.title || "E’lon"}
+        </div>
+        <div class="meta">📍 ${(ad.city||"")} · ${getAdCategory(ad)}</div>
+      </div>
+      <button class="unblock-btn" type="button">Blokdan chiqarish</button>
+    `;
+
+    row.querySelector(".unblock-btn").addEventListener("click", () => {
+      const set = getBlockedAdsSet();
+      set.delete(ad.id);
+      saveBlockedAdsSet(set);
+
+      applyAllFilters();
+      resetFeedRender();
+      renderFavorites();
+      renderHistory();
+
+      renderBlockedAds();
+    });
+
+    // если хочешь — кликом по левой части открывать объявление
+    row.querySelector(".left").addEventListener("click", () => openAdDetails(ad));
+
+    blockedAdsList.appendChild(row);
+  });
+}
+
+function renderBlockedShops(){
+  if (!blockedShopsList) return;
+  blockedShopsList.innerHTML = "";
+
+  const blocked = Array.from(getBlockedSet());
+  const shops = blocked
+    .map(id => (shopsData || []).find(s => String(s.id) === String(id)))
+    .filter(Boolean);
+
+  if (!shops.length) {
+    blockedShopsList.innerHTML = "<div class='ad-meta'>Bloklangan do‘konlar yo‘q</div>";
+    return;
+  }
+
+  shops.forEach(shop => {
+    const row = document.createElement("div");
+    row.className = "blocked-row";
+
+    row.innerHTML = `
+      <div class="left">
+        <div style="font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+          ${shop.name || "Do‘kon"}
+        </div>
+        <div class="meta">📍 ${(shop.city||"")} · ${(shop.category||"")}</div>
+      </div>
+      <button class="unblock-btn" type="button">Blokdan chiqarish</button>
+    `;
+
+    row.querySelector(".unblock-btn").addEventListener("click", () => {
+      const set = getBlockedSet();
+      set.delete(shop.id);
+      saveBlockedSet(set);
+
+      renderShops();
+      renderBlockedShops();
+    });
+
+    row.querySelector(".left").addEventListener("click", () => openShop(shop));
+
+    blockedShopsList.appendChild(row);
+  });
+}
+
+function renderBlocksScreen(){
+  if (blocksTab === "ads") renderBlockedAds();
+  else renderBlockedShops();
+}
+
+if (unblockAllBtn && !unblockAllBtn.dataset.bound) {
+  unblockAllBtn.dataset.bound = "1";
+  unblockAllBtn.addEventListener("click", () => {
+    if (blocksTab === "ads") {
+      saveBlockedAdsSet(new Set());
+      applyAllFilters();
+      resetFeedRender();
+      renderFavorites();
+      renderHistory();
+      renderBlockedAds();
+    } else {
+      saveBlockedSet(new Set());
+      renderShops();
+      renderBlockedShops();
+    }
+  });
+}
     function saveBlockedAdsSet(set){
       try { localStorage.setItem(blockedAdsKey(), JSON.stringify(Array.from(set))); } catch {}
     }
