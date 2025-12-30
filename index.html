@@ -6896,26 +6896,6 @@ async function sendMessage(text, imageDataUrl=null){
       chatTyping.style.display = "block";
       setTimeout(()=> chatTyping.style.display = "none", 800);
     }
-    setTimeout(()=>{
-      const tt = getThreadById(t.id);
-      if (!tt) return;
-      const reply = {
-        id: "m_other_" + nowTs(),
-        from:"other",
-        text:"Oldim ✅ Tez orada javob beraman.",
-        ts: nowTs(),
-        status:"read"
-      };
-      tt.messages.push(reply);
-      tt.lastMessage = reply.text;
-      tt.lastTs = reply.ts;
-      upsertThread(tt);
-      if (chatCurrentThreadId === tt.id) {
-        renderRoomMessages();
-        scrollChatToBottom();
-      }
-      renderThreads();
-    }, 1200);
   }
 }
 
