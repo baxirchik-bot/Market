@@ -3337,34 +3337,54 @@ body.sheet-open .bottom-nav{
 /* Когда открыт chatRoomSheetBackdrop (как и другие sheet), можно прятать нижнее меню */
 body.sheet-open .bottom-nav{ display:none !important; }
 
-/* ===== HARD FIX iOS: real fullscreen without gaps ===== */
+/* ===== CHAT ROOM: REAL FULLSCREEN (NO GAPS) ===== */
 body.chat-room-open{
-  overflow: hidden; /* чтобы страница не скроллилась */
+  overflow: hidden;
 }
 
-body.chat-room-open #chatRoomView.chat-view.active{
+/* Прячем нижнее меню и ЛЮБУЮ верхнюю шапку сайта (на всякий случай) */
+body.chat-room-open .bottom-nav{ display:none !important; }
+body.chat-room-open header,
+body.chat-room-open .app-header,
+body.chat-room-open .header,
+body.chat-room-open .topbar,
+body.chat-room-open .top-header{
+  display:none !important;
+}
+
+/* Полный экран — это весь screen-chat */
+body.chat-room-open #screen-chat{
   position: fixed !important;
   inset: 0 !important;
   z-index: 9999 !important;
-  display: block !important;
+  padding: 0 !important;
+  margin: 0 !important;
   background: #f1f4ff !important;
 }
 
-/* topbar остаётся сверху */
+/* Комната — базовый контейнер для absolute */
+body.chat-room-open #chatRoomView{
+  display:block !important;
+  position: relative !important;
+  height: var(--vvh, 100vh) !important;
+  background: #f1f4ff;
+}
+
+/* Верхняя панель — сверху */
 body.chat-room-open .chat-room-topbar{
   position: sticky;
   top: 0;
-  z-index: 2;
+  z-index: 5;
   background: rgba(241,244,255,0.95);
   backdrop-filter: blur(12px);
 }
 
-/* composer ВСЕГДА фикс внизу экрана */
+/* Поле ввода — фикс снизу */
 body.chat-room-open #chatComposerWrap{
   position: fixed !important;
   left: 0; right: 0;
   bottom: 0 !important;
-  z-index: 3 !important;
+  z-index: 6 !important;
   padding: 10px 12px calc(10px + env(safe-area-inset-bottom)) !important;
   background: rgba(241,244,255,0.95) !important;
   backdrop-filter: blur(12px);
@@ -3372,15 +3392,15 @@ body.chat-room-open #chatComposerWrap{
   border-top-right-radius: 18px;
 }
 
-/* сообщения — строгая высота между topbar и composer */
+/* Сообщения — строго между topbar и composer */
 body.chat-room-open #chatMessages{
-  position: fixed !important;
+  position: absolute !important;
   left: 0; right: 0;
-  top: var(--chatTop, 64px) !important;
-  height: calc(var(--chatVH, 100vh) - var(--chatTop, 64px) - var(--chatComposer, 76px)) !important;
+  top: var(--roomTop, 72px) !important;
+  bottom: calc(var(--roomComposer, 86px) + env(safe-area-inset-bottom)) !important;
   overflow-y: auto !important;
-  -webkit-overflow-scrolling: touch !important;
-  padding: 10px 12px 12px !important;
+  -webkit-overflow-scrolling: touch;
+  padding: 10px 12px !important;
 }
     
   @media (max-width: 480px) {
@@ -6567,30 +6587,8 @@ chatApplyRoomLayout(); // чтобы сбросилось
 
   chatCurrentThreadId = null;
   renderThreads();
-}
-
-    function chatApplyRoomLayout(){
-  if (!document.body.classList.contains("chat-room-open")) return;
-
-  // реальная высота окна (лучше чем 100vh на iOS)
-  const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-
-  const topbar = document.querySelector(".chat-room-topbar");
-  const composer = document.getElementById("chatComposerWrap");
-
-  const topH = topbar ? topbar.getBoundingClientRect().height : 64;
-  const compH = composer ? composer.getBoundingClientRect().height : 76;
-
-  document.documentElement.style.setProperty("--chatVH", vh + "px");
-  document.documentElement.style.setProperty("--chatTop", topH + "px");
-  document.documentElement.style.setProperty("--chatComposer", compH + "px");
-}
-
-// обновлять при повороте/скрытии адресной строки/клавиатуре
-window.addEventListener("resize", chatApplyRoomLayout);
-if (window.visualViewport){
-  window.visualViewport.addEventListener("resize", chatApplyRoomLayout);
-  window.visualViewport.addEventListener("scroll", chatApplyRoomLayout);
+  document.body.classList.remove("chat-room-open");
+  requestAnimationFrame(chatRoomMeasure);
 }
 
 /**
@@ -6640,6 +6638,30 @@ setTimeout(()=> chatApplyRoomLayout(), 150); // iOS иногда обновля�
 }, 50);
   
   scrollChatToBottom();
+  requestAnimationFrame(chatRoomMeasure);
+  setTimeout(chatRoomMeasure, 150);
+}
+
+    function chatRoomMeasure(){
+  if (!document.body.classList.contains("chat-room-open")) return;
+
+  const vvh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+
+  const topbar = document.querySelector("#chatRoomView .chat-room-topbar");
+  const composer = document.getElementById("chatComposerWrap");
+  const topH = topbar ? topbar.getBoundingClientRect().height : 72;
+  const compH = composer ? composer.getBoundingClientRect().height : 86;
+
+  document.documentElement.style.setProperty("--vvh", vvh + "px");
+  document.documentElement.style.setProperty("--roomTop", topH + "px");
+  document.documentElement.style.setProperty("--roomComposer", compH + "px");
+}
+
+// iOS меняет высоту при скрытии адресной строки и при клавиатуре
+window.addEventListener("resize", chatRoomMeasure);
+if (window.visualViewport){
+  window.visualViewport.addEventListener("resize", chatRoomMeasure);
+  window.visualViewport.addEventListener("scroll", chatRoomMeasure);
 }
 
 function sortThreads(arr){
