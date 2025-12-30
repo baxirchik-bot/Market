@@ -5888,16 +5888,24 @@ hideEls.forEach(el => {
 
     // bottom nav
     navButtons.forEach(btn => {
-      btn.addEventListener("click", () => {
-        let target = btn.getAttribute("data-screen");
-if (!target) return;
+  btn.addEventListener("click", () => {
+    let target = btn.getAttribute("data-screen");
+    if (!target) return;
 
-// ✅ если нажали нижнюю вкладку Chat — открываем список, а не переписку
-if (target === "chat") target = "chatList";
+    // если мы уже в переписке — игнорируем нижнее меню (на всякий случай)
+    if (document.body.classList.contains("chat-room-open")) return;
 
-showScreen(target, { push: false, resetStack: true });
-      });
-    });
+    // вкладка Chat всегда открывает список диалогов
+    if (target === "chat") {
+      showScreen("chatList", { push: false, resetStack: false });
+      // и на всякий: убираем режим комнаты
+      document.body.classList.remove("chat-room-open");
+      return;
+    }
+
+    showScreen(target, { push: false, resetStack: true });
+  });
+});
 
     if (navAddBtn && !navAddBtn.dataset.bound) {
   navAddBtn.dataset.bound = "1";
