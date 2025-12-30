@@ -3255,7 +3255,9 @@ body.sheet-open .bottom-nav{ display:none !important; }
 
 /* ===== CHAT ROOM: TRUE FULLSCREEN (FLEX, NO GAPS) ===== */
 
-body.chat-room-open{ overflow: hidden; }
+body.chat-room-open{
+  overflow: hidden;
+}
 
 /* прячем нижнее меню и верхнюю шапку сайта */
 body.chat-room-open .bottom-nav{ display:none !important; }
@@ -3271,47 +3273,72 @@ body.chat-room-open #screen-chat{
   background: #f1f4ff !important;
 }
 
-/* chatRoomView становится flex-колонкой */
+/* chatRoomView = flex-колонка на весь экран */
 body.chat-room-open #chatRoomView.chat-view.active{
-  display:flex !important;
+  display: flex !important;
   flex-direction: column !important;
-  height: 100vh !important;
   height: 100dvh !important;
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
+  padding-top: env(safe-area-inset-top) !important;
+  padding-bottom: 0 !important;
 }
 
 /* верхняя панель */
 body.chat-room-open .chat-room-topbar{
   flex: 0 0 auto !important;
-  background: rgba(241,244,255,0.95);
+  background: rgba(241,244,255,0.95) !important;
   backdrop-filter: blur(12px);
 }
 
-/* сообщения занимают всё доступное место и СКРОЛЛЯТСЯ */
+/* сообщения: занимают всё место и скроллятся */
 body.chat-room-open #chatMessages{
   flex: 1 1 auto !important;
   min-height: 0 !important;            /* ✅ ключ для iOS */
   overflow-y: auto !important;
   -webkit-overflow-scrolling: touch;
   padding: 10px 12px !important;
+  margin: 0 !important;
 }
 
-/* поле ввода всегда снизу, без fixed */
+/* composer-wrap: шире, ниже, всегда внизу (без fixed) */
 body.chat-room-open #chatComposerWrap{
   flex: 0 0 auto !important;
   position: sticky !important;
   bottom: 0 !important;
+
   background: rgba(241,244,255,0.95) !important;
   backdrop-filter: blur(12px);
-  padding-bottom: env(safe-area-inset-bottom) !important;
-}
 
-/* composer внутри */
-body.chat-room-open .chat-composer{
-  padding: 10px 12px !important;
+  padding: 8px 8px calc(8px + env(safe-area-inset-bottom)) !important;
+  margin: 0 !important;
+
   border-top-left-radius: 18px;
   border-top-right-radius: 18px;
+}
+
+/* composer внутри: компактнее, чтобы input стал шире */
+body.chat-room-open .chat-composer{
+  padding: 0 !important;
+  display: flex !important;
+  gap: 8px !important;
+  align-items: center !important;
+  background: transparent !important;
+}
+
+/* кнопки чуть меньше, чтобы input стал длиннее */
+body.chat-room-open .chat-attach,
+body.chat-room-open .chat-send{
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 12px !important;
+  flex: 0 0 auto !important;
+}
+
+/* input максимально широкий */
+body.chat-room-open .chat-input{
+  flex: 1 1 auto !important;
+  width: auto !important;
+  padding: 12px 14px !important;
+  border-radius: 16px !important;
 }
     
   @media (max-width: 480px) {
