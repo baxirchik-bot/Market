@@ -3340,6 +3340,20 @@ body.chat-room-open .chat-input{
   padding: 12px 14px !important;
   border-radius: 16px !important;
 }
+
+    /* ===== iOS Safari FIX: real viewport height ===== */
+:root{
+  --vvh: 1vh; /* будет обновляться JS */
+}
+
+/* использовать реальную высоту */
+body.chat-room-open #chatRoomView{
+  height: calc(var(--vvh) * 100) !important;
+}
+
+body.chat-room-open #screen-chat{
+  height: calc(var(--vvh) * 100) !important;
+}
     
   @media (max-width: 480px) {
     body {
@@ -7112,16 +7126,25 @@ chatShowRoom = function(threadId){
 // IMPORTANT: вызывать bindChatUI() один раз при старте
 bindChatUI();
 
-    const badge = document.createElement("div");
-badge.id = "chatDebugBadge";
-badge.style.cssText = "position:fixed;top:8px;right:8px;z-index:999999;padding:6px 10px;border-radius:10px;background:#111;color:#fff;font:12px/1.2 system-ui;opacity:.85;display:none";
-badge.textContent = "CHAT ROOM MODE";
-document.body.appendChild(badge);
+    // ===== iOS Safari FIX: real viewport height via VisualViewport =====
+(function setRealVh(){
+  function apply(){
+    const vv = window.visualViewport;
+    const h = vv ? vv.height : window.innerHeight;
+    document.documentElement.style.setProperty('--vvh', (h * 0.01) + 'px');
+  }
+  apply();
 
-setInterval(()=>{
-  const on = document.body.classList.contains("chat-room-open");
-  badge.style.display = on ? "block" : "none";
-}, 200);
+  // важно для Safari: адресная строка меняет высоту при скролле/фокусе
+  window.addEventListener('resize', apply);
+  window.addEventListener('orientationchange', apply);
+
+  if (window.visualViewport){
+    window.visualViewport.addEventListener('resize', apply);
+    window.visualViewport.addEventListener('scroll', apply);
+  }
+})();
+    
 // ================== /CHAT (PRO) ==================
 
     const settingsAdminRow  = document.getElementById("settingsAdminRow");
