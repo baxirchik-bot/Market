@@ -3347,59 +3347,51 @@ body.sheet-open .bottom-nav{
 /* Когда открыт chatRoomSheetBackdrop (как и другие sheet), можно прятать нижнее меню */
 body.sheet-open .bottom-nav{ display:none !important; }
 
-    /* ===== CHAT FULLSCREEN (Telegram-like) ===== */
+    /* ===== CHAT: FULLSCREEN ROOM (Telegram-like) ===== */
 
-/* чтобы экран чата не залезал под шапку */
-#screen-chat{
-  padding-top: var(--app-header-h, 72px);
-  padding-bottom: var(--bottom-nav-h, 88px);
-  height: 100%;
+/* убираем лишний верхний зазор у chat экрана */
+#screen-chat{ padding-top: 0 !important; }
+
+/* fullscreen включается ТОЛЬКО когда открыта переписка */
+body.chat-room-open #screen-chat{
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #f1f4ff;
 }
 
-/* общий контейнер чата */
-#screen-chat .chat-wrap{
-  height: calc(100vh - var(--app-header-h, 72px) - var(--bottom-nav-h, 88px));
+/* прячем общую шапку сайта в режиме переписки */
+body.chat-room-open .app-header{
+  display: none !important;
+}
+
+/* если screens добавляет отступ сверху — убираем */
+body.chat-room-open .screens{
+  padding-top: 0 !important;
+}
+
+/* переписка занимает весь экран */
+body.chat-room-open #chatRoomView.chat-view.active{
   display: flex;
   flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* каждая “вьюха” (список / комната) занимает всю высоту */
-#screen-chat .chat-view{
-  height: 100%;
-  display: none;
-  flex-direction: column;
-  min-height: 0; /* важно для прокрутки внутри */
-}
-
-#screen-chat .chat-view.active{
-  display: flex;
-}
-
-/* верхняя панель в комнате — закрепляем */
-#screen-chat .chat-room-topbar{
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  background: rgba(241,244,255,.92);
-  backdrop-filter: blur(10px);
-}
-
-/* сообщения занимают всё пространство и скроллятся */
-#screen-chat .chat-messages{
-  flex: 1;
-  min-height: 0;
+/* сообщения — скроллятся */
+body.chat-room-open .chat-messages{
+  flex: 1 1 auto;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding-bottom: 12px;
 }
 
-/* поле ввода — всегда внизу как в Telegram */
-#screen-chat .chat-composer-wrap{
+/* поле ввода — всегда внизу */
+body.chat-room-open .chat-composer-wrap{
+  flex: 0 0 auto;
   position: sticky;
   bottom: 0;
-  z-index: 6;
-  background: rgba(241,244,255,.92);
-  backdrop-filter: blur(10px);
   padding-bottom: env(safe-area-inset-bottom);
 }
     
@@ -4882,6 +4874,43 @@ const chatTyping = document.getElementById("chatTyping");
 const chatAttachBtn = document.getElementById("chatAttachBtn");
 const chatFileInput = document.getElementById("chatFileInput");
 
+    // ===== CHAT FULLSCREEN ROOM (only for переписка) =====
+function openChatRoomFullscreen(){
+  document.body.classList.add("chat-room-open");
+
+  // прячем список диалогов, показываем переписку
+  if (chatThreadsView) chatThreadsView.classList.remove("active");
+  if (chatRoomView) chatRoomView.classList.add("active");
+
+  // на всякий: нижнее меню скрываем
+  if (bottomNav) bottomNav.classList.add("nav-hidden");
+
+  // скролл вниз
+  requestAnimationFrame(() => {
+    if (chatMessagesEl) chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+  });
+}
+
+function closeChatRoomFullscreen(){
+  document.body.classList.remove("chat-room-open");
+
+  // показываем список диалогов, прячем переписку
+  if (chatRoomView) chatRoomView.classList.remove("active");
+  if (chatThreadsView) chatThreadsView.classList.add("active");
+
+  // вернуть нижнее меню (если мы на экране chat)
+  if (currentScreen === "chat" && bottomNav) bottomNav.classList.remove("nav-hidden");
+}
+
+// Back в переписке
+if (chatRoomBackBtn && !chatRoomBackBtn.dataset.bound) {
+  chatRoomBackBtn.dataset.bound = "1";
+  chatRoomBackBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    closeChatRoomFullscreen();
+  });
+}
+    
 // Sheet
 const chatRoomSheetBackdrop = document.getElementById("chatRoomSheetBackdrop");
 const chatRoomSheetTitle = document.getElementById("chatRoomSheetTitle");
@@ -6447,7 +6476,8 @@ function initials(name){
 //   id, peerName, peerId, peerType: "shop"|"user",
 //   pinned, muted, unread,
 //   lastMessage, lastTs,
-//   messages: [{id, from:"me"|"other", text, ts, status:"sent"|"read", imageDataUrl?}]
+//   messages: [{id, from:"me"|"other", text, ts, status:"sent"|"read", imageDataUrl?}],
+//   context: { adId?, adTitle?, adUrl?, sellerKey? }  // ✅ подготовка под БД
 // }
 
 function loadThreads(){
@@ -6524,9 +6554,15 @@ async function apiMarkRead(threadId){
 // ===== UI state =====
 let chatCurrentThreadId = null;
 
+/**
+ * ✅ LIST (вкладка Chat) — обычный режим, меню видно
+ */
 function chatShowThreads(){
-  // ✅ показываем экран списка чатов (меню должно быть видно)
-  showScreen("chatList", { push:false });
+  // Всегда остаёмся на экране "chat"
+  showScreen("chat", { push:false });
+
+  // Выключаем fullscreen переписки (Telegram-like)
+  if (typeof closeChatRoomFullscreen === "function") closeChatRoomFullscreen();
 
   if (chatThreadsView) chatThreadsView.classList.add("active");
   if (chatRoomView) chatRoomView.classList.remove("active");
@@ -6534,10 +6570,15 @@ function chatShowThreads(){
   chatCurrentThreadId = null;
   renderThreads();
 }
-  
+
+/**
+ * ✅ ROOM (переписка) — fullscreen режим, меню скрыто
+ */
 function chatShowRoom(threadId){
-  // ✅ открываем режим переписки (меню должно скрыться)
   showScreen("chat", { push:false });
+
+  // Включаем fullscreen переписки
+  if (typeof openChatRoomFullscreen === "function") openChatRoomFullscreen();
 
   if (chatThreadsView) chatThreadsView.classList.remove("active");
   if (chatRoomView) chatRoomView.classList.add("active");
@@ -6549,6 +6590,12 @@ function chatShowRoom(threadId){
     if (chatRoomAvatar) chatRoomAvatar.textContent = initials(t.peerName);
     if (chatRoomTitle) chatRoomTitle.textContent = t.peerName || "Chat";
     if (chatRoomStatus) chatRoomStatus.textContent = t.muted ? "muted" : "online";
+
+    // ✅ показать контекст объявления (пока в статусе, подготовка под UI позже)
+    // Пример: "Ad: iPhone 13 Pro"
+    if (t.context?.adTitle && chatRoomStatus){
+      chatRoomStatus.textContent = t.muted ? "muted" : `Ad: ${t.context.adTitle}`;
+    }
 
     t.unread = 0;
     upsertThread(t);
@@ -6610,6 +6657,7 @@ function renderThreads(){
       </div>
     `;
 
+    // ✅ ШАГ 3B: из списка диалогов открываем переписку в fullscreen
     row.addEventListener("click", ()=> chatShowRoom(t.id));
     chatThreadsList.appendChild(row);
   });
@@ -6661,6 +6709,7 @@ function ensureDemoThreadIfEmpty(){
     unread: 1,
     lastMessage: "Assalomu alaykum! Savollaringiz bormi? 🙂",
     lastTs: nowTs()-60000,
+    context: { adId: "demo_ad", adTitle: "Demo e’lon" },
     messages: [
       { id:"m1", from:"other", text:"Assalomu alaykum! Savollaringiz bormi? 🙂", ts: nowTs()-60000, status:"read" }
     ]
@@ -6678,6 +6727,16 @@ function openChatForAd(ad){
   const threads = loadThreads();
   let t = threads.find(x => x.peerId === peerKey);
 
+  // ✅ сохраняем контекст объявления (шаг 3A)
+  const ctx = {
+    adId: ad?.id ?? null,
+    adTitle: ad?.title ?? "",
+    adUrl: ad?.url ?? "",
+    sellerKey: peerKey,
+    ts: nowTs()
+  };
+  try { localStorage.setItem("zalvo_chat_context", JSON.stringify(ctx)); } catch {}
+
   if (!t){
     const peerName = tg ? ("@" + tg) : (phone || "Sotuvchi");
     t = {
@@ -6690,23 +6749,32 @@ function openChatForAd(ad){
       unread:0,
       lastMessage:"",
       lastTs: nowTs(),
+      context: ctx, // ✅ привязка к объявлению
       messages:[]
     };
 
-    // приветствие
+    // приветствие + подсказка по объявлению
+    const welcomeText = ctx.adTitle
+      ? `Assalomu alaykum! "${ctx.adTitle}" bo‘yicha savolingiz bormi? 🙂`
+      : "Assalomu alaykum! Xush kelibsiz 🙂";
+
     t.messages.push({
       id:"m_welcome_" + nowTs(),
       from:"other",
-      text:"Assalomu alaykum! Xush kelibsiz 🙂",
+      text: welcomeText,
       ts: nowTs(),
       status:"read"
     });
-    t.lastMessage = "Assalomu alaykum! Xush kelibsiz 🙂";
+    t.lastMessage = welcomeText;
     t.lastTs = nowTs();
+    upsertThread(t);
+  } else {
+    // если тред уже был — обновим контекст последнего объявления
+    t.context = ctx;
     upsertThread(t);
   }
 
-  // открыть экран чата и сразу комнату
+  // ✅ открыть экран чата и сразу комнату (fullscreen)
   showScreen("chat");
   chatShowRoom(t.id);
 }
@@ -6751,7 +6819,6 @@ async function sendMessage(text, imageDataUrl=null){
       renderThreads();
     }, 700);
   } catch(e){
-    // если сервер упал — оставляем локально, потом синкнем
     console.warn("send failed, will sync later", e);
   }
 
@@ -6774,7 +6841,6 @@ async function sendMessage(text, imageDataUrl=null){
       tt.messages.push(reply);
       tt.lastMessage = reply.text;
       tt.lastTs = reply.ts;
-      // unread не увеличиваем, потому что мы в комнате
       upsertThread(tt);
       if (chatCurrentThreadId === tt.id) {
         renderRoomMessages();
@@ -6815,6 +6881,7 @@ function bindChatUI(){
     chatThreadsSearch.addEventListener("input", renderThreads);
   }
 
+  // ✅ back всегда возвращает в список и выключает fullscreen
   if (chatRoomBackBtn && !chatRoomBackBtn.dataset.bound){
     chatRoomBackBtn.dataset.bound = "1";
     chatRoomBackBtn.addEventListener("click", ()=> chatShowThreads());
@@ -6864,7 +6931,7 @@ function bindChatUI(){
       if (!t) return;
       t.muted = !t.muted;
       upsertThread(t);
-      if (chatRoomStatus) chatRoomStatus.textContent = t.muted ? "muted" : "online";
+      if (chatRoomStatus) chatRoomStatus.textContent = t.muted ? "muted" : (t.context?.adTitle ? `Ad: ${t.context.adTitle}` : "online");
       closeChatSheet();
       showToast("Chat", t.muted ? "🔕 Muted" : "🔔 Unmuted");
     });
@@ -6897,11 +6964,10 @@ function bindChatUI(){
   if (chatActionReport && !chatActionReport.dataset.bound){
     chatActionReport.dataset.bound = "1";
     chatActionReport.addEventListener("click", ()=>{
-      // пока просто сохраняем жалобу локально (готово под БД)
       const t = chatCurrentThreadId ? getThreadById(chatCurrentThreadId) : null;
       if (!t) return;
       const reports = JSON.parse(localStorage.getItem("zalvo_chat_reports") || "[]");
-      reports.push({ threadId: t.id, peer: t.peerName, ts: nowTs() });
+      reports.push({ threadId: t.id, peer: t.peerName, ts: nowTs(), context: t.context || null });
       localStorage.setItem("zalvo_chat_reports", JSON.stringify(reports));
       closeChatSheet();
       showToast("Shikoyat yuborildi", "Adminlar tekshiradi ⚠️");
@@ -6950,7 +7016,6 @@ function bindChatUI(){
   if (chatNewDialogBtn && !chatNewDialogBtn.dataset.bound){
     chatNewDialogBtn.dataset.bound = "1";
     chatNewDialogBtn.addEventListener("click", ()=>{
-      // пока демо: создаём новый диалог
       const id = "t_new_" + nowTs();
       const t = {
         id,
@@ -6962,11 +7027,12 @@ function bindChatUI(){
         unread:0,
         lastMessage:"Yangi chat ochildi",
         lastTs: nowTs(),
+        context: null,
         messages:[{ id:"m0", from:"other", text:"Salom! 🙂", ts: nowTs(), status:"read" }]
       };
       upsertThread(t);
       renderThreads();
-      chatShowRoom(id);
+      chatShowRoom(id); // ✅ fullscreen
     });
   }
 
