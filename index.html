@@ -3320,16 +3320,6 @@ body.sheet-open .bottom-nav{
   font-size:12px;
 }
 
-.chat-composer{
-  position: sticky;
-  bottom: 64px; /* важно: чтобы над нижним меню */
-  padding: 10px 12px;
-  display:flex; gap:10px; align-items:center;
-  background: rgba(241,244,255,0.9);
-  backdrop-filter: blur(12px);
-  border-top-left-radius: 18px;
-  border-top-right-radius: 18px;
-}
 .chat-attach, .chat-send{
   border:none; background:#eaf1ff;
   width:44px; height:44px; border-radius:14px;
@@ -3467,6 +3457,81 @@ body.chat-room-open #chatMessages{
   min-height: 0 !important;
   overflow-y: auto !important;
   padding-bottom: calc(70px + env(safe-area-inset-bottom)) !important; /* высота composer */
+}
+
+    /* ================== CHAT ROOM: ABSOLUTE LAYOUT (NO GAPS) ================== */
+
+/* fullscreen только в переписке */
+body.chat-room-open #screen-chat{
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999 !important;
+  background: #f1f4ff !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* прячем шапку сайта и нижнее меню */
+body.chat-room-open .app-header{ display:none !important; }
+body.chat-room-open .bottom-nav{ display:none !important; }
+
+/* сам блок room делаем “контейнером” */
+body.chat-room-open #chatRoomView.chat-view.active{
+  display: block !important;
+  position: relative !important;
+  height: 100dvh !important;
+  padding-top: env(safe-area-inset-top) !important;
+  padding-bottom: env(safe-area-inset-bottom) !important;
+}
+
+/* topbar фикс сверху */
+body.chat-room-open .chat-room-topbar{
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  top: env(safe-area-inset-top) !important;
+  z-index: 10002 !important;
+  background: rgba(241,244,255,0.92) !important;
+  backdrop-filter: blur(12px);
+}
+
+/* composer фикс снизу */
+body.chat-room-open #chatComposerWrap{
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: env(safe-area-inset-bottom) !important;
+  z-index: 10002 !important;
+  background: rgba(241,244,255,0.92) !important;
+  backdrop-filter: blur(12px);
+}
+
+/* ВАЖНО: отменяем старые sticky/bottom */
+body.chat-room-open .chat-composer{
+  position: relative !important;
+  bottom: 0 !important;
+  border-radius: 0 !important;
+}
+
+/* messages = область между topbar и composer */
+body.chat-room-open #chatMessages{
+  position: absolute !important;
+  left: 0 !important;
+  right: 0 !important;
+
+  /* высоту topbar и composer задаём фиксировано */
+  top: calc(env(safe-area-inset-top) + 64px) !important;      /* 64px = высота topbar */
+  bottom: calc(env(safe-area-inset-bottom) + 72px) !important;/* 72px = высота composer */
+
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+
+  padding: 12px !important;
+}
+
+/* typing если включишь — пусть не ломает высоту */
+body.chat-room-open #chatTyping{
+  display:none !important;
 }
     
   @media (max-width: 480px) {
