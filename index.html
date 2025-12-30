@@ -6692,6 +6692,7 @@ let chatCurrentThreadId = null;
  * ✅ LIST (вкладка Chat) — обычный режим, меню видно
  */
 function chatShowThreads(){
+  document.body.classList.remove("chat-room-open");
   // Всегда остаёмся на экране "chat"
   showScreen("chat", { push:false });
 
@@ -6709,6 +6710,7 @@ function chatShowThreads(){
  * ✅ ROOM (переписка) — fullscreen режим, меню скрыто
  */
 function chatShowRoom(threadId){
+  document.body.classList.add("chat-room-open");
   showScreen("chat", { push:false });
 
   // Включаем fullscreen переписки
@@ -6737,6 +6739,16 @@ function chatShowRoom(threadId){
   }
 
   renderRoomMessages();
+
+  setTimeout(() => {
+  const topbar = document.querySelector(".chat-room-topbar");
+  const composer = document.getElementById("chatComposerWrap");
+  const topH = topbar ? topbar.getBoundingClientRect().height : 64;
+  const compH = composer ? composer.getBoundingClientRect().height : 88;
+  document.documentElement.style.setProperty("--chat-topbar-h", `${Math.round(topH)}px`);
+  document.documentElement.style.setProperty("--chat-composer-h", `${Math.round(compH)}px`);
+}, 50);
+  
   scrollChatToBottom();
 }
 
@@ -7250,6 +7262,16 @@ chatShowRoom = function(threadId){
 // IMPORTANT: вызывать bindChatUI() один раз при старте
 bindChatUI();
 
+    const badge = document.createElement("div");
+badge.id = "chatDebugBadge";
+badge.style.cssText = "position:fixed;top:8px;right:8px;z-index:999999;padding:6px 10px;border-radius:10px;background:#111;color:#fff;font:12px/1.2 system-ui;opacity:.85;display:none";
+badge.textContent = "CHAT ROOM MODE";
+document.body.appendChild(badge);
+
+setInterval(()=>{
+  const on = document.body.classList.contains("chat-room-open");
+  badge.style.display = on ? "block" : "none";
+}, 200);
 // ================== /CHAT (PRO) ==================
 
     const settingsAdminRow  = document.getElementById("settingsAdminRow");
