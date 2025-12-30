@@ -3337,52 +3337,54 @@ body.sheet-open .bottom-nav{
 /* Когда открыт chatRoomSheetBackdrop (как и другие sheet), можно прятать нижнее меню */
 body.sheet-open .bottom-nav{ display:none !important; }
 
-/* ===== CHAT ROOM FULLSCREEN (FIX THROUGH .screens) ===== */
+/* ===== TELEGRAM FULLSCREEN (ONLY ROOM) ===== */
 
-/* когда открыт room — фиксируем основной контейнер экранов */
-.screens.chat-room-open{
-  position: fixed !important;
-  inset: 0 !important;
-  height: 100dvh !important;
-  overflow: hidden !important;
-  padding-top: 0 !important;
-}
-
-/* прячем шапку и нижнее меню */
+/* в режиме room прячем шапку и нижнее меню */
 body.chat-room-open .app-header{ display:none !important; }
 body.chat-room-open .bottom-nav{ display:none !important; }
 
-/* сам чат-экран на всю высоту */
-body.chat-room-open #screen-chat{
-  height: 100% !important;
-  padding: 0 !important;
-}
+/* ВАЖНО: НЕ фиксируем .screens и НЕ трогаем весь сайт */
 
-/* room как колонка на весь экран */
-body.chat-room-open #chatRoomView{
+/* переписка становится отдельным фиксированным экраном */
+body.chat-room-open #chatRoomView.chat-view.active{
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999 !important;
   display: flex !important;
   flex-direction: column !important;
-  height: 100% !important;
+  background: #f1f4ff !important;
+  padding-top: env(safe-area-inset-top) !important;
+  padding-bottom: env(safe-area-inset-bottom) !important;
 }
 
-/* сообщения занимают всё место и скроллятся */
+/* верхняя панель */
+body.chat-room-open .chat-room-topbar{
+  flex: 0 0 auto !important;
+}
+
+/* сообщения занимают ВСЮ высоту между topbar и composer */
 body.chat-room-open #chatMessages{
   flex: 1 1 auto !important;
   min-height: 0 !important;
   overflow-y: auto !important;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: calc(72px + env(safe-area-inset-bottom)) !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding: 10px 12px 12px !important; /* без огромных нижних отступов */
 }
 
-/* composer внизу */
+/* composer всегда внизу (как Telegram) */
 body.chat-room-open #chatComposerWrap{
   flex: 0 0 auto !important;
-  position: sticky !important;
-  bottom: 0 !important;
-  z-index: 5;
-  padding-bottom: env(safe-area-inset-bottom);
-  background: rgba(241,244,255,0.92);
+  padding: 10px 12px calc(10px + env(safe-area-inset-bottom)) !important;
+  background: rgba(241,244,255,0.95) !important;
   backdrop-filter: blur(12px);
+  border-top-left-radius: 18px;
+  border-top-right-radius: 18px;
+}
+
+/* убираем прежний sticky/bottom у chat-composer, чтобы не было “зазоров” */
+body.chat-room-open .chat-composer{
+  position: relative !important;
+  bottom: auto !important;
 }
     
   @media (max-width: 480px) {
@@ -6557,7 +6559,6 @@ let chatCurrentThreadId = null;
  */
 function chatShowThreads(){
   document.body.classList.remove("chat-room-open");
-if (screensContainer) screensContainer.classList.remove("chat-room-open");
   // Всегда остаёмся на экране "chat"
   showScreen("chat", { push:false });
 
@@ -6576,7 +6577,6 @@ if (screensContainer) screensContainer.classList.remove("chat-room-open");
  */
 function chatShowRoom(threadId){
   document.body.classList.add("chat-room-open");
-if (screensContainer) screensContainer.classList.add("chat-room-open");
   showScreen("chat", { push:false });
 
   // Включаем fullscreen переписки
