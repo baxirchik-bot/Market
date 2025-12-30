@@ -3394,6 +3394,31 @@ body.chat-room-open .chat-composer-wrap{
   bottom: 0;
   padding-bottom: env(safe-area-inset-bottom);
 }
+
+    /* ===== CHAT ROOM FULLSCREEN: убрать нижний зазор ===== */
+body.chat-room-open #screen-chat{
+  padding-bottom: 0 !important;     /* ✅ убираем резерв под меню */
+  margin-bottom: 0 !important;
+}
+
+/* чат-рум занимает всю высоту экрана */
+body.chat-room-open #chatRoomView{
+  height: 100dvh;
+}
+
+/* прижимаем поле ввода к низу + safe-area iPhone */
+body.chat-room-open #chatComposerWrap{
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: env(safe-area-inset-bottom);
+  z-index: 9999;
+}
+
+/* чтобы сообщения не прятались под полем ввода */
+body.chat-room-open #chatMessages{
+  padding-bottom: calc(76px + env(safe-area-inset-bottom)) !important;
+}
     
   @media (max-width: 480px) {
     body {
