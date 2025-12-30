@@ -3341,45 +3341,6 @@ body.chat-room-open .chat-input{
   border-radius: 16px !important;
 }
 
-    /* ===== iOS Safari FIX: real viewport height ===== */
-:root{
-  --vvh: 1vh; /* будет обновляться JS */
-}
-
-/* использовать реальную высоту */
-body.chat-room-open #chatRoomView{
-  height: calc(var(--vvh) * 100) !important;
-}
-
-body.chat-room-open #screen-chat{
-  height: calc(var(--vvh) * 100) !important;
-}
-
-    /* input шире */
-body.chat-room-open .chat-composer{
-  gap: 8px !important;
-}
-
-/* кнопки компактнее -> input станет длиннее */
-body.chat-room-open .chat-attach,
-body.chat-room-open .chat-send{
-  width: 38px !important;
-  height: 38px !important;
-}
-
-/* input максимально широкий */
-body.chat-room-open .chat-input{
-  flex: 1 1 auto !important;
-  width: auto !important;
-  padding: 12px 14px !important;
-  border-radius: 16px !important;
-}
-
-/* опустить composer чуть ниже (внутренним паддингом) */
-body.chat-room-open #chatComposerWrap{
-  padding-bottom: calc(14px + env(safe-area-inset-bottom)) !important;
-}
-
   @media (max-width: 480px) {
     body {
       align-items: stretch;
