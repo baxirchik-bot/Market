@@ -3337,61 +3337,52 @@ body.sheet-open .bottom-nav{
 /* Когда открыт chatRoomSheetBackdrop (как и другие sheet), можно прятать нижнее меню */
 body.sheet-open .bottom-nav{ display:none !important; }
 
-   /* ================== CHAT ROOM FULLSCREEN (SINGLE CLEAN) ================== */
+/* ===== CHAT ROOM FULLSCREEN (FIX THROUGH .screens) ===== */
+
+/* когда открыт room — фиксируем основной контейнер экранов */
+.screens.chat-room-open{
+  position: fixed !important;
+  inset: 0 !important;
+  height: 100dvh !important;
+  overflow: hidden !important;
+  padding-top: 0 !important;
+}
+
+/* прячем шапку и нижнее меню */
 body.chat-room-open .app-header{ display:none !important; }
 body.chat-room-open .bottom-nav{ display:none !important; }
 
+/* сам чат-экран на всю высоту */
 body.chat-room-open #screen-chat{
-  position: fixed !important;
-  inset: 0 !important;
-  z-index: 999999 !important;
-  background:#f1f4ff !important;
+  height: 100% !important;
   padding: 0 !important;
-  margin: 0 !important;
 }
 
-/* ВАЖНО: chatRoomView становится flex-колонкой на весь экран */
+/* room как колонка на весь экран */
 body.chat-room-open #chatRoomView{
-  display:flex !important;
-  flex-direction:column !important;
-  height: 100dvh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
 }
 
-/* верхняя панель */
-body.chat-room-open .chat-room-topbar{
-  flex: 0 0 auto !important;
-  padding-top: env(safe-area-inset-top) !important;
-  background: rgba(241,244,255,.96) !important;
-  backdrop-filter: blur(12px);
-}
-
-/* сообщения: занимают всё пространство между topbar и composer */
+/* сообщения занимают всё место и скроллятся */
 body.chat-room-open #chatMessages{
   flex: 1 1 auto !important;
-  min-height: 0 !important;                  /* 🔥 критично для iOS */
+  min-height: 0 !important;
   overflow-y: auto !important;
-  -webkit-overflow-scrolling: touch !important;
-  padding: 12px !important;
-  padding-bottom: calc(84px + env(safe-area-inset-bottom)) !important; /* место под composer */
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: calc(72px + env(safe-area-inset-bottom)) !important;
 }
 
-/* нижнее поле ввода: fixed снизу */
+/* composer внизу */
 body.chat-room-open #chatComposerWrap{
-  position: fixed !important;
-  left: 0 !important;
-  right: 0 !important;
+  flex: 0 0 auto !important;
+  position: sticky !important;
   bottom: 0 !important;
-  z-index: 1000000 !important;
-  padding-bottom: env(safe-area-inset-bottom) !important;
-  background: rgba(241,244,255,.96) !important;
+  z-index: 5;
+  padding-bottom: env(safe-area-inset-bottom);
+  background: rgba(241,244,255,0.92);
   backdrop-filter: blur(12px);
-}
-
-/* убираем любые старые sticky/bottom у composer */
-body.chat-room-open .chat-composer{
-  position: relative !important;
-  bottom: auto !important;
-  border-radius: 0 !important;
 }
     
   @media (max-width: 480px) {
@@ -6566,6 +6557,7 @@ let chatCurrentThreadId = null;
  */
 function chatShowThreads(){
   document.body.classList.remove("chat-room-open");
+if (screensContainer) screensContainer.classList.remove("chat-room-open");
   // Всегда остаёмся на экране "chat"
   showScreen("chat", { push:false });
 
@@ -6584,6 +6576,7 @@ function chatShowThreads(){
  */
 function chatShowRoom(threadId){
   document.body.classList.add("chat-room-open");
+if (screensContainer) screensContainer.classList.add("chat-room-open");
   showScreen("chat", { push:false });
 
   // Включаем fullscreen переписки
