@@ -3419,6 +3419,26 @@ body.chat-room-open #chatComposerWrap{
 body.chat-room-open #chatMessages{
   padding-bottom: calc(76px + env(safe-area-inset-bottom)) !important;
 }
+
+    /* ===== FIX: chatMessages должен тянуться до composer ===== */
+body.chat-room-open #chatRoomView{
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* верхняя панель не растягивается */
+body.chat-room-open .chat-room-topbar{
+  flex: 0 0 auto;
+}
+
+/* список сообщений занимает всё доступное место */
+body.chat-room-open #chatMessages{
+  flex: 1 1 auto;
+  min-height: 0; /* 🔥 важно для iOS, иначе flex-скролл глючит */
+  overflow-y: auto;
+  padding-bottom: calc(76px + env(safe-area-inset-bottom)) !important;
+}
     
   @media (max-width: 480px) {
     body {
