@@ -3469,6 +3469,57 @@ body.chat-room-open #chatMessages{
   overflow-y: auto !important;
   -webkit-overflow-scrolling: touch !important;
 }
+
+    :root{ --chat-topbar-h:64px; --chat-composer-h:88px; }
+
+body.chat-room-open .app-header{ display:none !important; }
+body.chat-room-open .bottom-nav{ display:none !important; }
+
+body.chat-room-open #screen-chat{
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 999999 !important;
+  background:#f1f4ff !important;
+  padding:0 !important;
+  margin:0 !important;
+}
+
+/* topbar fixed */
+body.chat-room-open .chat-room-topbar{
+  position: fixed !important;
+  left:0; right:0;
+  top: env(safe-area-inset-top) !important;
+  z-index: 999999 !important;
+  background: rgba(241,244,255,.95) !important;
+  backdrop-filter: blur(12px);
+}
+
+/* composer fixed bottom */
+body.chat-room-open #chatComposerWrap{
+  position: fixed !important;
+  left:0; right:0;
+  bottom: 0 !important;
+  z-index: 999999 !important;
+  padding-bottom: env(safe-area-inset-bottom) !important;
+  background: rgba(241,244,255,.95) !important;
+  backdrop-filter: blur(12px);
+}
+
+/* IMPORTANT: remove your old big padding-bottom */
+body.chat-room-open #chatMessages,
+body.chat-room-open .chat-messages{
+  padding-bottom: 12px !important;
+}
+
+/* messages fixed between topbar & composer */
+body.chat-room-open #chatMessages{
+  position: fixed !important;
+  left:0; right:0;
+  top: calc(env(safe-area-inset-top) + var(--chat-topbar-h)) !important;
+  height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - var(--chat-topbar-h) - var(--chat-composer-h)) !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+}
     
   @media (max-width: 480px) {
     body {
@@ -6950,6 +7001,52 @@ function closeChatSheet(){
 // ===== bind events (once) =====
 function bindChatUI(){
   ensureDemoThreadIfEmpty();
+
+  // ===== FORCE chat-room-open + DEBUG =====
+(function(){
+  // маленький индикатор вверху (чтобы понять: включился режим или нет)
+  const badge = document.createElement("div");
+  badge.id = "chatDebugBadge";
+  badge.style.cssText = "position:fixed;top:8px;right:8px;z-index:999999;padding:6px 10px;border-radius:10px;background:#111;color:#fff;font:12px/1.2 system-ui;opacity:.85;display:none";
+  badge.textContent = "CHAT ROOM MODE";
+  document.body.appendChild(badge);
+
+  function setRoomMode(on){
+    document.body.classList.toggle("chat-room-open", !!on);
+    badge.style.display = on ? "block" : "none";
+  }
+
+  // 1) когда открываем переписку — включаем режим
+  const _origChatShowRoom = window.chatShowRoom;
+  window.chatShowRoom = function(threadId){
+    setRoomMode(true);
+    _origChatShowRoom(threadId);
+    setTimeout(()=>{ window.__chatMeasureHeights?.(); }, 50);
+    setTimeout(()=>{ window.__chatMeasureHeights?.(); }, 250);
+  };
+
+  // 2) когда возвращаемся к списку — выключаем режим
+  const _origChatShowThreads = window.chatShowThreads;
+  window.chatShowThreads = function(){
+    setRoomMode(false);
+    _origChatShowThreads();
+  };
+
+  // если вдруг открыли чат-рум каким-то другим способом — подстрахуемся
+  document.addEventListener("click", (e)=>{
+    if (e.target && e.target.id === "chatRoomBackBtn") setRoomMode(false);
+  }, true);
+
+  // экспортируем для замеров
+  window.__chatMeasureHeights = function(){
+    const topbar = document.querySelector(".chat-room-topbar");
+    const composer = document.getElementById("chatComposerWrap");
+    const topH = topbar ? topbar.getBoundingClientRect().height : 64;
+    const compH = composer ? composer.getBoundingClientRect().height : 88;
+    document.documentElement.style.setProperty("--chat-topbar-h", `${Math.round(topH)}px`);
+    document.documentElement.style.setProperty("--chat-composer-h", `${Math.round(compH)}px`);
+  };
+})();
 
   if (chatThreadsSearch && !chatThreadsSearch.dataset.bound){
     chatThreadsSearch.dataset.bound = "1";
