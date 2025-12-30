@@ -3341,6 +3341,78 @@ body.chat-room-open .chat-input{
   border-radius: 16px !important;
 }
 
+    /* ================== iOS TYPOGRAPHY (CHAT OVERRIDE) ================== */
+
+/* общий iOS-шрифт только для чата */
+#screen-chat, #screen-chat *{
+  font-family: -apple-system, BlinkMacSystemFont,
+               "SF Pro Text","SF Pro Display",
+               system-ui, sans-serif !important;
+}
+
+/* список чатов */
+.chat-topbar-title{
+  font-weight: 700 !important;
+  font-size: 20px !important;
+}
+
+.chat-thread-title{
+  font-weight: 700 !important;
+  font-size: 16px !important;
+}
+
+.chat-thread-last{
+  font-weight: 400 !important;
+  font-size: 14px !important;
+  opacity: .65 !important;
+}
+
+.chat-thread-time{
+  font-weight: 400 !important;
+  font-size: 12px !important;
+  opacity: .55 !important;
+}
+
+.chat-thread-avatar{
+  font-weight: 700 !important;
+}
+
+/* ROOM topbar */
+.chat-room-title{
+  font-weight: 700 !important;
+  font-size: 17px !important;   /* как iOS header */
+}
+
+.chat-room-status{
+  font-weight: 400 !important;
+  font-size: 13px !important;
+  opacity: .55 !important;
+}
+
+/* пузырьки сообщений */
+.chat-bubble{
+  font-weight: 400 !important;
+  font-size: 16px !important;   /* iMessage размер */
+  line-height: 1.35 !important;
+}
+
+.chat-bubble-meta{
+  font-weight: 400 !important;
+  font-size: 12px !important;
+  opacity: .55 !important;
+}
+
+/* поле ввода */
+.chat-input{
+  font-weight: 400 !important;
+  font-size: 16px !important;
+}
+
+.chat-search input{
+  font-weight: 400 !important;
+  font-size: 16px !important;
+}
+
   @media (max-width: 480px) {
     body {
       align-items: stretch;
