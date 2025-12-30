@@ -3406,6 +3406,69 @@ body.chat-room-open #chatMessages{
 
 /* typing не ломает высоту */
 body.chat-room-open #chatTyping{ display:none !important; }
+
+    /* ===== CHAT ROOM: NO GAP (measured heights) ===== */
+:root{
+  --chat-topbar-h: 64px;
+  --chat-composer-h: 88px;
+}
+
+body.chat-room-open .app-header{ display:none !important; }
+body.chat-room-open .bottom-nav{ display:none !important; }
+
+body.chat-room-open #screen-chat{
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999 !important;
+  background:#f1f4ff !important;
+  padding:0 !important;
+  margin:0 !important;
+}
+
+/* TOPBAR */
+body.chat-room-open .chat-room-topbar{
+  position: fixed !important;
+  left:0 !important; right:0 !important;
+  top: env(safe-area-inset-top) !important;
+  z-index: 10002 !important;
+  background: rgba(241,244,255,.92) !important;
+  backdrop-filter: blur(12px);
+}
+
+/* COMPOSER (внизу) */
+body.chat-room-open #chatComposerWrap{
+  position: fixed !important;
+  left:0 !important; right:0 !important;
+  bottom: 0 !important;
+  z-index: 10002 !important;
+  padding-bottom: env(safe-area-inset-bottom) !important;
+  background: rgba(241,244,255,.92) !important;
+  backdrop-filter: blur(12px);
+}
+
+/* ОЧЕНЬ ВАЖНО: убираем твой старый huge padding-bottom у сообщений */
+body.chat-room-open #chatMessages,
+body.chat-room-open .chat-messages{
+  padding-bottom: 12px !important;
+}
+
+/* MESSAGES: высота = экран - topbar - composer (без угадываний) */
+body.chat-room-open #chatMessages{
+  position: fixed !important;
+  left:0 !important; right:0 !important;
+  top: calc(env(safe-area-inset-top) + var(--chat-topbar-h)) !important;
+
+  height: calc(
+    100dvh
+    - env(safe-area-inset-top)
+    - env(safe-area-inset-bottom)
+    - var(--chat-topbar-h)
+    - var(--chat-composer-h)
+  ) !important;
+
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+}
     
   @media (max-width: 480px) {
     body {
@@ -6892,6 +6955,33 @@ function bindChatUI(){
     chatThreadsSearch.dataset.bound = "1";
     chatThreadsSearch.addEventListener("input", renderThreads);
   }
+
+  // ===== CHAT: measure heights (fix iOS gaps) =====
+function chatMeasureHeights(){
+  const topbar = document.querySelector(".chat-room-topbar");
+  const composer = document.getElementById("chatComposerWrap");
+
+  const topH = topbar ? topbar.getBoundingClientRect().height : 64;
+  const compH = composer ? composer.getBoundingClientRect().height : 88;
+
+  document.documentElement.style.setProperty("--chat-topbar-h", `${Math.round(topH)}px`);
+  document.documentElement.style.setProperty("--chat-composer-h", `${Math.round(compH)}px`);
+}
+
+window.addEventListener("resize", ()=> {
+  if (document.body.classList.contains("chat-room-open")) chatMeasureHeights();
+});
+window.addEventListener("orientationchange", ()=> {
+  if (document.body.classList.contains("chat-room-open")) setTimeout(chatMeasureHeights, 200);
+});
+
+// если в room открыли — меряем
+const _chatShowRoom = chatShowRoom;
+chatShowRoom = function(threadId){
+  _chatShowRoom(threadId);
+  setTimeout(chatMeasureHeights, 50);
+  setTimeout(chatMeasureHeights, 250);
+};
 
   // ✅ back всегда возвращает в список и выключает fullscreen
   if (chatRoomBackBtn && !chatRoomBackBtn.dataset.bound){
