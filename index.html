@@ -3337,129 +3337,7 @@ body.sheet-open .bottom-nav{
 /* Когда открыт chatRoomSheetBackdrop (как и другие sheet), можно прятать нижнее меню */
 body.sheet-open .bottom-nav{ display:none !important; }
 
-    /* ===== CHAT: FULLSCREEN ROOM (Telegram-like) ===== */
-
-/* убираем лишний верхний зазор у chat экрана */
-#screen-chat{ padding-top: 0 !important; }
-
-/* fullscreen включается ТОЛЬКО когда открыта переписка */
-body.chat-room-open #screen-chat{
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  background: #f1f4ff;
-}
-
-/* прячем общую шапку сайта в режиме переписки */
-body.chat-room-open .app-header{
-  display: none !important;
-}
-
-/* если screens добавляет отступ сверху — убираем */
-body.chat-room-open .screens{
-  padding-top: 0 !important;
-}
-
-/* переписка занимает весь экран */
-body.chat-room-open #chatRoomView.chat-view.active{
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  height: 100dvh;
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-/* сообщения — скроллятся */
-body.chat-room-open .chat-messages{
-  flex: 1 1 auto;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* поле ввода — всегда внизу */
-body.chat-room-open .chat-composer-wrap{
-  flex: 0 0 auto;
-  position: sticky;
-  bottom: 0;
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-    /* ===== CHAT ROOM FULLSCREEN: убрать нижний зазор ===== */
-body.chat-room-open #screen-chat{
-  padding-bottom: 0 !important;     /* ✅ убираем резерв под меню */
-  margin-bottom: 0 !important;
-}
-
-/* чат-рум занимает всю высоту экрана */
-body.chat-room-open #chatRoomView{
-  height: 100dvh;
-}
-
-/* прижимаем поле ввода к низу + safe-area iPhone */
-body.chat-room-open #chatComposerWrap{
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: env(safe-area-inset-bottom);
-  z-index: 9999;
-}
-
-/* чтобы сообщения не прятались под полем ввода */
-body.chat-room-open #chatMessages{
-  padding-bottom: calc(76px + env(safe-area-inset-bottom)) !important;
-}
-
-    /* ===== FIX: chatMessages должен тянуться до composer ===== */
-body.chat-room-open #chatRoomView{
-  height: 100dvh;
-  display: flex;
-  flex-direction: column;
-}
-
-/* верхняя панель не растягивается */
-body.chat-room-open .chat-room-topbar{
-  flex: 0 0 auto;
-}
-
-/* список сообщений занимает всё доступное место */
-body.chat-room-open #chatMessages{
-  flex: 1 1 auto;
-  min-height: 0; /* 🔥 важно для iOS, иначе flex-скролл глючит */
-  overflow-y: auto;
-  padding-bottom: calc(76px + env(safe-area-inset-bottom)) !important;
-}
-
-    /* ===== FINAL FIX: убираем bottom:64px и делаем Telegram-like ===== */
-body.chat-room-open .chat-composer{
-  position: relative !important;
-  bottom: 0 !important;         /* 🔥 убираем 64px */
-  border-radius: 0 !important;  /* чтобы выглядело как Telegram */
-}
-
-/* composer всегда внизу */
-body.chat-room-open #chatComposerWrap{
-  position: fixed !important;
-  left: 0; right: 0;
-  bottom: env(safe-area-inset-bottom) !important;
-  z-index: 9999;
-}
-
-/* messages растягиваем до composer (без лишних внутренних отступов) */
-body.chat-room-open #chatRoomView.chat-view.active{
-  display: flex !important;
-  flex-direction: column !important;
-  height: 100dvh !important;
-}
-
-body.chat-room-open #chatMessages{
-  flex: 1 1 auto !important;
-  min-height: 0 !important;
-  overflow-y: auto !important;
-  padding-bottom: calc(70px + env(safe-area-inset-bottom)) !important; /* высота composer */
-}
-
-    /* ================== CHAT ROOM: ABSOLUTE LAYOUT (NO GAPS) ================== */
+   /* ================== CHAT ROOM FULLSCREEN (FINAL, NO GAPS iOS) ================== */
 
 /* fullscreen только в переписке */
 body.chat-room-open #screen-chat{
@@ -3471,20 +3349,11 @@ body.chat-room-open #screen-chat{
   margin: 0 !important;
 }
 
-/* прячем шапку сайта и нижнее меню */
+/* прячем общую шапку и нижнее меню */
 body.chat-room-open .app-header{ display:none !important; }
 body.chat-room-open .bottom-nav{ display:none !important; }
 
-/* сам блок room делаем “контейнером” */
-body.chat-room-open #chatRoomView.chat-view.active{
-  display: block !important;
-  position: relative !important;
-  height: 100dvh !important;
-  padding-top: env(safe-area-inset-top) !important;
-  padding-bottom: env(safe-area-inset-bottom) !important;
-}
-
-/* topbar фикс сверху */
+/* ===== TOPBAR FIXED ===== */
 body.chat-room-open .chat-room-topbar{
   position: fixed !important;
   left: 0 !important;
@@ -3495,44 +3364,48 @@ body.chat-room-open .chat-room-topbar{
   backdrop-filter: blur(12px);
 }
 
-/* composer фикс снизу */
+/* ===== COMPOSER FIXED (нормальная высота) ===== */
 body.chat-room-open #chatComposerWrap{
   position: fixed !important;
   left: 0 !important;
   right: 0 !important;
-  bottom: env(safe-area-inset-bottom) !important;
+  bottom: 0 !important;
   z-index: 10002 !important;
+  padding-bottom: env(safe-area-inset-bottom) !important;
   background: rgba(241,244,255,0.92) !important;
   backdrop-filter: blur(12px);
 }
 
-/* ВАЖНО: отменяем старые sticky/bottom */
+/* возвращаем удобный размер поля ввода */
 body.chat-room-open .chat-composer{
   position: relative !important;
   bottom: 0 !important;
+  padding: 10px 12px !important;
+  display:flex !important;
+  gap:10px !important;
+  align-items:center !important;
   border-radius: 0 !important;
 }
 
-/* messages = область между topbar и composer */
+/* ===== MESSAGES: ДО НИЗА (без bottom-ограничения) ===== */
 body.chat-room-open #chatMessages{
-  position: absolute !important;
+  position: fixed !important;
   left: 0 !important;
   right: 0 !important;
-
-  /* высоту topbar и composer задаём фиксировано */
-  top: calc(env(safe-area-inset-top) + 64px) !important;      /* 64px = высота topbar */
-  bottom: calc(env(safe-area-inset-bottom) + 72px) !important;/* 72px = высота composer */
+  top: calc(env(safe-area-inset-top) + 64px) !important; /* 64px topbar */
+  bottom: 0 !important; /* 🔥 важно: убираем зазор */
 
   overflow-y: auto !important;
-  -webkit-overflow-scrolling: touch;
+  -webkit-overflow-scrolling: touch !important;
 
   padding: 12px !important;
+
+  /* 🔥 чтобы сообщения не прятались под composer */
+  padding-bottom: calc(92px + env(safe-area-inset-bottom)) !important;
 }
 
-/* typing если включишь — пусть не ломает высоту */
-body.chat-room-open #chatTyping{
-  display:none !important;
-}
+/* typing не ломает высоту */
+body.chat-room-open #chatTyping{ display:none !important; }
     
   @media (max-width: 480px) {
     body {
