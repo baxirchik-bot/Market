@@ -3413,6 +3413,72 @@ body.chat-room-open .chat-input{
   font-size: 16px !important;
 }
 
+    /* ===== Chat Ad Card ===== */
+.chat-adcard{
+  padding: 8px 12px 6px;
+}
+
+.chat-adcard-inner{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background: rgba(255,255,255,0.85);
+  border-radius: 16px;
+  padding: 10px 10px;
+  box-shadow: 0 10px 25px rgba(2,6,23,0.06);
+}
+
+.chat-adcard-img{
+  width:52px;
+  height:52px;
+  border-radius: 14px;
+  background:#eaf1ff;
+  flex:0 0 auto;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+  color:#1d4ed8;
+}
+
+.chat-adcard-img img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.chat-adcard-info{ flex:1; min-width:0; }
+.chat-adcard-title{
+  font-weight:800;
+  font-size:15px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.chat-adcard-sub{
+  margin-top:4px;
+  font-size:12px;
+  font-weight:600;
+  opacity:.7;
+  display:flex;
+  gap:8px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.chat-adcard-open{
+  border:none;
+  background:#2563eb;
+  color:#fff;
+  font-weight:800;
+  padding:10px 12px;
+  border-radius: 14px;
+  flex:0 0 auto;
+}
+
   @media (max-width: 480px) {
     body {
       align-items: stretch;
@@ -3929,6 +3995,23 @@ body.chat-room-open .chat-input{
       <button id="chatRoomMoreBtn" class="chat-room-more" type="button">⋯</button>
     </div>
 
+    <!-- AD CONTEXT CARD -->
+<div id="chatAdCard" class="chat-adcard" style="display:none;">
+  <div class="chat-adcard-inner">
+    <div id="chatAdImg" class="chat-adcard-img"></div>
+
+    <div class="chat-adcard-info">
+      <div id="chatAdTitle" class="chat-adcard-title">E’lon</div>
+      <div class="chat-adcard-sub">
+        <span id="chatAdPrice"></span>
+        <span id="chatAdCity"></span>
+      </div>
+    </div>
+
+    <button id="chatAdOpenBtn" class="chat-adcard-open" type="button">Открыть</button>
+  </div>
+</div>
+    
     <div id="chatMessages" class="chat-messages"></div>
 
     <div id="chatTyping" class="chat-typing" style="display:none;">Sotuvchi yozmoqda…</div>
@@ -4889,6 +4972,13 @@ const chatRoomTitle = document.getElementById("chatRoomTitle");
 const chatRoomStatus = document.getElementById("chatRoomStatus");
 const chatTyping = document.getElementById("chatTyping");
 
+    // Ad card DOM
+const chatAdCard   = document.getElementById("chatAdCard");
+const chatAdImg    = document.getElementById("chatAdImg");
+const chatAdTitle  = document.getElementById("chatAdTitle");
+const chatAdPrice  = document.getElementById("chatAdPrice");
+const chatAdCity   = document.getElementById("chatAdCity");
+const chatAdOpenBtn = document.getElementById("chatAdOpenBtn");
 const chatAttachBtn = document.getElementById("chatAttachBtn");
 const chatFileInput = document.getElementById("chatFileInput");
 
@@ -6623,6 +6713,8 @@ function chatShowRoom(threadId){
     if (chatRoomTitle) chatRoomTitle.textContent = t.peerName || "Chat";
     if (chatRoomStatus) chatRoomStatus.textContent = t.muted ? "muted" : "online";
 
+    renderAdCard();
+
     // ✅ показать контекст объявления (пока в статусе, подготовка под UI позже)
     // Пример: "Ad: iPhone 13 Pro"
     if (t.context?.adTitle && chatRoomStatus){
@@ -6732,6 +6824,46 @@ function renderThreads(){
     row.addEventListener("click", ()=> chatShowRoom(t.id));
     chatThreadsList.appendChild(row);
   });
+}
+
+    function renderAdCard(){
+  if (!chatAdCard) return;
+
+  const t = chatCurrentThreadId ? getThreadById(chatCurrentThreadId) : null;
+  const ctx = t?.context;
+
+  if (!ctx || (!ctx.title && !ctx.price && !ctx.city && !ctx.image && !ctx.url)){
+    chatAdCard.style.display = "none";
+    return;
+  }
+
+  chatAdCard.style.display = "block";
+
+  if (chatAdTitle) chatAdTitle.textContent = ctx.title || "E’lon";
+  if (chatAdPrice) chatAdPrice.textContent = ctx.price ? String(ctx.price) : "";
+  if (chatAdCity)  chatAdCity.textContent  = ctx.city ? `• ${ctx.city}` : "";
+
+  if (chatAdImg){
+    if (ctx.image){
+      chatAdImg.innerHTML = `<img src="${ctx.image}" alt="ad">`;
+    } else {
+      chatAdImg.textContent = "AD";
+    }
+  }
+
+  if (chatAdOpenBtn){
+    chatAdOpenBtn.onclick = () => {
+      // если у тебя есть открытие объявления по id — подцепим сюда
+      if (ctx.adId){
+        // пример: openAdById(ctx.adId);
+        showToast("E’lon", "Keyin openAdById() bog‘laymiz");
+      } else if (ctx.url){
+        window.open(ctx.url, "_blank");
+      } else {
+        showToast("E’lon", "ID/URL yo‘q");
+      }
+    };
+  }
 }
 
 function renderRoomMessages(){
