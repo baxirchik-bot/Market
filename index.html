@@ -3479,6 +3479,25 @@ body.chat-room-open .chat-input{
   flex:0 0 auto;
 }
 
+    .chat-ad-img{
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eaf1ff;
+  font-weight: 700;
+}
+
+.chat-ad-img img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+    
   @media (max-width: 480px) {
     body {
       align-items: stretch;
@@ -6976,6 +6995,29 @@ function ensureDemoThreadIfEmpty(){
   saveThreads([demo]);
 }
 
+    function getAdImage(ad){
+  if (!ad) return "";
+
+  // 1) самые частые варианты
+  let img =
+    ad.image ||
+    ad.img ||
+    ad.photo ||
+    ad.imgUrl ||
+    ad.imageUrl ||
+    "";
+
+  // 2) если картинки массивом
+  if (!img && Array.isArray(ad.images) && ad.images.length) img = ad.images[0];
+  if (!img && Array.isArray(ad.photos) && ad.photos.length) img = ad.photos[0];
+  if (!img && Array.isArray(ad.pics) && ad.pics.length) img = ad.pics[0];
+
+  // 3) если объект {url:"..."}
+  if (img && typeof img === "object") img = img.url || img.src || "";
+
+  return String(img || "").trim();
+}
+    
 // ===== open chat from Ad =====
 function openChatForAd(ad){
   const tg = String(ad?.telegram||"").replace(/^@/,"").toLowerCase().trim();
@@ -7008,13 +7050,13 @@ function openChatForAd(ad){
   lastTs: nowTs(),
 
   context: {
-    adId: ad?.id || ad?.adId || null,
-    title: ad?.title || ad?.name || ad?.model || "",
-    price: ad?.price || "",
-    city: ad?.city || ad?.location || "",
-    image: ad?.image || ad?.img || ad?.photo || "",
-    url: ad?.url || ""
-  },
+  adId: ad?.id || ad?.adId || null,
+  title: ad?.title || ad?.name || ad?.model || "",
+  price: ad?.price || "",
+  city: ad?.city || ad?.location || "",
+  image: getAdImage(ad),     // ✅ вот оно
+  url: ad?.url || ""
+},
 
   messages:[]
 };
