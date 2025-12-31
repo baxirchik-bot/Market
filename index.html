@@ -3271,13 +3271,15 @@ body.chat-room-open #screen-chat{
   padding: 0 !important;
   margin: 0 !important;
   background: #f1f4ff !important;
+  height: calc(var(--vvh, 1vh) * 100) !important;
+  overflow: hidden !important;
 }
 
 /* chatRoomView = flex-колонка на весь экран */
 body.chat-room-open #chatRoomView.chat-view.active{
   display: flex !important;
   flex-direction: column !important;
-  height: 100dvh !important;
+  height: calc(var(--vvh, 1vh) * 100) !important;
   padding-top: env(safe-area-inset-top) !important;
   padding-bottom: 0 !important;
 }
@@ -3308,7 +3310,7 @@ body.chat-room-open #chatComposerWrap{
   background: rgba(241,244,255,0.95) !important;
   backdrop-filter: blur(12px);
 
-  padding: 12px 8px calc(14px + env(safe-area-inset-bottom)) !important;
+  padding: 12px 8px max(14px, env(safe-area-inset-bottom)) !important;
   margin: 0 !important;
 
   border-top-left-radius: 18px;
