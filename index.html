@@ -6861,17 +6861,14 @@ function renderThreads(){
   }
 
   const openIt = () => {
-  // 1) выходим из режима переписки (чтобы не было “перекоса”)
+  // выключаем fullscreen комнаты
+  if (typeof closeChatRoomFullscreen === "function") closeChatRoomFullscreen();
   document.body.classList.remove("chat-room-open");
 
-  // 2) возвращаем нижнее меню / нормальный экран
-  // (не закрываем чат навсегда, просто выключаем fullscreen)
-  if (typeof chatShowThreads === "function") chatShowThreads();
-
-  // 3) небольшая пауза — чтобы UI успел переключиться
+  // открываем объявление прямо из чата
   setTimeout(() => {
     const ok = openAdById(ctx.adId, ctx);
-    if (!ok && ctx?.url) window.open(ctx.url, "_blank");
+    if (!ok) showToast("E’lon", "Ochilmadi");
   }, 50);
 };
 
@@ -6885,28 +6882,39 @@ chatAdCard.onclick = (e) => {
 };
   }
 
-   function openAdById(adId, ctx=null){
+   function openAdById(adId, ctx = null) {
   if (!adId) return false;
 
-  // берём актуальные объявления
-  const ads = (typeof window.__getAllAds === "function") ? window.__getAllAds() : allAds;
+  const findInAllAds = () => {
+    try {
+      return (allAds || []).find(a => String(a.id) === String(adId)) || null;
+    } catch {
+      return null;
+    }
+  };
 
-  const adObj = Array.isArray(ads)
-    ? ads.find(a => String(a.id) === String(adId))
-    : null;
+  const adObj = findInAllAds();
 
-  if (adObj){
-    try{
-      openAdDetails(adObj); // ✅ прямой вызов (без window)
-      return true;
-    }catch(e){}
-  }
-
-  // fallback: если есть url
-  if (ctx?.url){
-    window.open(ctx.url, "_blank");
+  // ✅ если нашли — открываем нормально
+  if (adObj) {
+    openAdDetails(adObj);
     return true;
   }
+
+  // ✅ если не нашли — значит ads ещё не загрузились. Подгружаем и пробуем снова.
+  loadAds().then(() => {
+    const ad2 = findInAllAds();
+    if (ad2) {
+      openAdDetails(ad2);
+    } else {
+      showToast("E’lon topilmadi", `ID: ${adId}`);
+      // если есть ссылка — откроем ссылку (если ты потом добавишь)
+      if (ctx?.url) window.open(ctx.url, "_blank");
+    }
+  });
+
+  return true;
+}
 
   if (typeof showToast === "function"){
     showToast("E’lon topilmadi", "ID bo‘yicha ochilmadi");
