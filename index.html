@@ -3497,6 +3497,31 @@ body.chat-room-open .chat-input{
   object-fit: cover;
   display: block;
 }
+
+    .chat-thread-avatar{
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #eaf1ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.chat-thread-avatar img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.chat-thread-avatar span{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
     
   @media (max-width: 480px) {
     body {
@@ -6834,19 +6859,23 @@ function renderThreads(){
     const pin = t.pinned ? `<div class="chat-thread-pin">📌</div>` : "";
     const badge = (t.unread||0) > 0 ? `<div class="chat-thread-badge">${t.unread}</div>` : "";
 
-    row.innerHTML = `
-      <div class="chat-thread-avatar">${initials(t.peerName)}</div>
-      <div class="chat-thread-main">
-        <div class="chat-thread-title">${t.peerName || "Chat"} ${pin}</div>
-        <div class="chat-thread-last">
-  ${(t.context?.title ? `📌 ${t.context.title} • ` : "")}${t.lastMessage || "—"}
-</div>
-      </div>
-      <div class="chat-thread-meta">
-        <div class="chat-thread-time">${t.lastTs ? fmtTime(t.lastTs) : ""}</div>
-        ${badge}
-      </div>
-    `;
+    const avatarHtml = (t.context?.image)
+  ? `<img src="${t.context.image}" alt="ad" />`
+  : `<span>${initials(t.peerName)}</span>`;
+
+row.innerHTML = `
+  <div class="chat-thread-avatar">${avatarHtml}</div>
+  <div class="chat-thread-main">
+    <div class="chat-thread-title">${t.peerName || "Chat"} ${pin}</div>
+    <div class="chat-thread-last">
+      ${(t.context?.title ? `📌 ${t.context.title} • ` : "")}${t.lastMessage || "—"}
+    </div>
+  </div>
+  <div class="chat-thread-meta">
+    <div class="chat-thread-time">${t.lastTs ? fmtTime(t.lastTs) : ""}</div>
+    ${badge}
+  </div>
+`;
 
     // ✅ ШАГ 3B: из списка диалогов открываем переписку в fullscreen
     row.addEventListener("click", ()=> chatShowRoom(t.id));
