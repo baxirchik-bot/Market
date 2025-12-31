@@ -6851,21 +6851,62 @@ function renderThreads(){
     }
   }
 
-  if (chatAdOpenBtn){
-    chatAdOpenBtn.onclick = () => {
-      // если у тебя есть открытие объявления по id — подцепим сюда
-      if (ctx.adId){
-        // пример: openAdById(ctx.adId);
-        showToast("E’lon", "Keyin openAdById() bog‘laymiz");
-      } else if (ctx.url){
-        window.open(ctx.url, "_blank");
-      } else {
-        showToast("E’lon", "ID/URL yo‘q");
-      }
-    };
+  const openIt = () => {
+  // 1) закрываем fullscreen режим чата (чтобы объявление не оказалось “под ним”)
+  document.body.classList.remove("chat-room-open");
+
+  // 2) открываем объявление
+  const ok = openAdById(ctx.adId);
+
+  // 3) если не открылось — хотя бы откроем URL (если есть)
+  if (!ok && ctx.url){
+    window.open(ctx.url, "_blank");
+  }
+};
+
+if (chatAdOpenBtn) chatAdOpenBtn.onclick = openIt;
+
+// кликабельна вся карточка целиком
+chatAdCard.onclick = (e) => {
+  // если нажали на кнопку — она сама обработает
+  if (e.target === chatAdOpenBtn) return;
+  openIt();
+};
   }
 }
 
+    function openAdById(adId){
+  if (!adId) return false;
+
+  // 1) Если в проекте уже есть готовая функция — используем её
+  if (typeof window.openAd === "function") { window.openAd(adId); return true; }
+  if (typeof window.openAdDetails === "function") { window.openAdDetails(adId); return true; }
+  if (typeof window.showAdDetails === "function") { window.showAdDetails(adId); return true; }
+
+  // 2) Если у тебя объявления хранятся в массиве — попробуем найти и открыть
+  const pool =
+    window.adsData ||
+    window.ads ||
+    window.allAds ||
+    window.filteredAds ||
+    null;
+
+  if (Array.isArray(pool)){
+    const ad = pool.find(a => String(a.id) === String(adId) || String(a.adId) === String(adId));
+    if (ad){
+      if (typeof window.openAdCard === "function") { window.openAdCard(ad); return true; }
+      if (typeof window.renderAdDetails === "function") { window.renderAdDetails(ad); return true; }
+      // если нет функций — хотя бы покажем что нашли
+      showToast("E’lon topildi", ad.title || ad.name || "OK");
+      return true;
+    }
+  }
+
+  // 3) Фолбэк — пока не подключили
+  showToast("E’lon", "openAdById() ulandi, lekin ochish funksiyasi topilmadi");
+  return false;
+}
+    
 function renderRoomMessages(){
   if (!chatMessagesEl || !chatCurrentThreadId) return;
 
@@ -6950,14 +6991,14 @@ function openChatForAd(ad){
       unread:0,
       lastMessage:"",
       lastTs: nowTs(),
-      context: {
-        adId: adId,
-        title: ad?.title || ad?.name || "E’lon",
-        price: ad?.price || "",
-        city: ad?.city || "",
-        image: ad?.image || ad?.img || "",
-        url: ad?.url || ""
-      },
+      t.context = {
+  adId: ad?.id || ad?.adId || null,
+  title: ad?.title || ad?.name || ad?.model || "",
+  price: ad?.price || "",
+  city: ad?.city || ad?.location || "",
+  image: ad?.image || ad?.img || ad?.photo || "",
+  url: ad?.url || ""
+};
       messages:[]
     };
 
