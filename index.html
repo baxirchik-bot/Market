@@ -6565,7 +6565,7 @@ if (sellerCard && !sellerCard.dataset.bound) {
       showToast("E’lon yuqoriga ko‘tarildi!", "TOP bo‘limida ko‘rinadi");
     });
 
-   /* ================== CHAT (PRO) — CLEAN / READY FOR DB ================== */
+   //================== CHAT (PRO) — CLEAN / READY FOR DB ================== 
 (() => {
   "use strict";
 
@@ -7390,6 +7390,114 @@ if (sellerCard && !sellerCard.dataset.bound) {
     window.ZalvoChat.init();
   }
 })();
+
+    // ================== CHAT INTEGRATION PATCH (AUTO DETECT) ==================
+
+// 1) Backward compatibility: если где-то в проекте вызывается openChatForAd(ad)
+window.openChatForAd = function(ad){
+  try{
+    if (typeof openChatForAd === "function" && openChatForAd !== window.openChatForAd) {
+      // если вдруг есть другая версия (на всякий случай)
+      return openChatForAd(ad);
+    }
+  } catch {}
+  if (typeof window.ZalvoChat?.openChatForAd === "function") {
+    return window.ZalvoChat.openChatForAd(ad);
+  }
+  // fallback: если у тебя openChatForAd остался глобальным (в твоём коде он глобальный)
+  if (typeof window.openChatForAd_legacy === "function") return window.openChatForAd_legacy(ad);
+  console.warn("openChatForAd: chat module not ready");
+};
+
+// 2) Автоподключение массива объявлений (чтобы openAdById мог найти объявление)
+(function autoBindAdsPool(){
+  const candidates = [
+    "adsData","ads","allAds","filteredAds","allAdsData","ADS","items","listings"
+  ];
+  for (const key of candidates){
+    if (Array.isArray(window[key]) && window[key].length){
+      window.adsData = window[key]; // унифицируем
+      return;
+    }
+  }
+})();
+
+// 3) Универсальная функция открытия объявления ПО ID
+// Сначала пробует реальные функции проекта, затем ищет в adsData и пробует открыть объектом
+window.__zalvoOpenAdUniversal = function(adId){
+  if (!adId) return false;
+
+  // 3.1) Если в проекте уже есть функции открытия по ID
+  const byIdFns = ["openAdById","openAd","openAdDetails","showAdDetails"];
+  for (const fn of byIdFns){
+    if (typeof window[fn] === "function"){
+      try{
+        window[fn](adId);
+        return true;
+      } catch {}
+    }
+  }
+
+  // 3.2) Если есть массив объявлений — найдём объект объявления
+  const pool = window.adsData || window.ads || window.allAds || window.filteredAds;
+  if (Array.isArray(pool)){
+    const ad = pool.find(a => String(a.id) === String(adId) || String(a.adId) === String(adId));
+    if (ad){
+      // 3.3) Пробуем функции открытия, которые принимают ОБЪЕКТ
+      const objFns = ["openAdCard","renderAdDetails","openAdDetails","showAdDetails"];
+      for (const fn of objFns){
+        if (typeof window[fn] === "function"){
+          try{
+            window[fn](ad);
+            return true;
+          } catch {}
+        }
+      }
+      // Если ничего не нашли — хотя бы покажем тост, что объект есть
+      if (typeof showToast === "function") showToast("E’lon topildi", ad.title || ad.name || "OK");
+      return false;
+    }
+  }
+
+  // 3.4) Если есть URL в текущем контексте (не всегда)
+  return false;
+};
+
+// 4) Патчим кнопку "Открыть" в карточке объявления чата так, чтобы она точно работала
+(function patchChatAdOpen(){
+  // подстрахуемся: подождём DOM
+  const apply = () => {
+    const btn = document.getElementById("chatAdOpenBtn");
+    const card = document.getElementById("chatAdCard");
+    if (!btn || !card) return;
+
+    // переопределяем обработчики, чтобы не остались старые
+    btn.onclick = null;
+    card.onclick = null;
+
+    const openIt = () => {
+      try{ document.body.classList.remove("chat-room-open"); } catch {}
+      const tId = window.chatCurrentThreadId || null;
+      const t = tId && typeof getThreadById === "function" ? getThreadById(tId) : null;
+      const ctx = t?.context || null;
+
+      const ok = window.__zalvoOpenAdUniversal(ctx?.adId);
+      if (!ok && ctx?.url) window.open(ctx.url, "_blank");
+      if (!ok && !ctx?.url && typeof showToast === "function"){
+        showToast("E’lon", "Ochish funksiyasi topilmadi (adsData/openAd...)");
+      }
+    };
+
+    btn.onclick = (e)=>{ e.preventDefault(); e.stopPropagation(); openIt(); };
+    card.onclick = (e)=>{ if (e.target === btn) return; openIt(); };
+  };
+
+  apply();
+  setTimeout(apply, 300);
+  setTimeout(apply, 900);
+})();
+
+// ================== /CHAT INTEGRATION PATCH ==================
 /* ================== /CHAT (PRO) ================== */
 
     const settingsAdminRow  = document.getElementById("settingsAdminRow");
