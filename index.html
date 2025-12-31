@@ -6717,9 +6717,9 @@ function chatShowRoom(threadId){
 
     // ✅ показать контекст объявления (пока в статусе, подготовка под UI позже)
     // Пример: "Ad: iPhone 13 Pro"
-    if (t.context?.adTitle && chatRoomStatus){
-      chatRoomStatus.textContent = t.muted ? "muted" : `Ad: ${t.context.adTitle}`;
-    }
+    if (t.context?.title && chatRoomStatus){
+  chatRoomStatus.textContent = t.muted ? "muted" : `Ad: ${t.context.title}`;
+}
 
     t.unread = 0;
     upsertThread(t);
@@ -6852,16 +6852,18 @@ function renderThreads(){
   }
 
   const openIt = () => {
-  // 1) закрываем fullscreen режим чата (чтобы объявление не оказалось “под ним”)
+  // 1) выходим из режима переписки (чтобы не было “перекоса”)
   document.body.classList.remove("chat-room-open");
 
-  // 2) открываем объявление
-  const ok = openAdById(ctx.adId);
+  // 2) возвращаем нижнее меню / нормальный экран
+  // (не закрываем чат навсегда, просто выключаем fullscreen)
+  if (typeof chatShowThreads === "function") chatShowThreads();
 
-  // 3) если не открылось — хотя бы откроем URL (если есть)
-  if (!ok && ctx.url){
-    window.open(ctx.url, "_blank");
-  }
+  // 3) небольшая пауза — чтобы UI успел переключиться
+  setTimeout(() => {
+    const ok = openAdById(ctx.adId, ctx);
+    if (!ok && ctx?.url) window.open(ctx.url, "_blank");
+  }, 50);
 };
 
 if (chatAdOpenBtn) chatAdOpenBtn.onclick = openIt;
@@ -6874,15 +6876,10 @@ chatAdCard.onclick = (e) => {
 };
   }
 
-    function openAdById(adId){
+    function openAdById(adId, ctx=null){
   if (!adId) return false;
 
-  // 1) Если в проекте уже есть готовая функция — используем её
-  if (typeof window.openAd === "function") { window.openAd(adId); return true; }
-  if (typeof window.openAdDetails === "function") { window.openAdDetails(adId); return true; }
-  if (typeof window.showAdDetails === "function") { window.showAdDetails(adId); return true; }
-
-  // 2) Если у тебя объявления хранятся в массиве — попробуем найти и открыть
+  // 0) Попробуем найти объявление в глобальных массивах (если они есть)
   const pool =
     window.adsData ||
     window.ads ||
@@ -6890,19 +6887,53 @@ chatAdCard.onclick = (e) => {
     window.filteredAds ||
     null;
 
+  let adObj = null;
   if (Array.isArray(pool)){
-    const ad = pool.find(a => String(a.id) === String(adId) || String(a.adId) === String(adId));
-    if (ad){
-      if (typeof window.openAdCard === "function") { window.openAdCard(ad); return true; }
-      if (typeof window.renderAdDetails === "function") { window.renderAdDetails(ad); return true; }
-      // если нет функций — хотя бы покажем что нашли
-      showToast("E’lon topildi", ad.title || ad.name || "OK");
-      return true;
+    adObj = pool.find(a =>
+      String(a.id) === String(adId) ||
+      String(a.adId) === String(adId) ||
+      String(a.slug) === String(adId)
+    ) || null;
+  }
+
+  // 1) Сначала пробуем открыть "по id" (если функция реально поддерживает id)
+  const byIdFns = ["openAdById", "openAd", "openAdDetails", "showAdDetails"];
+  for (const fn of byIdFns){
+    if (typeof window[fn] === "function"){
+      try{
+        // если fn === openAdById — чтобы не рекурсило
+        if (fn === "openAdById") continue;
+        window[fn](adId);
+        return true;
+      } catch(e){}
     }
   }
 
-  // 3) Фолбэк — пока не подключили
-  showToast("E’lon", "openAdById() ulandi, lekin ochish funksiyasi topilmadi");
+  // 2) Если по id не вышло — пробуем открыть "объектом"
+  if (adObj){
+    const byObjFns = ["openAdCard", "renderAdDetails", "openAdDetails", "showAdDetails", "openAd"];
+    for (const fn of byObjFns){
+      if (typeof window[fn] === "function"){
+        try{
+          window[fn](adObj);
+          return true;
+        } catch(e){}
+      }
+    }
+    // хотя бы покажем что нашли
+    if (typeof showToast === "function") showToast("E’lon topildi", adObj.title || adObj.name || "OK");
+    return false;
+  }
+
+  // 3) Фолбэк — если есть url в контексте чата
+  if (ctx?.url){
+    window.open(ctx.url, "_blank");
+    return true;
+  }
+
+  if (typeof showToast === "function"){
+    showToast("E’lon", "Ochish funksiyasi topilmadi (id/obj)");
+  }
   return false;
 }
     
