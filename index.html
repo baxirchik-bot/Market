@@ -6981,25 +6981,27 @@ function openChatForAd(ad){
     const peerName = tg ? ("@" + tg) : (phone || "Sotuvchi");
 
     t = {
-      id: threadId,
-      peerName,
-      peerId: peerKey,
-      peerType: "user",
-      pinned:false,
-      muted:false,
-      unread:0,
-      lastMessage:"",
-      lastTs: nowTs(),
-      t.context = {
-  adId: ad?.id || ad?.adId || null,
-  title: ad?.title || ad?.name || ad?.model || "",
-  price: ad?.price || "",
-  city: ad?.city || ad?.location || "",
-  image: ad?.image || ad?.img || ad?.photo || "",
-  url: ad?.url || ""
+  id: threadId,
+  peerName,
+  peerId: peerKey,
+  peerType: "user",
+  pinned:false,
+  muted:false,
+  unread:0,
+  lastMessage:"",
+  lastTs: nowTs(),
+
+  context: {
+    adId: ad?.id || ad?.adId || null,
+    title: ad?.title || ad?.name || ad?.model || "",
+    price: ad?.price || "",
+    city: ad?.city || ad?.location || "",
+    image: ad?.image || ad?.img || ad?.photo || "",
+    url: ad?.url || ""
+  },
+
+  messages:[]
 };
-      messages:[]
-    };
 
     // ✅ первое системное сообщение с контекстом
     const adTitle = t.context.title;
