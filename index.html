@@ -6504,6 +6504,7 @@ function initials(name){
 //   lastMessage, lastTs,
 //   messages: [{id, from:"me"|"other", text, ts, status:"sent"|"read", imageDataUrl?}],
 //   context: { adId?, adTitle?, adUrl?, sellerKey? }  // ✅ подготовка под БД
+// thread.context = { adId, title, price, image, city, url }
 // }
 
 function loadThreads(){
@@ -6717,7 +6718,9 @@ function renderThreads(){
       <div class="chat-thread-avatar">${initials(t.peerName)}</div>
       <div class="chat-thread-main">
         <div class="chat-thread-title">${t.peerName || "Chat"} ${pin}</div>
-        <div class="chat-thread-last">${t.lastMessage || "—"}</div>
+        <div class="chat-thread-last">
+  ${(t.context?.title ? `📌 ${t.context.title} • ` : "")}${t.lastMessage || "—"}
+</div>
       </div>
       <div class="chat-thread-meta">
         <div class="chat-thread-time">${t.lastTs ? fmtTime(t.lastTs) : ""}</div>
@@ -6787,28 +6790,26 @@ function ensureDemoThreadIfEmpty(){
 
 // ===== open chat from Ad =====
 function openChatForAd(ad){
-  // создаём/находим тред по продавцу (tg/phone)
   const tg = String(ad?.telegram||"").replace(/^@/,"").toLowerCase().trim();
   const phone = String(ad?.phone||"").replace(/\s+/g,"").trim();
   const peerKey = tg ? ("tg_" + tg) : phone ? ("ph_" + phone) : ("seller_unknown");
 
-  const threads = loadThreads();
-  let t = threads.find(x => x.peerId === peerKey);
+  // ✅ ключ объявления (обязательно уникальный)
+  const adId = String(ad?.id || ad?.adId || ad?.slug || ad?.title || "no_ad").trim();
+  const adKey = ("ad_" + adId).toLowerCase();
 
-  // ✅ сохраняем контекст объявления (шаг 3A)
-  const ctx = {
-    adId: ad?.id ?? null,
-    adTitle: ad?.title ?? "",
-    adUrl: ad?.url ?? "",
-    sellerKey: peerKey,
-    ts: nowTs()
-  };
-  try { localStorage.setItem("zalvo_chat_context", JSON.stringify(ctx)); } catch {}
+  // ✅ теперь чат уникален: продавец + объявление
+  const threadKey = `${peerKey}__${adKey}`;
+  const threadId = "t_" + threadKey;
+
+  const threads = loadThreads();
+  let t = threads.find(x => String(x.id) === String(threadId));
 
   if (!t){
     const peerName = tg ? ("@" + tg) : (phone || "Sotuvchi");
+
     t = {
-      id: "t_" + peerKey,
+      id: threadId,
       peerName,
       peerId: peerKey,
       peerType: "user",
@@ -6817,32 +6818,46 @@ function openChatForAd(ad){
       unread:0,
       lastMessage:"",
       lastTs: nowTs(),
-      context: ctx, // ✅ привязка к объявлению
+      context: {
+        adId: adId,
+        title: ad?.title || ad?.name || "E’lon",
+        price: ad?.price || "",
+        city: ad?.city || "",
+        image: ad?.image || ad?.img || "",
+        url: ad?.url || ""
+      },
       messages:[]
     };
 
-    // приветствие + подсказка по объявлению
-    const welcomeText = ctx.adTitle
-      ? `Assalomu alaykum! "${ctx.adTitle}" bo‘yicha savolingiz bormi? 🙂`
-      : "Assalomu alaykum! Xush kelibsiz 🙂";
-
+    // ✅ первое системное сообщение с контекстом
+    const adTitle = t.context.title;
     t.messages.push({
-      id:"m_welcome_" + nowTs(),
+      id:"m_ctx_" + nowTs(),
       from:"other",
-      text: welcomeText,
+      text:`Assalomu alaykum! “${adTitle}” bo‘yicha savolingiz bormi? 😊`,
       ts: nowTs(),
       status:"read"
     });
-    t.lastMessage = welcomeText;
+
+    t.lastMessage = `“${adTitle}” bo‘yicha savol`;
     t.lastTs = nowTs();
     upsertThread(t);
   } else {
-    // если тред уже был — обновим контекст последнего объявления
-    t.context = ctx;
-    upsertThread(t);
+    // ✅ если тред есть, но контекст вдруг пустой — восстановим
+    if (!t.context) {
+      t.context = {
+        adId: adId,
+        title: ad?.title || ad?.name || "E’lon",
+        price: ad?.price || "",
+        city: ad?.city || "",
+        image: ad?.image || ad?.img || "",
+        url: ad?.url || ""
+      };
+      upsertThread(t);
+    }
   }
 
-  // ✅ открыть экран чата и сразу комнату (fullscreen)
+  // открыть экран чата и сразу комнату
   showScreen("chat");
   chatShowRoom(t.id);
 }
