@@ -6565,940 +6565,814 @@ if (sellerCard && !sellerCard.dataset.bound) {
       showToast("E’lon yuqoriga ko‘tarildi!", "TOP bo‘limida ko‘rinadi");
     });
 
-   //================== CHAT (PRO) — CLEAN / READY FOR DB ================== 
-(() => {
-  "use strict";
-
-  // ---------- CONFIG ----------
-  const CHAT_STORAGE_KEY = "zalvo_chat_threads_v1";
-
-  // Заглушки под будущую БД
-  const CHAT_API_BASE = "https://YOUR_SERVER.com/api/chat"; // потом заменим
-  const CHAT_USE_API = false; // сейчас false (локально), потом true
-
-  // ---------- HELPERS ----------
-  const nowTs = () => Date.now();
-
-  function fmtTime(ts) {
-    try {
-      const d = new Date(ts);
-      const hh = String(d.getHours()).padStart(2, "0");
-      const mm = String(d.getMinutes()).padStart(2, "0");
-      return `${hh}:${mm}`;
-    } catch {
-      return "";
-    }
-  }
-
-  function initials(name) {
-    const s = String(name || "").trim();
-    if (!s) return "Z";
-    return s[0].toUpperCase();
-  }
-
-  function safeText(s) {
-    return String(s || "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  }
-
-  // ---------- STORAGE MODEL ----------
-  // thread = {
-  //   id, peerName, peerId, peerType: "shop"|"user",
-  //   pinned, muted, unread,
-  //   lastMessage, lastTs,
-  //   messages: [{id, from:"me"|"other", text, ts, status:"sent"|"read", imageDataUrl?}],
-  //   context: { adId, title, price, city, image, url }
-  // }
-
-  function loadThreads() {
-    try {
-      const raw = localStorage.getItem(CHAT_STORAGE_KEY);
-      const arr = JSON.parse(raw || "[]");
-      return Array.isArray(arr) ? arr : [];
-    } catch {
-      return [];
-    }
-  }
-
-  function saveThreads(arr) {
-    try {
-      localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(arr));
-    } catch {}
-  }
-
-  function upsertThread(thread) {
-    const threads = loadThreads();
-    const i = threads.findIndex(t => String(t.id) === String(thread.id));
-    if (i >= 0) threads[i] = thread;
-    else threads.unshift(thread);
-    saveThreads(threads);
-  }
-
-  function getThreadById(id) {
-    return loadThreads().find(t => String(t.id) === String(id)) || null;
-  }
-
-  function deleteThread(id) {
-    saveThreads(loadThreads().filter(t => String(t.id) !== String(id)));
-  }
-
-  function clearThreadMessages(id) {
-    const t = getThreadById(id);
-    if (!t) return;
-    t.messages = [];
-    t.lastMessage = "";
-    t.lastTs = nowTs();
-    t.unread = 0;
-    upsertThread(t);
-  }
-
-  function sortThreads(arr) {
-    return [...arr].sort((a, b) => {
-      const ap = a.pinned ? 1 : 0;
-      const bp = b.pinned ? 1 : 0;
-      if (ap !== bp) return bp - ap;
-      return (b.lastTs || 0) - (a.lastTs || 0);
-    });
-  }
-
-  // ---------- API STUBS ----------
-  async function apiGetThreads() {
-    if (!CHAT_USE_API) return loadThreads();
-    const r = await fetch(`${CHAT_API_BASE}/threads`);
-    if (!r.ok) throw new Error("threads_failed");
-    return await r.json();
-  }
-
-  async function apiGetMessages(threadId) {
-    if (!CHAT_USE_API) {
-      const t = getThreadById(threadId);
-      return t?.messages || [];
-    }
-    const r = await fetch(`${CHAT_API_BASE}/threads/${threadId}/messages`);
-    if (!r.ok) throw new Error("messages_failed");
-    return await r.json();
-  }
-
-  async function apiSendMessage(threadId, payload) {
-    if (!CHAT_USE_API) return { ok: true, serverId: "local_" + nowTs() };
-    const r = await fetch(`${CHAT_API_BASE}/threads/${threadId}/send`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-    if (!r.ok) throw new Error("send_failed");
-    return await r.json();
-  }
-
-  async function apiMarkRead(threadId) {
-    if (!CHAT_USE_API) return true;
-    await fetch(`${CHAT_API_BASE}/threads/${threadId}/read`, { method: "POST" });
-    return true;
-  }
-
-  // ---------- AD OPEN (HOOKS) ----------
-  // 1) Рекомендуемый способ: ты задаёшь функцию открытия объявления:
-  // window.ZalvoChat.setAdOpener((ad)=>{ ... открыть ad ... })
-  // 2) Если не задано — будет искать window.openAd/openAdDetails/showAdDetails и т.д.
-
-  let adOpener = null; // (ad)=>boolean
-
-  function getAdsPool() {
-    return window.adsData || window.ads || window.allAds || window.filteredAds || null;
-  }
-
-  function findAdById(adId) {
-    const pool = getAdsPool();
-    if (!Array.isArray(pool)) return null;
-
-    const idStr = String(adId);
-    return pool.find(a =>
-      String(a.id) === idStr ||
-      String(a.adId) === idStr ||
-      String(a.slug) === idStr
-    ) || null;
-  }
-
-  function fallbackOpenAd(ad) {
-    const candidates = [
-      "openAd", "openAdDetails", "showAdDetails",
-      "openAdCard", "renderAdDetails", "showAd"
-    ];
-
-    for (const fnName of candidates) {
-      const fn = window[fnName];
-      if (typeof fn === "function") {
-        try {
-          // чаще всего ваши функции принимают ОБЪЕКТ ad
-          fn(ad);
-          return true;
-        } catch (e) {
-          // иногда ждут id — попробуем второй раз id
-          try { fn(ad.id || ad.adId); return true; } catch {}
-        }
-      }
-    }
-    return false;
-  }
-
-  function openAdById(adId) {
-    if (!adId) return false;
-    const ad = findAdById(adId);
-
-    if (!ad) {
-      if (typeof window.showToast === "function") {
-        window.showToast("E’lon", "E’lon topilmadi (adsData yo‘q yoki id mos emas)");
-      }
-      return false;
-    }
-
-    if (typeof adOpener === "function") {
-      try { return !!adOpener(ad); } catch {}
-    }
-
-    const ok = fallbackOpenAd(ad);
-    if (!ok && typeof window.showToast === "function") {
-      window.showToast("E’lon", "Ochish funksiyasi topilmadi (openAd/openAdDetails...)");
-    }
-    return ok;
-  }
-
-  // ---------- UI STATE ----------
-  let chatCurrentThreadId = null;
-
-  // DOM refs (будем искать в init)
-  let chatThreadsView, chatRoomView, chatThreadsList, chatThreadsEmpty, chatThreadsSearch;
-  let chatRoomAvatar, chatRoomTitle, chatRoomStatus, chatMessagesEl, chatTyping;
-  let chatRoomBackBtn, chatRoomMoreBtn, chatNewDialogBtn;
-  let chatAttachBtn, chatSendBtn, chatInput, chatFileInput;
-
-  // sheet
-  let chatRoomSheetBackdrop, chatRoomSheetCancel, chatRoomSheetTitle;
-  let chatActionPin, chatActionMute, chatActionClear, chatActionDelete, chatActionReport;
-
-  // ad card
-  let chatAdCard, chatAdTitle, chatAdPrice, chatAdCity, chatAdImg, chatAdOpenBtn;
-
-  // ---------- FULLSCREEN LAYOUT MEASURE ----------
-  function chatRoomMeasure() {
-    if (!document.body.classList.contains("chat-room-open")) return;
-
-    const vvh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-    const topbar = document.querySelector("#chatRoomView .chat-room-topbar");
-    const composer = document.getElementById("chatComposerWrap");
-
-    const topH = topbar ? topbar.getBoundingClientRect().height : 72;
-    const compH = composer ? composer.getBoundingClientRect().height : 86;
-
-    document.documentElement.style.setProperty("--vvh", vvh + "px");
-    document.documentElement.style.setProperty("--roomTop", topH + "px");
-    document.documentElement.style.setProperty("--roomComposer", compH + "px");
-  }
-
-  function bindViewportMeasure() {
-    window.addEventListener("resize", chatRoomMeasure);
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener("resize", chatRoomMeasure);
-      window.visualViewport.addEventListener("scroll", chatRoomMeasure);
-    }
-  }
-
-  // ---------- RENDER ----------
-  function renderThreads() {
-    if (!chatThreadsList || !chatThreadsEmpty) return;
-
-    const q = (chatThreadsSearch?.value || "").toLowerCase().trim();
-    let threads = loadThreads();
-
-    if (q) {
-      threads = threads.filter(t => {
-        const text = `${t.peerName || ""} ${t.lastMessage || ""}`.toLowerCase();
-        return text.includes(q);
-      });
-    }
-
-    threads = sortThreads(threads);
-
-    chatThreadsList.innerHTML = "";
-    if (!threads.length) {
-      chatThreadsEmpty.style.display = "block";
-      return;
-    }
-    chatThreadsEmpty.style.display = "none";
-
-    threads.forEach(t => {
-      const row = document.createElement("div");
-      row.className = "chat-thread";
-
-      const pin = t.pinned ? `<div class="chat-thread-pin">📌</div>` : "";
-      const badge = (t.unread || 0) > 0 ? `<div class="chat-thread-badge">${t.unread}</div>` : "";
-
-      row.innerHTML = `
-        <div class="chat-thread-avatar">${initials(t.peerName)}</div>
-        <div class="chat-thread-main">
-          <div class="chat-thread-title">${safeText(t.peerName || "Chat")} ${pin}</div>
-          <div class="chat-thread-last">
-            ${(t.context?.title ? `📌 ${safeText(t.context.title)} • ` : "")}${safeText(t.lastMessage || "—")}
-          </div>
-        </div>
-        <div class="chat-thread-meta">
-          <div class="chat-thread-time">${t.lastTs ? fmtTime(t.lastTs) : ""}</div>
-          ${badge}
-        </div>
-      `;
-
-      row.addEventListener("click", () => chatShowRoom(t.id));
-      chatThreadsList.appendChild(row);
-    });
-  }
-
-  function renderRoomMessages() {
-    if (!chatMessagesEl || !chatCurrentThreadId) return;
-
-    const t = getThreadById(chatCurrentThreadId);
-    const msgs = t?.messages || [];
-    chatMessagesEl.innerHTML = "";
-
-    msgs.forEach(m => {
-      const b = document.createElement("div");
-      b.className = "chat-bubble " + (m.from === "me" ? "me" : "other");
-
-      const imgHtml = m.imageDataUrl
-        ? `<img class="chat-image" src="${m.imageDataUrl}" alt="image" />`
-        : "";
-
-      const status = m.from === "me" ? (m.status === "read" ? "✓✓" : "✓") : "";
-
-      b.innerHTML = `
-        <div>${safeText(m.text || "")}</div>
-        ${imgHtml}
-        <div class="chat-bubble-meta">
-          <span>${fmtTime(m.ts)}</span>
-          ${status ? `<span>${status}</span>` : ``}
-        </div>
-      `;
-
-      chatMessagesEl.appendChild(b);
-    });
-  }
-
-  function scrollChatToBottom() {
-    if (!chatMessagesEl) return;
-    chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
-  }
-
-  function renderAdCard() {
-    if (!chatAdCard) return;
-
-    const t = chatCurrentThreadId ? getThreadById(chatCurrentThreadId) : null;
-    const ctx = t?.context;
-
-    if (!ctx || (!ctx.title && !ctx.price && !ctx.city && !ctx.image && !ctx.url && !ctx.adId)) {
-      chatAdCard.style.display = "none";
-      return;
-    }
-
-    chatAdCard.style.display = "block";
-
-    if (chatAdTitle) chatAdTitle.textContent = ctx.title || "E’lon";
-    if (chatAdPrice) chatAdPrice.textContent = ctx.price ? String(ctx.price) : "";
-    if (chatAdCity) chatAdCity.textContent = ctx.city ? `• ${ctx.city}` : "";
-
-    if (chatAdImg) {
-      if (ctx.image) chatAdImg.innerHTML = `<img src="${ctx.image}" alt="ad">`;
-      else chatAdImg.textContent = "AD";
-    }
-
-    const openIt = () => {
-      // закрываем fullscreen режим чата (чтобы объявление не оказалось под ним)
-      document.body.classList.remove("chat-room-open");
-
-      const ok = openAdById(ctx.adId);
-
-      // fallback — если есть url
-      if (!ok && ctx.url) {
-        // на мобиле лучше так
-        location.href = ctx.url;
-      }
-    };
-
-    if (chatAdOpenBtn) chatAdOpenBtn.onclick = openIt;
-    chatAdCard.onclick = (e) => {
-      if (e.target === chatAdOpenBtn) return;
-      openIt();
-    };
-  }
-
-  // ---------- VIEWS ----------
-  function chatShowThreads() {
-    document.body.classList.remove("chat-room-open");
-
-    // остаёмся на экране "chat"
-    if (typeof window.showScreen === "function") window.showScreen("chat", { push: false });
-
-    if (chatThreadsView) chatThreadsView.classList.add("active");
-    if (chatRoomView) chatRoomView.classList.remove("active");
-
-    chatCurrentThreadId = null;
-    renderThreads();
-    requestAnimationFrame(chatRoomMeasure);
-  }
-
-  function chatShowRoom(threadId) {
-    document.body.classList.add("chat-room-open");
-
-    if (typeof window.showScreen === "function") window.showScreen("chat", { push: false });
-
-    if (chatThreadsView) chatThreadsView.classList.remove("active");
-    if (chatRoomView) chatRoomView.classList.add("active");
-
-    chatCurrentThreadId = threadId;
-
+  // ================== CHAT (PRO) + PREP FOR DB ==================
+const CHAT_STORAGE_KEY = "zalvo_chat_threads_v1";
+
+// Заглушки под будущую БД
+const CHAT_API_BASE = "https://YOUR_SERVER.com/api/chat"; // потом заменим
+const CHAT_USE_API = false; // сейчас false (локально), потом true
+
+function nowTs(){ return Date.now(); }
+function fmtTime(ts){
+  try{
+    const d = new Date(ts);
+    const hh = String(d.getHours()).padStart(2,"0");
+    const mm = String(d.getMinutes()).padStart(2,"0");
+    return `${hh}:${mm}`;
+  } catch { return ""; }
+}
+function initials(name){
+  const s = String(name||"").trim();
+  if (!s) return "Z";
+  return s[0].toUpperCase();
+}
+
+// ===== Local storage model =====
+// thread = {
+//   id, peerName, peerId, peerType: "shop"|"user",
+//   pinned, muted, unread,
+//   lastMessage, lastTs,
+//   messages: [{id, from:"me"|"other", text, ts, status:"sent"|"read", imageDataUrl?}],
+//   context: { adId?, adTitle?, adUrl?, sellerKey? }  // ✅ подготовка под БД
+// thread.context = { adId, title, price, image, city, url }
+// }
+
+function loadThreads(){
+  try{
+    const raw = localStorage.getItem(CHAT_STORAGE_KEY);
+    const arr = JSON.parse(raw || "[]");
+    return Array.isArray(arr) ? arr : [];
+  } catch { return []; }
+}
+function saveThreads(arr){
+  try{ localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(arr)); } catch {}
+}
+function upsertThread(thread){
+  const threads = loadThreads();
+  const i = threads.findIndex(t => String(t.id) === String(thread.id));
+  if (i >= 0) threads[i] = thread;
+  else threads.unshift(thread);
+  saveThreads(threads);
+}
+function getThreadById(id){
+  const threads = loadThreads();
+  return threads.find(t => String(t.id) === String(id)) || null;
+}
+function deleteThread(id){
+  const threads = loadThreads().filter(t => String(t.id) !== String(id));
+  saveThreads(threads);
+}
+function clearThreadMessages(id){
+  const t = getThreadById(id);
+  if (!t) return;
+  t.messages = [];
+  t.lastMessage = "";
+  t.lastTs = nowTs();
+  t.unread = 0;
+  upsertThread(t);
+}
+
+// ===== API stubs (ready for DB) =====
+async function apiGetThreads(){
+  if (!CHAT_USE_API) return loadThreads();
+  const r = await fetch(`${CHAT_API_BASE}/threads`);
+  if (!r.ok) throw new Error("threads_failed");
+  return await r.json();
+}
+async function apiGetMessages(threadId){
+  if (!CHAT_USE_API) {
     const t = getThreadById(threadId);
-    if (t) {
-      if (chatRoomAvatar) chatRoomAvatar.textContent = initials(t.peerName);
-      if (chatRoomTitle) chatRoomTitle.textContent = t.peerName || "Chat";
+    return t?.messages || [];
+  }
+  const r = await fetch(`${CHAT_API_BASE}/threads/${threadId}/messages`);
+  if (!r.ok) throw new Error("messages_failed");
+  return await r.json();
+}
+async function apiSendMessage(threadId, payload){
+  // payload: {text, imageBase64?}
+  if (!CHAT_USE_API) {
+    // локально “отправили”
+    return { ok:true, serverId: "local_" + nowTs() };
+  }
+  const r = await fetch(`${CHAT_API_BASE}/threads/${threadId}/send`,{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify(payload)
+  });
+  if (!r.ok) throw new Error("send_failed");
+  return await r.json();
+}
+async function apiMarkRead(threadId){
+  if (!CHAT_USE_API) return true;
+  await fetch(`${CHAT_API_BASE}/threads/${threadId}/read`, { method:"POST" });
+  return true;
+}
 
-      // status = muted / ad title
-      if (chatRoomStatus) {
-        chatRoomStatus.textContent = t.muted
-          ? "muted"
-          : (t.context?.title ? `Ad: ${t.context.title}` : "online");
-      }
+// ===== UI state =====
+let chatCurrentThreadId = null;
 
-      t.unread = 0;
-      upsertThread(t);
-      apiMarkRead(threadId).catch(() => {});
-    }
+/**
+ * ✅ LIST (вкладка Chat) — обычный режим, меню видно
+ */
+function chatShowThreads(){
+  document.body.classList.remove("chat-room-open");
+chatApplyRoomLayout(); // чтобы сбросилось
+  // Всегда остаёмся на экране "chat"
+  showScreen("chat", { push:false });
+
+  // Выключаем fullscreen переписки (Telegram-like)
+  if (typeof closeChatRoomFullscreen === "function") closeChatRoomFullscreen();
+
+  if (chatThreadsView) chatThreadsView.classList.add("active");
+  if (chatRoomView) chatRoomView.classList.remove("active");
+
+  chatCurrentThreadId = null;
+  renderThreads();
+  document.body.classList.remove("chat-room-open");
+  requestAnimationFrame(chatRoomMeasure);
+}
+
+/**
+ * ✅ ROOM (переписка) — fullscreen режим, меню скрыто
+ */
+function chatShowRoom(threadId){
+  document.body.classList.add("chat-room-open");
+  showScreen("chat", { push:false });
+
+  // Включаем fullscreen переписки
+  if (typeof openChatRoomFullscreen === "function") openChatRoomFullscreen();
+
+  if (chatThreadsView) chatThreadsView.classList.remove("active");
+  if (chatRoomView) chatRoomView.classList.add("active");
+
+  chatCurrentThreadId = threadId;
+
+  const t = getThreadById(threadId);
+  if (t){
+    if (chatRoomAvatar) chatRoomAvatar.textContent = initials(t.peerName);
+    if (chatRoomTitle) chatRoomTitle.textContent = t.peerName || "Chat";
+    if (chatRoomStatus) chatRoomStatus.textContent = t.muted ? "muted" : "online";
 
     renderAdCard();
-    renderRoomMessages();
-    scrollChatToBottom();
 
-    requestAnimationFrame(chatRoomMeasure);
-    setTimeout(chatRoomMeasure, 150);
-  }
-
-  // ---------- DEMO ----------
-  function ensureDemoThreadIfEmpty() {
-    const threads = loadThreads();
-    if (threads.length) return;
-
-    const demo = {
-      id: "t_demo_1",
-      peerName: "Sotuvchi",
-      peerId: "seller_1",
-      peerType: "user",
-      pinned: false,
-      muted: false,
-      unread: 1,
-      lastMessage: "Assalomu alaykum! Savollaringiz bormi? 🙂",
-      lastTs: nowTs() - 60000,
-      context: {
-        adId: "demo_ad",
-        title: "Demo e’lon",
-        price: "",
-        city: "",
-        image: "",
-        url: ""
-      },
-      messages: [
-        { id: "m1", from: "other", text: "Assalomu alaykum! Savollaringiz bormi? 🙂", ts: nowTs() - 60000, status: "read" }
-      ]
-    };
-
-    saveThreads([demo]);
-  }
-
-  // ---------- OPEN CHAT FROM AD (unique per seller + ad) ----------
-  function openChatForAd(ad) {
-    const tg = String(ad?.telegram || "").replace(/^@/, "").toLowerCase().trim();
-    const phone = String(ad?.phone || "").replace(/\s+/g, "").trim();
-    const peerKey = tg ? ("tg_" + tg) : phone ? ("ph_" + phone) : "seller_unknown";
-
-    const adId = String(ad?.id || ad?.adId || ad?.slug || "").trim() || ("ad_" + nowTs());
-    const adKey = ("ad_" + adId).toLowerCase();
-
-    // уникальный чат: продавец + объявление
-    const threadId = "t_" + peerKey + "__" + adKey;
-
-    let t = getThreadById(threadId);
-
-    if (!t) {
-      const peerName = tg ? ("@" + tg) : (phone || "Sotuvchi");
-
-      t = {
-        id: threadId,
-        peerName,
-        peerId: peerKey,
-        peerType: "user",
-        pinned: false,
-        muted: false,
-        unread: 0,
-        lastMessage: "",
-        lastTs: nowTs(),
-        context: {
-          adId: ad?.id || ad?.adId || adId,
-          title: ad?.title || ad?.name || ad?.model || "",
-          price: ad?.price || "",
-          city: ad?.city || ad?.location || "",
-          image: ad?.image || ad?.img || ad?.photo || "",
-          url: ad?.url || ""
-        },
-        messages: []
-      };
-
-      // первое системное сообщение (контекст объявления)
-      const adTitle = t.context.title || "E’lon";
-      t.messages.push({
-        id: "m_ctx_" + nowTs(),
-        from: "other",
-        text: `Assalomu alaykum! “${adTitle}” bo‘yicha savolingiz bormi? 😊`,
-        ts: nowTs(),
-        status: "read"
-      });
-
-      t.lastMessage = `“${adTitle}” bo‘yicha savol`;
-      t.lastTs = nowTs();
-      upsertThread(t);
-    } else {
-      // если тред есть, но контекст пустой — восстановим
-      if (!t.context) {
-        t.context = {
-          adId: ad?.id || ad?.adId || adId,
-          title: ad?.title || ad?.name || "E’lon",
-          price: ad?.price || "",
-          city: ad?.city || "",
-          image: ad?.image || ad?.img || "",
-          url: ad?.url || ""
-        };
-        upsertThread(t);
-      }
+    // ✅ показать контекст объявления (пока в статусе, подготовка под UI позже)
+    // Пример: "Ad: iPhone 13 Pro"
+    if (t.context?.adTitle && chatRoomStatus){
+      chatRoomStatus.textContent = t.muted ? "muted" : `Ad: ${t.context.adTitle}`;
     }
 
-    // открыть чат
-    if (typeof window.showScreen === "function") window.showScreen("chat");
-    chatShowRoom(t.id);
-  }
-
-  // ---------- SEND ----------
-  async function sendMessage(text, imageDataUrl = null) {
-    if (!chatCurrentThreadId) return;
-
-    const t = getThreadById(chatCurrentThreadId);
-    if (!t) return;
-
-    const msgText = String(text || "").trim();
-
-    if (!msgText && !imageDataUrl) return;
-
-    const msg = {
-      id: "m_" + nowTs(),
-      from: "me",
-      text: msgText,
-      ts: nowTs(),
-      status: "sent",
-      imageDataUrl: imageDataUrl || null
-    };
-
-    t.messages.push(msg);
-    t.lastMessage = msgText ? msgText : "📷 Rasm";
-    t.lastTs = msg.ts;
+    t.unread = 0;
     upsertThread(t);
+    apiMarkRead(threadId).catch(()=>{});
+  }
 
-    renderRoomMessages();
-    renderThreads();
-    scrollChatToBottom();
+  renderRoomMessages();
 
-    try {
-      await apiSendMessage(t.id, { text: msgText, imageBase64: imageDataUrl || null });
+  requestAnimationFrame(()=> chatApplyRoomLayout());
+setTimeout(()=> chatApplyRoomLayout(), 150); // iOS иногда обновляет позже
 
-      // имитация "прочитано" для твоего сообщения
-      setTimeout(() => {
-        const tt = getThreadById(t.id);
-        if (!tt) return;
-        const last = tt.messages[tt.messages.length - 1];
-        if (last && last.from === "me") last.status = "read";
-        upsertThread(tt);
-        if (chatCurrentThreadId === t.id) renderRoomMessages();
-        renderThreads();
-      }, 500);
-    } catch (e) {
-      console.warn("send failed, will sync later", e);
+  setTimeout(() => {
+  const topbar = document.querySelector(".chat-room-topbar");
+  const composer = document.getElementById("chatComposerWrap");
+  const topH = topbar ? topbar.getBoundingClientRect().height : 64;
+  const compH = composer ? composer.getBoundingClientRect().height : 88;
+  document.documentElement.style.setProperty("--chat-topbar-h", `${Math.round(topH)}px`);
+  document.documentElement.style.setProperty("--chat-composer-h", `${Math.round(compH)}px`);
+}, 50);
+  
+  scrollChatToBottom();
+  requestAnimationFrame(chatRoomMeasure);
+  setTimeout(chatRoomMeasure, 150);
+}
+
+    function chatRoomMeasure(){
+  if (!document.body.classList.contains("chat-room-open")) return;
+
+  const vvh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+
+  const topbar = document.querySelector("#chatRoomView .chat-room-topbar");
+  const composer = document.getElementById("chatComposerWrap");
+  const topH = topbar ? topbar.getBoundingClientRect().height : 72;
+  const compH = composer ? composer.getBoundingClientRect().height : 86;
+
+  document.documentElement.style.setProperty("--vvh", vvh + "px");
+  document.documentElement.style.setProperty("--roomTop", topH + "px");
+  document.documentElement.style.setProperty("--roomComposer", compH + "px");
+}
+
+// iOS меняет высоту при скрытии адресной строки и при клавиатуре
+window.addEventListener("resize", chatRoomMeasure);
+if (window.visualViewport){
+  window.visualViewport.addEventListener("resize", chatRoomMeasure);
+  window.visualViewport.addEventListener("scroll", chatRoomMeasure);
+}
+
+function sortThreads(arr){
+  // pinned first, then by lastTs desc
+  return [...arr].sort((a,b)=>{
+    const ap = a.pinned ? 1 : 0;
+    const bp = b.pinned ? 1 : 0;
+    if (ap !== bp) return bp - ap;
+    return (b.lastTs||0) - (a.lastTs||0);
+  });
+}
+
+function renderThreads(){
+  if (!chatThreadsList || !chatThreadsEmpty) return;
+
+  const q = (chatThreadsSearch?.value || "").toLowerCase().trim();
+  let threads = loadThreads();
+
+  if (q){
+    threads = threads.filter(t => {
+      const text = `${t.peerName||""} ${t.lastMessage||""}`.toLowerCase();
+      return text.includes(q);
+    });
+  }
+
+  threads = sortThreads(threads);
+
+  chatThreadsList.innerHTML = "";
+  if (!threads.length){
+    chatThreadsEmpty.style.display = "block";
+    return;
+  }
+  chatThreadsEmpty.style.display = "none";
+
+  threads.forEach(t=>{
+    const row = document.createElement("div");
+    row.className = "chat-thread";
+
+    const pin = t.pinned ? `<div class="chat-thread-pin">📌</div>` : "";
+    const badge = (t.unread||0) > 0 ? `<div class="chat-thread-badge">${t.unread}</div>` : "";
+
+    row.innerHTML = `
+      <div class="chat-thread-avatar">${initials(t.peerName)}</div>
+      <div class="chat-thread-main">
+        <div class="chat-thread-title">${t.peerName || "Chat"} ${pin}</div>
+        <div class="chat-thread-last">
+  ${(t.context?.title ? `📌 ${t.context.title} • ` : "")}${t.lastMessage || "—"}
+</div>
+      </div>
+      <div class="chat-thread-meta">
+        <div class="chat-thread-time">${t.lastTs ? fmtTime(t.lastTs) : ""}</div>
+        ${badge}
+      </div>
+    `;
+
+    // ✅ ШАГ 3B: из списка диалогов открываем переписку в fullscreen
+    row.addEventListener("click", ()=> chatShowRoom(t.id));
+    chatThreadsList.appendChild(row);
+  });
+}
+
+    function renderAdCard(){
+  if (!chatAdCard) return;
+
+  const t = chatCurrentThreadId ? getThreadById(chatCurrentThreadId) : null;
+  const ctx = t?.context;
+
+  if (!ctx || (!ctx.title && !ctx.price && !ctx.city && !ctx.image && !ctx.url)){
+    chatAdCard.style.display = "none";
+    return;
+  }
+
+  chatAdCard.style.display = "block";
+
+  if (chatAdTitle) chatAdTitle.textContent = ctx.title || "E’lon";
+  if (chatAdPrice) chatAdPrice.textContent = ctx.price ? String(ctx.price) : "";
+  if (chatAdCity)  chatAdCity.textContent  = ctx.city ? `• ${ctx.city}` : "";
+
+  if (chatAdImg){
+    if (ctx.image){
+      chatAdImg.innerHTML = `<img src="${ctx.image}" alt="ad">`;
+    } else {
+      chatAdImg.textContent = "AD";
     }
-
-    if (!CHAT_USE_API) {
-      if (chatTyping) {
-        chatTyping.style.display = "block";
-        setTimeout(() => (chatTyping.style.display = "none"), 600);
-      }
-    }
   }
 
-  // ---------- ATTACH ----------
-  function pickImage() {
-    if (!chatFileInput) return;
-    chatFileInput.value = "";
-    chatFileInput.click();
+  const openIt = () => {
+  // 1) закрываем fullscreen режим чата (чтобы объявление не оказалось “под ним”)
+  document.body.classList.remove("chat-room-open");
+
+  // 2) открываем объявление
+  const ok = openAdById(ctx.adId);
+
+  // 3) если не открылось — хотя бы откроем URL (если есть)
+  if (!ok && ctx.url){
+    window.open(ctx.url, "_blank");
   }
-
-  // ---------- SHEET ----------
-  function openChatSheet() {
-    if (!chatRoomSheetBackdrop) return;
-    chatRoomSheetBackdrop.classList.add("active");
-    document.body.classList.add("sheet-open");
-    const t = chatCurrentThreadId ? getThreadById(chatCurrentThreadId) : null;
-    if (chatRoomSheetTitle) chatRoomSheetTitle.textContent = t?.peerName || "Chat";
-  }
-
-  function closeChatSheet() {
-    if (!chatRoomSheetBackdrop) return;
-    chatRoomSheetBackdrop.classList.remove("active");
-    document.body.classList.remove("sheet-open");
-  }
-
-  // ---------- BIND ----------
-  function bindOnce(el, key, fn) {
-    if (!el) return false;
-    if (el.dataset[key]) return false;
-    el.dataset[key] = "1";
-    fn();
-    return true;
-  }
-
-  function initDomRefs() {
-    // ВАЖНО: подставь свои реальные селекторы/ID если отличаются.
-    // Я использую те же имена, что были у тебя.
-
-    chatThreadsView = window.chatThreadsView || document.getElementById("chatThreadsView");
-    chatRoomView = window.chatRoomView || document.getElementById("chatRoomView");
-
-    chatThreadsList = window.chatThreadsList || document.getElementById("chatThreadsList");
-    chatThreadsEmpty = window.chatThreadsEmpty || document.getElementById("chatThreadsEmpty");
-    chatThreadsSearch = window.chatThreadsSearch || document.getElementById("chatThreadsSearch");
-
-    chatRoomAvatar = window.chatRoomAvatar || document.getElementById("chatRoomAvatar");
-    chatRoomTitle = window.chatRoomTitle || document.getElementById("chatRoomTitle");
-    chatRoomStatus = window.chatRoomStatus || document.getElementById("chatRoomStatus");
-    chatMessagesEl = window.chatMessagesEl || document.getElementById("chatMessages");
-    chatTyping = window.chatTyping || document.getElementById("chatTyping");
-
-    chatRoomBackBtn = window.chatRoomBackBtn || document.getElementById("chatRoomBackBtn");
-    chatRoomMoreBtn = window.chatRoomMoreBtn || document.getElementById("chatRoomMoreBtn");
-    chatNewDialogBtn = window.chatNewDialogBtn || document.getElementById("chatNewDialogBtn");
-
-    chatAttachBtn = window.chatAttachBtn || document.getElementById("chatAttachBtn");
-    chatSendBtn = window.chatSendBtn || document.getElementById("chatSendBtn");
-    chatInput = window.chatInput || document.getElementById("chatInput");
-    chatFileInput = window.chatFileInput || document.getElementById("chatFileInput");
-
-    chatRoomSheetBackdrop = window.chatRoomSheetBackdrop || document.getElementById("chatRoomSheetBackdrop");
-    chatRoomSheetCancel = window.chatRoomSheetCancel || document.getElementById("chatRoomSheetCancel");
-    chatRoomSheetTitle = window.chatRoomSheetTitle || document.getElementById("chatRoomSheetTitle");
-
-    chatActionPin = window.chatActionPin || document.getElementById("chatActionPin");
-    chatActionMute = window.chatActionMute || document.getElementById("chatActionMute");
-    chatActionClear = window.chatActionClear || document.getElementById("chatActionClear");
-    chatActionDelete = window.chatActionDelete || document.getElementById("chatActionDelete");
-    chatActionReport = window.chatActionReport || document.getElementById("chatActionReport");
-
-    chatAdCard = window.chatAdCard || document.getElementById("chatAdCard");
-    chatAdTitle = window.chatAdTitle || document.getElementById("chatAdTitle");
-    chatAdPrice = window.chatAdPrice || document.getElementById("chatAdPrice");
-    chatAdCity = window.chatAdCity || document.getElementById("chatAdCity");
-    chatAdImg = window.chatAdImg || document.getElementById("chatAdImg");
-    chatAdOpenBtn = window.chatAdOpenBtn || document.getElementById("chatAdOpenBtn");
-  }
-
-  function bindChatUI() {
-    ensureDemoThreadIfEmpty();
-    initDomRefs();
-    bindViewportMeasure();
-
-    bindOnce(chatThreadsSearch, "bound", () => {
-      chatThreadsSearch.addEventListener("input", renderThreads);
-    });
-
-    bindOnce(chatRoomBackBtn, "bound", () => {
-      chatRoomBackBtn.addEventListener("click", () => chatShowThreads());
-    });
-
-    bindOnce(chatRoomMoreBtn, "bound", () => {
-      chatRoomMoreBtn.addEventListener("click", (e) => {
-        e.preventDefault(); e.stopPropagation();
-        openChatSheet();
-      });
-    });
-
-    bindOnce(chatRoomSheetCancel, "bound", () => {
-      chatRoomSheetCancel.addEventListener("click", (e) => {
-        e.preventDefault(); e.stopPropagation();
-        closeChatSheet();
-      });
-    });
-
-    bindOnce(chatRoomSheetBackdrop, "bound", () => {
-      chatRoomSheetBackdrop.addEventListener("click", (e) => {
-        if (e.target === chatRoomSheetBackdrop) closeChatSheet();
-      });
-      chatRoomSheetBackdrop.querySelector(".store-sheet")?.addEventListener("click", e => e.stopPropagation());
-    });
-
-    bindOnce(chatActionPin, "bound", () => {
-      chatActionPin.addEventListener("click", () => {
-        const t = chatCurrentThreadId ? getThreadById(chatCurrentThreadId) : null;
-        if (!t) return;
-        t.pinned = !t.pinned;
-        upsertThread(t);
-        renderThreads();
-        closeChatSheet();
-        window.showToast?.("Chat", t.pinned ? "📌 Pinned" : "Pin olib tashlandi");
-      });
-    });
-
-    bindOnce(chatActionMute, "bound", () => {
-      chatActionMute.addEventListener("click", () => {
-        const t = chatCurrentThreadId ? getThreadById(chatCurrentThreadId) : null;
-        if (!t) return;
-        t.muted = !t.muted;
-        upsertThread(t);
-        if (chatRoomStatus) {
-          chatRoomStatus.textContent = t.muted
-            ? "muted"
-            : (t.context?.title ? `Ad: ${t.context.title}` : "online");
-        }
-        closeChatSheet();
-        window.showToast?.("Chat", t.muted ? "🔕 Muted" : "🔔 Unmuted");
-      });
-    });
-
-    bindOnce(chatActionClear, "bound", () => {
-      chatActionClear.addEventListener("click", () => {
-        if (!chatCurrentThreadId) return;
-        clearThreadMessages(chatCurrentThreadId);
-        renderRoomMessages();
-        renderThreads();
-        closeChatSheet();
-        window.showToast?.("Tozalandi", "Chat ichidagi xabarlar o‘chirildi");
-      });
-    });
-
-    bindOnce(chatActionDelete, "bound", () => {
-      chatActionDelete.addEventListener("click", () => {
-        if (!chatCurrentThreadId) return;
-        const id = chatCurrentThreadId;
-        deleteThread(id);
-        closeChatSheet();
-        chatShowThreads();
-        window.showToast?.("O‘chirildi", "Chat ro‘yxatdan olib tashlandi");
-      });
-    });
-
-    bindOnce(chatActionReport, "bound", () => {
-      chatActionReport.addEventListener("click", () => {
-        const t = chatCurrentThreadId ? getThreadById(chatCurrentThreadId) : null;
-        if (!t) return;
-        const reports = JSON.parse(localStorage.getItem("zalvo_chat_reports") || "[]");
-        reports.push({ threadId: t.id, peer: t.peerName, ts: nowTs(), context: t.context || null });
-        localStorage.setItem("zalvo_chat_reports", JSON.stringify(reports));
-        closeChatSheet();
-        window.showToast?.("Shikoyat yuborildi", "Adminlar tekshiradi ⚠️");
-      });
-    });
-
-    bindOnce(chatAttachBtn, "bound", () => {
-      chatAttachBtn.addEventListener("click", (e) => {
-        e.preventDefault(); e.stopPropagation();
-        pickImage();
-      });
-    });
-
-    bindOnce(chatFileInput, "bound", () => {
-      chatFileInput.addEventListener("change", () => {
-        const file = chatFileInput.files?.[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const url = e.target.result;
-          sendMessage("", url);
-        };
-        reader.readAsDataURL(file);
-      });
-    });
-
-    bindOnce(chatSendBtn, "bound", () => {
-      chatSendBtn.addEventListener("click", () => {
-        const text = (chatInput?.value || "").trim();
-        if (chatInput) chatInput.value = "";
-        sendMessage(text);
-      });
-
-      if (chatInput) {
-        bindOnce(chatInput, "boundEnter", () => {
-          chatInput.addEventListener("keydown", (e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              chatSendBtn.click();
-            }
-          });
-        });
-      }
-    });
-
-    bindOnce(chatNewDialogBtn, "bound", () => {
-      chatNewDialogBtn.addEventListener("click", () => {
-        const id = "t_new_" + nowTs();
-        const t = {
-          id,
-          peerName: "Yangi chat",
-          peerId: "new_" + id,
-          peerType: "user",
-          pinned: false,
-          muted: false,
-          unread: 0,
-          lastMessage: "Yangi chat ochildi",
-          lastTs: nowTs(),
-          context: null,
-          messages: [{ id: "m0", from: "other", text: "Salom! 🙂", ts: nowTs(), status: "read" }]
-        };
-        upsertThread(t);
-        renderThreads();
-        chatShowRoom(id);
-      });
-    });
-
-    // первичный рендер
-    renderThreads();
-  }
-
-  // ---------- PUBLIC API ----------
-  window.ZalvoChat = {
-    init: bindChatUI,
-    openChatForAd,
-    chatShowThreads,
-    chatShowRoom,
-    openAdById,
-    setAdOpener(fn) { adOpener = fn; }
-  };
-
-  // ---------- AUTO INIT ----------
-  // Вызови вручную после того как DOM готов (или оставь так)
-  // Если у тебя есть свой app init — лучше вызови ZalvoChat.init() там один раз.
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", () => window.ZalvoChat.init());
-  } else {
-    window.ZalvoChat.init();
-  }
-})();
-
-    // ================== CHAT INTEGRATION PATCH (AUTO DETECT) ==================
-
-// 1) Backward compatibility: если где-то в проекте вызывается openChatForAd(ad)
-window.openChatForAd = function(ad){
-  try{
-    if (typeof openChatForAd === "function" && openChatForAd !== window.openChatForAd) {
-      // если вдруг есть другая версия (на всякий случай)
-      return openChatForAd(ad);
-    }
-  } catch {}
-  if (typeof window.ZalvoChat?.openChatForAd === "function") {
-    return window.ZalvoChat.openChatForAd(ad);
-  }
-  // fallback: если у тебя openChatForAd остался глобальным (в твоём коде он глобальный)
-  if (typeof window.openChatForAd_legacy === "function") return window.openChatForAd_legacy(ad);
-  console.warn("openChatForAd: chat module not ready");
 };
 
-// 2) Автоподключение массива объявлений (чтобы openAdById мог найти объявление)
-(function autoBindAdsPool(){
-  const candidates = [
-    "adsData","ads","allAds","filteredAds","allAdsData","ADS","items","listings"
-  ];
-  for (const key of candidates){
-    if (Array.isArray(window[key]) && window[key].length){
-      window.adsData = window[key]; // унифицируем
-      return;
-    }
-  }
-})();
+if (chatAdOpenBtn) chatAdOpenBtn.onclick = openIt;
 
-// 3) Универсальная функция открытия объявления ПО ID
-// Сначала пробует реальные функции проекта, затем ищет в adsData и пробует открыть объектом
-window.__zalvoOpenAdUniversal = function(adId){
+// кликабельна вся карточка целиком
+chatAdCard.onclick = (e) => {
+  // если нажали на кнопку — она сама обработает
+  if (e.target === chatAdOpenBtn) return;
+  openIt();
+};
+  }
+
+    function openAdById(adId){
   if (!adId) return false;
 
-  // 3.1) Если в проекте уже есть функции открытия по ID
-  const byIdFns = ["openAdById","openAd","openAdDetails","showAdDetails"];
-  for (const fn of byIdFns){
-    if (typeof window[fn] === "function"){
-      try{
-        window[fn](adId);
-        return true;
-      } catch {}
-    }
-  }
+  // 1) Если в проекте уже есть готовая функция — используем её
+  if (typeof window.openAd === "function") { window.openAd(adId); return true; }
+  if (typeof window.openAdDetails === "function") { window.openAdDetails(adId); return true; }
+  if (typeof window.showAdDetails === "function") { window.showAdDetails(adId); return true; }
 
-  // 3.2) Если есть массив объявлений — найдём объект объявления
-  const pool = window.adsData || window.ads || window.allAds || window.filteredAds;
+  // 2) Если у тебя объявления хранятся в массиве — попробуем найти и открыть
+  const pool =
+    window.adsData ||
+    window.ads ||
+    window.allAds ||
+    window.filteredAds ||
+    null;
+
   if (Array.isArray(pool)){
     const ad = pool.find(a => String(a.id) === String(adId) || String(a.adId) === String(adId));
     if (ad){
-      // 3.3) Пробуем функции открытия, которые принимают ОБЪЕКТ
-      const objFns = ["openAdCard","renderAdDetails","openAdDetails","showAdDetails"];
-      for (const fn of objFns){
-        if (typeof window[fn] === "function"){
-          try{
-            window[fn](ad);
-            return true;
-          } catch {}
-        }
-      }
-      // Если ничего не нашли — хотя бы покажем тост, что объект есть
-      if (typeof showToast === "function") showToast("E’lon topildi", ad.title || ad.name || "OK");
-      return false;
+      if (typeof window.openAdCard === "function") { window.openAdCard(ad); return true; }
+      if (typeof window.renderAdDetails === "function") { window.renderAdDetails(ad); return true; }
+      // если нет функций — хотя бы покажем что нашли
+      showToast("E’lon topildi", ad.title || ad.name || "OK");
+      return true;
     }
   }
 
-  // 3.4) Если есть URL в текущем контексте (не всегда)
+  // 3) Фолбэк — пока не подключили
+  showToast("E’lon", "openAdById() ulandi, lekin ochish funksiyasi topilmadi");
   return false;
+}
+    
+function renderRoomMessages(){
+  if (!chatMessagesEl || !chatCurrentThreadId) return;
+
+  const t = getThreadById(chatCurrentThreadId);
+  const msgs = t?.messages || [];
+  chatMessagesEl.innerHTML = "";
+
+  msgs.forEach(m=>{
+    const b = document.createElement("div");
+    b.className = "chat-bubble " + (m.from === "me" ? "me" : "other");
+
+    const safeText = (m.text || "").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    const imgHtml = m.imageDataUrl ? `<img class="chat-image" src="${m.imageDataUrl}" alt="image" />` : "";
+
+    const status = m.from === "me" ? (m.status === "read" ? "✓✓" : "✓") : "";
+    b.innerHTML = `
+      <div>${safeText}</div>
+      ${imgHtml}
+      <div class="chat-bubble-meta">
+        <span>${fmtTime(m.ts)}</span>
+        ${status ? `<span>${status}</span>` : ``}
+      </div>
+    `;
+    chatMessagesEl.appendChild(b);
+  });
+}
+
+function scrollChatToBottom(){
+  if (!chatMessagesEl) return;
+  chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+}
+
+function ensureDemoThreadIfEmpty(){
+  const threads = loadThreads();
+  if (threads.length) return;
+
+  const demo = {
+    id: "t_demo_1",
+    peerName: "Sotuvchi",
+    peerId: "seller_1",
+    peerType: "user",
+    pinned: false,
+    muted: false,
+    unread: 1,
+    lastMessage: "Assalomu alaykum! Savollaringiz bormi? 🙂",
+    lastTs: nowTs()-60000,
+    context: { adId: "demo_ad", adTitle: "Demo e’lon" },
+    messages: [
+      { id:"m1", from:"other", text:"Assalomu alaykum! Savollaringiz bormi? 🙂", ts: nowTs()-60000, status:"read" }
+    ]
+  };
+  saveThreads([demo]);
+}
+
+// ===== open chat from Ad =====
+function openChatForAd(ad){
+  const tg = String(ad?.telegram||"").replace(/^@/,"").toLowerCase().trim();
+  const phone = String(ad?.phone||"").replace(/\s+/g,"").trim();
+  const peerKey = tg ? ("tg_" + tg) : phone ? ("ph_" + phone) : ("seller_unknown");
+
+  // ✅ ключ объявления (обязательно уникальный)
+  const adId = String(ad?.id || ad?.adId || ad?.slug || ad?.title || "no_ad").trim();
+  const adKey = ("ad_" + adId).toLowerCase();
+
+  // ✅ теперь чат уникален: продавец + объявление
+  const threadKey = `${peerKey}__${adKey}`;
+  const threadId = "t_" + threadKey;
+
+  const threads = loadThreads();
+  let t = threads.find(x => String(x.id) === String(threadId));
+
+  if (!t){
+    const peerName = tg ? ("@" + tg) : (phone || "Sotuvchi");
+
+    t = {
+  id: threadId,
+  peerName,
+  peerId: peerKey,
+  peerType: "user",
+  pinned:false,
+  muted:false,
+  unread:0,
+  lastMessage:"",
+  lastTs: nowTs(),
+
+  context: {
+    adId: ad?.id || ad?.adId || null,
+    title: ad?.title || ad?.name || ad?.model || "",
+    price: ad?.price || "",
+    city: ad?.city || ad?.location || "",
+    image: ad?.image || ad?.img || ad?.photo || "",
+    url: ad?.url || ""
+  },
+
+  messages:[]
 };
 
-// 4) Патчим кнопку "Открыть" в карточке объявления чата так, чтобы она точно работала
-(function patchChatAdOpen(){
-  // подстрахуемся: подождём DOM
-  const apply = () => {
-    const btn = document.getElementById("chatAdOpenBtn");
-    const card = document.getElementById("chatAdCard");
-    if (!btn || !card) return;
+    // ✅ первое системное сообщение с контекстом
+    const adTitle = t.context.title;
+    t.messages.push({
+      id:"m_ctx_" + nowTs(),
+      from:"other",
+      text:`Assalomu alaykum! “${adTitle}” bo‘yicha savolingiz bormi? 😊`,
+      ts: nowTs(),
+      status:"read"
+    });
 
-    // переопределяем обработчики, чтобы не остались старые
-    btn.onclick = null;
-    card.onclick = null;
+    t.lastMessage = `“${adTitle}” bo‘yicha savol`;
+    t.lastTs = nowTs();
+    upsertThread(t);
+  } else {
+    // ✅ если тред есть, но контекст вдруг пустой — восстановим
+    if (!t.context) {
+      t.context = {
+        adId: adId,
+        title: ad?.title || ad?.name || "E’lon",
+        price: ad?.price || "",
+        city: ad?.city || "",
+        image: ad?.image || ad?.img || "",
+        url: ad?.url || ""
+      };
+      upsertThread(t);
+    }
+  }
 
-    const openIt = () => {
-      try{ document.body.classList.remove("chat-room-open"); } catch {}
-      const tId = window.chatCurrentThreadId || null;
-      const t = tId && typeof getThreadById === "function" ? getThreadById(tId) : null;
-      const ctx = t?.context || null;
+  // открыть экран чата и сразу комнату
+  showScreen("chat");
+  chatShowRoom(t.id);
+}
 
-      const ok = window.__zalvoOpenAdUniversal(ctx?.adId);
-      if (!ok && ctx?.url) window.open(ctx.url, "_blank");
-      if (!ok && !ctx?.url && typeof showToast === "function"){
-        showToast("E’lon", "Ochish funksiyasi topilmadi (adsData/openAd...)");
-      }
-    };
+// ===== send =====
+async function sendMessage(text, imageDataUrl=null){
+  if (!chatCurrentThreadId) return;
 
-    btn.onclick = (e)=>{ e.preventDefault(); e.stopPropagation(); openIt(); };
-    card.onclick = (e)=>{ if (e.target === btn) return; openIt(); };
+  const t = getThreadById(chatCurrentThreadId);
+  if (!t) return;
+
+  const msg = {
+    id: "m_" + nowTs(),
+    from: "me",
+    text: String(text||"").trim(),
+    ts: nowTs(),
+    status: "sent",
+    imageDataUrl: imageDataUrl || null
+  };
+  if (!msg.text && !msg.imageDataUrl) return;
+
+  t.messages.push(msg);
+  t.lastMessage = msg.text ? msg.text : "📷 Rasm";
+  t.lastTs = msg.ts;
+  upsertThread(t);
+
+  renderRoomMessages();
+  renderThreads();
+  scrollChatToBottom();
+
+  // отправка на сервер (когда включим CHAT_USE_API)
+  try{
+    await apiSendMessage(t.id, { text: msg.text, imageBase64: msg.imageDataUrl || null });
+    // имитация "прочитано"
+    setTimeout(()=>{
+      const tt = getThreadById(t.id);
+      if (!tt) return;
+      const last = tt.messages[tt.messages.length-1];
+      if (last && last.from==="me") last.status = "read";
+      upsertThread(tt);
+      if (chatCurrentThreadId === t.id) renderRoomMessages();
+      renderThreads();
+    }, 700);
+  } catch(e){
+    console.warn("send failed, will sync later", e);
+  }
+
+  // имитация ответа продавца (только локально)
+  if (!CHAT_USE_API){
+    if (chatTyping){
+      chatTyping.style.display = "block";
+      setTimeout(()=> chatTyping.style.display = "none", 800);
+    }
+  }
+}
+
+// ===== Attach image =====
+function pickImage(){
+  if (!chatFileInput) return;
+  chatFileInput.value = "";
+  chatFileInput.click();
+}
+
+// ===== sheet =====
+function openChatSheet(){
+  if (!chatRoomSheetBackdrop) return;
+  chatRoomSheetBackdrop.classList.add("active");
+  document.body.classList.add("sheet-open");
+  const t = chatCurrentThreadId ? getThreadById(chatCurrentThreadId) : null;
+  if (chatRoomSheetTitle) chatRoomSheetTitle.textContent = t?.peerName || "Chat";
+}
+function closeChatSheet(){
+  if (!chatRoomSheetBackdrop) return;
+  chatRoomSheetBackdrop.classList.remove("active");
+  document.body.classList.remove("sheet-open");
+}
+
+// ===== bind events (once) =====
+function bindChatUI(){
+  ensureDemoThreadIfEmpty();
+
+  // ===== FORCE chat-room-open + DEBUG =====
+(function(){
+  // маленький индикатор вверху (чтобы понять: включился режим или нет)
+  const badge = document.createElement("div");
+  badge.id = "chatDebugBadge";
+  badge.style.cssText = "position:fixed;top:8px;right:8px;z-index:999999;padding:6px 10px;border-radius:10px;background:#111;color:#fff;font:12px/1.2 system-ui;opacity:.85;display:none";
+  badge.textContent = "CHAT ROOM MODE";
+  document.body.appendChild(badge);
+
+  function setRoomMode(on){
+    document.body.classList.toggle("chat-room-open", !!on);
+    badge.style.display = on ? "block" : "none";
+  }
+
+  // 1) когда открываем переписку — включаем режим
+  const _origChatShowRoom = window.chatShowRoom;
+  window.chatShowRoom = function(threadId){
+    setRoomMode(true);
+    _origChatShowRoom(threadId);
+    setTimeout(()=>{ window.__chatMeasureHeights?.(); }, 50);
+    setTimeout(()=>{ window.__chatMeasureHeights?.(); }, 250);
   };
 
-  apply();
-  setTimeout(apply, 300);
-  setTimeout(apply, 900);
+  // 2) когда возвращаемся к списку — выключаем режим
+  const _origChatShowThreads = window.chatShowThreads;
+  window.chatShowThreads = function(){
+    setRoomMode(false);
+    _origChatShowThreads();
+  };
+
+  // если вдруг открыли чат-рум каким-то другим способом — подстрахуемся
+  document.addEventListener("click", (e)=>{
+    if (e.target && e.target.id === "chatRoomBackBtn") setRoomMode(false);
+  }, true);
+
+  // экспортируем для замеров
+  window.__chatMeasureHeights = function(){
+    const topbar = document.querySelector(".chat-room-topbar");
+    const composer = document.getElementById("chatComposerWrap");
+    const topH = topbar ? topbar.getBoundingClientRect().height : 64;
+    const compH = composer ? composer.getBoundingClientRect().height : 88;
+    document.documentElement.style.setProperty("--chat-topbar-h", `${Math.round(topH)}px`);
+    document.documentElement.style.setProperty("--chat-composer-h", `${Math.round(compH)}px`);
+  };
 })();
 
-// ================== /CHAT INTEGRATION PATCH ==================
-/* ================== /CHAT (PRO) ================== */
+  if (chatThreadsSearch && !chatThreadsSearch.dataset.bound){
+    chatThreadsSearch.dataset.bound = "1";
+    chatThreadsSearch.addEventListener("input", renderThreads);
+  }
+
+  // ===== CHAT: measure heights (fix iOS gaps) =====
+function chatMeasureHeights(){
+  const topbar = document.querySelector(".chat-room-topbar");
+  const composer = document.getElementById("chatComposerWrap");
+
+  const topH = topbar ? topbar.getBoundingClientRect().height : 64;
+  const compH = composer ? composer.getBoundingClientRect().height : 88;
+
+  document.documentElement.style.setProperty("--chat-topbar-h", `${Math.round(topH)}px`);
+  document.documentElement.style.setProperty("--chat-composer-h", `${Math.round(compH)}px`);
+}
+
+window.addEventListener("resize", ()=> {
+  if (document.body.classList.contains("chat-room-open")) chatMeasureHeights();
+});
+window.addEventListener("orientationchange", ()=> {
+  if (document.body.classList.contains("chat-room-open")) setTimeout(chatMeasureHeights, 200);
+});
+
+// если в room открыли — меряем
+const _chatShowRoom = chatShowRoom;
+chatShowRoom = function(threadId){
+  _chatShowRoom(threadId);
+  setTimeout(chatMeasureHeights, 50);
+  setTimeout(chatMeasureHeights, 250);
+};
+
+  // ✅ back всегда возвращает в список и выключает fullscreen
+  if (chatRoomBackBtn && !chatRoomBackBtn.dataset.bound){
+    chatRoomBackBtn.dataset.bound = "1";
+    chatRoomBackBtn.addEventListener("click", ()=> chatShowThreads());
+  }
+
+  if (chatRoomMoreBtn && !chatRoomMoreBtn.dataset.bound){
+    chatRoomMoreBtn.dataset.bound = "1";
+    chatRoomMoreBtn.addEventListener("click", (e)=>{
+      e.preventDefault(); e.stopPropagation();
+      openChatSheet();
+    });
+  }
+
+  if (chatRoomSheetCancel && !chatRoomSheetCancel.dataset.bound){
+    chatRoomSheetCancel.dataset.bound = "1";
+    chatRoomSheetCancel.addEventListener("click", (e)=>{
+      e.preventDefault(); e.stopPropagation();
+      closeChatSheet();
+    });
+  }
+
+  if (chatRoomSheetBackdrop && !chatRoomSheetBackdrop.dataset.bound){
+    chatRoomSheetBackdrop.dataset.bound = "1";
+    chatRoomSheetBackdrop.addEventListener("click", (e)=>{
+      if (e.target === chatRoomSheetBackdrop) closeChatSheet();
+    });
+    chatRoomSheetBackdrop.querySelector(".store-sheet")?.addEventListener("click", e=>e.stopPropagation());
+  }
+
+  if (chatActionPin && !chatActionPin.dataset.bound){
+    chatActionPin.dataset.bound = "1";
+    chatActionPin.addEventListener("click", ()=>{
+      const t = chatCurrentThreadId ? getThreadById(chatCurrentThreadId) : null;
+      if (!t) return;
+      t.pinned = !t.pinned;
+      upsertThread(t);
+      renderThreads();
+      closeChatSheet();
+      showToast("Chat yangilandi", t.pinned ? "📌 Pinned" : "Pin olib tashlandi");
+    });
+  }
+
+  if (chatActionMute && !chatActionMute.dataset.bound){
+    chatActionMute.dataset.bound = "1";
+    chatActionMute.addEventListener("click", ()=>{
+      const t = chatCurrentThreadId ? getThreadById(chatCurrentThreadId) : null;
+      if (!t) return;
+      t.muted = !t.muted;
+      upsertThread(t);
+      if (chatRoomStatus) chatRoomStatus.textContent = t.muted ? "muted" : (t.context?.adTitle ? `Ad: ${t.context.adTitle}` : "online");
+      closeChatSheet();
+      showToast("Chat", t.muted ? "🔕 Muted" : "🔔 Unmuted");
+    });
+  }
+
+  if (chatActionClear && !chatActionClear.dataset.bound){
+    chatActionClear.dataset.bound = "1";
+    chatActionClear.addEventListener("click", ()=>{
+      if (!chatCurrentThreadId) return;
+      clearThreadMessages(chatCurrentThreadId);
+      renderRoomMessages();
+      renderThreads();
+      closeChatSheet();
+      showToast("Tozalandi", "Chat ichidagi xabarlar o‘chirildi");
+    });
+  }
+
+  if (chatActionDelete && !chatActionDelete.dataset.bound){
+    chatActionDelete.dataset.bound = "1";
+    chatActionDelete.addEventListener("click", ()=>{
+      if (!chatCurrentThreadId) return;
+      const id = chatCurrentThreadId;
+      deleteThread(id);
+      closeChatSheet();
+      chatShowThreads();
+      showToast("O‘chirildi", "Chat ro‘yxatdan olib tashlandi");
+    });
+  }
+
+  if (chatActionReport && !chatActionReport.dataset.bound){
+    chatActionReport.dataset.bound = "1";
+    chatActionReport.addEventListener("click", ()=>{
+      const t = chatCurrentThreadId ? getThreadById(chatCurrentThreadId) : null;
+      if (!t) return;
+      const reports = JSON.parse(localStorage.getItem("zalvo_chat_reports") || "[]");
+      reports.push({ threadId: t.id, peer: t.peerName, ts: nowTs(), context: t.context || null });
+      localStorage.setItem("zalvo_chat_reports", JSON.stringify(reports));
+      closeChatSheet();
+      showToast("Shikoyat yuborildi", "Adminlar tekshiradi ⚠️");
+    });
+  }
+
+  if (chatAttachBtn && !chatAttachBtn.dataset.bound){
+    chatAttachBtn.dataset.bound = "1";
+    chatAttachBtn.addEventListener("click", (e)=>{
+      e.preventDefault(); e.stopPropagation();
+      pickImage();
+    });
+  }
+
+  if (chatFileInput && !chatFileInput.dataset.bound){
+    chatFileInput.dataset.bound = "1";
+    chatFileInput.addEventListener("change", ()=>{
+      const file = chatFileInput.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e)=>{
+        const url = e.target.result; // base64 dataUrl
+        sendMessage("", url);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  if (chatSendBtn && chatInput && !chatSendBtn.dataset.bound){
+    chatSendBtn.dataset.bound = "1";
+    chatSendBtn.addEventListener("click", ()=>{
+      const text = (chatInput.value || "").trim();
+      chatInput.value = "";
+      sendMessage(text);
+    });
+
+    chatInput.addEventListener("keydown", (e)=>{
+      if (e.key === "Enter"){
+        e.preventDefault();
+        chatSendBtn.click();
+      }
+    });
+  }
+
+  if (chatNewDialogBtn && !chatNewDialogBtn.dataset.bound){
+    chatNewDialogBtn.dataset.bound = "1";
+    chatNewDialogBtn.addEventListener("click", ()=>{
+      const id = "t_new_" + nowTs();
+      const t = {
+        id,
+        peerName: "Yangi chat",
+        peerId: "new_" + id,
+        peerType: "user",
+        pinned:false,
+        muted:false,
+        unread:0,
+        lastMessage:"Yangi chat ochildi",
+        lastTs: nowTs(),
+        context: null,
+        messages:[{ id:"m0", from:"other", text:"Salom! 🙂", ts: nowTs(), status:"read" }]
+      };
+      upsertThread(t);
+      renderThreads();
+      chatShowRoom(id); // ✅ fullscreen
+    });
+  }
+
+  // первичный рендер
+  renderThreads();
+}
+
+// IMPORTANT: вызывать bindChatUI() один раз при старте
+bindChatUI();
+
+    // ===== iOS Safari FIX: real viewport height via VisualViewport =====
+(function setRealVh(){
+  function apply(){
+    const vv = window.visualViewport;
+    const h = vv ? vv.height : window.innerHeight;
+    document.documentElement.style.setProperty('--vvh', (h * 0.01) + 'px');
+  }
+  apply();
+
+  // важно для Safari: адресная строка меняет высоту при скролле/фокусе
+  window.addEventListener('resize', apply);
+  window.addEventListener('orientationchange', apply);
+
+  if (window.visualViewport){
+    window.visualViewport.addEventListener('resize', apply);
+    window.visualViewport.addEventListener('scroll', apply);
+  }
+})();
+    
+// ================== /CHAT (PRO) ==================
 
     const settingsAdminRow  = document.getElementById("settingsAdminRow");
 
