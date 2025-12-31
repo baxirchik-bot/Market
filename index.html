@@ -5617,6 +5617,7 @@ function toggleShopFav(shopId){
         if (!Array.isArray(data)) throw new Error("Not array");
 
         allAds = data;
+        window.__getAllAds = () => allAds; // на всякий случай обновляем ссылку
         applyAllFilters();
         resetFeedRender();
         renderFavorites();
@@ -6178,6 +6179,10 @@ hideEls.forEach(el => {
         saveHistoryToStorage();
       }
 
+      // ✅ expose для chat / внешних вызовов
+window.openAdDetails = openAdDetails;
+window.__getAllAds = () => allAds; // чтобы всегда брать актуальный массив
+      
       if (detailTitle) detailTitle.textContent = ad.title || "";
       if (detailPrice) detailPrice.textContent = formatPrice(ad.price);
       if (detailMeta) detailMeta.textContent = `${ad.city || ""} · ${getAdCategory(ad)}`;
@@ -6271,7 +6276,7 @@ hideEls.forEach(el => {
         });
       }
 
-      // ===== bind seller card click =====
+      // ===== bind seller card click (ALWAYS uses currentAd) =====
 const sellerCard = document.getElementById("sellerCard");
 
 if (sellerCard && !sellerCard.dataset.bound) {
@@ -6281,12 +6286,16 @@ if (sellerCard && !sellerCard.dataset.bound) {
     e.preventDefault();
     e.stopPropagation();
 
-    const tg = String(ad.telegram || "")
+    // ✅ берём ТЕКУЩЕЕ объявление (а не то, которое было при первом bind)
+    const a = currentAd;
+    if (!a) return;
+
+    const tg = String(a.telegram || "")
       .replace(/^@/, "")
       .toLowerCase()
       .trim();
 
-    const phone = String(ad.phone || "")
+    const phone = String(a.phone || "")
       .replace(/\s+/g, "")
       .trim();
 
@@ -6298,29 +6307,29 @@ if (sellerCard && !sellerCard.dataset.bound) {
     });
 
     // 2) Если не нашли — создаём виртуальный магазин продавца
-  if (!shop) {
-  const vid = "seller_" + (tg || phone || "unknown");
+    if (!shop) {
+      const vid = "seller_" + (tg || phone || "unknown");
 
-  shop = {
-    id: vid,
-    name: tg ? (`@${tg}`) : (phone || "Sotuvchi"),
-    city: ad.city || "Uzbekiston",
-    category: getAdCategory(ad) || "Boshqa",
-    subs: 0,
-    rating: 0,
-    reviews: 0,
-    ads: 0,
-    verified: false,
-    last: "yaqinda",
-    ownerTelegram: tg || "",
-    ownerPhone: phone || "",
-    _virtual: true
-  };
+      shop = {
+        id: vid,
+        name: tg ? (`@${tg}`) : (phone || "Sotuvchi"),
+        city: a.city || "Uzbekiston",
+        category: getAdCategory(a) || "Boshqa",
+        subs: 0,
+        rating: 0,
+        reviews: 0,
+        ads: 0,
+        verified: false,
+        last: "yaqinda",
+        ownerTelegram: tg || "",
+        ownerPhone: phone || "",
+        _virtual: true
+      };
 
-  // чтобы не дублировать одинакового продавца много раз
-  const exists = (shopsData || []).some(s => String(s.id) === vid);
-  if (!exists) shopsData.push(shop);
-}
+      // чтобы не дублировать одинакового продавца много раз
+      const exists = (shopsData || []).some(s => String(s.id) === vid);
+      if (!exists) shopsData.push(shop);
+    }
 
     // 3) Открываем страницу магазина
     openShop(shop);
@@ -6876,63 +6885,31 @@ chatAdCard.onclick = (e) => {
 };
   }
 
-    function openAdById(adId, ctx=null){
+   function openAdById(adId, ctx=null){
   if (!adId) return false;
 
-  // 0) Попробуем найти объявление в глобальных массивах (если они есть)
-  const pool =
-    window.adsData ||
-    window.ads ||
-    window.allAds ||
-    window.filteredAds ||
-    null;
+  // берём актуальные объявления
+  const ads = (typeof window.__getAllAds === "function") ? window.__getAllAds() : allAds;
 
-  let adObj = null;
-  if (Array.isArray(pool)){
-    adObj = pool.find(a =>
-      String(a.id) === String(adId) ||
-      String(a.adId) === String(adId) ||
-      String(a.slug) === String(adId)
-    ) || null;
-  }
+  const adObj = Array.isArray(ads)
+    ? ads.find(a => String(a.id) === String(adId))
+    : null;
 
-  // 1) Сначала пробуем открыть "по id" (если функция реально поддерживает id)
-  const byIdFns = ["openAdById", "openAd", "openAdDetails", "showAdDetails"];
-  for (const fn of byIdFns){
-    if (typeof window[fn] === "function"){
-      try{
-        // если fn === openAdById — чтобы не рекурсило
-        if (fn === "openAdById") continue;
-        window[fn](adId);
-        return true;
-      } catch(e){}
-    }
-  }
-
-  // 2) Если по id не вышло — пробуем открыть "объектом"
   if (adObj){
-    const byObjFns = ["openAdCard", "renderAdDetails", "openAdDetails", "showAdDetails", "openAd"];
-    for (const fn of byObjFns){
-      if (typeof window[fn] === "function"){
-        try{
-          window[fn](adObj);
-          return true;
-        } catch(e){}
-      }
-    }
-    // хотя бы покажем что нашли
-    if (typeof showToast === "function") showToast("E’lon topildi", adObj.title || adObj.name || "OK");
-    return false;
+    try{
+      openAdDetails(adObj); // ✅ прямой вызов (без window)
+      return true;
+    }catch(e){}
   }
 
-  // 3) Фолбэк — если есть url в контексте чата
+  // fallback: если есть url
   if (ctx?.url){
     window.open(ctx.url, "_blank");
     return true;
   }
 
   if (typeof showToast === "function"){
-    showToast("E’lon", "Ochish funksiyasi topilmadi (id/obj)");
+    showToast("E’lon topilmadi", "ID bo‘yicha ochilmadi");
   }
   return false;
 }
