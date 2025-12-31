@@ -6883,11 +6883,14 @@ chatAdCard.onclick = (e) => {
   }
 
    function openAdById(adId, ctx = null) {
-  if (!adId) return false;
+  if (!adId) {
+    if (typeof showToast === "function") showToast("E’lon", "ID yo‘q");
+    return false;
+  }
 
   const findInAllAds = () => {
     try {
-      return (allAds || []).find(a => String(a.id) === String(adId)) || null;
+      return (window.allAds || allAds || []).find(a => String(a.id) === String(adId)) || null;
     } catch {
       return null;
     }
@@ -6895,30 +6898,27 @@ chatAdCard.onclick = (e) => {
 
   const adObj = findInAllAds();
 
-  // ✅ если нашли — открываем нормально
   if (adObj) {
     openAdDetails(adObj);
     return true;
   }
 
-  // ✅ если не нашли — значит ads ещё не загрузились. Подгружаем и пробуем снова.
-  loadAds().then(() => {
-    const ad2 = findInAllAds();
-    if (ad2) {
-      openAdDetails(ad2);
-    } else {
-      showToast("E’lon topilmadi", `ID: ${adId}`);
-      // если есть ссылка — откроем ссылку (если ты потом добавишь)
-      if (ctx?.url) window.open(ctx.url, "_blank");
-    }
-  });
-
-  return true;
-}
-
-  if (typeof showToast === "function"){
-    showToast("E’lon topilmadi", "ID bo‘yicha ochilmadi");
+  // если ads ещё не загрузились — грузим и открываем
+  if (typeof loadAds === "function") {
+    loadAds().then(() => {
+      const ad2 = findInAllAds();
+      if (ad2) {
+        openAdDetails(ad2);
+      } else {
+        if (typeof showToast === "function") showToast("E’lon topilmadi", `ID: ${adId}`);
+        if (ctx?.url) window.open(ctx.url, "_blank");
+      }
+    });
+    return true;
   }
+
+  if (typeof showToast === "function") showToast("E’lon topilmadi", `ID: ${adId}`);
+  if (ctx?.url) window.open(ctx.url, "_blank");
   return false;
 }
     
