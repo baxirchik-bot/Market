@@ -3279,7 +3279,11 @@ body.chat-room-open #screen-chat{
 body.chat-room-open #chatRoomView.chat-view.active{
   display: flex !important;
   flex-direction: column !important;
-  height: calc(var(--vvh, 1vh) * 100) !important;
+
+  /* iOS FIX: используем реальную высоту, которую ты ставишь через JS (--vvh) */
+  height: var(--vvh, 100vh) !important;
+  min-height: var(--vvh, 100vh) !important;
+
   padding-top: env(safe-area-inset-top) !important;
   padding-bottom: 0 !important;
 }
@@ -3304,19 +3308,21 @@ body.chat-room-open #chatMessages{
 /* composer-wrap: шире, ниже, всегда внизу (без fixed) */
 body.chat-room-open #chatComposerWrap{
   flex: 0 0 auto !important;
-  position: sticky !important;
-  bottom: 0 !important;
+
+  /* iOS FIX: НЕ sticky */
+  position: relative !important;
+  bottom: auto !important;
 
   background: rgba(241,244,255,0.95) !important;
   backdrop-filter: blur(12px);
 
-  padding: 12px 8px max(14px, env(safe-area-inset-bottom)) !important;
+  padding: 12px 8px calc(14px + env(safe-area-inset-bottom)) !important;
   margin: 0 !important;
 
   border-top-left-radius: 18px;
   border-top-right-radius: 18px;
 }
-
+    
 /* composer внутри: компактнее, чтобы input стал шире */
 body.chat-room-open .chat-composer{
   padding: 0 !important;
@@ -7442,6 +7448,31 @@ chatShowRoom = function(threadId){
 // IMPORTANT: вызывать bindChatUI() один раз при старте
 bindChatUI();
 
+    // iOS/Chrome: иногда composer не появляется пока не произойдет "движение" UI
+function forceComposerRelayout(){
+  requestAnimationFrame(()=> chatRoomMeasure());
+  setTimeout(()=> chatRoomMeasure(), 50);
+  setTimeout(()=> chatRoomMeasure(), 180);
+
+  // легкий "пинок" для пересчета fixed/flex в iOS
+  const el = document.getElementById("chatMessages");
+  if (el) el.scrollTop = el.scrollTop + 1;
+}
+
+// когда открыли комнату — принудительно пересчитать
+document.addEventListener("click", (e)=>{
+  // если ты открываешь чат через список — это сработает
+  if (document.body.classList.contains("chat-room-open")) forceComposerRelayout();
+}, true);
+
+// когда фокус в инпуте — тоже пересчитать
+document.addEventListener("focusin", (e)=>{
+  if (e.target && e.target.classList && e.target.classList.contains("chat-input")){
+    forceComposerRelayout();
+    setTimeout(scrollChatToBottom, 80);
+  }
+});
+    
     // ===== iOS Safari FIX: real viewport height via VisualViewport =====
 (function setRealVh(){
   function apply(){
