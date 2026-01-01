@@ -3303,15 +3303,16 @@ body.chat-room-open #chatMessages{
   -webkit-overflow-scrolling: touch;
   padding: 10px 12px !important;
   margin: 0 !important;
+  padding-bottom: calc(var(--composer-h, 90px) + 10px) !important;
 }
 
 /* composer-wrap: шире, ниже, всегда внизу (без fixed) */
 body.chat-room-open #chatComposerWrap{
-  flex: 0 0 auto !important;
-
-  /* iOS FIX: НЕ sticky */
-  position: relative !important;
-  bottom: auto !important;
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  z-index: 10000 !important;
 
   background: rgba(241,244,255,0.95) !important;
   backdrop-filter: blur(12px);
@@ -3321,6 +3322,10 @@ body.chat-room-open #chatComposerWrap{
 
   border-top-left-radius: 18px;
   border-top-right-radius: 18px;
+
+  /* будет управляться JS при клавиатуре */
+  transform: translateY(var(--kbd-shift, 0px)) !important;
+  will-change: transform;
 }
     
 /* composer внутри: компактнее, чтобы input стал шире */
@@ -7447,6 +7452,65 @@ chatShowRoom = function(threadId){
 
 // IMPORTANT: вызывать bindChatUI() один раз при старте
 bindChatUI();
+
+    (function iosKeyboardDock(){
+  const root = document.documentElement;
+
+  function measureComposer(){
+    const comp = document.getElementById("chatComposerWrap");
+    if (!comp) return 90;
+    const h = Math.round(comp.getBoundingClientRect().height || 90);
+    root.style.setProperty("--composer-h", h + "px");
+    return h;
+  }
+
+  function apply(){
+    if (!document.body.classList.contains("chat-room-open")) {
+      root.style.setProperty("--kbd-shift", "0px");
+      return;
+    }
+
+    const vv = window.visualViewport;
+    measureComposer();
+
+    if (!vv){
+      root.style.setProperty("--kbd-shift", "0px");
+      return;
+    }
+
+    // Сколько “не хватает” до низа экрана из-за клавиатуры/панелей
+    const gap = window.innerHeight - (vv.height + vv.offsetTop);
+
+    // gap > 0 когда клавиатура открыта
+    root.style.setProperty("--kbd-shift", (-Math.max(0, Math.round(gap))) + "px");
+  }
+
+  // события клавиатуры/вьюпорта
+  if (window.visualViewport){
+    window.visualViewport.addEventListener("resize", apply);
+    window.visualViewport.addEventListener("scroll", apply);
+  }
+  window.addEventListener("resize", apply);
+
+  // при фокусе/снятии фокуса тоже
+  document.addEventListener("focusin", apply);
+  document.addEventListener("focusout", () => setTimeout(apply, 50));
+
+  // когда открываем/закрываем комнату — пересчитать
+  const _origChatShowRoom = window.chatShowRoom;
+  window.chatShowRoom = function(id){
+    _origChatShowRoom(id);
+    setTimeout(apply, 0);
+    setTimeout(apply, 80);
+    setTimeout(apply, 200);
+  };
+
+  const _origChatShowThreads = window.chatShowThreads;
+  window.chatShowThreads = function(){
+    _origChatShowThreads();
+    root.style.setProperty("--kbd-shift", "0px");
+  };
+})();
 
     // iOS/Chrome: иногда composer не появляется пока не произойдет "движение" UI
 function forceComposerRelayout(){
