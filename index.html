@@ -3535,6 +3535,13 @@ body.chat-room-open .chat-input{
   align-items: center;
   justify-content: center;
 }
+
+    #shopViewAvatar img, .shop-view-avatar img, .shop-avatar img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
     
   @media (max-width: 480px) {
     body {
@@ -3713,6 +3720,7 @@ body.chat-room-open .chat-input{
           <div class="ad-view-description-title">Tavsif</div>
           <div id="detailDescription" class="ad-view-description"></div>
 
+          <div id="shopAdsList"></div>
           <div id="sellerCard" class="ad-view-seller-card">
             <div>
               <div class="ad-view-seller-info-main">Baxir B-R (@Baxir1987)</div>
@@ -5359,6 +5367,146 @@ window.addEventListener("resize", setAppInsetsVars);
       } catch { return ""; }
     }
 
+    // ================== SELLER SHOP (Avito-like) ==================
+function normTg(v){
+  return String(v || "").replace(/^@/, "").toLowerCase().trim();
+}
+function normPhone(v){
+  return String(v || "").replace(/\s+/g, "").trim();
+}
+
+/** Уникальный ключ продавца: tg_... или ph_... */
+function getSellerKey(ad){
+  const tg = normTg(ad?.telegram);
+  const ph = normPhone(ad?.phone);
+  if (tg) return "tg_" + tg;
+  if (ph) return "ph_" + ph;
+  return "unknown_" + String(ad?.id || ad?.title || "seller").toLowerCase().trim();
+}
+
+/** Находим/создаём магазин продавца в shopsData */
+function ensureSellerShopByAd(ad){
+  window.shopsData = window.shopsData || [];
+  const sellerKey = getSellerKey(ad);
+
+  const tg = normTg(ad?.telegram);
+  const ph = normPhone(ad?.phone);
+
+  let shop = (shopsData || []).find(s=>{
+    const stg = normTg(s.ownerTelegram);
+    const sph = normPhone(s.ownerPhone);
+    return (tg && stg && tg === stg) || (ph && sph && ph === sph) || (String(s.sellerKey||"") === sellerKey);
+  });
+
+  if (!shop){
+    const id = "seller_" + sellerKey;
+
+    shop = {
+      id,
+      sellerKey,
+      name: tg ? ("@" + tg) : (ph || "Sotuvchi"),
+      city: ad?.city || "Uzbekiston",
+      category: (typeof getAdCategory === "function" ? (getAdCategory(ad) || "Boshqa") : "Boshqa"),
+      subs: 0,
+      rating: 0,
+      reviews: 0,
+      ads: 0,
+      verified: false,
+      last: "yaqinda",
+      ownerTelegram: tg || "",
+      ownerPhone: ph || "",
+      _virtual: true
+    };
+
+    const exists = (shopsData || []).some(s => String(s.id) === String(id));
+    if (!exists) shopsData.push(shop);
+  }
+
+  return shop;
+}
+
+/** Все объявления этого продавца */
+function getAdsBySellerKey(sellerKey){
+  const list = Array.isArray(window.allAds) ? window.allAds : [];
+  return list.filter(a => (a.sellerKey || getSellerKey(a)) === sellerKey);
+}
+
+/** Рендер объявлений продавца внутри страницы магазина */
+function renderSellerAdsInShop(shop){
+  const box = document.getElementById("shopAdsList");
+  if (!box) return;
+
+  const sellerKey =
+    shop?.sellerKey ||
+    (shop?.ownerTelegram ? ("tg_" + normTg(shop.ownerTelegram)) : "") ||
+    (shop?.ownerPhone ? ("ph_" + normPhone(shop.ownerPhone)) : "");
+
+  const ads = getAdsBySellerKey(sellerKey);
+  shop.ads = ads.length;
+
+  if (!ads.length){
+    box.innerHTML = `<div style="opacity:.65;font-weight:700;padding:14px;">Hozircha e’lonlar yo‘q</div>`;
+    return;
+  }
+
+  box.innerHTML = ads.map(ad=>{
+    const img = ad.image || ad.img || ad.photo || "";
+    const title = ad.title || ad.name || "E’lon";
+    const price = ad.price || "";
+    const city  = ad.city || ad.location || "";
+
+    return `
+      <div class="ad-card" style="margin:10px 0;" data-adid="${ad.id}">
+        <div class="ad-card-inner" style="display:flex;gap:10px;align-items:center;background:rgba(255,255,255,.85);border-radius:16px;padding:10px;box-shadow:0 10px 25px rgba(2,6,23,.06);">
+          <div style="width:56px;height:56px;border-radius:14px;overflow:hidden;background:#eaf1ff;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-weight:800;color:#1d4ed8;">
+            ${img ? `<img src="${img}" style="width:100%;height:100%;object-fit:cover;display:block;" alt="">` : "AD"}
+          </div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${title}</div>
+            <div style="opacity:.7;font-weight:700;font-size:13px;margin-top:2px;">
+              ${price ? price : ""} ${city ? ` • ${city}` : ""}
+            </div>
+          </div>
+          <button class="open-ad-btn" style="border:none;background:#2563eb;color:#fff;font-weight:800;padding:10px 12px;border-radius:14px;flex:0 0 auto;">
+            Ochish
+          </button>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  box.querySelectorAll(".ad-card").forEach(card=>{
+    const id = card.getAttribute("data-adid");
+    const btn = card.querySelector(".open-ad-btn");
+    const open = ()=>{
+      const adObj = (window.allAds || []).find(a => String(a.id) === String(id));
+      if (adObj && typeof openAdDetails === "function") openAdDetails(adObj);
+    };
+    card.addEventListener("click", (e)=>{
+      if (e.target === btn) return;
+      open();
+    });
+    if (btn) btn.addEventListener("click", (e)=>{ e.preventDefault(); e.stopPropagation(); open(); });
+  });
+}
+
+/** Открыть магазин продавца из объявления */
+function openSellerShopFromAd(ad){
+  ad.sellerKey = ad.sellerKey || getSellerKey(ad);
+
+  const shop = ensureSellerShopByAd(ad);
+
+  if (typeof openShop === "function"){
+    openShop(shop);
+    setTimeout(()=> renderSellerAdsInShop(shop), 30);
+    return;
+  }
+
+  if (typeof showScreen === "function") showScreen("shop");
+  setTimeout(()=> renderSellerAdsInShop(shop), 30);
+}
+// ================== /SELLER SHOP ==================
+
     // ================== PROFILIM (localStorage, ready for DB) ==================
 function loadProfileFromStorage(){
   try{
@@ -5872,7 +6020,14 @@ hideEls.forEach(el => {
         }
       }
 
-      if (shopViewAvatar) shopViewAvatar.textContent = getInitials(currentShop.name);
+     if (shopViewAvatar) {
+  const img = currentShop.avatar || "";
+  if (img) {
+    shopViewAvatar.innerHTML = `<img src="${img}" alt="shop" />`;
+  } else {
+    shopViewAvatar.textContent = getInitials(currentShop.name);
+  }
+}
 
       renderShopViewAds();
       setSubscribeUI(shopViewSubBtn, currentShop.id, { mode: "default" });
@@ -6343,18 +6498,15 @@ if (sellerCard && !sellerCard.dataset.bound) {
     e.preventDefault();
     e.stopPropagation();
 
-    // ✅ берём ТЕКУЩЕЕ объявление (а не то, которое было при первом bind)
+    // ✅ берём ТЕКУЩЕЕ объявление
     const a = currentAd;
     if (!a) return;
 
-    const tg = String(a.telegram || "")
-      .replace(/^@/, "")
-      .toLowerCase()
-      .trim();
+    const tg = String(a.telegram || "").replace(/^@/, "").toLowerCase().trim();
+    const phone = String(a.phone || "").replace(/\s+/g, "").trim();
 
-    const phone = String(a.phone || "")
-      .replace(/\s+/g, "")
-      .trim();
+    // ✅ фото объявления (поддержка разных названий поля)
+    const adImg = a.image || a.img || a.photo || a.images?.[0] || a.photos?.[0] || "";
 
     // 1) Пытаемся найти существующий магазин в shopsData
     let shop = (shopsData || []).find(s => {
@@ -6371,7 +6523,7 @@ if (sellerCard && !sellerCard.dataset.bound) {
         id: vid,
         name: tg ? (`@${tg}`) : (phone || "Sotuvchi"),
         city: a.city || "Uzbekiston",
-        category: getAdCategory(a) || "Boshqa",
+        category: (typeof getAdCategory === "function" ? (getAdCategory(a) || "Boshqa") : "Boshqa"),
         subs: 0,
         rating: 0,
         reviews: 0,
@@ -6380,16 +6532,24 @@ if (sellerCard && !sellerCard.dataset.bound) {
         last: "yaqinda",
         ownerTelegram: tg || "",
         ownerPhone: phone || "",
+        // ✅ добавляем аватар магазина (берём фото объявления)
+        avatar: adImg || "",
         _virtual: true
       };
 
       // чтобы не дублировать одинакового продавца много раз
       const exists = (shopsData || []).some(s => String(s.id) === vid);
       if (!exists) shopsData.push(shop);
+    } else {
+      // ✅ если магазин уже был, но без аватара — обновим
+      if (!shop.avatar && adImg) shop.avatar = adImg;
     }
 
     // 3) Открываем страницу магазина
     openShop(shop);
+
+    // ✅ (опционально) если у тебя есть функция рендера объявлений магазина — дерни её
+    // renderSellerAdsInShop(shop);
   });
 }
       
