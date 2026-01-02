@@ -4953,6 +4953,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const screenNewAdSuccess= document.getElementById("screen-new-ad-success");
     const screenShops       = document.getElementById("screen-shops");
     const screenSettings    = document.getElementById("screen-settings");
+    const screenBlocks = document.getElementById("screen-blocks");
+    const settingsBlocksRow = document.getElementById("settingsBlocksRow");
     
     // ===== PROFILIM (edit) =====
 const screenProfileEdit = document.getElementById("screen-profile-edit");
@@ -5066,9 +5068,9 @@ if (settingsBlocksRow && !settingsBlocksRow.dataset.bound){
 }
 
 // back from business
-if (businessBack && !businessBack.dataset.bound){
-  businessBack.dataset.bound = "1";
-  businessBack.addEventListener("click", ()=> showScreen("profile"));
+if (businessBackBtn && !businessBackBtn.dataset.bound){
+  businessBackBtn.dataset.bound = "1";
+  businessBackBtn.addEventListener("click", ()=> showScreen("profile"));
 }
 
 // create shop
