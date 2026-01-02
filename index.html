@@ -5045,10 +5045,6 @@ function createMyShopDraft(){
 }
 
 // ================== NAVIGATION (SETTINGS -> MY SHOP) ==================
-const settingsMyShopRow = document.getElementById("settingsMyShopRow");
-const businessOpenShopBtn = document.getElementById("businessOpenShopBtn");
-const businessBack = document.getElementById("businessBack");
-
 function goMyShop(){
   const shop = loadMyShop();
   if (!shop){
@@ -5062,6 +5058,11 @@ function goMyShop(){
 if (settingsMyShopRow && !settingsMyShopRow.dataset.bound){
   settingsMyShopRow.dataset.bound = "1";
   settingsMyShopRow.addEventListener("click", goMyShop);
+}
+
+if (settingsBlocksRow && !settingsBlocksRow.dataset.bound){
+  settingsBlocksRow.dataset.bound = "1";
+  settingsBlocksRow.addEventListener("click", () => showScreen("blocks"));
 }
 
 // back from business
@@ -6301,9 +6302,6 @@ if (bottomNav) bottomNav.classList.toggle("nav-hidden", hideNavScreens.has(name)
         btn.classList.toggle("active", s === name);
       });
 
-      if (settingsBlocksRow) {
-  settingsBlocksRow.addEventListener("click", () => showScreen("blocks"));
-}
       if (name === "blocks") {
   setBlocksTab(blocksTab || "ads");
 }
@@ -6329,9 +6327,10 @@ if (bottomNav) bottomNav.classList.toggle("nav-hidden", hideNavScreens.has(name)
   ensureShopsLoaded().then(() => renderShops());
 }
 
+      if (name === "profileEdit") renderProfileEditValues();
+      
       updateBackButtonVisibility();
     }
-      if (name === "profileEdit") renderProfileEditValues(); 
     
     function popPlusBtn() {
   const addBtn = document.getElementById("navAddBtn");
@@ -6368,10 +6367,10 @@ if (bottomNav) bottomNav.classList.toggle("nav-hidden", hideNavScreens.has(name)
 
     function openShop(shop){
   currentShop = shop;
-  showScreen("shop-view");     // ✅ screen-shop-view
-  renderShopView();            // ✅ твоя функция уже есть
+  showScreen("shopView");   // ✅ ключ из screens
+  renderShopView();
 }
-
+    
     function renderShopView(){
       if (!currentShop) return;
 
