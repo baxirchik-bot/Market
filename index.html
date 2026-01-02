@@ -4988,6 +4988,7 @@ const profileEditSave     = document.getElementById("profileEditSave");
     const settingsChangePhoto = document.getElementById("settingsChangePhoto");
 
     const screenMyShop      = document.getElementById("screen-my-shop");
+    const screenMyShopOwner = document.getElementById("screen-my-shop-owner"); // ✅ экран редактирования магазина
     const myShopAdsList     = document.getElementById("myShopAdsList");
     const settingsMyShopRow = document.getElementById("settingsMyShopRow");
 
@@ -5053,8 +5054,8 @@ function goMyShop(){
     showScreen("business");     // ✅ screen-business
     return;
   }
-  showScreen("my-shop-owner"); // ✅ screen-my-shop-owner
-  renderMyShopOwnerForm();
+  showScreen("myShopOwner");
+  renderMyShopOwnerForm(); 
 }
 
 if (settingsMyShopRow && !settingsMyShopRow.dataset.bound){
@@ -5080,7 +5081,7 @@ if (businessOpenShopBtn && !businessOpenShopBtn.dataset.bound){
     const shop = createMyShopDraft();
     saveMyShop(shop);
     showToast?.("Do‘kon ochildi", "Endi sozlashingiz mumkin ✅");
-    showScreen("my-shop-owner");
+    showScreen("myShopOwner");
     renderMyShopOwnerForm();
   });
 }
@@ -6258,6 +6259,7 @@ function toggleShopFav(shopId){
       myAds: screenMyAds,
       business: screenBusiness,
       myShop: screenMyShop,
+      myShopOwner: screenMyShopOwner, // ✅ редактирование магазина (owner)
       shopView: screenShopView,
       blocks: screenBlocks,
       profileEdit: screenProfileEdit,
@@ -6320,6 +6322,10 @@ if (bottomNav) bottomNav.classList.toggle("nav-hidden", hideNavScreens.has(name)
   if (myShop?.id) setSubscribeUI(storeSubscribeBtn, myShop.id, { mode:"short" });
 }
 
+      if (name === "myShopOwner") {
+  renderMyShopOwnerForm();
+}
+      
       if (name === "shops") {
   renderShopCategoryChips();
   syncShopsFilterUI();
@@ -8275,14 +8281,6 @@ if (editPasswordRow && !editPasswordRow.dataset.bound) {
       } catch (e) { console.warn("Profile photo load error:", e); }
     }
 
-    function userHasShop() {
-      try { return localStorage.getItem("zalvoHasShop") === "1"; }
-      catch { return false; }
-    }
-    function setUserHasShop() {
-      try { localStorage.setItem("zalvoHasShop", "1"); } catch {}
-    }
-
     function renderMyShopAds() {
       if (!myShopAdsList) return;
       myShopAdsList.innerHTML = "";
@@ -8368,20 +8366,6 @@ if (editPasswordRow && !editPasswordRow.dataset.bound) {
     }
 
     if (businessBackBtn) businessBackBtn.addEventListener("click", () => showScreen("profile"));
-
-    if (businessOpenShopBtn) {
-      businessOpenShopBtn.addEventListener("click", () => {
-        setUserHasShop();
-        showScreen("myShop");
-      });
-    }
-
-    if (settingsMyShopRow) {
-      settingsMyShopRow.addEventListener("click", () => {
-        if (userHasShop()) showScreen("myShop");
-        else showScreen("business");
-      });
-    }
 
     if (settingsLangRow) settingsLangRow.addEventListener("click", () => showScreen("language"));
 
