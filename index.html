@@ -5080,11 +5080,16 @@ if (businessOpenShopBtn && !businessOpenShopBtn.dataset.bound){
   businessOpenShopBtn.addEventListener("click", ()=>{
     const shop = createMyShopDraft();
     saveMyShop(shop);
+
+    // ✅ добавляем/обновляем магазин в shopsData
+    upsertMyShopIntoShopsData();
+
     showToast?.("Do‘kon ochildi", "Endi sozlashingiz mumkin ✅");
     showScreen("myShopOwner");
     renderMyShopOwnerForm();
   });
 }
+    
     // ================== MY SHOP OWNER UI ==================
 const myShopOwnerBackBtn = document.getElementById("myShopOwnerBackBtn");
 const myShopOwnerSaveBtn = document.getElementById("myShopOwnerSaveBtn");
@@ -5175,6 +5180,7 @@ function saveMyShopOwnerForm(){
 
   s.updatedAt = Date.now();
   saveMyShop(s);
+  upsertMyShopIntoShopsData();
 
   showToast?.("Saqlandi", "Do‘kon ma’lumotlari yangilandi ✅");
   renderMyShopOwnerForm();
@@ -5195,25 +5201,12 @@ if (myShopOwnerSaveBtn && !myShopOwnerSaveBtn.dataset.bound){
     if (myShopOwnerPreviewBtn && !myShopOwnerPreviewBtn.dataset.bound){
   myShopOwnerPreviewBtn.dataset.bound = "1";
   myShopOwnerPreviewBtn.addEventListener("click", ()=>{
-    const s = loadMyShop();
-    if (!s) return;
+  // ✅ сначала синхронизируем localStorage -> shopsData
+  const shopObj = upsertMyShopIntoShopsData();
+  if (!shopObj) return;
 
-    openShop({
-      id: s.id,
-      name: s.name,
-      city: s.city,
-      ownerPhone: s.phone,
-      ownerTelegram: s.telegram,
-      instagram: s.instagram,
-      subs: s.subs || 0,
-      rating: s.rating || 0,
-      reviews: s.reviews || 0,
-      cover: s.cover || "",
-      avatar: s.avatar || "",
-      _virtual: false
-    });
-  });
-}
+  openShop(shopObj);
+});
     
 // avatar upload
 if (myShopOwnerAvatarBtn && myShopOwnerAvatarFile && !myShopOwnerAvatarBtn.dataset.bound){
@@ -8409,6 +8402,42 @@ if (editPasswordRow && !editPasswordRow.dataset.bound) {
       { id:"s10", name:"Sport Shop", city:"Namangan", category:"Sport", subs:60, rating:4.3, reviews:9, ads:8, verified:false, last:"yaqinda", ownerTelegram:"sport_shop" }
     ];
 
+// ================== MY SHOP -> shopsData SYNC ==================
+function upsertMyShopIntoShopsData(){
+  const s = loadMyShop();
+  if (!s) return null;
+
+  // Приводим к формату shopsData (реальный do‘kon, НЕ виртуальный продавец)
+  const mapped = {
+    id: s.id || "myshop_1",
+    name: s.name || "My Shop",
+    city: s.city || "Uzbekiston",
+    category: "Do‘kon",          // можно потом сделать выбор категории
+    subs: s.subs || 0,
+    rating: s.rating || 0,
+    reviews: s.reviews || 0,
+    ads: 0,
+    verified: false,
+    last: "yaqinda",
+    ownerTelegram: String(s.telegram || "").replace(/^@/,""),
+    ownerPhone: s.phone || "",
+    avatar: s.avatar || "",
+    cover: s.cover || "",
+    about: s.about || "",
+    address: s.address || "",
+    worktime: s.worktime || "",
+    _virtual: false              // ✅ важно: это реальный do‘kon
+  };
+
+  // Если уже есть в shopsData — обновляем, если нет — добавляем
+  const idx = (shopsData || []).findIndex(x => String(x.id) === String(mapped.id));
+  if (idx >= 0) shopsData[idx] = { ...shopsData[idx], ...mapped };
+  else shopsData.unshift(mapped);
+
+  return mapped;
+}
+// ================== /MY SHOP -> shopsData SYNC ==================
+    
     function renderShopCategoryChips(){
   if (!shopsCategoryRow) return;
 
