@@ -8679,7 +8679,158 @@ if (shopPreviewBtn && !shopPreviewBtn.dataset.bound){
   });
 }
 // ================== /MY SHOP REGISTRATION ==================
-    
+   
+(function () {
+  // ---------- 1) showScreen (глобально) ----------
+  function showScreen(name) {
+    const all = document.querySelectorAll(".screen");
+    all.forEach(s => s.classList.remove("active"));
+
+    const el = document.getElementById("screen-" + name);
+    if (!el) {
+      console.warn("❌ screen not found:", "screen-" + name);
+      return;
+    }
+    el.classList.add("active");
+    window.scrollTo(0, 0);
+  }
+  window.showScreen = showScreen;
+
+  // ---------- 2) Навигация нижнего меню ----------
+  document.querySelectorAll(".nav-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      showScreen(btn.dataset.screen);
+    });
+  });
+
+  // ---------- 3) Переходы из профиля ----------
+  const go = (id, screen) => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener("click", () => showScreen(screen));
+  };
+
+  go("settingsFavoritesRow", "favorites");
+  go("settingsMyAdsRow", "my-ads");
+  go("settingsHistoryRow", "history");
+  go("settingsBlocksRow", "blocks");
+  go("settingsAdminRow", "admin");
+  go("settingsBusinessRow", "business");
+  go("settingsMyShopRow", "my-shop");
+
+  // ---------- 4) Кнопка "Do‘konni bepul ochish" -> регистрация ----------
+  const businessOpen = document.getElementById("businessOpenShopBtn");
+  if (businessOpen) businessOpen.addEventListener("click", () => showScreen("shop-register"));
+
+  // ---------- 5) Если экрана регистрации магазина НЕТ — создаём автоматически ----------
+  if (!document.getElementById("screen-shop-register")) {
+    const main = document.querySelector("main.screens");
+    if (main) {
+      const reg = document.createElement("section");
+      reg.id = "screen-shop-register";
+      reg.className = "screen";
+      reg.innerHTML = `
+        <div class="screen-title">Do‘kon ochish</div>
+
+        <div class="form-group">
+          <label class="form-label">Do‘kon nomi</label>
+          <input id="shopRegName" class="form-input" type="text" placeholder="Masalan: Zalvo Phone Shop" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Shahar</label>
+          <select id="shopRegCity" class="form-select">
+            <option value="Toshkent shahri">Toshkent shahri</option>
+            <option value="Toshkent viloyati">Toshkent viloyati</option>
+            <option value="Andijon">Andijon</option>
+            <option value="Farg‘ona">Farg‘ona</option>
+            <option value="Samarqand">Samarqand</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Kategoriya</label>
+          <select id="shopRegCategory" class="form-select">
+            <option value="Elektronika">Elektronika</option>
+            <option value="Avto">Avto</option>
+            <option value="Uy-rozg‘or">Uy-rozg‘or</option>
+            <option value="Xizmatlar">Xizmatlar</option>
+            <option value="Kiyim">Kiyim</option>
+          </select>
+        </div>
+
+        <div class="filters-actions-row">
+          <button id="shopPreviewBtn" class="outline-btn" type="button">Oldindan ko‘rish</button>
+          <button id="shopSaveBtn" class="primary-btn" type="button">Saqlash</button>
+          <button id="shopRegBack" class="outline-btn" type="button">Orqaga</button>
+        </div>
+
+        <div class="hint" style="margin-top:10px;">
+          Saqlangandan keyin do‘kon sahifasi ochiladi.
+        </div>
+      `;
+      main.appendChild(reg);
+    }
+  }
+
+  // ---------- 6) Логика "Preview / Save" ----------
+  function readShopForm() {
+    return {
+      name: (document.getElementById("shopRegName")?.value || "").trim(),
+      city: document.getElementById("shopRegCity")?.value || "",
+      category: document.getElementById("shopRegCategory")?.value || ""
+    };
+  }
+
+  function applyShopToMyShopScreen(shop) {
+    // обновим только имя и город в твоём screen-my-shop (если есть элементы)
+    const nameEl = document.querySelector("#screen-my-shop .store-name");
+    if (nameEl && shop.name) nameEl.textContent = shop.name;
+
+    // город — у тебя в контактах сейчас текстом, найдём строку с 📍 и заменим span
+    const locRow = document.querySelectorAll("#screen-my-shop .store-contact-row");
+    locRow.forEach(row => {
+      if (row.textContent.includes("📍")) {
+        const spans = row.querySelectorAll("span");
+        if (spans.length) spans[spans.length - 1].textContent = shop.city || spans[spans.length - 1].textContent;
+      }
+    });
+  }
+
+  // делегируем события (чтобы работало даже если экран создан позже)
+  document.addEventListener("click", (e) => {
+    const t = e.target;
+
+    if (t && t.id === "shopRegBack") showScreen("business");
+
+    if (t && t.id === "shopPreviewBtn") {
+      const shop = readShopForm();
+      if (!shop.name) return alert("Do‘kon nomini kiriting");
+      applyShopToMyShopScreen(shop);
+      showScreen("my-shop");
+    }
+
+    if (t && t.id === "shopSaveBtn") {
+      const shop = readShopForm();
+      if (!shop.name) return alert("Do‘kon nomini kiriting");
+
+      localStorage.setItem("zalvo_my_shop", JSON.stringify(shop));
+      applyShopToMyShopScreen(shop);
+      showScreen("my-shop");
+    }
+  });
+
+  // ---------- 7) При старте подтягиваем сохранённый магазин ----------
+  try {
+    const saved = localStorage.getItem("zalvo_my_shop");
+    if (saved) applyShopToMyShopScreen(JSON.parse(saved));
+  } catch (err) {}
+
+  // ---------- 8) По умолчанию покажем home ----------
+  showScreen("home");
+})();
+
     // ================== START ==================
     applySavedProfilePhoto();
     showScreen("home");
