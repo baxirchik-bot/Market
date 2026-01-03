@@ -8831,6 +8831,29 @@ if (shopPreviewBtn && !shopPreviewBtn.dataset.bound){
   showScreen("home");
 })();
 
+    function showScreen(name) {
+  const id = `screen-${name}`;
+
+  // 1) Скрываем все экраны
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+
+  // 2) Показываем нужный
+  const el = document.getElementById(id);
+  if (!el) {
+    console.warn("showScreen: экран не найден:", id);
+    return;
+  }
+  el.classList.add("active");
+
+  // 3) Подсветка нижнего меню (если есть)
+  document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+  const btn = document.querySelector(`.nav-btn[data-screen="${name}"]`);
+  if (btn) btn.classList.add("active");
+}
+
+// чтобы в консоли тоже было видно
+window.showScreen = showScreen;
+    
     // ================== START ==================
     applySavedProfilePhoto();
     showScreen("home");
