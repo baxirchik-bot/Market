@@ -8589,6 +8589,97 @@ if (reportCancelBtn && !reportCancelBtn.dataset.bound) {
   reportCancelBtn.addEventListener("pointerup", handler);
 }
 
+    // ================== MY SHOP REGISTRATION (SAVE + PREVIEW) ==================
+const MY_SHOP_KEY = "zalvo_my_shop_v1";
+
+// ⚠️ ВАЖНО: замени id на свои реальные из HTML
+const shopRegName = document.getElementById("shopRegName");
+const shopRegCity = document.getElementById("shopRegCity");
+const shopRegCategory = document.getElementById("shopRegCategory");
+const shopRegPhone = document.getElementById("shopRegPhone");
+const shopRegTg = document.getElementById("shopRegTg");
+
+const shopSaveBtn = document.getElementById("shopSaveBtn");
+const shopPreviewBtn = document.getElementById("shopPreviewBtn");
+
+function loadMyShop(){
+  try{
+    const raw = localStorage.getItem(MY_SHOP_KEY);
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ return null; }
+}
+function saveMyShop(obj){
+  try{ localStorage.setItem(MY_SHOP_KEY, JSON.stringify(obj)); }catch(e){}
+}
+
+function upsertMyShopToShopsData(shop){
+  if (!shop?.id) return;
+  const i = shopsData.findIndex(s => String(s.id) === String(shop.id));
+  if (i >= 0) shopsData[i] = { ...shopsData[i], ...shop, _virtual:false };
+  else shopsData.unshift({ ...shop, _virtual:false });
+}
+
+function buildShopFromForm(){
+  const name = (shopRegName?.value || "").trim();
+  const city = (shopRegCity?.value || "").trim();
+  const category = (shopRegCategory?.value || "").trim();
+  const phone = (shopRegPhone?.value || "").trim();
+  const tg = (shopRegTg?.value || "").trim().replace(/^@/,"");
+
+  if (!name) { showToast("Xatolik", "Do‘kon nomini kiriting"); return null; }
+  if (!city) { showToast("Xatolik", "Shaharni tanlang"); return null; }
+  if (!category) { showToast("Xatolik", "Kategoriya tanlang"); return null; }
+
+  const id = "myshop_" + (tg || phone || "owner");
+  return {
+    id,
+    name,
+    city,
+    category,
+    subs: 0,
+    rating: 0,
+    reviews: 0,
+    ads: 0,
+    verified: false,
+    last: "bugun",
+    ownerTelegram: tg,
+    ownerPhone: phone
+  };
+}
+
+// SAVE
+if (shopSaveBtn && !shopSaveBtn.dataset.bound){
+  shopSaveBtn.dataset.bound = "1";
+  shopSaveBtn.addEventListener("click", (e)=>{
+    e.preventDefault();
+    const shop = buildShopFromForm();
+    if (!shop) return;
+
+    saveMyShop(shop);
+    upsertMyShopToShopsData(shop);
+    setUserHasShop();
+
+    showToast("Saqlandi", "Do‘kon yaratildi ✅");
+    showScreen("myShop");
+    renderShops();
+  });
+}
+
+// PREVIEW
+if (shopPreviewBtn && !shopPreviewBtn.dataset.bound){
+  shopPreviewBtn.dataset.bound = "1";
+  shopPreviewBtn.addEventListener("click", (e)=>{
+    e.preventDefault();
+    const shop = buildShopFromForm();
+    if (!shop) return;
+
+    // временно показываем как будет выглядеть
+    currentShop = shop;
+    showScreen("shopView");
+  });
+}
+// ================== /MY SHOP REGISTRATION ==================
+    
     // ================== START ==================
     applySavedProfilePhoto();
     showScreen("home");
