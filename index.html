@@ -9305,6 +9305,51 @@ window.loadShops = function loadShops() {
   console.log("loadShops OK:", list.length);
 };
 
+    // ================== FIX: NAV -> screens + autoload shops ==================
+(function initNavFix() {
+  // 1) безопасный showScreen, если вдруг его нет — не падаем
+  if (typeof window.showScreen !== "function") {
+    console.warn("showScreen() не найдена на момент initNavFix");
+    return;
+  }
+
+  // 2) найдём ВСЕ кнопки нижнего меню, где есть data-screen
+  const navBtns = document.querySelectorAll(".bottom-nav .nav-btn[data-screen]");
+  if (!navBtns.length) {
+    console.warn("nav buttons не найдены (.bottom-nav .nav-btn[data-screen])");
+    return;
+  }
+
+  // 3) повесим клики заново (не важно, что было раньше)
+  navBtns.forEach(btn => {
+    btn.onclick = (e) => {
+      e.preventDefault();
+
+      const target = btn.getAttribute("data-screen");
+      if (!target) return;
+
+      // показать экран
+      window.showScreen(target);
+
+      // если это shops — подгружаем магазины
+      if (target === "shops") {
+        if (typeof window.loadShops === "function") {
+          window.loadShops();
+        } else {
+          console.warn("loadShops() не найдена");
+        }
+      }
+
+      // активная кнопка
+      navBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+    };
+  });
+
+  console.log("✅ initNavFix: навигация подключена");
+})();
+
+    
     // ================== START ==================
     applySavedProfilePhoto();
     showScreen("home");
