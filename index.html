@@ -4250,6 +4250,16 @@ body.chat-room-open .chat-input{
           <a id="shopViewTg" href="#" target="_blank">@shop</a>
         </div>
 
+        <div class="shop-info-block">
+  <div class="shop-info-title">Ish vaqti</div>
+  <div id="shopViewWorkdays" class="shop-info-text">—</div>
+</div>
+
+<div class="shop-info-block">
+  <div class="shop-info-title">Tavsif</div>
+  <div id="shopViewAbout" class="shop-info-text">—</div>
+</div>
+
         <div class="store-contact-row">
           <span class="store-contact-icon loc">📍</span>
           <span id="shopViewCity">Shahar</span>
@@ -5850,6 +5860,7 @@ if (bottomNav) bottomNav.classList.toggle("nav-hidden", hideNavScreens.has(name)
       if (name === "myAds")     renderMyAds();
       if (name === "shopView")  renderShopView();
       if (name === "myShop") { 
+        renderMyShopScreen();
         renderMyShopAds();
   const s = ensureMyShopState();
   if (s?.id) setSubscribeUI(storeSubscribeBtn, s.id, { mode:"short" });
@@ -5905,6 +5916,12 @@ if (bottomNav) bottomNav.classList.toggle("nav-hidden", hideNavScreens.has(name)
 
     function renderShopView(){
       if (!currentShop) return;
+
+      const aboutEl = document.getElementById("shopViewAbout");
+      const wdEl    = document.getElementById("shopViewWorkdays");
+
+     if (wdEl) wdEl.textContent = currentShop.workdays || "—";
+     if (aboutEl) aboutEl.textContent = currentShop.about || "—";
 
       const isVirtualUser = !!currentShop._virtual === true; // признак "обычный продавец"
       
@@ -8078,6 +8095,29 @@ bindShopRegistrationUI();
       alert("Язык установлен: Русский");
       showScreen("profile");
     });
+
+    function renderMyShopScreen(){
+  const s = ensureMyShopState(); // берём сохранённый магазин
+  if (!s) return;
+
+  // ✅ подставь сюда реальные id элементов из твоего HTML
+  const nameEl = document.getElementById("myShopName");
+  const cityEl = document.getElementById("myShopCity");
+  const catEl  = document.getElementById("myShopCategory");
+  const wdEl   = document.getElementById("myShopWorkdays");
+  const aboutEl= document.getElementById("myShopAbout");
+  const avatarEl = document.getElementById("myShopAvatar"); // если есть
+
+  if (nameEl) nameEl.textContent = s.name || "Do‘kon";
+  if (cityEl) cityEl.textContent = s.city || "";
+  if (catEl)  catEl.textContent  = s.category || "";
+  if (wdEl)   wdEl.textContent   = s.workdays || "—";
+  if (aboutEl)aboutEl.textContent= s.about || "—";
+  if (avatarEl) avatarEl.textContent = getInitials(s.name);
+
+  // если хочешь, можно обновить subs/кнопку подписки
+  if (storeSubscribeBtn && s.id) setSubscribeUI(storeSubscribeBtn, s.id, { mode:"short" });
+}
 
     // ================== SHOPS DATA + RENDER ==================
     const shopsSearchInput = document.getElementById("shopsSearchInput");
