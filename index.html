@@ -7882,7 +7882,7 @@ function openShopRegistration(){
   if (hasMyShop()){
     showScreen("myShop");
   } else {
-    showScreen("business"); // сначала бизнес-страница
+    openShopRegistration(); // сразу анкета
   }
 }
 
@@ -7945,6 +7945,9 @@ function submitShopRegistration(){
   saveMyShop(shop);
   setUserHasShop(); // ✅ твоя функция-флаг
   myShopState = shop;
+
+  syncMyShopIntoShopsData(); // ✅ добавили в shopsData
+  renderShops();             // ✅ обновили экран do‘konlar (если открыт)
 
   showToast("Do‘kon saqlandi", "✅");
   showScreen("myShop");
@@ -8060,13 +8063,6 @@ bindShopRegistrationUI();
   });
 }
 
-    if (settingsMyShopRow) {
-  settingsMyShopRow.addEventListener("click", () => {
-    if (userHasShop() && hasMyShop()) showScreen("myShop");
-    else openShopRegistration();
-  });
-}
-
     if (settingsLangRow) settingsLangRow.addEventListener("click", () => showScreen("language"));
 
     if (languageUz) languageUz.addEventListener("click", () => {
@@ -8109,6 +8105,38 @@ bindShopRegistrationUI();
       { id:"s10", name:"Sport Shop", city:"Namangan", category:"Sport", subs:60, rating:4.3, reviews:9, ads:8, verified:false, last:"yaqinda", ownerTelegram:"sport_shop" }
     ];
 
+    function syncMyShopIntoShopsData(){
+  const s = loadMyShop();
+  if (!s) return;
+
+  // гарантируем поля для списка
+  const shopObj = {
+    id: s.id || "myshop_local",
+    name: s.name || "My Shop",
+    city: s.city || "Shahar",
+    category: s.category || "Boshqa",
+    subs: Number(s.subs || 0),
+    rating: Number(s.rating || 0),
+    reviews: Number(s.reviews || 0),
+    ads: Number(s.ads || 0),
+    verified: !!s.verified,
+    last: s.last || "yaqinda",
+    ownerTelegram: s.ownerTelegram || "",
+    ownerPhone: s.ownerPhone || "",
+    workdays: s.workdays || "",
+    about: s.about || "",
+    _virtual: false,
+    _isMine: true,
+  };
+
+  const i = shopsData.findIndex(x => String(x.id) === String(shopObj.id));
+  if (i >= 0) shopsData[i] = shopObj;
+  else shopsData.unshift(shopObj);
+}
+
+// ✅ один раз при старте подмешиваем "мой магазин" в общий список
+syncMyShopIntoShopsData();
+
     function renderShopCategoryChips(){
   if (!shopsCategoryRow) return;
 
@@ -8138,16 +8166,19 @@ bindShopRegistrationUI();
 }
     
     // ✅ MY SHOP ⋯ открывает ОБЩИЙ shopSheetBackdrop
-    const myShop = shopsData.find(s => s.id === "s1") || shopsData[0] || null;
+    function getMyShop(){
+  return loadMyShop() || shopsData.find(s => s.id === "s1") || shopsData[0] || null;
+}
 
-    if (storeMoreBtn && !storeMoreBtn.dataset.bound) {
-      storeMoreBtn.dataset.bound = "1";
-      storeMoreBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (myShop) openShopSheet(myShop);
-      });
-    }
+   if (storeMoreBtn && !storeMoreBtn.dataset.bound) {
+  storeMoreBtn.dataset.bound = "1";
+  storeMoreBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const shop = getMyShop();
+    if (shop) openShopSheet(shop);
+  });
+}
 
     // ✅ My Shop subscribe bind
 const myShopSubsEl = document.querySelector("#screen-my-shop .store-subs");
