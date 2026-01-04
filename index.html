@@ -4874,11 +4874,27 @@ const profileEditSave     = document.getElementById("profileEditSave");
     const screenMyShop      = document.getElementById("screen-my-shop");
     const myShopAdsList     = document.getElementById("myShopAdsList");
     const settingsMyShopRow = document.getElementById("settingsMyShopRow");
+if (settingsMyShopRow && !settingsMyShopRow.dataset.bound) {
+  settingsMyShopRow.dataset.bound = "1";
+  settingsMyShopRow.addEventListener("click", (e) => {
+    e.preventDefault();
+    openMeningDokonim(); // ✅ ВОТ ОНО
+  });
+}
 
+    const businessBtn = document.getElementById("businessOpenShopBtn");
+if (businessBtn && !businessBtn.dataset.bound) {
+  businessBtn.dataset.bound = "1";
+  businessBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    openShopRegistration(); // 👉 переход на screen-shopRegister
+  });
+}
     const screenBusiness    = document.getElementById("screen-business");
     const businessBackBtn   = document.getElementById("businessBack");
     const businessOpenShopBtn  = document.getElementById("businessOpenShopBtn");
-
+    const screenShopRegister = document.getElementById("screen-shopRegister");
+    
     // ✅ ВАЖНО: storeMoreBtn объявляем ТОЛЬКО ОДИН РАЗ
     const storeMoreBtn      = document.getElementById("storeMoreBtn");
     const storeSheet        = document.getElementById("storeSheet"); // оставил, если где-то используешь
@@ -5230,6 +5246,17 @@ const chatActionReport = document.getElementById("chatActionReport");
         lastScrollTop = st;
       }, { passive: true });
     }
+
+    document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("businessOpenShopBtn");
+  if (btn && !btn.dataset.bound){
+    btn.dataset.bound = "1";
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      openShopRegistration();
+    });
+  }
+});
 
     // ===== APP INSETS (header + bottom nav heights) =====
 function setAppInsetsVars(){
@@ -5759,6 +5786,7 @@ function toggleShopFav(shopId){
       language: screenLanguage,
       myAds: screenMyAds,
       business: screenBusiness,
+      shopRegister: screenShopRegister,
       myShop: screenMyShop,
       shopView: screenShopView,
       blocks: screenBlocks,
@@ -7850,7 +7878,15 @@ function openShopRegistration(){
   }, 0);
 }
 
-// Preview -> открываем shopView с временными данными
+    function openMeningDokonim(){
+  if (hasMyShop()){
+    showScreen("myShop");
+  } else {
+    showScreen("business"); // сначала бизнес-страница
+  }
+}
+
+    // Preview -> открываем shopView с временными данными
 function previewShop(){
   const data = readShopForm();
   const err = validateShopForm(data);
