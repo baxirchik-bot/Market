@@ -4355,6 +4355,48 @@ body.chat-room-open .chat-input{
       Hoziroq bepul ulaning — keyin pullik obunaga o‘tish ixtiyoriy bo‘ladi.
     </div>
   </div>
+
+  <div class="card" style="margin-top:12px;">
+  <div class="section-title">Do‘kon ochish</div>
+
+  <input id="shopRegName" class="profile-input" placeholder="Do‘kon nomi" />
+  <div style="height:10px"></div>
+
+  <select id="shopRegCity" class="profile-input">
+    <option value="">Shaharni tanlang</option>
+    <option>Toshkent shahri</option>
+    <option>Samarqand</option>
+    <option>Farg‘ona</option>
+    <option>Andijon</option>
+    <option>Namangan</option>
+  </select>
+  <div style="height:10px"></div>
+
+  <select id="shopRegCategory" class="profile-input">
+    <option value="">Kategoriya</option>
+    <option>Elektronika</option>
+    <option>Avto</option>
+    <option>Xizmatlar</option>
+    <option>Uy-rozg‘or</option>
+    <option>Kiyim</option>
+  </select>
+
+  <div style="height:10px"></div>
+  <input id="shopRegPhone" class="profile-input" placeholder="Telefon (ixtiyoriy)" />
+  <div style="height:10px"></div>
+  <input id="shopRegTelegram" class="profile-input" placeholder="Telegram (ixtiyoriy) @username" />
+
+  <div style="height:10px"></div>
+  <input id="shopRegWorkdays" class="profile-input" placeholder="Ish vaqti (masalan: Du–Ju 09:00–18:00)" />
+
+  <div style="height:10px"></div>
+  <textarea id="shopRegAbout" class="profile-input" style="min-height:90px;" placeholder="Qisqa tavsif (ixtiyoriy)"></textarea>
+
+  <div style="display:flex; gap:10px; margin-top:12px;">
+    <button id="shopRegPreviewBtn" class="btn" type="button" style="flex:1;">Oldindan ko‘rish</button>
+    <button id="shopRegSaveBtn" class="btn primary" type="button" style="flex:1;">Saqlash</button>
+  </div>
+</div>
 </section>
       
       <!-- ================= ADMIN PANEL ================= -->
@@ -7718,6 +7760,161 @@ if (editPasswordRow && !editPasswordRow.dataset.bound) {
       try { localStorage.setItem("zalvoHasShop", "1"); } catch {}
     }
 
+    // ================== SHOP REGISTRATION (Mening do‘konim) ==================
+const SHOP_KEY = "zalvo_my_shop_v1";
+
+function loadMyShop(){
+  try{
+    const raw = localStorage.getItem(SHOP_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  }catch(e){ return null; }
+}
+function saveMyShop(shop){
+  try{ localStorage.setItem(SHOP_KEY, JSON.stringify(shop)); } catch {}
+}
+function hasMyShop(){
+  return !!loadMyShop();
+}
+
+// собираем данные из формы (если форма уже есть)
+function readShopForm(){
+  const name = (document.getElementById("shopRegName")?.value || "").trim();
+  const city = (document.getElementById("shopRegCity")?.value || "").trim();
+  const category = (document.getElementById("shopRegCategory")?.value || "").trim();
+  const phone = (document.getElementById("shopRegPhone")?.value || "").trim();
+  const telegram = (document.getElementById("shopRegTelegram")?.value || "").trim().replace(/^@/, "");
+
+  const workdays = (document.getElementById("shopRegWorkdays")?.value || "").trim(); // "Du–Ju 09:00–18:00"
+  const about = (document.getElementById("shopRegAbout")?.value || "").trim();
+
+  return { name, city, category, phone, telegram, workdays, about };
+}
+
+function validateShopForm(data){
+  if (!data.name) return "Do‘kon nomini kiriting";
+  if (!data.city) return "Shaharni tanlang";
+  if (!data.category) return "Kategoriya tanlang";
+  // phone/tg можно оставить пустыми
+  return "";
+}
+
+// применяем магазин как “мой” (для My Shop экрана и кнопок)
+let myShopState = loadMyShop();
+
+function ensureMyShopState(){
+  myShopState = loadMyShop();
+  return myShopState;
+}
+
+// показать/спрятать нужные экраны
+function openShopRegistration(){
+  showScreen("business"); // ✅ сейчас у тебя business экран есть
+  // ВАЖНО: внутри business мы покажем форму регистрации (HTML ниже)
+  setTimeout(()=>{
+    // если уже есть сохраненный магазин — заполним форму
+    const s = ensureMyShopState();
+    if (!s) return;
+    const elName = document.getElementById("shopRegName");
+    const elCity = document.getElementById("shopRegCity");
+    const elCat  = document.getElementById("shopRegCategory");
+    const elPh   = document.getElementById("shopRegPhone");
+    const elTg   = document.getElementById("shopRegTelegram");
+    const elWd   = document.getElementById("shopRegWorkdays");
+    const elAb   = document.getElementById("shopRegAbout");
+
+    if (elName) elName.value = s.name || "";
+    if (elCity) elCity.value = s.city || "";
+    if (elCat)  elCat.value  = s.category || "";
+    if (elPh)   elPh.value   = s.ownerPhone || "";
+    if (elTg)   elTg.value   = s.ownerTelegram || "";
+    if (elWd)   elWd.value   = s.workdays || "";
+    if (elAb)   elAb.value   = s.about || "";
+  }, 0);
+}
+
+// Preview -> открываем shopView с временными данными
+function previewShop(){
+  const data = readShopForm();
+  const err = validateShopForm(data);
+  if (err) { alert(err); return; }
+
+  // временный объект магазина
+  const tempShop = {
+    id: "myshop_local",
+    name: data.name,
+    city: data.city,
+    category: data.category,
+    subs: 0,
+    rating: 0,
+    reviews: 0,
+    ads: 0,
+    verified: false,
+    last: "yaqinda",
+    ownerPhone: data.phone,
+    ownerTelegram: data.telegram,
+    workdays: data.workdays,
+    about: data.about,
+    _virtual: false,
+    _isMine: true
+  };
+
+  // ✅ используем твою существующую механику
+  currentShop = tempShop;
+  showScreen("shopView");
+}
+
+// Save -> сохраняем и считаем что магазин создан
+function submitShopRegistration(){
+  const data = readShopForm();
+  const err = validateShopForm(data);
+  if (err) { alert(err); return; }
+
+  const shop = {
+    id: "myshop_local",
+    name: data.name,
+    city: data.city,
+    category: data.category,
+    subs: 0,
+    rating: 0,
+    reviews: 0,
+    ads: 0,
+    verified: false,
+    last: "yaqinda",
+    ownerPhone: data.phone,
+    ownerTelegram: data.telegram,
+    workdays: data.workdays,
+    about: data.about,
+    _virtual: false,
+    _isMine: true
+  };
+
+  saveMyShop(shop);
+  setUserHasShop(); // ✅ твоя функция-флаг
+  myShopState = shop;
+
+  showToast("Do‘kon saqlandi", "✅");
+  showScreen("myShop");
+}
+
+// ===== bind кнопок регистрации (если они есть) =====
+function bindShopRegistrationUI(){
+  const previewBtn = document.getElementById("shopRegPreviewBtn");
+  const saveBtn    = document.getElementById("shopRegSaveBtn");
+
+  if (previewBtn && !previewBtn.dataset.bound){
+    previewBtn.dataset.bound = "1";
+    previewBtn.addEventListener("click", (e)=>{ e.preventDefault(); previewShop(); });
+  }
+  if (saveBtn && !saveBtn.dataset.bound){
+    saveBtn.dataset.bound = "1";
+    saveBtn.addEventListener("click", (e)=>{ e.preventDefault(); submitShopRegistration(); });
+  }
+}
+bindShopRegistrationUI();
+
+// ================== /SHOP REGISTRATION ==================
+
     function renderMyShopAds() {
       if (!myShopAdsList) return;
       myShopAdsList.innerHTML = "";
@@ -7805,18 +8002,17 @@ if (editPasswordRow && !editPasswordRow.dataset.bound) {
     if (businessBackBtn) businessBackBtn.addEventListener("click", () => showScreen("profile"));
 
     if (businessOpenShopBtn) {
-      businessOpenShopBtn.addEventListener("click", () => {
-        setUserHasShop();
-        showScreen("myShop");
-      });
-    }
+  businessOpenShopBtn.addEventListener("click", () => {
+    openShopRegistration(); // ✅ форма регистрации
+  });
+}
 
     if (settingsMyShopRow) {
-      settingsMyShopRow.addEventListener("click", () => {
-        if (userHasShop()) showScreen("myShop");
-        else showScreen("business");
-      });
-    }
+  settingsMyShopRow.addEventListener("click", () => {
+    if (userHasShop() && hasMyShop()) showScreen("myShop");
+    else openShopRegistration();
+  });
+}
 
     if (settingsLangRow) settingsLangRow.addEventListener("click", () => showScreen("language"));
 
