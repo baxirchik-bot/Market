@@ -5849,8 +5849,10 @@ if (bottomNav) bottomNav.classList.toggle("nav-hidden", hideNavScreens.has(name)
       
       if (name === "myAds")     renderMyAds();
       if (name === "shopView")  renderShopView();
-      if (name === "myShop") {  renderMyShopAds();
-      if (myShop?.id) setSubscribeUI(storeSubscribeBtn, myShop.id, { mode:"short" });
+      if (name === "myShop") { 
+        renderMyShopAds();
+  const s = ensureMyShopState();
+  if (s?.id) setSubscribeUI(storeSubscribeBtn, s.id, { mode:"short" });
 }
 
       if (name === "profileEdit") renderProfileEditValues();
@@ -8183,7 +8185,7 @@ syncMyShopIntoShopsData();
     // ✅ My Shop subscribe bind
 const myShopSubsEl = document.querySelector("#screen-my-shop .store-subs");
 
-bindSubscribe(storeSubscribeBtn, () => myShop, {
+bindSubscribe(storeSubscribeBtn, () => ensureMyShopState(), {
   mode: "short",
   subsEl: myShopSubsEl,
   onAfter: () => renderShops()
