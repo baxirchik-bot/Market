@@ -8845,7 +8845,18 @@ if (shopPreviewBtn && !shopPreviewBtn.dataset.bound){
   }
   el.classList.add("active");
 
-  // 3) Подсветка нижнего меню (если есть)
+      // авто-загрузка при входе на экран
+if (name === "shops") {
+  if (typeof loadShops === "function") loadShops();
+  else console.warn("loadShops() не найдена");
+}
+
+if (name === "my-shop") {
+  if (typeof renderMyShopAds === "function") renderMyShopAds();
+  else console.warn("renderMyShopAds() не найдена");
+}
+
+      // 3) Подсветка нижнего меню (если есть)
   document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
   const btn = document.querySelector(`.nav-btn[data-screen="${name}"]`);
   if (btn) btn.classList.add("active");
@@ -8853,6 +8864,32 @@ if (shopPreviewBtn && !shopPreviewBtn.dataset.bound){
 
 // чтобы в консоли тоже было видно
 window.showScreen = showScreen;
+
+    // ================== NAVIGATION ==================
+document.querySelectorAll(".nav-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const target = btn.dataset.screen;
+    if (!target) return;
+    showScreen(target);
+  });
+});
+
+    // ================== SETTINGS LINKS ==================
+document.getElementById("settingsMyShopRow")?.addEventListener("click", () => {
+  showScreen("my-shop");
+});
+
+document.getElementById("settingsMyAdsRow")?.addEventListener("click", () => {
+  showScreen("my-ads");
+});
+
+document.getElementById("settingsFavoritesRow")?.addEventListener("click", () => {
+  showScreen("favorites");
+});
+
+document.getElementById("settingsHistoryRow")?.addEventListener("click", () => {
+  showScreen("history");
+});
     
     // ================== START ==================
     applySavedProfilePhoto();
