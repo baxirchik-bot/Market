@@ -5850,9 +5850,10 @@ if (bottomNav) bottomNav.classList.toggle("nav-hidden", hideNavScreens.has(name)
       if (name === "myAds")     renderMyAds();
       if (name === "shopView")  renderShopView();
       if (name === "myShop") {  renderMyShopAds();
-  if (myShop?.id) setSubscribeUI(storeSubscribeBtn, myShop.id, { mode:"short" });
+      if (myShop?.id) setSubscribeUI(storeSubscribeBtn, myShop.id, { mode:"short" });
 }
 
+      if (name === "profileEdit") renderProfileEditValues();
       if (name === "shops") {
   renderShopCategoryChips();
   syncShopsFilterUI();
@@ -5860,8 +5861,7 @@ if (bottomNav) bottomNav.classList.toggle("nav-hidden", hideNavScreens.has(name)
 }
 
       updateBackButtonVisibility();
-    }
-      if (name === "profileEdit") renderProfileEditValues(); 
+    } 
     
     function popPlusBtn() {
   const addBtn = document.getElementById("navAddBtn");
