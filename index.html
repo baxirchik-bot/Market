@@ -8890,7 +8890,347 @@ document.getElementById("settingsFavoritesRow")?.addEventListener("click", () =>
 document.getElementById("settingsHistoryRow")?.addEventListener("click", () => {
   showScreen("history");
 });
-    
+
+    // ================== SHOPS DATA + LOAD ==================
+let SHOPS = [
+  {
+    id: "zalvo-phone",
+    name: "Zalvo Phone Shop",
+    cat: "Elektronika",
+    city: "Toshkent shahri",
+    verified: true,
+    subs: 451,
+    rating: 4.9,
+    votes: 451,
+    phone: "+998991234567",
+    tg: "@gulzor_shop",
+    cover: "iphone14-pro.jpg",
+    avatarLetter: "Z"
+  },
+  {
+    id: "avto-master",
+    name: "Avto Master",
+    cat: "Avto",
+    city: "Toshkent viloyati",
+    verified: false,
+    subs: 120,
+    rating: 4.7,
+    votes: 88,
+    phone: "",
+    tg: "@avtomaster",
+    cover: "iphone14-pro.jpg",
+    avatarLetter: "A"
+  },
+  {
+    id: "uy-rozgor",
+    name: "Uy-rozg‘or Market",
+    cat: "Uy-rozg‘or",
+    city: "Samarqand",
+    verified: true,
+    subs: 980,
+    rating: 4.8,
+    votes: 210,
+    phone: "+998901112233",
+    tg: "@uyrozgor",
+    cover: "iphone14-pro.jpg",
+    avatarLetter: "U"
+  },
+  {
+    id: "xizmat-pro",
+    name: "Xizmat Pro",
+    cat: "Xizmatlar",
+    city: "Farg‘ona",
+    verified: false,
+    subs: 77,
+    rating: 4.6,
+    votes: 35,
+    phone: "",
+    tg: "@xizmatpro",
+    cover: "iphone14-pro.jpg",
+    avatarLetter: "X"
+  },
+  {
+    id: "kiyim-shop",
+    name: "Kiyim Shop",
+    cat: "Kiyim",
+    city: "Buxoro",
+    verified: true,
+    subs: 305,
+    rating: 4.9,
+    votes: 95,
+    phone: "+998937778899",
+    tg: "@kiyimshop",
+    cover: "iphone14-pro.jpg",
+    avatarLetter: "K"
+  },
+];
+
+let shopsState = {
+  q: "",
+  cat: "all",
+  city: "all",
+  sort: "popular",      // popular | new | rating
+  onlyVerified: false
+};
+
+function escHtml(s) {
+  return String(s ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
+function formatSubs(n) {
+  const num = Number(n || 0);
+  if (num >= 1000) return (num / 1000).toFixed(1).replace(".0", "") + "k";
+  return String(num);
+}
+
+function getFilteredShops() {
+  let list = [...SHOPS];
+
+  // category
+  if (shopsState.cat !== "all") {
+    list = list.filter(s => s.cat === shopsState.cat);
+  }
+
+  // search
+  const q = shopsState.q.trim().toLowerCase();
+  if (q) {
+    list = list.filter(s =>
+      (s.name || "").toLowerCase().includes(q) ||
+      (s.cat || "").toLowerCase().includes(q) ||
+      (s.city || "").toLowerCase().includes(q)
+    );
+  }
+
+  // city
+  if (shopsState.city !== "all") {
+    list = list.filter(s => s.city === shopsState.city);
+  }
+
+  // verified
+  if (shopsState.onlyVerified) {
+    list = list.filter(s => !!s.verified);
+  }
+
+  // sort
+  if (shopsState.sort === "rating") {
+    list.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+  } else if (shopsState.sort === "new") {
+    // если нет дат — имитируем новизну по id
+    list.sort((a, b) => String(b.id).localeCompare(String(a.id)));
+  } else {
+    // popular
+    list.sort((a, b) => (b.subs || 0) - (a.subs || 0));
+  }
+
+  return list;
+}
+
+function renderTopShops(list) {
+  const topRow = document.getElementById("topShopsRow");
+  if (!topRow) return;
+
+  const top = list.slice(0, 6);
+  topRow.innerHTML = top.map(s => `
+    <button class="top-shop" type="button" data-shopid="${escHtml(s.id)}">
+      <div class="top-shop-avatar">${escHtml(s.avatarLetter || s.name?.[0] || "S")}</div>
+      <div class="top-shop-name">${escHtml(s.name)}</div>
+      <div class="top-shop-sub">${escHtml(formatSubs(s.subs))} obunachi</div>
+    </button>
+  `).join("");
+
+  topRow.querySelectorAll("[data-shopid]").forEach(btn => {
+    btn.addEventListener("click", () => openShopView(btn.dataset.shopid));
+  });
+}
+
+function renderShopsList(list) {
+  const box = document.getElementById("shopsList");
+  const empty = document.getElementById("shopsEmpty");
+  if (!box) return;
+
+  if (!list.length) {
+    box.innerHTML = "";
+    if (empty) empty.style.display = "block";
+    return;
+  }
+  if (empty) empty.style.display = "none";
+
+  box.innerHTML = list.map(s => `
+    <button class="shop-row" type="button" data-shopid="${escHtml(s.id)}">
+      <div class="shop-row-left">
+        <div class="shop-row-avatar">${escHtml(s.avatarLetter || s.name?.[0] || "S")}</div>
+        <div class="shop-row-main">
+          <div class="shop-row-title">
+            ${escHtml(s.name)}
+            ${s.verified ? `<span class="shop-verified">✔</span>` : ``}
+          </div>
+          <div class="shop-row-meta">${escHtml(s.cat)} · ${escHtml(s.city)}</div>
+        </div>
+      </div>
+      <div class="shop-row-right">
+        <div class="shop-row-rating">⭐ ${Number(s.rating||0).toFixed(1)}</div>
+        <div class="shop-row-subs">${escHtml(formatSubs(s.subs))}</div>
+      </div>
+    </button>
+  `).join("");
+
+  box.querySelectorAll("[data-shopid]").forEach(btn => {
+    btn.addEventListener("click", () => openShopView(btn.dataset.shopid));
+  });
+}
+
+function loadShops() {
+  const list = getFilteredShops();
+  renderTopShops(list);
+  renderShopsList(list);
+}
+
+// ================== OPEN SHOP VIEW ==================
+function openShopView(shopId) {
+  const s = SHOPS.find(x => x.id === shopId);
+  if (!s) return;
+
+  // cover
+  const cover = document.getElementById("shopViewCover");
+  if (cover) cover.src = s.cover || "iphone14-pro.jpg";
+
+  // avatar
+  const av = document.getElementById("shopViewAvatar");
+  if (av) av.textContent = s.avatarLetter || s.name?.[0] || "S";
+
+  // name + badge
+  const name = document.getElementById("shopViewName");
+  if (name) name.textContent = s.name || "Do‘kon";
+
+  const badge = document.getElementById("shopViewBadge");
+  if (badge) {
+    if (s.verified) {
+      badge.style.display = "inline-flex";
+      badge.textContent = "Tasdiqlangan";
+    } else {
+      badge.style.display = "none";
+      badge.textContent = "";
+    }
+  }
+
+  // subs + rating
+  const subs = document.getElementById("shopViewSubs");
+  if (subs) subs.textContent = `${s.subs || 0} obunachi`;
+
+  const stars = document.getElementById("shopViewStars");
+  const rating = document.getElementById("shopViewRating");
+  if (stars) stars.textContent = "★★★★★";
+  if (rating) rating.textContent = `${Number(s.rating || 0).toFixed(1)} (${s.votes || 0} baho)`;
+
+  // phone
+  const phoneA = document.getElementById("shopViewPhone");
+  const phoneT = document.getElementById("shopViewPhoneText");
+  if (s.phone) {
+    if (phoneA) {
+      phoneA.style.display = "inline";
+      phoneA.href = `tel:${s.phone}`;
+      phoneA.textContent = s.phone;
+    }
+    if (phoneT) phoneT.style.display = "none";
+  } else {
+    if (phoneA) phoneA.style.display = "none";
+    if (phoneT) {
+      phoneT.style.display = "inline";
+      phoneT.textContent = "Telefon yo‘q";
+    }
+  }
+
+  // tg
+  const tg = document.getElementById("shopViewTg");
+  if (tg) {
+    const handle = (s.tg || "@shop").replace("@", "");
+    tg.textContent = "@" + handle;
+    tg.href = `https://t.me/${handle}`;
+  }
+
+  // city
+  const city = document.getElementById("shopViewCity");
+  if (city) city.textContent = s.city || "Shahar";
+
+  // ads list (пока заглушка)
+  const ads = document.getElementById("shopViewAdsList");
+  if (ads) {
+    ads.innerHTML = `<div class="ad-meta" style="padding:10px;">Hozircha e’lonlar yo‘q</div>`;
+  }
+
+  showScreen("shop-view");
+}
+
+// ================== SHOPS UI EVENTS ==================
+(function initShopsUI() {
+  const search = document.getElementById("shopsSearchInput");
+  const catRow = document.getElementById("shopsCategoryRow");
+  const filterBtn = document.getElementById("shopsFilterBtn");
+  const sheet = document.getElementById("shopsFilterSheet");
+
+  const sheetCity = document.getElementById("shopsFilterCity");
+  const sheetSort = document.getElementById("shopsSort");
+  const sheetOnlyVerified = document.getElementById("shopsOnlyVerified");
+  const sheetApply = document.getElementById("shopsApply");
+  const sheetReset = document.getElementById("shopsReset");
+
+  // search
+  search?.addEventListener("input", () => {
+    shopsState.q = search.value || "";
+    loadShops();
+  });
+
+  // category chips
+  catRow?.querySelectorAll(".chip").forEach(chip => {
+    chip.addEventListener("click", () => {
+      catRow.querySelectorAll(".chip").forEach(c => c.classList.remove("chip-filled"));
+      chip.classList.add("chip-filled");
+
+      shopsState.cat = chip.dataset.shopcat || "all";
+      loadShops();
+    });
+  });
+
+  // open/close filter sheet
+  function openSheet() { if (sheet) sheet.classList.add("active"); }
+  function closeSheet() { if (sheet) sheet.classList.remove("active"); }
+
+  filterBtn?.addEventListener("click", openSheet);
+  sheet?.addEventListener("click", (e) => {
+    if (e.target === sheet) closeSheet();
+  });
+
+  // toggle verified chip
+  sheetOnlyVerified?.addEventListener("click", () => {
+    shopsState.onlyVerified = !shopsState.onlyVerified;
+    sheetOnlyVerified.classList.toggle("chip-filled", shopsState.onlyVerified);
+  });
+
+  // apply
+  sheetApply?.addEventListener("click", () => {
+    shopsState.city = sheetCity?.value || "all";
+    shopsState.sort = sheetSort?.value || "popular";
+    closeSheet();
+    loadShops();
+  });
+
+  // reset
+  sheetReset?.addEventListener("click", () => {
+    shopsState.city = "all";
+    shopsState.sort = "popular";
+    shopsState.onlyVerified = false;
+    if (sheetCity) sheetCity.value = "all";
+    if (sheetSort) sheetSort.value = "popular";
+    sheetOnlyVerified?.classList.remove("chip-filled");
+    closeSheet();
+    loadShops();
+  });
+})();
+
     // ================== START ==================
     applySavedProfilePhoto();
     showScreen("home");
