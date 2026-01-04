@@ -4355,50 +4355,64 @@ body.chat-room-open .chat-input{
       Hoziroq bepul ulaning — keyin pullik obunaga o‘tish ixtiyoriy bo‘ladi.
     </div>
   </div>
-
-  <div class="card" style="margin-top:12px;">
-  <div class="section-title">Do‘kon ochish</div>
-
-  <input id="shopRegName" class="profile-input" placeholder="Do‘kon nomi" />
-  <div style="height:10px"></div>
-
-  <select id="shopRegCity" class="profile-input">
-    <option value="">Shaharni tanlang</option>
-    <option>Toshkent shahri</option>
-    <option>Samarqand</option>
-    <option>Farg‘ona</option>
-    <option>Andijon</option>
-    <option>Namangan</option>
-  </select>
-  <div style="height:10px"></div>
-
-  <select id="shopRegCategory" class="profile-input">
-    <option value="">Kategoriya</option>
-    <option>Elektronika</option>
-    <option>Avto</option>
-    <option>Xizmatlar</option>
-    <option>Uy-rozg‘or</option>
-    <option>Kiyim</option>
-  </select>
-
-  <div style="height:10px"></div>
-  <input id="shopRegPhone" class="profile-input" placeholder="Telefon (ixtiyoriy)" />
-  <div style="height:10px"></div>
-  <input id="shopRegTelegram" class="profile-input" placeholder="Telegram (ixtiyoriy) @username" />
-
-  <div style="height:10px"></div>
-  <input id="shopRegWorkdays" class="profile-input" placeholder="Ish vaqti (masalan: Du–Ju 09:00–18:00)" />
-
-  <div style="height:10px"></div>
-  <textarea id="shopRegAbout" class="profile-input" style="min-height:90px;" placeholder="Qisqa tavsif (ixtiyoriy)"></textarea>
-
-  <div style="display:flex; gap:10px; margin-top:12px;">
-    <button id="shopRegPreviewBtn" class="btn" type="button" style="flex:1;">Oldindan ko‘rish</button>
-    <button id="shopRegSaveBtn" class="btn primary" type="button" style="flex:1;">Saqlash</button>
-  </div>
-</div>
 </section>
-      
+
+      <!-- ================== SHOP REGISTER SCREEN ================== -->
+<section id="screen-shopRegister" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="showScreen('business')">←</button>
+    <div class="topbar-title">Do‘kon ro‘yxatdan o‘tkazish</div>
+    <div style="width:34px;"></div>
+  </div>
+
+  <div class="content">
+
+    <div class="card" style="margin-top:12px;">
+      <div class="section-title">Ma’lumotlar</div>
+
+      <input id="shopRegName" class="profile-input" placeholder="Do‘kon nomi" />
+      <div style="height:10px"></div>
+
+      <select id="shopRegCity" class="profile-input">
+        <option value="">Shaharni tanlang</option>
+        <option>Toshkent shahri</option>
+        <option>Samarqand</option>
+        <option>Farg‘ona</option>
+        <option>Andijon</option>
+        <option>Namangan</option>
+      </select>
+      <div style="height:10px"></div>
+
+      <select id="shopRegCategory" class="profile-input">
+        <option value="">Kategoriya</option>
+        <option>Elektronika</option>
+        <option>Avto</option>
+        <option>Xizmatlar</option>
+        <option>Uy-rozg‘or</option>
+        <option>Kiyim</option>
+      </select>
+
+      <div style="height:10px"></div>
+      <input id="shopRegPhone" class="profile-input" placeholder="Telefon (ixtiyoriy)" />
+      <div style="height:10px"></div>
+      <input id="shopRegTelegram" class="profile-input" placeholder="Telegram (ixtiyoriy) @username" />
+
+      <div style="height:10px"></div>
+      <input id="shopRegWorkdays" class="profile-input" placeholder="Ish vaqti (Du–Ju 09:00–18:00)" />
+
+      <div style="height:10px"></div>
+      <textarea id="shopRegAbout" class="profile-input" style="min-height:90px;" placeholder="Qisqa tavsif (ixtiyoriy)"></textarea>
+
+      <div style="display:flex; gap:10px; margin-top:12px;">
+        <button id="shopRegPreviewBtn" class="btn" type="button" style="flex:1;">Oldindan ko‘rish</button>
+        <button id="shopRegSaveBtn" class="btn primary" type="button" style="flex:1;">Saqlash</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+<!-- ================== /SHOP REGISTER SCREEN ================== -->
+
       <!-- ================= ADMIN PANEL ================= -->
       <section id="screen-admin" class="screen">
         <div class="screen-title">Admin Panel</div>
@@ -7809,12 +7823,15 @@ function ensureMyShopState(){
 
 // показать/спрятать нужные экраны
 function openShopRegistration(){
-  showScreen("business"); // ✅ сейчас у тебя business экран есть
-  // ВАЖНО: внутри business мы покажем форму регистрации (HTML ниже)
+  showScreen("shopRegister");   // ✅ отдельный экран регистрации
+
   setTimeout(()=>{
+    bindShopRegistrationUI();   // ✅ биндим кнопки когда DOM экрана уже показан
+
     // если уже есть сохраненный магазин — заполним форму
     const s = ensureMyShopState();
     if (!s) return;
+
     const elName = document.getElementById("shopRegName");
     const elCity = document.getElementById("shopRegCity");
     const elCat  = document.getElementById("shopRegCategory");
