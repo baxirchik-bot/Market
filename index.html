@@ -9231,6 +9231,80 @@ function openShopView(shopId) {
   });
 })();
 
+    // ================== SHOPS (GLOBAL) ==================
+window.SHOPS = window.SHOPS || [
+  { id:"zalvo-phone", name:"Zalvo Phone Shop", cat:"Elektronika", city:"Toshkent shahri", verified:true, subs:451, rating:4.9, votes:451 },
+  { id:"avto-master", name:"Avto Master", cat:"Avto", city:"Toshkent viloyati", verified:false, subs:120, rating:4.7, votes:88 },
+  { id:"uy-rozgor", name:"Uy-rozg‘or Market", cat:"Uy-rozg‘or", city:"Samarqand", verified:true, subs:980, rating:4.8, votes:210 },
+];
+
+window.shopsState = window.shopsState || { q:"", cat:"all", city:"all", sort:"popular", onlyVerified:false };
+
+window.loadShops = function loadShops() {
+  const topRow = document.getElementById("topShopsRow");
+  const listBox = document.getElementById("shopsList");
+  const empty = document.getElementById("shopsEmpty");
+
+  if (!topRow || !listBox) {
+    console.warn("Shops DOM topShopsRow/shopsList not found");
+    return;
+  }
+
+  // фильтрация
+  let list = [...window.SHOPS];
+
+  if (window.shopsState.cat !== "all") list = list.filter(s => s.cat === window.shopsState.cat);
+
+  const q = (window.shopsState.q || "").trim().toLowerCase();
+  if (q) list = list.filter(s =>
+    (s.name||"").toLowerCase().includes(q) ||
+    (s.city||"").toLowerCase().includes(q) ||
+    (s.cat||"").toLowerCase().includes(q)
+  );
+
+  if (window.shopsState.city !== "all") list = list.filter(s => s.city === window.shopsState.city);
+  if (window.shopsState.onlyVerified) list = list.filter(s => !!s.verified);
+
+  if (window.shopsState.sort === "rating") list.sort((a,b)=> (b.rating||0)-(a.rating||0));
+  else if (window.shopsState.sort === "new") list.sort((a,b)=> String(b.id).localeCompare(String(a.id)));
+  else list.sort((a,b)=> (b.subs||0)-(a.subs||0));
+
+  // top shops
+  topRow.innerHTML = list.slice(0,6).map(s => `
+    <button class="top-shop" type="button">
+      <div class="top-shop-avatar">${(s.name||"S")[0]}</div>
+      <div class="top-shop-name">${s.name}</div>
+      <div class="top-shop-sub">${s.subs||0} obunachi</div>
+    </button>
+  `).join("");
+
+  // all shops
+  if (!list.length) {
+    listBox.innerHTML = "";
+    if (empty) empty.style.display = "block";
+    return;
+  }
+  if (empty) empty.style.display = "none";
+
+  listBox.innerHTML = list.map(s => `
+    <button class="shop-row" type="button">
+      <div class="shop-row-left">
+        <div class="shop-row-avatar">${(s.name||"S")[0]}</div>
+        <div class="shop-row-main">
+          <div class="shop-row-title">${s.name} ${s.verified ? "✔" : ""}</div>
+          <div class="shop-row-meta">${s.cat} · ${s.city}</div>
+        </div>
+      </div>
+      <div class="shop-row-right">
+        <div class="shop-row-rating">⭐ ${(s.rating||0).toFixed(1)}</div>
+        <div class="shop-row-subs">${s.subs||0}</div>
+      </div>
+    </button>
+  `).join("");
+
+  console.log("loadShops OK:", list.length);
+};
+
     // ================== START ==================
     applySavedProfilePhoto();
     showScreen("home");
