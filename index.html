@@ -3535,8 +3535,58 @@ body.chat-room-open .chat-input{
   align-items: center;
   justify-content: center;
 }
-    
-  @media (max-width: 480px) {
+
+    /* ===== BUTTONS (GLOBAL) ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: none;
+
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+
+  background: #f3f4f6;
+  color: #111827;
+
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn:hover {
+  background: #e5e7eb;
+}
+
+/* ===== PRIMARY BUTTON ===== */
+.btn.primary {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+}
+
+.btn.primary:hover {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+}
+
+/* ===== OUTLINE BUTTON (на будущее) ===== */
+.btn.outline {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  color: #111827;
+}
+
+.btn.outline:hover {
+  background: #f9fafb;
+}
+
+    @media (max-width: 480px) {
     body {
       align-items: stretch;
     }
