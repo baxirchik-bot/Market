@@ -3639,6 +3639,28 @@ body.chat-room-open .chat-input{
   margin-bottom: 12px;
 }
 
+    /* ✅ контейнер картинок должен быть "видимым" */
+.shop-reg-images {
+  margin-bottom: 0;
+}
+
+/* ✅ обложка держит место под нависающий аватар */
+.shop-reg-cover {
+  position: relative;
+  overflow: visible;
+  padding-bottom: 44px; /* 👈 вот это и решает проблему */
+}
+
+/* ✅ аватар нависает, но НЕ ломает верстку */
+.shop-reg-avatar-wrap {
+  position: absolute;
+  left: 16px;
+  bottom: 0;          /* привязали к низу обложки */
+  transform: translateY(50%); /* уводим вниз на половину */
+  margin: 0;          /* margin больше не нужен */
+}
+
+    
     @media (max-width: 480px) {
     body {
       align-items: stretch;
