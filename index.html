@@ -5859,10 +5859,11 @@ if (bottomNav) bottomNav.classList.toggle("nav-hidden", hideNavScreens.has(name)
       
       if (name === "myAds")     renderMyAds();
       if (name === "shopView")  renderShopView();
-      if (name === "myShop") { 
-        renderMyShopScreen();
-        renderMyShopAds();
-  const s = ensureMyShopState();
+      if (name === "myShop") {
+  const s = ensureMyShopState();     // ✅ ВАЖНО: читаем из localStorage
+  renderMyShopScreen();             // ✅ твоя функция, что рисует шапку
+  renderMyShopAds();
+
   if (s?.id) setSubscribeUI(storeSubscribeBtn, s.id, { mode:"short" });
 }
 
@@ -8209,7 +8210,7 @@ syncMyShopIntoShopsData();
     
     // ✅ MY SHOP ⋯ открывает ОБЩИЙ shopSheetBackdrop
     function getMyShop(){
-  return loadMyShop() || shopsData.find(s => s.id === "s1") || shopsData[0] || null;
+  return ensureMyShopState(); // ✅ ТОЛЬКО из localStorage
 }
 
    if (storeMoreBtn && !storeMoreBtn.dataset.bound) {
