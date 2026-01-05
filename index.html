@@ -7899,87 +7899,79 @@ function openShopRegistration(){
   }, 0);
 }
 
-    function renderMyShopScreen() {
+   function renderMyShopScreen() {
   const s = ensureMyShopState();
   const root = document.querySelector("#screen-my-shop");
   if (!root) return;
 
-  // Если магазина нет — можно показать заглушку/кнопку открыть магазин
-  if (!s) {
-    // тут можешь показать экран регистрации, если так задумано
-    return;
-  }
+  if (!s) return;
 
-  // 1) Название магазина
+  // 1) Название
   const nameEl = root.querySelector(".store-profile .store-name");
-  if (nameEl) nameEl.textContent = s.name || s.title || "Mening do‘konim";
+  if (nameEl) nameEl.textContent = s.name || "Mening do‘konim";
 
-  // 2) Подписчики (если есть)
+  // 2) Подписчики
   const subsEl = root.querySelector(".store-profile .store-subs");
-  if (subsEl) {
-    const subs = (s.subs ?? s.subscribers ?? 0);
-    subsEl.textContent = `${subs} obunachi`;
-  }
+  if (subsEl) subsEl.textContent = `${Number(s.subs || 0)} obunachi`;
 
-  // 3) Рейтинг (если есть)
+  // 3) Рейтинг
   const ratingCountEl = root.querySelector(".store-rating-count");
   if (ratingCountEl) {
-    const r = (s.rating ?? 0);
-    const c = (s.ratingCount ?? s.reviews ?? 0);
+    const r = Number(s.rating || 0);
+    const c = Number(s.reviews || 0);
     ratingCountEl.textContent = `${r} (${c} baho)`;
   }
 
-  // 4) Контакты — берём строки по порядку как у тебя в HTML
+  // Контакты
   const rows = root.querySelectorAll(".store-contacts-list .store-contact-row");
 
-  // Телефон (1-я строка)
+  // ✅ Телефон (берём ownerPhone)
   const phoneA = rows?.[0]?.querySelector("a");
   if (phoneA) {
-    const phone = s.phone || s.tel || "";
+    const phone = (s.ownerPhone || s.phone || "").trim();
     phoneA.textContent = phone || "Telefon yo‘q";
-    phoneA.href = phone ? `tel:${phone}` : "javascript:void(0)";
+    phoneA.href = phone ? `tel:${phone.replace(/\s+/g, "")}` : "javascript:void(0)";
   }
 
-  // Telegram (2-я строка)
+  // ✅ Telegram (берём ownerTelegram)
   const tgA = rows?.[1]?.querySelector("a");
   if (tgA) {
-    const tg = s.telegram || s.tg || "";
-    const handle = tg?.startsWith("@") ? tg : (tg ? `@${tg}` : "");
+    const tg = (s.ownerTelegram || s.telegram || "").trim().replace(/^@/, "");
+    const handle = tg ? `@${tg}` : "";
     tgA.textContent = handle || "Telegram yo‘q";
-    tgA.href = handle ? `https://t.me/${handle.replace("@","")}` : "javascript:void(0)";
+    tgA.href = tg ? `https://t.me/${tg}` : "javascript:void(0)";
   }
 
-  // Instagram (3-я строка)
+  // Instagram (если у тебя есть в форме — пока оставил)
   const igA = rows?.[2]?.querySelector("a");
   if (igA) {
-    const ig = s.instagram || s.ig || "";
-    const handle = ig?.startsWith("@") ? ig : (ig ? `@${ig}` : "");
+    const ig = (s.instagram || s.ig || "").trim().replace(/^@/, "");
+    const handle = ig ? `@${ig}` : "";
     igA.textContent = handle || "Instagram yo‘q";
-    igA.href = handle ? `https://instagram.com/${handle.replace("@","")}` : "javascript:void(0)";
+    igA.href = ig ? `https://instagram.com/${ig}` : "javascript:void(0)";
   }
 
-  // Локация (4-я строка)
+  // Локация
   const locSpan = rows?.[3]?.querySelector("span:not(.store-contact-icon)");
   if (locSpan) {
-    const city = s.city || "";
-    const address = s.address || s.location || "";
-    locSpan.textContent = [city, address].filter(Boolean).join(", ") || "Manzil yo‘q";
+    locSpan.textContent = s.city || "Manzil yo‘q";
   }
 
-  // График (5-я строка)
+  // ✅ График (берём workdays)
   const clockSpan = rows?.[4]?.querySelector("span:not(.store-contact-icon)");
   if (clockSpan) {
-    // если ты сохраняешь schedule как строку
-    const scheduleText = s.scheduleText || s.schedule || "";
-    // если ты сохраняешь рабочие часы как объект — просто покажем JSON строкой
-    clockSpan.innerHTML = scheduleText
-      ? `<strong>Bugun ochiq</strong>: ${scheduleText}`
+    const wd = (s.workdays || "").trim();
+    clockSpan.innerHTML = wd
+      ? `<strong>Bugun ochiq</strong>: ${wd}`
       : `<strong>Bugun ochiq</strong>: Grafik yo‘q`;
   }
 
-  // 5) Описание (твой блок Do‘kon haqida)
+  // ✅ Описание (берём about)
   const aboutEl = root.querySelector(".store-about-text");
-  if (aboutEl) aboutEl.textContent = s.description || s.about || "Tavsif yo‘q";
+  if (aboutEl) aboutEl.textContent = (s.about || "").trim() || "Tavsif yo‘q";
+
+  // обновим кнопку подписки (если есть)
+  if (storeSubscribeBtn && s.id) setSubscribeUI(storeSubscribeBtn, s.id, { mode:"short" });
 }
 
     function openMeningDokonim(){
@@ -8180,29 +8172,6 @@ bindShopRegistrationUI();
       alert("Язык установлен: Русский");
       showScreen("profile");
     });
-
-    function renderMyShopScreen(){
-  const s = ensureMyShopState(); // берём сохранённый магазин
-  if (!s) return;
-
-  // ✅ подставь сюда реальные id элементов из твоего HTML
-  const nameEl = document.getElementById("myShopName");
-  const cityEl = document.getElementById("myShopCity");
-  const catEl  = document.getElementById("myShopCategory");
-  const wdEl   = document.getElementById("myShopWorkdays");
-  const aboutEl= document.getElementById("myShopAbout");
-  const avatarEl = document.getElementById("myShopAvatar"); // если есть
-
-  if (nameEl) nameEl.textContent = s.name || "Do‘kon";
-  if (cityEl) cityEl.textContent = s.city || "";
-  if (catEl)  catEl.textContent  = s.category || "";
-  if (wdEl)   wdEl.textContent   = s.workdays || "—";
-  if (aboutEl)aboutEl.textContent= s.about || "—";
-  if (avatarEl) avatarEl.textContent = getInitials(s.name);
-
-  // если хочешь, можно обновить subs/кнопку подписки
-  if (storeSubscribeBtn && s.id) setSubscribeUI(storeSubscribeBtn, s.id, { mode:"short" });
-}
 
     // ================== SHOPS DATA + RENDER ==================
     const shopsSearchInput = document.getElementById("shopsSearchInput");
